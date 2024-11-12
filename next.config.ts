@@ -3,10 +3,10 @@ const prefix = process.env.NODE_ENV === 'production' ? 'https://jinsung4069.gith
 const nextConfig = {
   output: 'export',
   assetPrefix: prefix,
-  basePath: '',
-  images: {
-    unoptimized: true
-  }
+  // basePath: '',
+  // images: {
+  //   unoptimized: true
+  // }
 }
 
 module.exports = nextConfig
