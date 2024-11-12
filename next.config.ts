@@ -2,8 +2,8 @@
 const isProduction = process.env.NODE_ENV === 'production';
 
 const nextConfig = {
+  output: 'export',
   reactStrictMode: true,
-  // basePath 명시
   basePath: '',
   images: {
     unoptimized: true
