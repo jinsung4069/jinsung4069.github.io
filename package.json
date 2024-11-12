@@ -5,12 +5,7 @@
   "homepage": "https://jinsung4069.github.io",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "rimraf .next",
     "build": "next build",
-    "preexport": "rimraf out",
-    "export": "next export",
-    "touch": "touch out/.nojekyll",
-    "posttouch": "touch out/_next/.nojekyll",
     "start": "next start",
     "lint": "next lint",
     "predeploy": "npm run build",
