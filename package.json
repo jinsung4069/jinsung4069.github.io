@@ -5,7 +5,8 @@
   "homepage": "https://jinsung4069.github.io",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
+    "serve": "npx http-server out",
     "start": "next start",
     "lint": "next lint",
     "predeploy": "npm run build",
