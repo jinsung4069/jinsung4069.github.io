@@ -73,10 +73,11 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Install and Build 🔧
-        run: |
-          yarn install
-          yarn build && touch ./out/.nojekyll
+      - name: Static HTML export with Next.js
+        run: ${{ steps.detect-package-manager.outputs.runner }} next export
+        // .noJekyll 파일 추가하는 단계 추가
+      - name: Add noJekyll file
+        run: ${{ steps.detect-package-manager.outputs.runner }} run touch
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

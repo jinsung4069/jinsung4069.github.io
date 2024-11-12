@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
-const prefix = process.env.NODE_ENV === 'production' ? 'https://jinsung4069.github.io' : ''
+const isProduction = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
-  output: 'export',
-  assetPrefix: prefix,
-  // basePath: '',
-  // images: {
-  //   unoptimized: true
-  // }
-}
+  reactStrictMode: true,
+  // basePath 명시
+  basePath: '',
+  images: {
+    unoptimized: true
+  },
+};
 
 module.exports = nextConfig
