@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from 'react';
 import {
   AlertDialog,
@@ -11,33 +13,63 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+// 타입 정의
+type PieceType = 'monkey' | 'alligator' | null;
+type Board = PieceType[][];
+type GameState = {
+  board: Board;
+  currentPlayer: PieceType;
+  gameOver: boolean;
+  winner: PieceType;
+  computerThinking: boolean;
+};
+
+const BOARD_SIZE = 3;
+
 const AlligatorChess = () => {
-  const BOARD_SIZE = 3;
-  const [selectedPiece, setSelectedPiece] = useState(null);
-  const [showRules, setShowRules] = useState(false);
-  const [gameState, setGameState] = useState({
-    board: Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(null)),
+  // 초기 보드 생성 함수
+  const createInitialBoard = (): Board => {
+    const board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(null));
+    // 원숭이는 아래쪽에 배치
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      board[BOARD_SIZE - 1][i] = 'monkey';
+    }
+    // 악어는 위쪽에 배치
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      board[0][i] = 'alligator';
+    }
+    return board;
+  };
+
+  // 상태 관리
+  const [selectedPiece, setSelectedPiece] = useState<[number, number] | null>(null);
+  const [showRules, setShowRules] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>({
+    board: createInitialBoard(),
     currentPlayer: 'monkey',
     gameOver: false,
     winner: null,
     computerThinking: false
   });
 
-  // 게임 초기화
-  useEffect(() => {
-    resetGame();
-  }, []);
-
-  // 유효한 이동인지 확인
-  const isValidMove = (fromRow, fromCol, toRow, toCol, board) => {
+  // 이동 가능 여부 확인
+  const isValidMove = (
+    fromRow: number,
+    fromCol: number,
+    toRow: number,
+    toCol: number,
+    board: Board
+  ): boolean => {
     const piece = board[fromRow][fromCol];
     const targetPiece = board[toRow][toCol];
     
+    // 보드 범위 체크
     if (toRow < 0 || toRow >= BOARD_SIZE || toCol < 0 || toCol >= BOARD_SIZE) {
       return false;
     }
 
     if (piece === 'monkey') {
+      // 원숭이는 위로 이동
       const isDiagonalAttack = Math.abs(fromCol - toCol) === 1 && fromRow - toRow === 1;
       const isForward = toCol === fromCol && toRow === fromRow - 1;
 
@@ -48,6 +80,7 @@ const AlligatorChess = () => {
         return targetPiece === null;
       }
     } else {
+      // 악어는 아래로 이동
       const isDiagonalAttack = Math.abs(fromCol - toCol) === 1 && toRow - fromRow === 1;
       const isForward = toCol === fromCol && toRow === fromRow + 1;
 
@@ -63,48 +96,64 @@ const AlligatorChess = () => {
   };
 
   // 가능한 모든 이동 찾기
-  const getAllPossibleMoves = (piece, board) => {
-    const moves = [];
+  const getAllPossibleMoves = (piece: PieceType, board: Board) => {
+    const moves: { from: [number, number]; to: [number, number] }[] = [];
+    
     for (let fromRow = 0; fromRow < BOARD_SIZE; fromRow++) {
       for (let fromCol = 0; fromCol < BOARD_SIZE; fromCol++) {
         if (board[fromRow][fromCol] === piece) {
           for (let toRow = 0; toRow < BOARD_SIZE; toRow++) {
             for (let toCol = 0; toCol < BOARD_SIZE; toCol++) {
               if (isValidMove(fromRow, fromCol, toRow, toCol, board)) {
-                moves.push({ from: [fromRow, fromCol], to: [toRow, toCol] });
+                moves.push({
+                  from: [fromRow, fromCol],
+                  to: [toRow, toCol]
+                });
               }
             }
           }
         }
       }
     }
+    
     return moves;
   };
 
   // 컴퓨터의 최적 이동 찾기
-  const findBestMove = (board) => {
-    // 1. 먼저 대각선 공격 찾기
+  const findBestMove = (board: Board) => {
+    // 1. 먼저 대각선 공격 가능한지 확인
     for (let fromRow = 0; fromRow < BOARD_SIZE; fromRow++) {
       for (let fromCol = 0; fromCol < BOARD_SIZE; fromCol++) {
         if (board[fromRow][fromCol] === 'alligator') {
           if (fromRow + 1 < BOARD_SIZE) {
+            // 왼쪽 대각선 공격
             if (fromCol - 1 >= 0 && board[fromRow + 1][fromCol - 1] === 'monkey') {
-              return { from: [fromRow, fromCol], to: [fromRow + 1, fromCol - 1] };
+              return {
+                from: [fromRow, fromCol] as [number, number],
+                to: [fromRow + 1, fromCol - 1] as [number, number]
+              };
             }
+            // 오른쪽 대각선 공격
             if (fromCol + 1 < BOARD_SIZE && board[fromRow + 1][fromCol + 1] === 'monkey') {
-              return { from: [fromRow, fromCol], to: [fromRow + 1, fromCol + 1] };
+              return {
+                from: [fromRow, fromCol] as [number, number],
+                to: [fromRow + 1, fromCol + 1] as [number, number]
+              };
             }
           }
         }
       }
     }
 
-    // 2. 일반적인 전진 이동
+    // 2. 공격할 수 없다면 전진
     for (let fromRow = 0; fromRow < BOARD_SIZE; fromRow++) {
       for (let fromCol = 0; fromCol < BOARD_SIZE; fromCol++) {
         if (board[fromRow][fromCol] === 'alligator') {
           if (fromRow + 1 < BOARD_SIZE && board[fromRow + 1][fromCol] === null) {
-            return { from: [fromRow, fromCol], to: [fromRow + 1, fromCol] };
+            return {
+              from: [fromRow, fromCol] as [number, number],
+              to: [fromRow + 1, fromCol] as [number, number]
+            };
           }
         }
       }
@@ -113,7 +162,38 @@ const AlligatorChess = () => {
     return null;
   };
 
-  // 컴퓨터 이동 실행
+  // 승자 확인
+  const checkWinner = (board: Board): PieceType => {
+    // 1. 상대방 진영 끝에 도달했는지 확인
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      if (board[0][i] === 'monkey') return 'monkey';
+      if (board[BOARD_SIZE-1][i] === 'alligator') return 'alligator';
+    }
+
+    // 2. 모든 말이 잡혔는지 확인
+    let monkeyCount = 0;
+    let alligatorCount = 0;
+    for (let row = 0; row < BOARD_SIZE; row++) {
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        if (board[row][col] === 'monkey') monkeyCount++;
+        if (board[row][col] === 'alligator') alligatorCount++;
+      }
+    }
+
+    if (monkeyCount === 0) return 'alligator';
+    if (alligatorCount === 0) return 'monkey';
+
+    // 3. 이동 가능한 수가 있는지 확인
+    const monkeyMoves = getAllPossibleMoves('monkey', board);
+    if (monkeyMoves.length === 0) return 'alligator';
+
+    const alligatorMoves = getAllPossibleMoves('alligator', board);
+    if (alligatorMoves.length === 0) return 'monkey';
+
+    return null;
+  };
+
+  // 컴퓨터 이동
   const makeComputerMove = () => {
     const move = findBestMove(gameState.board);
     
@@ -152,36 +232,8 @@ const AlligatorChess = () => {
     }
   }, [gameState.currentPlayer, gameState.computerThinking]);
 
-  // 승자 확인
-  const checkWinner = (board) => {
-    // 1. 끝에 도달했는지 확인
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      if (board[0][i] === 'monkey') return 'monkey';
-      if (board[BOARD_SIZE-1][i] === 'alligator') return 'alligator';
-    }
-
-    // 2. 말이 모두 잡혔는지 확인
-    let monkeyCount = 0;
-    let alligatorCount = 0;
-    for (let row = 0; row < BOARD_SIZE; row++) {
-      for (let col = 0; col < BOARD_SIZE; col++) {
-        if (board[row][col] === 'monkey') monkeyCount++;
-        if (board[row][col] === 'alligator') alligatorCount++;
-      }
-    }
-
-    if (monkeyCount === 0) return 'alligator';
-    if (alligatorCount === 0) return 'monkey';
-
-    // 3. 이동 가능한 수가 있는지 확인
-    const monkeyMoves = getAllPossibleMoves('monkey', board);
-    if (monkeyMoves.length === 0) return 'alligator';
-
-    return null;
-  };
-
-  // 말 이동 처리
-  const handleCellClick = (row, col) => {
+  // 사용자 이동 처리
+  const handleCellClick = (row: number, col: number) => {
     if (gameState.gameOver || gameState.currentPlayer === 'alligator') return;
 
     const piece = gameState.board[row][col];
@@ -211,15 +263,10 @@ const AlligatorChess = () => {
     }
   };
 
-  // 게임 리셋
+  // 게임 초기화
   const resetGame = () => {
-    const newBoard = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(null));
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      newBoard[BOARD_SIZE-1][i] = 'monkey';
-      newBoard[0][i] = 'alligator';
-    }
     setGameState({
-      board: newBoard,
+      board: createInitialBoard(),
       currentPlayer: 'monkey',
       gameOver: false,
       winner: null,
@@ -229,14 +276,14 @@ const AlligatorChess = () => {
   };
 
   // 말 이모지 반환
-  const getPieceEmoji = (piece) => {
+  const getPieceEmoji = (piece: PieceType): string => {
     if (piece === 'monkey') return '🐒';
     if (piece === 'alligator') return '🐊';
     return '';
   };
 
   // 유효한 이동 위치 확인
-  const getValidMoves = (row, col) => {
+  const getValidMoves = (row: number, col: number): boolean => {
     if (!selectedPiece) return false;
     return isValidMove(selectedPiece[0], selectedPiece[1], row, col, gameState.board);
   };
@@ -309,7 +356,6 @@ const AlligatorChess = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       <AlertDialog open={gameState.gameOver}>
         <AlertDialogContent>
           <AlertDialogHeader>

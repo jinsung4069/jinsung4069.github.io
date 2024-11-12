@@ -1,9 +1,11 @@
-import AlligatorChess from "@/components/AlligatorChess"
+import AlligatorChess from '@/components/AlligatorChess'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <AlligatorChess />
+    <main className="min-h-screen bg-gray-100 py-8">
+      <div className="container mx-auto">
+        <AlligatorChess />
+      </div>
     </main>
   )
 }
