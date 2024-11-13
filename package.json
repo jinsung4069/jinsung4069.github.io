@@ -2,7 +2,7 @@
   "name": "jinsung4069.github.io",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://jinsung4069.github.io",
+  "homepage": "https://jinsung4069.github.io/alligatorchess",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
