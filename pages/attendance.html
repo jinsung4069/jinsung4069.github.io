@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System</title>
+    <link rel="stylesheet" href="../css/attendance.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance System</h1>
+        
+        <!-- Student Registration Section -->
+        <div class="section">
+            <h2>Add New Student</h2>
+            <form id="studentForm">
+                <input type="text" id="studentName" placeholder="Enter student name" required>
+                <button type="submit">Add Student</button>
+            </form>
+        </div>
+
+        <!-- Attendance Taking Section -->
+        <div class="section">
+            <h2>Take Attendance</h2>
+            <div class="date-selector">
+                <label for="attendanceDate">Date:</label>
+                <input type="date" id="attendanceDate" required>
+            </div>
+            
+            <div class="attendance-list">
+                <table id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <!-- Students will be added here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Attendance Record Section -->
+        <div class="section">
+            <h2>Attendance Records</h2>
+            <div id="attendanceRecords">
+                <!-- Records will be displayed here -->
+            </div>
+        </div>
+    </div>
+    <script src="../js/attendance.js"></script>
+</body>
+</html>
