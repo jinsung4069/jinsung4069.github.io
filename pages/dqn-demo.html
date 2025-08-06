@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DQN 알고리즘 데모 - Inseong's Website</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .game-area {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .game-canvas-container {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .game-canvas {
+            border: 2px solid #333;
+            background: #000;
+            max-width: 100%;
+        }
+        
+        .controls {
+            min-width: 300px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .control-group input, .control-group select, .control-group button {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .control-group button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .control-group button:hover {
+            background: #0056b3;
+        }
+        
+        .control-group button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .explanation {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .algorithm-steps {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="../index.html">홈</a></li>
+                <li><a href="cv.html">이력서</a></li>
+                <li><a href="../simplequiz">퀴즈</a></li>
+                <li><a href="attendance.html">출석</a></li>
+                <li><a href="../AlligatorChess">알리게이터 체스</a></li>
+                <li><a href="../astar-pathfinding">A* 길찾기</a></li>
+                <li><a href="dqn-demo.html" class="active">DQN 데모</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="demo-container">
+        <h1>DQN (Deep Q-Network) 알고리즘 데모</h1>
+        
+        <div class="explanation">
+            <h2>DQN이란?</h2>
+            <p><strong>Deep Q-Network (DQN)</strong>은 강화학습의 한 방법으로, 딥러닝과 Q-Learning을 결합한 알고리즘입니다. 
+            에이전트가 환경과 상호작용하면서 보상을 최대화하는 행동을 학습합니다.</p>
+            
+            <h3>주요 특징:</h3>
+            <ul>
+                <li><strong>Experience Replay</strong>: 과거 경험을 저장하고 무작위로 샘플링하여 학습</li>
+                <li><strong>Target Network</strong>: 안정적인 학습을 위한 별도의 타겟 네트워크 사용</li>
+                <li><strong>ε-greedy 정책</strong>: 탐험과 활용의 균형을 위한 행동 선택 전략</li>
+            </ul>
+        </div>
+
+        <div class="game-area">
+            <div class="game-canvas-container">
+                <canvas id="gameCanvas" class="game-canvas" width="400" height="400"></canvas>
+                <p>간단한 격자 게임에서 DQN 에이전트가 목표에 도달하는 과정을 관찰하세요.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>게임 상태</label>
+                    <button id="startBtn">학습 시작</button>
+                    <button id="pauseBtn" disabled>일시정지</button>
+                    <button id="resetBtn">리셋</button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="learningRate">학습률 (α)</label>
+                    <input type="range" id="learningRate" min="0.01" max="0.5" step="0.01" value="0.1">
+                    <span id="learningRateValue">0.1</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="epsilon">탐험률 (ε)</label>
+                    <input type="range" id="epsilon" min="0" max="1" step="0.01" value="0.1">
+                    <span id="epsilonValue">0.1</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="discountFactor">할인인자 (γ)</label>
+                    <input type="range" id="discountFactor" min="0.1" max="1" step="0.01" value="0.95">
+                    <span id="discountFactorValue">0.95</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>학습 속도</label>
+                    <select id="speed">
+                        <option value="50">매우 빠름</option>
+                        <option value="100">빠름</option>
+                        <option value="200" selected>보통</option>
+                        <option value="500">느림</option>
+                        <option value="1000">매우 느림</option>
+                    </select>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div>에피소드</div>
+                        <div class="stat-value" id="episode">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>총 보상</div>
+                        <div class="stat-value" id="totalReward">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>평균 보상</div>
+                        <div class="stat-value" id="avgReward">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>성공률</div>
+                        <div class="stat-value" id="successRate">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="algorithm-steps">
+            <h2>DQN 알고리즘 단계</h2>
+            <ol>
+                <li><strong>환경 관찰</strong>: 현재 상태 s를 관찰합니다</li>
+                <li><strong>행동 선택</strong>: ε-greedy 정책으로 행동 a를 선택합니다</li>
+                <li><strong>행동 실행</strong>: 환경에서 행동을 실행하여 보상 r과 다음 상태 s'를 얻습니다</li>
+                <li><strong>경험 저장</strong>: (s, a, r, s') 튜플을 경험 버퍼에 저장합니다</li>
+                <li><strong>배치 학습</strong>: 경험 버퍼에서 배치를 샘플링하여 Q-네트워크를 업데이트합니다</li>
+                <li><strong>타겟 업데이트</strong>: 주기적으로 타겟 네트워크를 업데이트합니다</li>
+            </ol>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Inseong's Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        class DQNDemo {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gridSize = 10;
+                this.cellSize = this.canvas.width / this.gridSize;
+                
+                this.agent = { x: 0, y: 0 };
+                this.goal = { x: 9, y: 9 };
+                this.obstacles = this.generateObstacles();
+                
+                this.qTable = this.initializeQTable();
+                this.episode = 0;
+                this.totalReward = 0;
+                this.rewardHistory = [];
+                this.successCount = 0;
+                
+                this.isRunning = false;
+                this.animationId = null;
+                
+                this.initializeControls();
+                this.render();
+            }
+            
+            generateObstacles() {
+                const obstacles = [];
+                for (let i = 0; i < 15; i++) {
+                    let x, y;
+                    do {
+                        x = Math.floor(Math.random() * this.gridSize);
+                        y = Math.floor(Math.random() * this.gridSize);
+                    } while ((x === 0 && y === 0) || (x === 9 && y === 9));
+                    obstacles.push({ x, y });
+                }
+                return obstacles;
+            }
+            
+            initializeQTable() {
+                const table = {};
+                for (let x = 0; x < this.gridSize; x++) {
+                    for (let y = 0; y < this.gridSize; y++) {
+                        table[`${x},${y}`] = [0, 0, 0, 0]; // up, right, down, left
+                    }
+                }
+                return table;
+            }
+            
+            initializeControls() {
+                document.getElementById('startBtn').onclick = () => this.start();
+                document.getElementById('pauseBtn').onclick = () => this.pause();
+                document.getElementById('resetBtn').onclick = () => this.reset();
+                
+                const learningRateSlider = document.getElementById('learningRate');
+                const epsilonSlider = document.getElementById('epsilon');
+                const discountSlider = document.getElementById('discountFactor');
+                
+                learningRateSlider.oninput = (e) => {
+                    document.getElementById('learningRateValue').textContent = e.target.value;
+                };
+                
+                epsilonSlider.oninput = (e) => {
+                    document.getElementById('epsilonValue').textContent = e.target.value;
+                };
+                
+                discountSlider.oninput = (e) => {
+                    document.getElementById('discountFactorValue').textContent = e.target.value;
+                };
+            }
+            
+            start() {
+                this.isRunning = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('pauseBtn').disabled = false;
+                this.runEpisode();
+            }
+            
+            pause() {
+                this.isRunning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                if (this.animationId) {
+                    clearTimeout(this.animationId);
+                }
+            }
+            
+            reset() {
+                this.pause();
+                this.agent = { x: 0, y: 0 };
+                this.episode = 0;
+                this.totalReward = 0;
+                this.rewardHistory = [];
+                this.successCount = 0;
+                this.qTable = this.initializeQTable();
+                this.obstacles = this.generateObstacles();
+                this.updateStats();
+                this.render();
+            }
+            
+            getState(pos) {
+                return `${pos.x},${pos.y}`;
+            }
+            
+            getValidActions(pos) {
+                const actions = [];
+                const directions = [
+                    { dx: 0, dy: -1, action: 0 }, // up
+                    { dx: 1, dy: 0, action: 1 },  // right
+                    { dx: 0, dy: 1, action: 2 },  // down
+                    { dx: -1, dy: 0, action: 3 }  // left
+                ];
+                
+                directions.forEach(dir => {
+                    const newX = pos.x + dir.dx;
+                    const newY = pos.y + dir.dy;
+                    
+                    if (newX >= 0 && newX < this.gridSize && 
+                        newY >= 0 && newY < this.gridSize &&
+                        !this.obstacles.some(obs => obs.x === newX && obs.y === newY)) {
+                        actions.push(dir.action);
+                    }
+                });
+                
+                return actions;
+            }
+            
+            chooseAction(state) {
+                const epsilon = parseFloat(document.getElementById('epsilon').value);
+                const validActions = this.getValidActions(this.agent);
+                
+                if (Math.random() < epsilon) {
+                    return validActions[Math.floor(Math.random() * validActions.length)];
+                }
+                
+                const qValues = this.qTable[state];
+                let bestAction = 0;
+                let bestValue = -Infinity;
+                
+                validActions.forEach(action => {
+                    if (qValues[action] > bestValue) {
+                        bestValue = qValues[action];
+                        bestAction = action;
+                    }
+                });
+                
+                return bestAction;
+            }
+            
+            takeAction(action) {
+                const directions = [
+                    { dx: 0, dy: -1 }, // up
+                    { dx: 1, dy: 0 },  // right
+                    { dx: 0, dy: 1 },  // down
+                    { dx: -1, dy: 0 }  // left
+                ];
+                
+                const dir = directions[action];
+                const newPos = {
+                    x: Math.max(0, Math.min(this.gridSize - 1, this.agent.x + dir.dx)),
+                    y: Math.max(0, Math.min(this.gridSize - 1, this.agent.y + dir.dy))
+                };
+                
+                if (this.obstacles.some(obs => obs.x === newPos.x && obs.y === newPos.y)) {
+                    return { newPos: this.agent, reward: -1, done: false };
+                }
+                
+                let reward = -0.1; // 기본 이동 비용
+                let done = false;
+                
+                if (newPos.x === this.goal.x && newPos.y === this.goal.y) {
+                    reward = 10;
+                    done = true;
+                }
+                
+                return { newPos, reward, done };
+            }
+            
+            updateQValue(state, action, reward, nextState, done) {
+                const learningRate = parseFloat(document.getElementById('learningRate').value);
+                const discountFactor = parseFloat(document.getElementById('discountFactor').value);
+                
+                const currentQ = this.qTable[state][action];
+                let maxNextQ = 0;
+                
+                if (!done) {
+                    maxNextQ = Math.max(...this.qTable[nextState]);
+                }
+                
+                const newQ = currentQ + learningRate * (reward + discountFactor * maxNextQ - currentQ);
+                this.qTable[state][action] = newQ;
+            }
+            
+            async runEpisode() {
+                if (!this.isRunning) return;
+                
+                this.agent = { x: 0, y: 0 };
+                let episodeReward = 0;
+                let steps = 0;
+                const maxSteps = 100;
+                
+                while (this.isRunning && steps < maxSteps) {
+                    const state = this.getState(this.agent);
+                    const action = this.chooseAction(state);
+                    const { newPos, reward, done } = this.takeAction(action);
+                    
+                    const nextState = this.getState(newPos);
+                    this.updateQValue(state, action, reward, nextState, done);
+                    
+                    this.agent = newPos;
+                    episodeReward += reward;
+                    steps++;
+                    
+                    this.render();
+                    
+                    if (done) {
+                        this.successCount++;
+                        break;
+                    }
+                    
+                    const speed = parseInt(document.getElementById('speed').value);
+                    await new Promise(resolve => {
+                        this.animationId = setTimeout(resolve, speed);
+                    });
+                }
+                
+                this.episode++;
+                this.totalReward += episodeReward;
+                this.rewardHistory.push(episodeReward);
+                this.updateStats();
+                
+                if (this.isRunning) {
+                    setTimeout(() => this.runEpisode(), 500);
+                }
+            }
+            
+            updateStats() {
+                document.getElementById('episode').textContent = this.episode;
+                document.getElementById('totalReward').textContent = this.totalReward.toFixed(1);
+                
+                if (this.rewardHistory.length > 0) {
+                    const avgReward = this.rewardHistory.reduce((a, b) => a + b, 0) / this.rewardHistory.length;
+                    document.getElementById('avgReward').textContent = avgReward.toFixed(1);
+                }
+                
+                const successRate = this.episode > 0 ? (this.successCount / this.episode * 100).toFixed(1) : 0;
+                document.getElementById('successRate').textContent = successRate + '%';
+            }
+            
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 격자 그리기
+                this.ctx.strokeStyle = '#ddd';
+                for (let i = 0; i <= this.gridSize; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(i * this.cellSize, 0);
+                    this.ctx.lineTo(i * this.cellSize, this.canvas.height);
+                    this.ctx.stroke();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, i * this.cellSize);
+                    this.ctx.lineTo(this.canvas.width, i * this.cellSize);
+                    this.ctx.stroke();
+                }
+                
+                // 장애물 그리기
+                this.ctx.fillStyle = '#666';
+                this.obstacles.forEach(obs => {
+                    this.ctx.fillRect(
+                        obs.x * this.cellSize + 2,
+                        obs.y * this.cellSize + 2,
+                        this.cellSize - 4,
+                        this.cellSize - 4
+                    );
+                });
+                
+                // 목표 그리기
+                this.ctx.fillStyle = '#28a745';
+                this.ctx.fillRect(
+                    this.goal.x * this.cellSize + 2,
+                    this.goal.y * this.cellSize + 2,
+                    this.cellSize - 4,
+                    this.cellSize - 4
+                );
+                
+                // 에이전트 그리기
+                this.ctx.fillStyle = '#007bff';
+                this.ctx.beginPath();
+                this.ctx.arc(
+                    this.agent.x * this.cellSize + this.cellSize / 2,
+                    this.agent.y * this.cellSize + this.cellSize / 2,
+                    this.cellSize / 3,
+                    0,
+                    2 * Math.PI
+                );
+                this.ctx.fill();
+            }
+        }
+        
+        window.addEventListener('load', () => {
+            new DQNDemo();
+        });
+    </script>
+</body>
+</html>

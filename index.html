@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inseong's Website</title>
+    <meta name="description" content="Inseong's personal website showcasing projects, CV, games, and interactive demos including A* pathfinding algorithm.">
+    <title>Inseong's Website - Portfolio & Projects</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,13 +17,45 @@
                 <li><a href="pages/attendance.html">Attendance</a></li>
                 <li><a href="AlligatorChess">AlligatorChess</a></li>
                 <li><a href="astar-pathfinding">A* Pathfinding Algorithm</a></li>
+                <li><a href="pages/dqn-demo.html">DQN Demo</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h1>Welcome</h1>
-        <p>Welcome to Inseong's website.</p>
+        <section class="hero">
+            <h1>Welcome to Inseong's Portfolio</h1>
+            <p>Explore my projects, view my CV, and try interactive demos including games and algorithms.</p>
+            
+            <div class="featured-projects">
+                <h2>Featured Projects</h2>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <h3>A* Pathfinding Algorithm</h3>
+                        <p>Interactive visualization of the A* pathfinding algorithm with customizable obstacles and start/end points.</p>
+                        <a href="astar-pathfinding" class="project-link">Try Demo →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>Alligator Chess</h3>
+                        <p>A strategic chess variant game with unique rules and engaging gameplay mechanics.</p>
+                        <a href="AlligatorChess" class="project-link">Play Game →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>Interactive Quiz</h3>
+                        <p>Test your knowledge with this interactive quiz application featuring multiple categories.</p>
+                        <a href="simplequiz" class="project-link">Take Quiz →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>DQN Algorithm Demo</h3>
+                        <p>Deep Q-Network 강화학습 알고리즘의 시각적 데모. 에이전트가 환경에서 학습하는 과정을 관찰하세요.</p>
+                        <a href="pages/dqn-demo.html" class="project-link">DQN 데모 보기 →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
