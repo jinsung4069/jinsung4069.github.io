@@ -6,11 +6,38 @@
     <meta name="description" content="Inseong's personal website showcasing projects, CV, games, and interactive demos including A* pathfinding algorithm.">
     <title>Inseong's Website - Portfolio & Projects</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .language-toggle:hover {
+            background: #0056b3;
+        }
+        .lang-content {
+            display: none;
+        }
+        .lang-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <header>
+        <button id="languageToggle" class="language-toggle">KOR</button>
         <nav>
-            <ul>
+            <!-- English Navigation -->
+            <ul class="lang-content lang-en active">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="pages/cv.html">CV</a></li>
                 <li><a href="simplequiz">Quiz</a></li>
@@ -19,11 +46,22 @@
                 <li><a href="astar-pathfinding">A* Pathfinding Algorithm</a></li>
                 <li><a href="pages/dqn-demo.html">DQN Demo</a></li>
             </ul>
+            <!-- Korean Navigation -->
+            <ul class="lang-content lang-ko">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="pages/cv.html">이력서</a></li>
+                <li><a href="simplequiz">퀴즈</a></li>
+                <li><a href="pages/attendance.html">출석</a></li>
+                <li><a href="AlligatorChess">알리게이터 체스</a></li>
+                <li><a href="astar-pathfinding">A* 길찾기 알고리즘</a></li>
+                <li><a href="pages/dqn-demo.html">DQN 데모</a></li>
+            </ul>
         </nav>
     </header>
 
     <main>
-        <section class="hero">
+        <!-- English Content -->
+        <section class="hero lang-content lang-en active">
             <h1>Welcome to Inseong's Portfolio</h1>
             <p>Explore my projects, view my CV, and try interactive demos including games and algorithms.</p>
             
@@ -50,6 +88,41 @@
                     
                     <div class="project-card">
                         <h3>DQN Algorithm Demo</h3>
+                        <p>Deep Q-Network reinforcement learning algorithm visualization. Watch the agent learn in the environment.</p>
+                        <a href="pages/dqn-demo.html" class="project-link">View DQN Demo →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Korean Content -->
+        <section class="hero lang-content lang-ko">
+            <h1>인성의 포트폴리오에 오신 것을 환영합니다</h1>
+            <p>제 프로젝트를 둘러보시고, 이력서를 확인하시며, 게임과 알고리즘을 포함한 인터랙티브 데모를 체험해보세요.</p>
+            
+            <div class="featured-projects">
+                <h2>주요 프로젝트</h2>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <h3>A* 길찾기 알고리즘</h3>
+                        <p>사용자 정의 장애물과 시작/끝점을 가진 A* 길찾기 알고리즘의 인터랙티브 시각화입니다.</p>
+                        <a href="astar-pathfinding" class="project-link">데모 체험 →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>알리게이터 체스</h3>
+                        <p>독특한 규칙과 매력적인 게임플레이 메커니즘을 가진 전략적 체스 변형 게임입니다.</p>
+                        <a href="AlligatorChess" class="project-link">게임하기 →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>인터랙티브 퀴즈</h3>
+                        <p>여러 카테고리를 특징으로 하는 인터랙티브 퀴즈 애플리케이션으로 지식을 테스트해보세요.</p>
+                        <a href="simplequiz" class="project-link">퀴즈 풀기 →</a>
+                    </div>
+                    
+                    <div class="project-card">
+                        <h3>DQN 알고리즘 데모</h3>
                         <p>Deep Q-Network 강화학습 알고리즘의 시각적 데모. 에이전트가 환경에서 학습하는 과정을 관찰하세요.</p>
                         <a href="pages/dqn-demo.html" class="project-link">DQN 데모 보기 →</a>
                     </div>
@@ -59,9 +132,54 @@
     </main>
 
     <footer>
-        <p>&copy; 2024 Inseong's Website. All rights reserved.</p>
+        <!-- English Footer -->
+        <p class="lang-content lang-en active">&copy; 2024 Inseong's Website. All rights reserved.</p>
+        <!-- Korean Footer -->
+        <p class="lang-content lang-ko">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('languageToggle');
+            const enContent = document.querySelectorAll('.lang-en');
+            const koContent = document.querySelectorAll('.lang-ko');
+            let isKorean = false;
+            
+            // Load saved language preference
+            const savedLang = localStorage.getItem('language');
+            if (savedLang === 'ko') {
+                toggleToKorean();
+            }
+            
+            toggleBtn.addEventListener('click', function() {
+                if (isKorean) {
+                    toggleToEnglish();
+                } else {
+                    toggleToKorean();
+                }
+            });
+            
+            function toggleToKorean() {
+                enContent.forEach(el => el.classList.remove('active'));
+                koContent.forEach(el => el.classList.add('active'));
+                toggleBtn.textContent = 'ENG';
+                document.documentElement.lang = 'ko';
+                document.title = '인성의 웹사이트 - 포트폴리오 & 프로젝트';
+                isKorean = true;
+                localStorage.setItem('language', 'ko');
+            }
+            
+            function toggleToEnglish() {
+                koContent.forEach(el => el.classList.remove('active'));
+                enContent.forEach(el => el.classList.add('active'));
+                toggleBtn.textContent = 'KOR';
+                document.documentElement.lang = 'en';
+                document.title = 'Inseong\'s Website - Portfolio & Projects';
+                isKorean = false;
+                localStorage.setItem('language', 'en');
+            }
+        });
+    </script>
 </body>
 </html>
