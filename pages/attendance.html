@@ -1,56 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance System</title>
-    <link rel="stylesheet" href="../css/attendance.css">
+    <title>출석 시스템</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Attendance System</h1>
-        
-        <!-- Student Registration Section -->
-        <div class="section">
-            <h2>Add New Student</h2>
-            <form id="studentForm">
-                <input type="text" id="studentName" placeholder="Enter student name" required>
-                <button type="submit">Add Student</button>
-            </form>
+    <header>
+        <div class="logo">
+            <a href="../index.html">Inseong</a>
         </div>
+        <button id="mobileMenuToggle" class="mobile-menu-toggle">☰</button>
+        <nav id="mainNav">
+            <!-- English Navigation -->
+            <ul class="lang-content lang-en" id="navMenuEn">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="cv.html">CV</a></li>
+                <li><a href="../simplequiz">Quiz</a></li>
+                <li><a href="attendance.html">Attendance</a></li>
+                <li><a href="../AlligatorChess">AlligatorChess</a></li>
+                <li><a href="../astar-pathfinding">A* Pathfinding</a></li>
+                <li><a href="dqn-demo.html">DQN Demo</a></li>
+            </ul>
+            <!-- Korean Navigation -->
+            <ul class="lang-content lang-ko active" id="navMenuKo">
+                <li><a href="../index.html">홈</a></li>
+                <li><a href="cv.html">이력서</a></li>
+                <li><a href="../simplequiz">퀴즈</a></li>
+                <li><a href="attendance.html">출석</a></li>
+                <li><a href="../AlligatorChess">알리게이터 체스</a></li>
+                <li><a href="../astar-pathfinding">A* 길찾기</a></li>
+                <li><a href="dqn-demo.html">DQN 데모</a></li>
+            </ul>
+        </nav>
+        <button id="languageToggle" class="language-toggle">ENG</button>
+    </header>
 
-        <!-- Attendance Taking Section -->
-        <div class="section">
-            <h2>Take Attendance</h2>
-            <div class="date-selector">
-                <label for="attendanceDate">Date:</label>
-                <input type="date" id="attendanceDate" required>
+    <main>
+        <section class="hero">
+            <div class="lang-content lang-ko active">
+                <h1>출석 시스템</h1>
             </div>
-            
-            <div class="attendance-list">
-                <table id="attendanceTable">
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendanceTableBody">
-                        <!-- Students will be added here dynamically -->
-                    </tbody>
-                </table>
+            <div class="lang-content lang-en">
+                <h1>Attendance System</h1>
             </div>
-        </div>
+        </section>
 
-        <!-- Attendance Record Section -->
-        <div class="section">
-            <h2>Attendance Records</h2>
-            <div id="attendanceRecords">
-                <!-- Records will be displayed here -->
+        <div class="container project-card">
+            <!-- Student Registration Section -->
+            <div class="section">
+                <div class="lang-content lang-ko active">
+                    <h2>신규 학생 추가</h2>
+                    <form id="studentForm">
+                        <input type="text" id="studentName" placeholder="학생 이름 입력" required>
+                        <button type="submit">학생 추가</button>
+                    </form>
+                </div>
+                <div class="lang-content lang-en">
+                    <h2>Add New Student</h2>
+                    <form id="studentFormEn">
+                        <input type="text" id="studentNameEn" placeholder="Enter student name" required>
+                        <button type="submit">Add Student</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Attendance Taking Section -->
+            <div class="section">
+                <div class="lang-content lang-ko active">
+                    <h2>출석 확인</h2>
+                    <div class="date-selector">
+                        <label for="attendanceDate">날짜:</label>
+                        <input type="date" id="attendanceDate" required>
+                    </div>
+                </div>
+                <div class="lang-content lang-en">
+                    <h2>Take Attendance</h2>
+                    <div class="date-selector">
+                        <label for="attendanceDateEn">Date:</label>
+                        <input type="date" id="attendanceDateEn" required>
+                    </div>
+                </div>
+                
+                <div class="attendance-list">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr class="lang-content lang-ko active">
+                                <th>학생 이름</th>
+                                <th>상태</th>
+                                <th>작업</th>
+                            </tr>
+                            <tr class="lang-content lang-en">
+                                <th>Student Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Students will be added here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Attendance Record Section -->
+            <div class="section">
+                <div class="lang-content lang-ko active">
+                    <h2>출석 기록</h2>
+                </div>
+                <div class="lang-content lang-en">
+                    <h2>Attendance Records</h2>
+                </div>
+                <div id="attendanceRecords">
+                    <!-- Records will be displayed here -->
+                </div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <!-- English Footer Links -->
+                <div class="lang-content lang-en">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <!-- Korean Footer Links -->
+                <div class="lang-content lang-ko active">
+                    <a href="#">개인정보 처리방침</a>
+                    <a href="#">서비스 이용약관</a>
+                    <a href="#">문의하기</a>
+                </div>
+            </div>
+            <!-- English Footer -->
+            <p class="lang-content lang-en">&copy; 2024 Inseong's Website. All rights reserved.</p>
+            <!-- Korean Footer -->
+            <p class="lang-content lang-ko active">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
     <script src="../js/attendance.js"></script>
 </body>
 </html>

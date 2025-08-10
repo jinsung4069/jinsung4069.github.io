@@ -9,8 +9,11 @@
 </head>
 <body>
     <header>
+        <div class="logo">
+            <a href="index.html">Inseong</a>
+        </div>
         <button id="mobileMenuToggle" class="mobile-menu-toggle">☰</button>
-        <nav>
+        <nav id="mainNav">
             <!-- English Navigation -->
             <ul class="lang-content lang-en" id="navMenuEn">
                 <li><a href="index.html">Home</a></li>
@@ -40,57 +43,71 @@
         <section class="hero lang-content lang-en">
             <h1>Welcome to Inseong's Portfolio</h1>
             <p>Explore my projects, view my CV, and try interactive demos including games and algorithms.</p>
-            
-            <div class="featured-projects">
-                <h2>Featured Projects</h2>
-                <div class="project-grid">
-                    <div class="project-card">
-                        <h3>A* Pathfinding Algorithm</h3>
-                        <p>Interactive visualization of the A* pathfinding algorithm with customizable obstacles and start/end points.</p>
-                        <a href="astar-pathfinding" class="project-link">Try Demo →</a>
-                    </div>
-                    <div class="project-card">
-                        <h3>Alligator Chess</h3>
-                        <p>A strategic chess variant game with unique rules and engaging gameplay mechanics.</p>
-                        <a href="AlligatorChess" class="project-link">Play Game →</a>
-                    </div>
-                    <div class="project-card">
-                        <h3>Interactive Quiz</h3>
-                        <p>Test your knowledge with this interactive quiz application featuring multiple categories.</p>
-                        <a href="simplequiz" class="project-link">Take Quiz →</a>
-                    </div>
-                    <div class="project-card">
-                        <h3>DQN Algorithm Demo</h3>
-                        <p>Deep Q-Network reinforcement learning algorithm visualization. Watch the agent learn in the environment.</p>
-                        <a href="pages/dqn-demo.html" class="project-link">View DQN Demo →</a>
-                    </div>
-                </div>
-            </div>
         </section>
         
         <!-- Korean Content -->
         <section class="hero lang-content lang-ko active">
             <h1>인성의 포트폴리오</h1>
             <p>저의 프로젝트를 둘러보고, 이력서를 확인하고, 게임과 알고리즘을 포함한 대화형 데모를 사용해 보세요.</p>
-            <div class="featured-projects">
+        </section>
+
+        <section class="featured-projects">
+            <!-- English Content -->
+            <div class="lang-content lang-en">
+                <h2>Featured Projects</h2>
+            </div>
+            <!-- Korean Content -->
+            <div class="lang-content lang-ko active">
                 <h2>주요 프로젝트</h2>
-                <div class="project-grid">
-                    <div class="project-card">
+            </div>
+            <div class="project-grid">
+                <!-- Project 1 -->
+                <div class="project-card">
+                    <div class="lang-content lang-en">
+                        <h3>A* Pathfinding Algorithm</h3>
+                        <p>Interactive visualization of the A* pathfinding algorithm with customizable obstacles and start/end points.</p>
+                        <a href="astar-pathfinding" class="project-link">Try Demo →</a>
+                    </div>
+                    <div class="lang-content lang-ko active">
                         <h3>A* 길찾기 알고리즘</h3>
                         <p>사용자 정의 장애물과 시작/끝점을 가진 A* 길찾기 알고리즘의 인터랙티브 시각화입니다.</p>
                         <a href="astar-pathfinding" class="project-link">데모 체험 →</a>
                     </div>
-                    <div class="project-card">
+                </div>
+                <!-- Project 2 -->
+                <div class="project-card">
+                    <div class="lang-content lang-en">
+                        <h3>Alligator Chess</h3>
+                        <p>A strategic chess variant game with unique rules and engaging gameplay mechanics.</p>
+                        <a href="AlligatorChess" class="project-link">Play Game →</a>
+                    </div>
+                    <div class="lang-content lang-ko active">
                         <h3>알리게이터 체스</h3>
                         <p>독특한 규칙과 매력적인 게임플레이 메커니즘을 가진 전략적 체스 변형 게임입니다.</p>
                         <a href="AlligatorChess" class="project-link">게임하기 →</a>
                     </div>
-                    <div class="project-card">
+                </div>
+                <!-- Project 3 -->
+                <div class="project-card">
+                    <div class="lang-content lang-en">
+                        <h3>Interactive Quiz</h3>
+                        <p>Test your knowledge with this interactive quiz application featuring multiple categories.</p>
+                        <a href="simplequiz" class="project-link">Take Quiz →</a>
+                    </div>
+                    <div class="lang-content lang-ko active">
                         <h3>인터랙티브 퀴즈</h3>
                         <p>여러 카테고리를 특징으로 하는 인터랙티브 퀴즈 애플리케이션으로 지식을 테스트해보세요.</p>
                         <a href="simplequiz" class="project-link">퀴즈 풀기 →</a>
                     </div>
-                    <div class="project-card">
+                </div>
+                <!-- Project 4 -->
+                <div class="project-card">
+                    <div class="lang-content lang-en">
+                        <h3>DQN Algorithm Demo</h3>
+                        <p>Deep Q-Network reinforcement learning algorithm visualization. Watch the agent learn in the environment.</p>
+                        <a href="pages/dqn-demo.html" class="project-link">View DQN Demo →</a>
+                    </div>
+                    <div class="lang-content lang-ko active">
                         <h3>DQN 알고리즘 데모</h3>
                         <p>Deep Q-Network 강화학습 알고리즘의 시각적 데모. 에이전트가 환경에서 학습하는 과정을 관찰하세요.</p>
                         <a href="pages/dqn-demo.html" class="project-link">DQN 데모 보기 →</a>
@@ -101,10 +118,26 @@
     </main>
 
     <footer>
-        <!-- English Footer -->
-        <p class="lang-content lang-en">&copy; 2024 Inseong's Website. All rights reserved.</p>
-        <!-- Korean Footer -->
-        <p class="lang-content lang-ko active">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
+        <div class="footer-content">
+            <div class="footer-links">
+                <!-- English Footer Links -->
+                <div class="lang-content lang-en">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <!-- Korean Footer Links -->
+                <div class="lang-content lang-ko active">
+                    <a href="#">개인정보 처리방침</a>
+                    <a href="#">서비스 이용약관</a>
+                    <a href="#">문의하기</a>
+                </div>
+            </div>
+            <!-- English Footer -->
+            <p class="lang-content lang-en">&copy; 2024 Inseong's Website. All rights reserved.</p>
+            <!-- Korean Footer -->
+            <p class="lang-content lang-ko active">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
+        </div>
     </footer>
 
     <script src="js/main.js"></script>

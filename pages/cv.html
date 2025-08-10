@@ -1,1654 +1,209 @@
 <!DOCTYPE html>
-
-
-
-<html lang="en">
-
-
-
+<html lang="ko">
 <head>
-
-
-
     <meta charset="UTF-8">
-
-
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
     <title>CV - 전인성</title>
-
-
-
     <link rel="stylesheet" href="../css/style.css">
-
-
-
     <style>
-
-
-
-        /* Additional styles for better layout */
-
-
-
-        .personal-info, .education, .thesis, .experience, .publications {
-
-
-
-            margin-bottom: 2rem;
-
-
-
+        .cv-section {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 900px;
         }
 
+        .cv-section h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f5f5f7;
+            padding-bottom: 15px;
+        }
 
+        .cv-section h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #333;
+        }
 
-        .personal-info ul, .education ul, .thesis ul, .experience ul, .publications ul {
-
-
-
+        .cv-section ul {
             list-style-type: none;
-
-
-
             padding-left: 0;
-
-
-
         }
 
-
-
-        .personal-info li, .education li, .thesis li, .experience li, .publications li {
-
-
-
-            margin-bottom: 0.5rem;
-
-
-
+        .cv-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
         }
-
-
-
-        h3 {
-
-
-
-            margin-top: 1rem;
-
-
-
-            color: #2c3e50;
-
-
-
-        }
-
-
-
-        .section-title {
-
-
-
-            border-bottom: 2px solid #3498db;
-
-
-
-            padding-bottom: 0.5rem;
-
-
-
-            margin-bottom: 1rem;
-
-
-
-        }
-
-
 
         .highlight {
-
-
-
-            background-color: #eaf2f8;
-
-
-
-            padding: 0.5rem;
-
-
-
-            border-radius: 4px;
-
-
-
+            font-weight: 600;
+            color: #000;
         }
-
-
-
     </style>
-
-
-
 </head>
-
-
-
 <body>
-
-
-
     <header>
-
-
-
-        <nav>
-
-
-
-            <ul>
+        <div class="logo">
+            <a href="../index.html">Inseong</a>
+        </div>
+        <button id="mobileMenuToggle" class="mobile-menu-toggle">☰</button>
+        <nav id="mainNav">
+            <!-- English Navigation -->
+            <ul class="lang-content lang-en" id="navMenuEn">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="cv.html">CV</a></li>
-                <li><a href="simplequiz">Quiz</a></li>
+                <li><a href="../simplequiz">Quiz</a></li>
                 <li><a href="attendance.html">Attendance</a></li>
                 <li><a href="../AlligatorChess">AlligatorChess</a></li>
+                <li><a href="../astar-pathfinding">A* Pathfinding</a></li>
+                <li><a href="dqn-demo.html">DQN Demo</a></li>
             </ul>
-
-
-
+            <!-- Korean Navigation -->
+            <ul class="lang-content lang-ko active" id="navMenuKo">
+                <li><a href="../index.html">홈</a></li>
+                <li><a href="cv.html">이력서</a></li>
+                <li><a href="../simplequiz">퀴즈</a></li>
+                <li><a href="attendance.html">출석</a></li>
+                <li><a href="../AlligatorChess">알리게이터 체스</a></li>
+                <li><a href="../astar-pathfinding">A* 길찾기</a></li>
+                <li><a href="dqn-demo.html">DQN 데모</a></li>
+            </ul>
         </nav>
-
-
-
-        <div class="language-selector">
-
-
-
-
-
-
-
-            <button id="korBtn" class="active">한국어</button>
-
-
-
-
-
-
-
-            <button id="engBtn">English</button>
-
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
+        <button id="languageToggle" class="language-toggle">ENG</button>
     </header>
 
-
-
-
-
-
-
-    <div id="korVersion">
-
-
-
-
-
     <main>
-
-
-
-        <h1>전인성 (JEON IN SEONG)</h1>
-
-
-
-
-
-
-
-        <section class="personal-info">
-
-
-
-            <h2 class="section-title">개인정보</h2>
-
-
-
-            <ul>
-
-
-
-                <li><span class="highlight">최종학위:</span> 교육학박사 (컴퓨터교육)</li>
-
-
-
-                <li><span class="highlight">세부전공:</span> 초등컴퓨터교육전공</li>
-
-
-
-            </ul>
-
-
-
-        </section>
-
-
-
-
-
-
-
-        <section class="education">
-
-
-
-            <h2 class="section-title">학력사항</h2>
-
-
-
-            <h3>박사</h3>
-
-
-
-            <ul>
-
-
-
-                <li>한국교원대학교 대학원 컴퓨터교육과 (초등컴퓨터교육전공)</li>
-
-
-
-                <li>기간: 2017.03.02 - 2023.02.21</li>
-
-
-
-                <li>학위: 교육학박사</li>
-
-
-
-            </ul>
-
-
-
-            <h3>석사</h3>
-
-
-
-            <ul>
-
-
-
-                <li>광주교육대학교 교육대학원 컴퓨터교육과 (초등컴퓨터교육전공)</li>
-
-
-
-                <li>기간: 2014.03.02 - 2016.08.27</li>
-
-
-
-                <li>학위: 교육학석사</li>
-
-
-
-            </ul>
-
-
-
-            <h3>학사</h3>
-
-
-
-            <ul>
-
-
-
-                <li>광주교육대학교 컴퓨터교육과 (초등컴퓨터교육전공)</li>
-
-
-
-                <li>기간: 2010.03.02 - 2014.02.21</li>
-
-
-
-                <li>학위: 교육학사</li>
-
-
-
-            </ul>
-
-
-
-        </section>
-
-
-
-
-
-
-
-        <section class="thesis">
-
-
-
-            <h2 class="section-title">학위논문</h2>
-
-
-
-            <h3>박사학위논문</h3>
-
-
-
-            <ul>
-
-
-
-                <li>제목: 인공지능 및 학습분석을 적용한 블록 기반 소프트웨어·인공지능교육 교수 학습 지원 시스템 개발</li>
-
-
-
-                <li>학위수여기관: 한국교원대학교대학원</li>
-
-
-
-                <li>학위취득일: 2023.02.21</li>
-
-
-
-                <li>지도교수: 송기상</li>
-
-
-
-            </ul>
-
-
-
-            <h3>석사학위논문</h3>
-
-
-
-            <ul>
-
-
-
-                <li>제목: 마인크래프트를 활용한 게임기반학습 프로그램 개발 및 적용</li>
-
-
-
-                <li>학위수여기관: 광주교육대학교 교육대학원</li>
-
-
-
-                <li>학위취득일: 2016.08.27</li>
-
-
-
-                <li>지도교수: 김정랑</li>
-
-
-
-            </ul>
-
-
-
-        </section>
-
-
-
-
-
-
-
-        <section class="experience">
-
-
-
-            <h2 class="section-title">교육 및 연구활동 경력</h2>
-
-
-
-            <h3>현재 직위</h3>
-
-
-
-            <ul>
-
-
-
-                <li>광주광역시교육청 광주효동초등학교 교사 (2015.03.01 - 현재)</li>
-
-
-
-                <li>광주교육대학교(3), 한국교원대학교(3), 조선대학교(3) AI융합교육전공 강사 (2024.09.01 - 현재)</li>
-
-
-
-                <li>담당업무: 대학원강의 (9시수)</li>
-
-
-
-            </ul>
-
-
-
-            <h3>이전 경력</h3>
-
-
-
-            <ul>
-
-
-
-                <li>광주교육대학교(6), 한국교원대학교(3) AI융합교육전공 강사 (2024.03.01 - 2024.08.31)</li>
-
-
-
-                <li>담당업무: 대학원강의 (6시수)</li>
-
-
-
-                <li>광주교육대학교(6), 한국교원대학교(3) AI융합교육전공 강사 (2023.09.01 - 2024.02.29)</li>
-
-
-
-                <li>담당업무: 대학원강의 (9시수)</li>
-
-
-
-                <li>광주교육대학교(6), 한국교원대학교(3) AI융합교육전공 강사 (2023.03.01 - 2023.08.31)</li>
-
-
-
-                <li>담당업무: 대학원강의 (9시수)</li>
-
-
-
-                <li>광주교육대학교(6) AI융합교육전공 강사 (2021.09.01 - 2023.02.28)</li>
-
-
-
-                <li>담당업무: 대학원강의 (6시수)</li>
-
-
-
-            </ul>
-
-
-
-        </section>
-
-
-
-
-
-
-
-        <section class="publications">
-
-
-
-            <h2 class="section-title">연구실적</h2>
-
-
-
-            <h3>저서</h3>
-
-
-
-            <ul>
-
-
-
-                <li>초등용 「빛고을 아이(AI)」 광주 AI교육 프로그램 교수학습자료 (광주광역시교육연구정보원, 2024.02.29)</li>
-
-
-
-                <li>초등 AI와 함께하는 즐거운 사회수업 (광주광역시교육연구정보원, 2024.02.29)</li>
-
-
-
-                <li>수업에 바로 쓰는 AI: 미래교육을 준비하다 (비상교육, 2022.02.17)</li>
-
-
-
-            </ul>
-
-
-
-            <h3>연구보고서</h3>
-
-
-
-            <ul>
-
-
-
-                <li>AI 디지털 환경에서 청소년이 경험하는 윤리적 이슈 및 개선 방안 (충청남도교육청, 2023.12.31)</li>
-
-
-
-                <li>(연수 효과성 제고를 위한) 연수모형 개발 (교육부중앙교육연수원, 2020.11.30)</li>
-
-
-
-            </ul>
-
-
-
-            <h3>국제 학술지 논문</h3>
-
-
-
-            <ul>
-
-
-
-                <li>Jeon, I.-S., Kang, S. J., & Kang, S.-J. (2024). A Staged Framework for Computer Vision Education: Integrating AI, Data Science, and Computational Thinking. <em>Applied Sciences</em>, <strong>14</strong>(21), 9792.</li>
-
-
-
-                <li>Jeon, I.-S., Kim, S.-Y., & Kang, S.-J. (2024). Developing Standards for Educational Datasets by School Level: A Framework for Sustainable K-12 Education. <em>Sustainability</em>, <strong>16</strong>(12), 4954.</li>
-
-
-
-                <li>Kim, S.-Y., Jeon, I., & Kang, S.-J. (2024). Integrating Data Science and Machine Learning to Chemistry Education: Predicting Classification and Boiling Point of Compounds. <em>Journal of Chemical Education</em>, <strong>101</strong>(4), 1771-1776.</li>
-
-
-
-                <li>Jeon, I.-S., & Song, K.-S. (2018). On the Effect of a Pilot Coding Education Support System for Complex Problem Solving Tasks. <em>The International Journal of Advanced Smart Convergence</em>.</li>
-
-
-
-            </ul>
-
-
-
-            <h3>국내 학술지 논문</h3>
-
-
-
-            <ul>
-
-
-
-                <li>전인성. (2024). LMS 기반 교수학습 플랫폼을 활용한 초등학생 대상 소프트웨어교육 프로그램의 효과성 분석. <em>컴퓨터교육학회 논문지</em>.</li>
-
-
-
-                <li>전인성. (2024). 초등학교 저학년을 위한 인공지능 교육용 콘텐츠 설계 및 개발. <em>에듀테인먼트연구</em>.</li>
-
-
-
-                <li>전인성, & 김다원. (2024). 인공지능 융합 기후환경교육을 위한 수업 연구: 초등 사회과교육과정의 기후환경 내용을 중심으로. <em>사회과교육</em>.</li>
-
-
-
-                <li>김지윤, 전인성, & 김귀훈. (2023). 예비 정보교사 대상 스토리텔링 기반 실생활 문제해결 인공지능 융합교육 프로그램의 교육적 효과. <em>학습자중심교과교육연구</em>.</li>
-
-
-
-                <li>전인성, & 송기상. (2022). 자연어 처리 모델을 활용한 블록 코드 생성 및 추천 모델 개발. <em>정보교육학회논문지</em>, <strong>26</strong>(3), 197-207.</li>
-
-
-
-                <li>전인성, 정상목, & 송기상. (2022). 개발도상국 예비교사 양성을 위한 ICT 전공 교육과정 설계 및 개발: 캄보디아 국가를 중심으로. <em>에듀테인먼트연구</em>.</li>
-
-
-
-                <li>김귀훈, 송기상, 김태영, 이태욱, 이승철, 전형기, 전인성, 김지윤, & 김영식. (2021). 인공지능 융합교육 대학원 공통 교육과정 개발 및 교수효능감 효과성 검증. <em>컴퓨터교육학회 논문지</em>.</li>
-
-
-
-                <li>김귀훈, 전인성, & 송기상. (2021). 교사를 위한 인공지능 소양교육 프로그램 개발 및 인공지능 융합교육 관심도 효과성 검증. <em>한국컴퓨터정보학회논문지</em>.</li>
-
-
-
-                <li>민설아, 전인성, & 송기상. (2021). 머신러닝 플랫폼을 활용한 인공지능융합교육이 융합인재소양과 학습몰입에 미치는 영향. <em>한국컴퓨터정보학회논문지</em>.</li>
-
-
-
-                <li>전인성, 이준형, 정상목, & 송기상. (2021). 해외 교사를 위한 지속가능한 발전 기반 아두이노 교육과정 설계 및 개발. <em>에듀테인먼트연구</em>.</li>
-
-
-
-                <li>전인성, & 송기상. (2020). 수요자 요구분석 기반의 맞춤형 인공지능융합교육 과정 연구. <em>컴퓨터교육학회 논문지</em>.</li>
-
-
-
-                <li>전인성, & 송기상. (2020). 학습분석 기법을 적용한 소프트웨어교육 지원 시스템 개발. <em>정보교육학회논문지</em>.</li>
-
-
-
-                <li>전인성, 전수진, & 송기상. (2020). 인공지능교육 역량 강화를 위한 교원 연수 프로그램과 교사 요구분석. <em>정보교육학회논문지</em>.</li>
-
-
-
-                <li>전인성, 정상목, 이수환, & 송기상. (2020). 2019 광주SW체험축전 운영 프로그램 분석. <em>에듀테인먼트연구</em>.</li>
-
-
-
-                <li>정상목, & 전인성. (2020). 충청북도 도민참여 교육프로그램 실태조사. <em>에듀테인먼트연구</em>.</li>
-
-
-
-                <li>정상목, 신수범, 임택균, 문성윤, & 전인성. (2019). IoT 기반의 문·이과 통합형 CT 교육 프로그램 개발. <em>한국엔터테인먼트산업학회논문지</em>.</li>
-
-
-
-                <li>송기상, 고유정, & 전인성. (2019). 코딩교육 환경에서의 복합문제해결능력 분석 체제 연구. <em>한국정보기술학회논문지</em>, <strong>17</strong>(11), 105-114.</li>
-
-
-
-                <li>전인성, & 김정랑. (2016). 샌드박스형 게임을 활용한 게임기반학습이 학생들의 창의적 문제해결력과 학습몰입도에 미치는 영향. <em>정보교육학회논문지</em>, <strong>20</strong>(3), 313-322.</li>
-
-
-
-                <li>설희준, 전인성, & 김정랑. (2016). 피지컬 컴퓨팅 교육에 관한 교사 인식 현황. <em>2016년 동계 학술대회</em>.</li>
-
-
-
-            </ul>
-
-
-
-        </section>
-
-
-
+        <div class="lang-content lang-ko active">
+            <section class="hero">
+                <h1>전인성 (JEON IN SEONG)</h1>
+            </section>
+            <section class="cv-section">
+                <h2>개인정보</h2>
+                <ul>
+                    <li><span class="highlight">최종학위:</span> 교육학박사 (컴퓨터교육)</li>
+                    <li><span class="highlight">세부전공:</span> 초등컴퓨터교육전공</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>학력사항</h2>
+                <h3>박사</h3>
+                <ul>
+                    <li>한국교원대학교 대학원 컴퓨터교육과 (초등컴퓨터교육전공)</li>
+                    <li>기간: 2017.03.02 - 2023.02.21</li>
+                    <li>학위: 교육학박사</li>
+                </ul>
+                <h3>석사</h3>
+                <ul>
+                    <li>광주교육대학교 교육대학원 컴퓨터교육과 (초등컴퓨터교육전공)</li>
+                    <li>기간: 2014.03.02 - 2016.08.27</li>
+                    <li>학위: 교육학석사</li>
+                </ul>
+                <h3>학사</h3>
+                <ul>
+                    <li>광주교육대학교 컴퓨터교육과 (초등컴퓨터교육전공)</li>
+                    <li>기간: 2010.03.02 - 2014.02.21</li>
+                    <li>학위: 교육학사</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>학위논문</h2>
+                <h3>박사학위논문</h3>
+                <ul>
+                    <li>제목: 인공지능 및 학습분석을 적용한 블록 기반 소프트웨어·인공지능교육 교수 학습 지원 시스템 개발</li>
+                    <li>학위수여기관: 한국교원대학교대학원</li>
+                    <li>학위취득일: 2023.02.21</li>
+                    <li>지도교수: 송기상</li>
+                </ul>
+                <h3>석사학위논문</h3>
+                <ul>
+                    <li>제목: 마인크래프트를 활용한 게임기반학습 프로그램 개발 및 적용</li>
+                    <li>학위수여기관: 광주교육대학교 교육대학원</li>
+                    <li>학위취득일: 2016.08.27</li>
+                    <li>지도교수: 김정랑</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="lang-content lang-en">
+            <section class="hero">
+                <h1>JEON IN SEONG</h1>
+            </section>
+            <section class="cv-section">
+                <h2>Personal Information</h2>
+                <ul>
+                    <li><span class="highlight">Highest Degree:</span> Ph.D. (Computer Education)</li>
+                    <li><span class="highlight">Major:</span> Elementary Computer Education</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Educational Background</h2>
+                <h3>Ph.D.</h3>
+                <ul>
+                    <li>Department of Computer Education, Graduate School, Korean National Education University</li>
+                    <li>Period: March 2, 2017 - February 21, 2023</li>
+                    <li>Degree: Ph.D. in Education</li>
+                </ul>
+                <h3>M.S.</h3>
+                <ul>
+                    <li>Department of Computer Education, Graduate School, Gwangju National University of Education</li>
+                    <li>Period: March 2, 2014 - August 27, 2016</li>
+                    <li>Degree: M.S. in Education</li>
+                </ul>
+                <h3>B.S.</h3>
+                <ul>
+                    <li>Department of Computer Education, Gwangju National University of Education</li>
+                    <li>Period: March 2, 2010 - February 21, 2014</li>
+                    <li>Degree: B.S. in Education</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Thesis</h2>
+                <h3>Ph.D. Thesis</h3>
+                <ul>
+                    <li>Title: Development of a Block-Based Software·Artificial Intelligence Education Support System for Teachers' Learning Support: Integrating AI and Learning Analytics</li>
+                    <li>Degree Awarding Institution: Korean National Education University</li>
+                    <li>Date of Degree Award: February 21, 2023</li>
+                    <li>Supervisor: Song Ki-Sang</li>
+                </ul>
+                <h3>M.S. Thesis</h3>
+                <ul>
+                    <li>Title: Development and Application of Minecraft for Game-Based Learning: A Framework for Sustainable K-12 Education</li>
+                    <li>Degree Awarding Institution: Gwangju National University of Education</li>
+                    <li>Date of Degree Award: August 27, 2016</li>
+                    <li>Supervisor: Kim Jeong-Rang</li>
+                </ul>
+            </section>
+        </div>
     </main>
 
-
-
-    </div>
-
-
-
-
-
-
-
-    <div id="engVersion" style="display: none;">
-
-
-
-
-
-
-
-        <main>
-
-
-
-
-
-
-
-            <h1>JEON IN SEONG</h1>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <section class="personal-info">
-
-
-
-
-
-
-
-                <h2 class="section-title">Personal Information</h2>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li><span class="highlight">Highest Degree:</span> Ph.D. (Computer Education)</li>
-
-
-
-
-
-
-
-                    <li><span class="highlight">Major:</span> Elementary Computer Education</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-            </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <section class="education">
-
-
-
-
-
-
-
-                <h2 class="section-title">Educational Background</h2>
-
-
-
-
-
-
-
-                <h3>Ph.D.</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Department of Computer Education, Graduate School, Korean National Education University</li>
-
-
-
-
-
-
-
-                    <li>Period: March 2, 2017 - February 21, 2023</li>
-
-
-
-
-
-
-
-                    <li>Degree: Ph.D. in Education</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>M.S.</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Department of Computer Education, Graduate School, Gwangju National University of Education</li>
-
-
-
-
-
-
-
-                    <li>Period: March 2, 2014 - August 27, 2016</li>
-
-
-
-
-
-
-
-                    <li>Degree: M.S. in Education</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>B.S.</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Department of Computer Education, Gwangju National University of Education</li>
-
-
-
-
-
-
-
-                    <li>Period: March 2, 2010 - February 21, 2014</li>
-
-
-
-
-
-
-
-                    <li>Degree: B.S. in Education</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-            </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <section class="thesis">
-
-
-
-
-
-
-
-                <h2 class="section-title">Thesis</h2>
-
-
-
-
-
-
-
-                <h3>Ph.D. Thesis</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Title: Development of a Block-Based Software·Artificial Intelligence Education Support System for Teachers' Learning Support: Integrating AI and Learning Analytics</li>
-
-
-
-
-
-
-
-                    <li>Degree Awarding Institution: Korean National Education University</li>
-
-
-
-
-
-
-
-                    <li>Date of Degree Award: February 21, 2023</li>
-
-
-
-
-
-
-
-                    <li>Supervisor: Song Ki-Sang</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>M.S. Thesis</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Title: Development and Application of Minecraft for Game-Based Learning: A Framework for Sustainable K-12 Education</li>
-
-
-
-
-
-
-
-                    <li>Degree Awarding Institution: Gwangju National University of Education</li>
-
-
-
-
-
-
-
-                    <li>Date of Degree Award: August 27, 2016</li>
-
-
-
-
-
-
-
-                    <li>Supervisor: Kim Jeong-Rang</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-            </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <section class="experience">
-
-
-
-
-
-
-
-                <h2 class="section-title">Educational and Research Experience</h2>
-
-
-
-
-
-
-
-                <h3>Current Position</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Elementary School Teacher at Gwangju Metropolitan Office of Education (since March 1, 2015)</li>
-
-
-
-
-
-
-
-                    <li>Lecturer at Gwangju National University of Education (3), Korean National Education University (3), and Chosun University (3) AI Integration Education Major (since September 1, 2024)</li>
-
-
-
-
-
-
-
-                    <li>Responsibilities: Graduate Course (9 hours)</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>Previous Experience</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Lecturer at Gwangju National University of Education (6), Korean National Education University (3) AI Integration Education Major (March 1, 2024 - August 31, 2024)</li>
-
-
-
-
-
-
-
-                    <li>Responsibilities: Graduate Course (6 hours)</li>
-
-
-
-
-
-
-
-                    <li>Lecturer at Gwangju National University of Education (6), Korean National Education University (3) AI Integration Education Major (September 1, 2023 - February 29, 2024)</li>
-
-
-
-
-
-
-
-                    <li>Responsibilities: Graduate Course (9 hours)</li>
-
-
-
-
-
-
-
-                    <li>Lecturer at Gwangju National University of Education (6), Korean National Education University (3) AI Integration Education Major (March 1, 2023 - August 31, 2023)</li>
-
-
-
-
-
-
-
-                    <li>Responsibilities: Graduate Course (9 hours)</li>
-
-
-
-
-
-
-
-                    <li>Lecturer at Gwangju National University of Education (6) AI Integration Education Major (September 1, 2021 - February 28, 2023)</li>
-
-
-
-
-
-
-
-                    <li>Responsibilities: Graduate Course (6 hours)</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-            </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <section class="publications">
-
-
-
-
-
-
-
-                <h2 class="section-title">Research Achievements</h2>
-
-
-
-
-
-
-
-                <h3>Books</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>「빛고을 아이(AI)」 광주 AI교육 프로그램 교수학습자료 (광주광역시교육연구정보원, 2024.02.29)</li>
-
-
-
-
-
-
-
-                    <li>초등 AI와 함께하는 즐거운 사회수업 (광주광역시교육연구정보원, 2024.02.29)</li>
-
-
-
-
-
-
-
-                    <li>수업에 바로 쓰는 AI: 미래교육을 준비하다 (비상교육, 2022.02.17)</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>Research Reports</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Analysis of Ethical Issues and Improvement Measures for Young People Experiencing in AI Digital Environment (Chungnam Provincial Office of Education, 2023.12.31)</li>
-
-
-
-
-
-
-
-                    <li>(For Improving the Effectiveness of Training) Development of Training Models (Korea Institute of Education, 2020.11.30)</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>International Journal Articles</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Kang, S. J., & Kang, S.-J. (2024). A Staged Framework for Computer Vision Education: Integrating AI, Data Science, and Computational Thinking. <em>Applied Sciences</em>, <strong>14</strong>(21), 9792.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Kim, S.-Y., & Kang, S.-J. (2024). Developing Standards for Educational Datasets by School Level: A Framework for Sustainable K-12 Education. <em>Sustainability</em>, <strong>16</strong>(12), 4954.</li>
-
-
-
-
-
-
-
-                    <li>Kim, S.-Y., Jeon, I., & Kang, S.-J. (2024). Integrating Data Science and Machine Learning to Chemistry Education: Predicting Classification and Boiling Point of Compounds. <em>Journal of Chemical Education</em>, <strong>101</strong>(4), 1771-1776.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Song, K.-S. (2018). On the Effect of a Pilot Coding Education Support System for Complex Problem Solving Tasks. <em>The International Journal of Advanced Smart Convergence</em>.</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-                <h3>Domestic Journal Articles</h3>
-
-
-
-
-
-
-
-                <ul>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S. (2024). Analysis of the Effectiveness of a Software Education Program for Elementary Students Using an LMS-Based Learning Management System. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S. (2024). Design and Development of Artificial Intelligence Education Content for Elementary Students. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Kim Da-Won. (2024). Research on AI Integration in Climate Education: Focusing on the Content of Social Studies Education. <em>Social Studies Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Kim Ji-Yoon, Jeon, I.-S., & Kim Gyu-Hoon. (2023). Educational Effectiveness of a Storytelling-Based ICT Integration Education Program for Pre-Service Teachers. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Song, K.-S. (2022). Development of Natural Language Processing Models for Block Code Generation and Recommendation. <em>Journal of Computer Education</em>, <strong>26</strong>(3), 197-207.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Jeong, S. M., & Song, K.-S. (2022). Development and Design of ICT Education Curriculum for Pre-Service Teachers in Developing Countries: Focusing on Cambodia. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Kim Gyu-Hoon, Song, K.-S., Kim, T.-Y., Lee, T.-W., Lee, S.-C., Jeon, I.-S., Kim, J.-Y., & Kim, Y.-S. (2021). Development and Evaluation of a Common Curriculum for Graduate Students in AI Integration Education. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Kim Gyu-Hoon, Jeon, I.-S., & Song, K.-S. (2021). Development of an AI Literacy Education Program for Teachers and Interest in AI Integration Education. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Min, S. A., Jeon, I.-S., & Song, K.-S. (2021). Impact of AI Integration Education on the Integration of AI and Climate Education. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Lee, J.-H., Jeong, S. M., & Song, K.-S. (2021). Development of a Sustainable Development Foundation for Foreign Teachers. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Song, K.-S. (2020). Research on a Customized AI Integration Education Curriculum Based on Demand Analysis. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Song, K.-S. (2020). Development of a Software Education Support System Based on Learning Analysis. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Jeon, S., & Song, K.-S. (2020). Analysis of AI Education Capacity Enhancement and Teacher Demand Analysis. <em>Journal of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., Jeong, S. M., Lee, S.-H., & Song, K.-S. (2020). Analysis of the 2019 Gwangju SW Experience Competition. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeong, S. M., & Jeon, I.-S. (2020). Survey of the Implementation of the Community Education Program in North Chungcheong Province. <em>Educational Research</em>.</li>
-
-
-
-
-
-
-
-                    <li>Jeong, S. M., Shin, S.-B., Im, T.-K., Moon, S.-Y., & Jeon, I.-S. (2019). Development of a CT Education Program for Integrated Science and Mathematics: Focusing on IoT. <em>Journal of the Korean Society of Computer Education</em>.</li>
-
-
-
-
-
-
-
-                    <li>Song, K.-S., Ko, Y.-J., & Jeon, I.-S. (2019). Analysis of the Complex Problem-Solving Ability in the Coding Education Environment. <em>Journal of the Korean Society of Computer Education</em>, <strong>17</strong>(11), 105-114.</li>
-
-
-
-
-
-
-
-                    <li>Jeon, I.-S., & Kim, S.-R. (2016). Impact of Game-Based Learning Using Sandbox Games on Students' Creative Problem-Solving Ability and Learning Engagement. <em>Journal of Computer Education</em>, <strong>20</strong>(3), 313-322.</li>
-
-
-
-
-
-
-
-                    <li>Seol, H.-J., Jeon, I.-S., & Kim, S.-R. (2016). Teacher Awareness of Physical Computing Education. <em>2016 Winter Conference</em>.</li>
-
-
-
-
-
-
-
-                </ul>
-
-
-
-
-
-
-
-            </section>
-
-
-
-
-
-
-
-        </main>
-
-
-
-
-
-
-
-    </div>
-
-
-
-
-
     <footer>
-
-
-
-        <p>&copy; 2024 JEON IN SEONG. All rights reserved.</p>
-
-
-
-
+        <div class="footer-content">
+            <div class="footer-links">
+                <!-- English Footer Links -->
+                <div class="lang-content lang-en">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <!-- Korean Footer Links -->
+                <div class="lang-content lang-ko active">
+                    <a href="#">개인정보 처리방침</a>
+                    <a href="#">서비스 이용약관</a>
+                    <a href="#">문의하기</a>
+                </div>
+            </div>
+            <!-- English Footer -->
+            <p class="lang-content lang-en">&copy; 2024 Inseong's Website. All rights reserved.</p>
+            <!-- Korean Footer -->
+            <p class="lang-content lang-ko active">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
+        </div>
     </footer>
 
-
-
-
-
-
-
     <script src="../js/main.js"></script>
-
-
-
 </body>
-
-
-
-</html> 
-
-
+</html>
