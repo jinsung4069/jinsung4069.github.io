@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Inseong's personal website showcasing projects, CV, games, and interactive demos including A* pathfinding algorithm.">
     <title>인성의 웹사이트 - 포트폴리오 & 프로젝트</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -37,7 +40,18 @@
                 <li><a href="pages/microrobot.html">마이크로 로봇</a></li>
             </ul>
         </nav>
-        <button id="languageToggle" class="language-toggle">ENG</button>
+        <div class="header-controls">
+            <button id="darkModeToggle" class="dark-mode-toggle" aria-label="다크모드 토글">
+                <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                    <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button id="languageToggle" class="language-toggle">ENG</button>
+        </div>
     </header>
 
     <main>
