@@ -4,7 +4,8 @@
       "WebFetch(domain:themewagon.github.io)",
       "Bash(curl -s \"https://themewagon.github.io/picto/\")",
       "Bash(curl -s \"https://themewagon.github.io/picto/assets/index-DhZmhbdT.css\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

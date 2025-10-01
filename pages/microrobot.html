@@ -50,15 +50,23 @@
 
         // 보드 구조: 6x6, 각 숫자(1~6) 6회, 각 색상 6회, (num,color) 쌍은 정확히 1회씩 등장
         function buildNumbersLayout() {
-          // 각 숫자가 정확히 6회 등장하도록 만드는 패턴 (행마다 두 숫자를 3회씩 배치)
-          const rows = [
-            [1, 2, 1, 2, 1, 2],
-            [3, 4, 3, 4, 3, 4],
-            [5, 6, 5, 6, 5, 6],
-            [1, 3, 1, 3, 1, 3],
-            [2, 5, 2, 5, 2, 5],
-            [4, 6, 4, 6, 4, 6],
-          ];
+          // 각 숫자를 정확히 6번씩 배치한 배열 생성
+          const numbers = [];
+          for (let num = 1; num <= 6; num++) {
+            for (let count = 0; count < 6; count++) {
+              numbers.push(num);
+            }
+          }
+
+          // Fisher-Yates 셔플로 완전히 랜덤하게 섞기
+          const shuffled = shuffle(numbers);
+
+          // 6x6 그리드로 변환
+          const rows = [];
+          for (let r = 0; r < 6; r++) {
+            rows.push(shuffled.slice(r * 6, (r + 1) * 6));
+          }
+
           return rows;
         }
 
