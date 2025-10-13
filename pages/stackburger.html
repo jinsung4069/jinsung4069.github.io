@@ -37,8 +37,40 @@
             0%, 100% { transform: translateY(0); box-shadow: 0 24px 30px -24px rgba(248,113,113,0.4); }
             50% { transform: translateY(-6px); box-shadow: 0 40px 45px -30px rgba(248,113,113,0.6); }
         }
+        @keyframes flip-card {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(180deg); }
+        }
+        @keyframes flip-back {
+            0% { transform: rotateY(180deg); }
+            100% { transform: rotateY(0deg); }
+        }
         .animate-crown { animation: crown-pop 0.75s ease forwards; }
         .animate-highlight-card { animation: pulse-card 1.4s ease-in-out infinite; }
+        .card-flip-container {
+            perspective: 1000px;
+            position: relative;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
         .bg-burger-gradient {
             background:
                 radial-gradient(circle at 18% 18%, rgba(254,215,170,0.9), transparent 55%),
@@ -67,8 +99,44 @@
     <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
+    // ============================================
+    // CONFIGURATION CONSTANTS
+    // ============================================
+
+    // Storage & Game Rules
     const STORAGE_KEY = 'stackburger-progress-v1';
     const VICTORY_THRESHOLD = 10;
+    const DECK_SIZE = 36;
+    const MAX_HISTORY_ITEMS = 6;
+    const MAX_PLAYER_HISTORY = 5;
+
+    // UI Configuration
+    const TEXT_SCALE = {
+        MIN: 0.9,
+        MAX: 1.3,
+        STEP: 0.05
+    };
+
+    // Timing Configuration (milliseconds)
+    const TIMING = {
+        CARD_HIDE_DELAY: 1000,
+        COMPLETION_DELAY: 900,
+        COMPUTER_DRAW_DELAY: 700,
+        COMPUTER_INGREDIENT_DELAY: 500,
+        COMPUTER_COMPLETE_DELAY: 850
+    };
+
+    // Audio Frequencies
+    const AUDIO_TONES = {
+        success: 660,
+        error: 200,
+        draw: 440,
+        crown: 880
+    };
+
+    // ============================================
+    // GAME DATA
+    // ============================================
 
     const INGREDIENTS = [
         { id: 'bun-bottom', label: '버거 번 (아래)', icon: '🍞', tone: 'from-amber-200 to-amber-300', concept: '순서의 시작과 끝' },
@@ -109,11 +177,21 @@
         'from-slate-200 via-slate-100 to-slate-200'
     ];
 
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    /**
+     * Generate unique ID with counter and timestamp
+     */
     const randomId = (() => {
         let counter = 0;
         return (prefix = 'id') => `${prefix}-${Date.now()}-${counter++}-${Math.random().toString(16).slice(2,8)}`;
     })();
 
+    /**
+     * Fisher-Yates shuffle algorithm
+     */
     const shuffle = (array) => {
         const copy = [...array];
         for (let i = copy.length - 1; i > 0; i--) {
@@ -123,6 +201,9 @@
         return copy;
     };
 
+    /**
+     * Create game deck based on mode
+     */
     const createDeck = (mode) => {
         let patterns = [...BASE_PATTERNS];
         if (mode === 'challenge') {
@@ -132,7 +213,7 @@
             patterns = patterns.filter(pattern => ['초급','중급'].includes(pattern.complexity));
         }
         const deck = [];
-        while (deck.length < 36) {
+        while (deck.length < DECK_SIZE) {
             const pattern = patterns[deck.length % patterns.length];
             deck.push({
                 id: randomId('card'),
@@ -145,6 +226,9 @@
         return shuffle(deck);
     };
 
+    /**
+     * Initialize human players
+     */
     const createPlayers = (count) => Array.from({ length: count }, (_, index) => ({
         id: index + 1,
         name: `플레이어 ${index + 1}`,
@@ -154,6 +238,9 @@
         isAI: false
     }));
 
+    /**
+     * Create AI player (StackBot)
+     */
     const createComputerPlayer = (id) => ({
         id,
         name: 'StackBot',
@@ -163,10 +250,43 @@
         isAI: true
     });
 
+    /**
+     * Format current time as MM/DD HH:MM
+     */
     const getTimestamp = () => {
         const now = new Date();
         return `${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     };
+
+    // ============================================
+    // HELPER FUNCTIONS (State Management)
+    // ============================================
+
+    /**
+     * Clear card reveal state and cancel pending timers
+     * @param {Function} setRevealedIngredients - State setter for revealed ingredients
+     * @param {Object} hideTimerRef - Ref object containing timer ID
+     */
+    const clearCardRevealState = (setRevealedIngredients, hideTimerRef) => {
+        setRevealedIngredients(new Set());
+        if (hideTimerRef.current) {
+            clearTimeout(hideTimerRef.current);
+            hideTimerRef.current = null;
+        }
+    };
+
+    /**
+     * Add entry to game history with automatic limit
+     * @param {Function} setHistory - State setter for history
+     * @param {Object} entry - History entry with icon, title, detail, time
+     */
+    const addHistoryEntry = (setHistory, entry) => {
+        setHistory(prev => [entry, ...prev].slice(0, MAX_HISTORY_ITEMS));
+    };
+
+    // ============================================
+    // UI COMPONENTS
+    // ============================================
     const ModeBadge = ({ mode }) => (
         <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-burger-primary shadow-soft backdrop-blur">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary"></span>
@@ -224,24 +344,37 @@
         </section>
     );
 
-    const IngredientTile = ({ ingredient, disabled, onSelect, highlight }) => (
+    const IngredientTile = ({ ingredient, disabled, onSelect, highlight, isRevealed }) => (
         <button
             onClick={() => !disabled && onSelect(ingredient.id)}
             disabled={disabled}
-            className={`group relative flex items-center justify-between rounded-2xl border border-white/60 bg-gradient-to-br ${ingredient.tone} px-4 py-3 text-left shadow-soft transition hover:-translate-y-1 hover:shadow-card focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-60`}
+            className={`card-flip-container ${isRevealed ? 'card-flipped' : ''} group relative rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:cursor-not-allowed`}
+            style={{ minHeight: '80px' }}
         >
-            <div>
-                <p className="text-sm font-semibold text-slate-800">{ingredient.label}</p>
-                <p className="text-xs text-slate-600">{ingredient.concept}</p>
+            <div className="card-inner">
+                {/* 카드 앞면 (뒤집혀 있을 때 보이는 면) */}
+                <div className="card-front flex items-center justify-center rounded-2xl border border-white/60 bg-gradient-to-br from-amber-200 to-orange-300 px-4 py-3 shadow-soft transition hover:-translate-y-1 hover:shadow-card">
+                    <div className="flex flex-col items-center gap-2">
+                        <span className="text-4xl" aria-hidden="true">🍔</span>
+                        <p className="text-xs font-semibold text-slate-700">?</p>
+                    </div>
+                </div>
+                {/* 카드 뒷면 (뒤집었을 때 보이는 내용) */}
+                <div className={`card-back flex items-center justify-between rounded-2xl border border-white/60 bg-gradient-to-br ${ingredient.tone} px-4 py-3 shadow-soft`}>
+                    <div>
+                        <p className="text-sm font-semibold text-slate-800">{ingredient.label}</p>
+                        <p className="text-xs text-slate-600">{ingredient.concept}</p>
+                    </div>
+                    <span className="text-2xl transition-transform group-hover:scale-110" aria-hidden="true">{ingredient.icon}</span>
+                    {highlight && (
+                        <span className={`absolute inset-0 rounded-2xl ring-2 ${highlight === 'correct' ? 'ring-emerald-400' : 'ring-rose-400'} ring-offset-4 ring-offset-white`}></span>
+                    )}
+                </div>
             </div>
-            <span className="text-2xl transition-transform group-hover:scale-110" aria-hidden="true">{ingredient.icon}</span>
-            {highlight && (
-                <span className={`absolute inset-0 rounded-2xl ring-2 ${highlight === 'correct' ? 'ring-emerald-400' : 'ring-rose-400'} ring-offset-4 ring-offset-white`}></span>
-            )}
         </button>
     );
 
-    const IngredientPalette = ({ currentCard, currentStack, onSelect, disabled }) => {
+    const IngredientPalette = ({ currentCard, currentStack, onSelect, disabled, revealedIngredients }) => {
         const expectedId = currentCard ? currentCard.pattern[currentStack.length] : null;
         const revealIngredients = Boolean(currentCard);
 
@@ -250,13 +383,8 @@
                 <header className="flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-semibold text-slate-800 dark:text-amber-100">재료 선택</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-300">카드 순서를 따라 재료를 클릭하세요.</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-300">카드를 클릭해서 뒤집어 재료를 확인하세요.</p>
                     </div>
-                    {expectedId && (
-                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">
-                            다음 재료: {INGREDIENTS.find(ing => ing.id === expectedId)?.label}
-                        </span>
-                    )}
                 </header>
                 <div className="relative">
                     <div
@@ -271,6 +399,7 @@
                                 disabled={disabled || !revealIngredients}
                                 onSelect={onSelect}
                                 highlight={revealIngredients && ingredient.id === expectedId ? 'correct' : undefined}
+                                isRevealed={revealedIngredients.has(ingredient.id)}
                             />
                         ))}
                     </div>
@@ -472,7 +601,7 @@
             </button>
             <label className="flex items-center gap-2">
                 <span aria-hidden="true">🔡</span>
-                <input type="range" min="0.9" max="1.3" step="0.05" value={textScale} onChange={event => onChangeScale(parseFloat(event.target.value))} className="accent-burger-primary" />
+                <input type="range" min={TEXT_SCALE.MIN} max={TEXT_SCALE.MAX} step={TEXT_SCALE.STEP} value={textScale} onChange={event => onChangeScale(parseFloat(event.target.value))} className="accent-burger-primary" />
             </label>
         </div>
     );
@@ -618,10 +747,12 @@
         const [ruleModalOpen, setRuleModalOpen] = useState(false);
         const [tutorialOpen, setTutorialOpen] = useState(false);
         const [audioEnabled, setAudioEnabled] = useState(true);
+        const [revealedIngredients, setRevealedIngredients] = useState(new Set());
         const audioCtxRef = useRef(null);
         const computerTimerRef = useRef(null);
         const computerAwaitingRef = useRef(false);
         const stageRef = useRef(stage);
+        const hideTimerRef = useRef(null);
 
         useEffect(() => {
             if (typeof window === 'undefined') return;
@@ -689,8 +820,7 @@
                 const oscillator = ctx.createOscillator();
                 const gain = ctx.createGain();
                 const now = ctx.currentTime;
-                const tones = { success: 660, error: 200, draw: 440, crown: 880 };
-                oscillator.frequency.setValueAtTime(tones[type] ?? 440, now);
+                oscillator.frequency.setValueAtTime(AUDIO_TONES[type] ?? AUDIO_TONES.draw, now);
                 oscillator.type = type === 'error' ? 'sawtooth' : 'sine';
                 gain.gain.setValueAtTime(0.001, now);
                 gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
@@ -711,31 +841,58 @@
             setCurrentCard(nextCard);
             setCurrentStack([]);
             setStackFeedback(null);
+            clearCardRevealState(setRevealedIngredients, hideTimerRef);
             playTone('draw');
-            setHistory(prev => [
-                { icon: '🃏', title: `${players[currentPlayerIndex].name} 카드 뽑기`, detail: `${nextCard.name} (${nextCard.pattern.length}단계)`, time: getTimestamp() },
-                ...prev
-            ].slice(0, 6));
+            addHistoryEntry(setHistory, {
+                icon: '🃏',
+                title: `${players[currentPlayerIndex].name} 카드 뽑기`,
+                detail: `${nextCard.name} (${nextCard.pattern.length}단계)`,
+                time: getTimestamp()
+            });
         };
 
         const handleIngredientSelect = (ingredientId) => {
             if (!currentCard) return;
+
+            // 타이머가 있다면 취소
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+                hideTimerRef.current = null;
+            }
+
+            // 카드를 뒤집어서 보여줌
+            setRevealedIngredients(prev => new Set([...prev, ingredientId]));
+
             const stepIndex = currentStack.length;
             const expected = currentCard.pattern[stepIndex];
-            const updated = [...currentStack, ingredientId];
-            setCurrentStack(updated);
+
             if (ingredientId === expected) {
+                // 정답: 스택에 추가하고 계속 보이도록 유지
+                const updated = [...currentStack, ingredientId];
+                setCurrentStack(updated);
                 setStackFeedback({ type: 'success', message: `${stepIndex + 1}번째 재료가 정확합니다!` });
                 playTone('success');
             } else {
-                setStackFeedback({ type: 'error', message: '재료 순서가 어긋났어요. 되돌리고 다시 시도하세요.' });
+                // 오답: 1초 후 다시 덮음
+                setStackFeedback({ type: 'error', message: '재료 순서가 어긋났어요. 카드가 다시 덮힙니다.' });
                 playTone('error');
+
+                hideTimerRef.current = setTimeout(() => {
+                    setRevealedIngredients(prev => {
+                        const newSet = new Set(prev);
+                        newSet.delete(ingredientId);
+                        return newSet;
+                    });
+                    setStackFeedback(null);
+                    hideTimerRef.current = null;
+                }, TIMING.CARD_HIDE_DELAY);
             }
         };
 
         const handleResetStack = () => {
             setCurrentStack([]);
             setStackFeedback(null);
+            clearCardRevealState(setRevealedIngredients, hideTimerRef);
         };
 
         const evaluateBurger = () => {
@@ -762,10 +919,12 @@
             playTone('success');
 
             if (mode === 'practice') {
-                setHistory(prev => [
-                    { icon: '📚', title: `${players[currentPlayerIndex].name} 학습 완료`, detail: `${currentCard.name} 카드 분석`, time: getTimestamp() },
-                    ...prev
-                ].slice(0, 6));
+                addHistoryEntry(setHistory, {
+                    icon: '📚',
+                    title: `${players[currentPlayerIndex].name} 학습 완료`,
+                    detail: `${currentCard.name} 카드 분석`,
+                    time: getTimestamp()
+                });
                 if (autoAdvance) {
                     setTimeout(() => {
                         if (stageRef.current === 'game') {
@@ -773,7 +932,7 @@
                         } else {
                             computerAwaitingRef.current = false;
                         }
-                    }, 900);
+                    }, TIMING.COMPLETION_DELAY);
                 }
                 return;
             }
@@ -787,15 +946,17 @@
                     history: [
                         { card: currentCard.name, steps: currentCard.pattern.length, reward, time: getTimestamp() },
                         ...player.history
-                    ].slice(0, 5)
+                    ].slice(0, MAX_PLAYER_HISTORY)
                 };
             }));
 
             const reward = MODES[mode].bonus(currentCard);
-            setHistory(prev => [
-                { icon: '👑', title: `${players[currentPlayerIndex].name} 버거 완성!`, detail: `${currentCard.name} 성공 · +${reward}점`, time: getTimestamp() },
-                ...prev
-            ].slice(0, 6));
+            addHistoryEntry(setHistory, {
+                icon: '👑',
+                title: `${players[currentPlayerIndex].name} 버거 완성!`,
+                detail: `${currentCard.name} 성공 · +${reward}점`,
+                time: getTimestamp()
+            });
             playTone('crown');
 
             setPlayers(updatedPlayers => {
@@ -806,7 +967,7 @@
                     setLeaderboard(prev => [
                         { winner: player.name, crowns: player.crowns, modeLabel: MODES[mode].label, timestamp: getTimestamp() },
                         ...prev
-                    ].slice(0, 6));
+                    ].slice(0, MAX_HISTORY_ITEMS));
                     computerAwaitingRef.current = false;
                 } else {
                     setCurrentCard(null);
@@ -818,7 +979,7 @@
                             } else {
                                 computerAwaitingRef.current = false;
                             }
-                        }, 900);
+                        }, TIMING.COMPLETION_DELAY);
                     }
                 }
                 return updatedPlayers;
@@ -831,11 +992,14 @@
             setCurrentStack([]);
             setCurrentCard(null);
             setStackFeedback(null);
+            clearCardRevealState(setRevealedIngredients, hideTimerRef);
             setCurrentPlayerIndex(nextIndex);
-            setHistory(prev => [
-                { icon: '🔄', title: '턴 종료', detail: `다음 차례: ${players[nextIndex].name}`, time: getTimestamp() },
-                ...prev
-            ].slice(0, 6));
+            addHistoryEntry(setHistory, {
+                icon: '🔄',
+                title: '턴 종료',
+                detail: `다음 차례: ${players[nextIndex].name}`,
+                time: getTimestamp()
+            });
         };
         const handleResetGame = () => {
             computerAwaitingRef.current = false;
@@ -852,6 +1016,11 @@
             setHistory([]);
             setStackFeedback(null);
             setWinner(null);
+            setRevealedIngredients(new Set());
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+                hideTimerRef.current = null;
+            }
         };
 
         const handleStartSetup = () => {
@@ -860,6 +1029,11 @@
             setCurrentCard(null);
             setCurrentStack([]);
             setStackFeedback(null);
+            setRevealedIngredients(new Set());
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+                hideTimerRef.current = null;
+            }
         };
 
         const handleToggleSoloMode = () => {
@@ -946,6 +1120,11 @@
             setHistory([]);
             setStackFeedback(null);
             setWinner(null);
+            setRevealedIngredients(new Set());
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+                hideTimerRef.current = null;
+            }
             setStage('game');
         };
 
@@ -959,6 +1138,11 @@
             setHistory([]);
             setStackFeedback(null);
             setWinner(null);
+            setRevealedIngredients(new Set());
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+                hideTimerRef.current = null;
+            }
             setStage('game');
         };
 
@@ -970,7 +1154,7 @@
 
             const hasCard = Boolean(currentCard);
             const needsIngredient = hasCard && currentCard ? currentStack.length < currentCard.pattern.length : false;
-            const delay = !hasCard ? 700 : needsIngredient ? 500 : 850;
+            const delay = !hasCard ? TIMING.COMPUTER_DRAW_DELAY : needsIngredient ? TIMING.COMPUTER_INGREDIENT_DELAY : TIMING.COMPUTER_COMPLETE_DELAY;
 
             computerTimerRef.current = setTimeout(() => {
                 if (stageRef.current !== 'game') {
@@ -1223,6 +1407,7 @@
                                     currentStack={currentStack}
                                     onSelect={handleIngredientSelect}
                                     disabled={!currentCard || Boolean(players[currentPlayerIndex]?.isAI)}
+                                    revealedIngredients={revealedIngredients}
                                 />
                                 <LearningCorner mode={mode} currentCard={currentCard} />
                                 <HistoryLog history={history} />
