@@ -1,0 +1,1294 @@
+﻿<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StackBurger 보드게임 인터랙티브 허브">
+    <title>StackBurger | 인터랙티브 코딩 보드게임</title>
+    <link rel="icon" href="../css/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        burger: {
+                            primary: '#f97316',
+                            secondary: '#fb923c',
+                            accent: '#22c55e',
+                            dark: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        card: '0 15px 30px -12px rgba(249,115,22,0.45)',
+                        soft: '0 18px 34px -20px rgba(15,23,42,0.25)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @keyframes crown-pop {
+            0% { transform: scale(0.8) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.18) rotate(8deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); }
+        }
+        @keyframes pulse-card {
+            0%, 100% { transform: translateY(0); box-shadow: 0 24px 30px -24px rgba(248,113,113,0.4); }
+            50% { transform: translateY(-6px); box-shadow: 0 40px 45px -30px rgba(248,113,113,0.6); }
+        }
+        .animate-crown { animation: crown-pop 0.75s ease forwards; }
+        .animate-highlight-card { animation: pulse-card 1.4s ease-in-out infinite; }
+        .bg-burger-gradient {
+            background:
+                radial-gradient(circle at 18% 18%, rgba(254,215,170,0.9), transparent 55%),
+                radial-gradient(circle at 82% 28%, rgba(248,113,113,0.25), transparent 60%),
+                radial-gradient(circle at 50% 82%, rgba(134,239,172,0.45), transparent 60%),
+                linear-gradient(135deg, #fff7ed 0%, #fef3c7 42%, #f3e8ff 100%);
+        }
+        .grain-overlay::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cdefs%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/defs%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+            mix-blend-mode: soft-light;
+            pointer-events: none;
+        }
+        .glass-card { background: rgba(255,255,255,0.78); backdrop-filter: blur(18px); }
+        .glass-card-dark { background: rgba(15,23,42,0.82); backdrop-filter: blur(18px); }
+    </style>
+</head>
+<body class="min-h-screen font-['Pretendard','Work_Sans',sans-serif] bg-burger-gradient text-slate-900">
+    <div id="root" class="relative z-10"></div>
+    <div class="grain-overlay pointer-events-none fixed inset-0 z-0"></div>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const STORAGE_KEY = 'stackburger-progress-v1';
+    const VICTORY_THRESHOLD = 10;
+
+    const INGREDIENTS = [
+        { id: 'bun-bottom', label: '버거 번 (아래)', icon: '🍞', tone: 'from-amber-200 to-amber-300', concept: '순서의 시작과 끝' },
+        { id: 'patty', label: '소고기 패티', icon: '🥩', tone: 'from-orange-300 to-orange-500', concept: '핵심 로직' },
+        { id: 'cheese', label: '치즈', icon: '🧀', tone: 'from-yellow-200 to-yellow-400', concept: '부드러운 연결' },
+        { id: 'lettuce', label: '상추', icon: '🥬', tone: 'from-emerald-200 to-lime-300', concept: '조건 분기' },
+        { id: 'tomato', label: '토마토', icon: '🍅', tone: 'from-rose-200 to-rose-400', concept: '디버깅 힌트' },
+        { id: 'onion', label: '양파', icon: '🧅', tone: 'from-purple-200 to-purple-400', concept: '패턴 점검' },
+        { id: 'pickle', label: '피클', icon: '🥒', tone: 'from-green-200 to-green-400', concept: '반복 묶음' },
+        { id: 'bacon', label: '베이컨', icon: '🥓', tone: 'from-red-300 to-amber-500', concept: '보너스 규칙' },
+        { id: 'sauce', label: '특제 소스', icon: '🧂', tone: 'from-slate-200 to-amber-100', concept: '최종 정리' },
+        { id: 'bun-top', label: '버거 번 (위)', icon: '🍔', tone: 'from-amber-200 to-amber-400', concept: '완성 마무리' }
+    ];
+    const BASE_PATTERNS = [
+        { name: '클래식 스택', steps: ['bun-bottom','patty','cheese','bun-top'], complexity: '초급', concept: '순차 구조 연습' },
+        { name: '레인보우 베지', steps: ['bun-bottom','lettuce','tomato','onion','bun-top'], complexity: '초급', concept: '조건 순서 파악' },
+        { name: '더블 치즈 펀치', steps: ['bun-bottom','patty','cheese','patty','cheese','bun-top'], complexity: '중급', concept: '반복 패턴 익히기' },
+        { name: '픽클 퍼즐', steps: ['bun-bottom','pickle','pickle','patty','cheese','bun-top'], complexity: '중급', concept: '중첩 순서' },
+        { name: '스파이시 스택', steps: ['bun-bottom','bacon','patty','cheese','tomato','bun-top'], complexity: '중급', concept: '조건 + 반복' },
+        { name: '그린 루프', steps: ['bun-bottom','lettuce','pickle','lettuce','pickle','bun-top'], complexity: '고급', concept: '교차 패턴' },
+        { name: '디버거 스페셜', steps: ['bun-bottom','onion','patty','tomato','lettuce','bun-top'], complexity: '고급', concept: '디버깅 사고' },
+        { name: '트리플 스택', steps: ['bun-bottom','patty','cheese','patty','cheese','patty','bun-top'], complexity: '고급', concept: '누적 연산' },
+        { name: '마스터 버거', steps: ['bun-bottom','sauce','patty','cheese','bacon','lettuce','tomato','bun-top'], complexity: '챌린지', concept: '종합 알고리즘' }
+    ];
+
+    const MODES = {
+        classic: { label: '클래식', description: '기본 규칙으로 즐겨요', bonus: card => 1 },
+        speed: { label: '스피드', description: '5단 이상 미션 2점', bonus: card => card.pattern.length >= 5 ? 2 : 1 },
+        challenge: { label: '챌린지', description: '고난도 카드 전용', bonus: () => 2 },
+        practice: { label: '학습', description: '점수 대신 피드백', bonus: () => 0 }
+    };
+
+    const PLAYER_COLORS = [
+        'from-orange-200 via-orange-100 to-amber-200',
+        'from-emerald-200 via-lime-100 to-emerald-200',
+        'from-sky-200 via-blue-100 to-sky-200',
+        'from-rose-200 via-pink-100 to-rose-200',
+        'from-slate-200 via-slate-100 to-slate-200'
+    ];
+
+    const randomId = (() => {
+        let counter = 0;
+        return (prefix = 'id') => `${prefix}-${Date.now()}-${counter++}-${Math.random().toString(16).slice(2,8)}`;
+    })();
+
+    const shuffle = (array) => {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    };
+
+    const createDeck = (mode) => {
+        let patterns = [...BASE_PATTERNS];
+        if (mode === 'challenge') {
+            patterns = patterns.filter(pattern => ['고급','챌린지'].includes(pattern.complexity));
+        }
+        if (mode === 'practice') {
+            patterns = patterns.filter(pattern => ['초급','중급'].includes(pattern.complexity));
+        }
+        const deck = [];
+        while (deck.length < 36) {
+            const pattern = patterns[deck.length % patterns.length];
+            deck.push({
+                id: randomId('card'),
+                name: pattern.name,
+                pattern: [...pattern.steps],
+                complexity: pattern.complexity,
+                concept: pattern.concept
+            });
+        }
+        return shuffle(deck);
+    };
+
+    const createPlayers = (count) => Array.from({ length: count }, (_, index) => ({
+        id: index + 1,
+        name: `플레이어 ${index + 1}`,
+        crowns: 0,
+        history: [],
+        color: PLAYER_COLORS[index % PLAYER_COLORS.length],
+        isAI: false
+    }));
+
+    const createComputerPlayer = (id) => ({
+        id,
+        name: 'StackBot',
+        crowns: 0,
+        history: [],
+        color: PLAYER_COLORS[4],
+        isAI: true
+    });
+
+    const getTimestamp = () => {
+        const now = new Date();
+        return `${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    };
+    const ModeBadge = ({ mode }) => (
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-burger-primary shadow-soft backdrop-blur">
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary"></span>
+            {MODES[mode].label} 모드 · {MODES[mode].description}
+        </span>
+    );
+
+    const PlayerCard = ({ player, isActive }) => (
+        <div className={`relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-br ${player.color} p-4 shadow-soft transition ${isActive ? 'scale-[1.02] shadow-card' : ''}`}>
+            {isActive && <span className="absolute right-4 top-4 animate-pulse text-xl" aria-hidden="true">⭐</span>}
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-600">{player.isAI ? 'AI PLAYER' : '플레이어'}</p>
+                    <p className="mt-1 text-lg font-bold text-slate-800">
+                        {player.name}
+                        {player.isAI && <span className="ml-2 text-base" aria-hidden="true">🤖</span>}
+                    </p>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-sm font-semibold text-slate-700">
+                    <span aria-hidden="true">👑</span>
+                    <span>{player.crowns}</span>
+                </div>
+            </div>
+            {player.isAI && (
+                <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-600">
+                    StackBot
+                </span>
+            )}
+            <div className="mt-4 space-y-2">
+                <div className="flex justify-between text-[11px] font-medium text-slate-600">
+                    <span>승리까지</span>
+                    <span>{Math.max(VICTORY_THRESHOLD - player.crowns, 0)}점</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/60">
+                    <div className="h-full rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary" style={{ width: `${Math.min(player.crowns / VICTORY_THRESHOLD * 100, 100)}%` }}></div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const ScoreBoard = ({ players, currentPlayerIndex }) => (
+        <section className="space-y-3 rounded-3xl bg-white/70 p-6 shadow-soft backdrop-blur dark:bg-slate-900/80">
+            <header className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-lg font-semibold text-slate-800 dark:text-amber-100">점수 현황</h2>
+                    <p className="text-xs text-slate-500 dark:text-slate-300">왕관 {VICTORY_THRESHOLD}개를 선착순으로 모으세요.</p>
+                </div>
+                <span className="rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-white">Crown Race</span>
+            </header>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {players.map((player, index) => (
+                    <PlayerCard key={player.id} player={player} isActive={currentPlayerIndex === index} />
+                ))}
+            </div>
+        </section>
+    );
+
+    const IngredientTile = ({ ingredient, disabled, onSelect, highlight }) => (
+        <button
+            onClick={() => !disabled && onSelect(ingredient.id)}
+            disabled={disabled}
+            className={`group relative flex items-center justify-between rounded-2xl border border-white/60 bg-gradient-to-br ${ingredient.tone} px-4 py-3 text-left shadow-soft transition hover:-translate-y-1 hover:shadow-card focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-60`}
+        >
+            <div>
+                <p className="text-sm font-semibold text-slate-800">{ingredient.label}</p>
+                <p className="text-xs text-slate-600">{ingredient.concept}</p>
+            </div>
+            <span className="text-2xl transition-transform group-hover:scale-110" aria-hidden="true">{ingredient.icon}</span>
+            {highlight && (
+                <span className={`absolute inset-0 rounded-2xl ring-2 ${highlight === 'correct' ? 'ring-emerald-400' : 'ring-rose-400'} ring-offset-4 ring-offset-white`}></span>
+            )}
+        </button>
+    );
+
+    const IngredientPalette = ({ currentCard, currentStack, onSelect, disabled }) => {
+        const expectedId = currentCard ? currentCard.pattern[currentStack.length] : null;
+        const revealIngredients = Boolean(currentCard);
+
+        return (
+            <section className="space-y-4 rounded-3xl bg-white/70 p-6 shadow-soft backdrop-blur dark:bg-slate-900/80">
+                <header className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-amber-100">재료 선택</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-300">카드 순서를 따라 재료를 클릭하세요.</p>
+                    </div>
+                    {expectedId && (
+                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">
+                            다음 재료: {INGREDIENTS.find(ing => ing.id === expectedId)?.label}
+                        </span>
+                    )}
+                </header>
+                <div className="relative">
+                    <div
+                        className={`grid gap-3 sm:grid-cols-2 transition ${
+                            revealIngredients ? 'opacity-100 blur-0' : 'pointer-events-none opacity-0'
+                        }`}
+                    >
+                        {INGREDIENTS.map(ingredient => (
+                            <IngredientTile
+                                key={ingredient.id}
+                                ingredient={ingredient}
+                                disabled={disabled || !revealIngredients}
+                                onSelect={onSelect}
+                                highlight={revealIngredients && ingredient.id === expectedId ? 'correct' : undefined}
+                            />
+                        ))}
+                    </div>
+                    {!revealIngredients && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100/85 via-white/90 to-emerald-50/80 p-6 text-center shadow-inner">
+                            <div className="flex max-w-sm flex-col items-center gap-4 rounded-3xl border border-white/80 bg-white/80 px-6 py-6 text-slate-700 shadow-xl">
+                                <div className="flex h-24 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-burger-primary to-burger-secondary text-3xl text-white shadow-lg">
+                                    🃏
+                                </div>
+                                <div className="space-y-2">
+                                    <p className="text-base font-semibold">재료는 카드가 열릴 때 공개돼요</p>
+                                    <p className="text-xs text-slate-500">먼저 카드 뽑기 버튼을 눌러 미션을 확인하세요.</p>
+                                </div>
+                                <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold text-emerald-600 uppercase tracking-[0.3em]">
+                                    카드 가림막
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </section>
+        );
+    };
+
+    const BurgerStack = ({ stack }) => (
+        <div className="relative flex min-h-[260px] flex-col-reverse items-center justify-end gap-2 rounded-3xl border border-white/60 bg-white/80 p-6 text-center shadow-soft dark:bg-slate-800/90">
+            <div className="absolute inset-x-8 top-3 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">
+                Current Stack
+            </div>
+            {stack.length === 0 && (
+                <div className="flex flex-col items-center gap-4 text-slate-500">
+                    <span className="text-4xl" aria-hidden="true">🍽️</span>
+                    <p className="text-sm font-medium">카드를 보고 순서를 맞춰 재료를 올려보세요!</p>
+                </div>
+            )}
+            {stack.map((ingredientId, index) => {
+                const ingredient = INGREDIENTS.find(item => item.id === ingredientId);
+                return (
+                    <div key={`${ingredientId}-${index}`} className="flex w-full max-w-[240px] items-center justify-between rounded-2xl bg-gradient-to-r from-white/90 to-amber-50 px-4 py-3 text-slate-800 shadow">
+                        <span className="text-sm font-semibold">{ingredient?.label ?? ingredientId}</span>
+                        <span className="text-2xl" aria-hidden="true">{ingredient?.icon ?? '❓'}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+    const DeckPreview = ({ currentCard, deckCount }) => (
+        <section className="relative overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-white/90 via-amber-50 to-white/90 p-6 shadow-soft dark:bg-slate-800/90">
+            <span className="absolute right-6 top-6 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-500">남은 카드 {deckCount}장</span>
+            {currentCard ? (
+                <article className="space-y-4">
+                    <header className="space-y-2">
+                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Stack Mission</p>
+                        <h3 className="text-2xl font-bold text-slate-900">{currentCard.name}</h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">{currentCard.complexity}</span>
+                            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-600">{currentCard.pattern.length} 단계</span>
+                        </div>
+                    </header>
+                    <ul className="space-y-2 rounded-2xl bg-white/80 p-4 text-sm shadow-inner">
+                        {currentCard.pattern.map((step, index) => {
+                            const ingredient = INGREDIENTS.find(item => item.id === step);
+                            return (
+                                <li key={`${step}-${index}`} className="flex items-center justify-between rounded-xl border border-white/70 bg-white/90 px-3 py-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-200 text-xs font-semibold text-slate-800">{index + 1}</span>
+                                        <span className="font-medium text-slate-700">{ingredient?.label ?? step}</span>
+                                    </div>
+                                    <span className="text-lg">{ingredient?.icon ?? '❔'}</span>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-600">학습 포인트: {currentCard.concept}</p>
+                </article>
+            ) : (
+                <div className="flex min-h-[220px] flex-col items-center justify-center gap-4 text-center text-slate-500">
+                    <span className="text-5xl" aria-hidden="true">🃏</span>
+                    <p className="text-lg font-semibold">카드를 뽑아 새로운 미션을 시작하세요!</p>
+                </div>
+            )}
+        </section>
+    );
+
+    const HistoryLog = ({ history }) => (
+        <section className="space-y-3 rounded-3xl bg-white/70 p-6 shadow-soft backdrop-blur dark:bg-slate-900/80">
+            <header className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-amber-100">턴 로그</h3>
+                <span className="text-xs font-medium text-slate-500">최근 {history.length}개</span>
+            </header>
+            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-200">
+                {history.length === 0 && <li className="rounded-2xl bg-white/70 px-4 py-3 text-center text-slate-400 dark:bg-slate-800/80">아직 기록이 없습니다.</li>}
+                {history.map((item, index) => (
+                    <li key={`${item.time}-${index}`} className="flex items-start gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-sm dark:bg-slate-800/80">
+                        <span className="mt-1 text-lg" aria-hidden="true">{item.icon}</span>
+                        <div>
+                            <p className="font-semibold text-slate-700 dark:text-amber-100">{item.title}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-300">{item.detail}</p>
+                            <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-slate-400">{item.time}</p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+
+    const LearningCorner = ({ mode, currentCard }) => (
+        <section className="space-y-4 rounded-3xl bg-gradient-to-br from-white/80 via-amber-50 to-white/80 p-6 text-slate-700 shadow-soft dark:from-slate-900/80 dark:via-slate-900/60 dark:to-slate-900/80 dark:text-slate-100">
+            <header className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">학습 가이드</h3>
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">코딩 개념</span>
+            </header>
+            <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-3 rounded-2xl bg-white/70 px-4 py-3 shadow-sm dark:bg-slate-800/80">
+                    <span aria-hidden="true">🔁</span>
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-amber-100">순차 (Sequence)</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300">카드 단계대로 재료를 쌓으면 알고리즘 기본 흐름을 익힙니다.</p>
+                    </div>
+                </li>
+                <li className="flex items-start gap-3 rounded-2xl bg-white/70 px-4 py-3 shadow-sm dark:bg-slate-800/80">
+                    <span aria-hidden="true">🧩</span>
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-amber-100">패턴 인식</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300">반복되는 재료 묶음은 루프·함수 추상화와 연결됩니다.</p>
+                    </div>
+                </li>
+                <li className="flex items-start gap-3 rounded-2xl bg-white/70 px-4 py-3 shadow-sm dark:bg-slate-800/80">
+                    <span aria-hidden="true">🐞</span>
+                    <div>
+                        <p className="font-semibold text-slate-800 dark:text-amber-100">디버깅 전략</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300">잘못 쌓은 재료는 버그와 같습니다. 되돌리며 검증하세요.</p>
+                    </div>
+                </li>
+            </ul>
+            {currentCard && <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-xs font-medium text-emerald-600">현재 미션 키워드: {currentCard.concept}</div>}
+            <div className="rounded-2xl border border-amber-200 bg-white/80 px-4 py-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800/80">
+                {mode === 'practice' ? '학습 모드에서는 점수 대신 정확도 피드백을 제공합니다.' : '연속 성공 시 패턴 분석을 공유하며 추가 보너스를 노려보세요.'}
+            </div>
+        </section>
+    );
+    const ControlsBar = ({
+        hasCard,
+        canComplete,
+        onDraw,
+        onResetStack,
+        onComplete,
+        onNextTurn,
+        onResetGame,
+        isComputerTurn = false
+    }) => (
+        <div className="grid gap-3 rounded-3xl bg-white/70 p-4 shadow-soft backdrop-blur dark:bg-slate-900/80 sm:grid-cols-2 lg:grid-cols-5">
+            <button
+                onClick={() => onDraw()}
+                disabled={isComputerTurn}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-burger-primary to-burger-secondary px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                <span aria-hidden="true">🃏</span> 카드 뽑기
+            </button>
+            <button
+                onClick={() => onResetStack()}
+                disabled={!hasCard || isComputerTurn}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-slate-700 shadow focus:outline-none focus:ring-2 focus:ring-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                <span aria-hidden="true">♻️</span> 재료 되돌리기
+            </button>
+            <button
+                onClick={() => onComplete()}
+                disabled={!canComplete || isComputerTurn}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                <span aria-hidden="true">✅</span> 버거 완성
+            </button>
+            <button
+                onClick={() => onNextTurn()}
+                disabled={!hasCard || isComputerTurn}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-slate-700 shadow focus:outline-none focus:ring-2 focus:ring-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                <span aria-hidden="true">➡️</span> 다음 차례
+            </button>
+            <button
+                onClick={() => onResetGame()}
+                className="flex items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-600 shadow-inner focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2"
+            >
+                <span aria-hidden="true">🔄</span> 전체 리셋
+            </button>
+            {isComputerTurn && (
+                <div className="sm:col-span-2 lg:col-span-5 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-center text-xs font-semibold text-slate-600 shadow-inner dark:bg-slate-800/80 dark:text-amber-100">
+                    StackBot이 차례를 진행 중입니다. 잠시만 기다려 주세요!
+                </div>
+            )}
+        </div>
+    );
+
+    const AccessibilityPanel = ({ contrastMode, textScale, onToggleContrast, onChangeScale }) => (
+        <div className="flex items-center gap-3 rounded-full border border-white/70 bg-white/70 px-4 py-2 text-xs font-medium text-slate-600 shadow backdrop-blur dark:bg-slate-800/80 dark:text-slate-200">
+            <button onClick={onToggleContrast} className={`flex items-center gap-1 rounded-full px-3 py-1 transition ${contrastMode ? 'bg-slate-900 text-amber-200' : 'bg-white text-slate-600'}`}>
+                <span aria-hidden="true">🌓</span> 대비
+            </button>
+            <label className="flex items-center gap-2">
+                <span aria-hidden="true">🔡</span>
+                <input type="range" min="0.9" max="1.3" step="0.05" value={textScale} onChange={event => onChangeScale(parseFloat(event.target.value))} className="accent-burger-primary" />
+            </label>
+        </div>
+    );
+
+    const AudioToggle = ({ enabled, onToggle }) => (
+        <button onClick={onToggle} className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-300 dark:bg-slate-800/80 dark:text-amber-100">
+            <span aria-hidden="true">{enabled ? '🔊' : '🔇'}</span>
+            사운드 {enabled ? 'ON' : 'OFF'}
+        </button>
+    );
+
+    const ModeSelector = ({ mode, onChange }) => (
+        <div className="grid gap-3 rounded-3xl bg-white/70 p-6 shadow-soft backdrop-blur dark:bg-slate-900/80 sm:grid-cols-2">
+            {Object.entries(MODES).map(([key, info]) => (
+                <button key={key} onClick={() => onChange(key)} className={`flex h-full flex-col gap-3 rounded-2xl border px-4 py-4 text-left shadow transition hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-300 ${mode === key ? 'border-burger-primary bg-amber-50/90 text-slate-900' : 'border-white/70 bg-white/80 text-slate-600 dark:bg-slate-800/80 dark:text-slate-200'}`}>
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-lg font-semibold text-slate-800 dark:text-amber-100">{info.label}</h4>
+                        {mode === key && <span className="text-xl" aria-hidden="true">✅</span>}
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300">{info.description}</p>
+                    <div className="rounded-xl bg-white/70 px-3 py-2 text-xs font-medium text-slate-500 dark:bg-slate-900/50">
+                        {key === 'practice' ? '정답 피드백 중심' : key === 'speed' ? '5단 이상 2점' : key === 'challenge' ? '고난도 카드' : '표준 규칙'}
+                    </div>
+                </button>
+            ))}
+        </div>
+    );
+
+    const RuleModal = ({ open, onClose }) => {
+        if (!open) return null;
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4 py-8">
+                <div className="w-full max-w-3xl space-y-4 rounded-3xl bg-white p-6 shadow-2xl">
+                    <header className="flex items-start justify-between gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-900">StackBurger 게임 규칙</h2>
+                            <p className="text-sm text-slate-500">코딩 알고리즘 개념을 따라 플레이하세요.</p>
+                        </div>
+                        <button onClick={onClose} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-400">닫기</button>
+                    </header>
+                    <section className="grid gap-4 text-sm text-slate-600 md:grid-cols-2">
+                        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+                            <h3 className="font-semibold text-slate-800">게임 목표</h3>
+                            <p className="mt-2 text-xs leading-relaxed">카드 미션을 해결하며 왕관 10개를 먼저 모으면 승리합니다. 각 미션은 순차 알고리즘 문제를 나타냅니다.</p>
+                        </div>
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                            <h3 className="font-semibold text-slate-800">세팅</h3>
+                            <ul className="mt-2 space-y-1 text-xs">
+                                <li>ㆍ 카드 더미를 중앙에 둡니다.</li>
+                                <li>ㆍ 재료 타일을 모두 공개합니다.</li>
+                                <li>ㆍ 각 플레이어에게 시작 카드를 나눕니다.</li>
+                            </ul>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <h3 className="font-semibold text-slate-800">진행 순서</h3>
+                            <ol className="mt-2 space-y-1 text-xs">
+                                <li>1) 카드 뽑기</li>
+                                <li>2) 재료 선택 및 배치</li>
+                                <li>3) 버거 완성 여부 확인</li>
+                                <li>4) 다음 플레이어로 턴 이동</li>
+                            </ol>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                            <h3 className="font-semibold text-slate-800">코딩 개념</h3>
+                            <ul className="mt-2 space-y-1 text-xs">
+                                <li>ㆍ 시퀀스: 카드 순서 그대로 진행</li>
+                                <li>ㆍ 패턴 인식: 반복 구간 찾기</li>
+                                <li>ㆍ 디버깅: 오류 재료를 수정</li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        );
+    };
+
+    const TutorialOverlay = ({ open, onClose }) => {
+        if (!open) return null;
+        return (
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 px-4 py-8">
+                <div className="relative w-full max-w-xl space-y-4 rounded-3xl bg-white p-6 shadow-2xl">
+                    <button onClick={onClose} className="absolute right-5 top-5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300">닫기</button>
+                    <h2 className="text-xl font-bold text-slate-900">튜토리얼 모드</h2>
+                    <ol className="space-y-3 text-sm text-slate-600">
+                        <li className="rounded-2xl bg-amber-50 px-4 py-3">
+                            <p className="font-semibold text-slate-800">1단계 · 카드 관찰</p>
+                            <p className="text-xs text-slate-600">재료 순서를 소리 내어 읽고 패턴을 파악하세요.</p>
+                        </li>
+                        <li className="rounded-2xl bg-emerald-50 px-4 py-3">
+                            <p className="font-semibold text-slate-800">2단계 · 재료 추적</p>
+                            <p className="text-xs text-slate-600">재료 아이콘을 클릭해 순차적으로 스택을 쌓아보세요.</p>
+                        </li>
+                        <li className="rounded-2xl bg-sky-50 px-4 py-3">
+                            <p className="font-semibold text-slate-800">3단계 · 디버깅</p>
+                            <p className="text-xs text-slate-600">완성 전 카드와 스택을 비교하며 오류를 수정합니다.</p>
+                        </li>
+                        <li className="rounded-2xl bg-rose-50 px-4 py-3">
+                            <p className="font-semibold text-slate-800">4단계 · 확장</p>
+                            <p className="text-xs text-slate-600">반복 구간을 함수처럼 묶어 표현해보세요.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        );
+    };
+
+    const Leaderboard = ({ leaderboard }) => (
+        <section className="space-y-3 rounded-3xl bg-white/70 p-6 shadow-soft backdrop-blur dark:bg-slate-900/80">
+            <header className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-amber-100">기록실</h3>
+                <span className="text-xs font-medium text-slate-500">최근 {leaderboard.length}게임</span>
+            </header>
+            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-200">
+                {leaderboard.length === 0 && <li className="rounded-2xl bg-white/70 px-4 py-3 text-center text-slate-400 dark:bg-slate-800/80">저장된 기록이 없습니다.</li>}
+                {leaderboard.map((entry, index) => (
+                    <li key={`${entry.timestamp}-${index}`} className="flex items-center justify-between rounded-2xl bg-white/80 px-4 py-3 shadow-sm dark:bg-slate-800/80">
+                        <div>
+                            <p className="font-semibold text-slate-800 dark:text-amber-100">{entry.winner}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-300">{entry.modeLabel} · {entry.crowns}점</p>
+                        </div>
+                        <p className="text-xs text-slate-400">{entry.timestamp}</p>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+    const App = () => {
+        const [stage, setStage] = useState('landing');
+        const [players, setPlayers] = useState(() => createPlayers(2));
+        const [playerCount, setPlayerCount] = useState(2);
+        const [soloMode, setSoloMode] = useState(false);
+        const [mode, setMode] = useState('classic');
+        const [deck, setDeck] = useState(() => createDeck('classic'));
+        const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+        const [currentCard, setCurrentCard] = useState(null);
+        const [currentStack, setCurrentStack] = useState([]);
+        const [history, setHistory] = useState([]);
+        const [stackFeedback, setStackFeedback] = useState(null);
+        const [winner, setWinner] = useState(null);
+        const [leaderboard, setLeaderboard] = useState([]);
+        const [contrastMode, setContrastMode] = useState(false);
+        const [textScale, setTextScale] = useState(1);
+        const [ruleModalOpen, setRuleModalOpen] = useState(false);
+        const [tutorialOpen, setTutorialOpen] = useState(false);
+        const [audioEnabled, setAudioEnabled] = useState(true);
+        const audioCtxRef = useRef(null);
+        const computerTimerRef = useRef(null);
+        const computerAwaitingRef = useRef(false);
+        const stageRef = useRef(stage);
+
+        useEffect(() => {
+            if (typeof window === 'undefined') return;
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                if (saved.players) setPlayers(saved.players);
+                if (saved.stage) setStage(saved.stage);
+                if (saved.playerCount) setPlayerCount(saved.playerCount);
+                if (saved.mode) setMode(saved.mode);
+                if (saved.deck) setDeck(saved.deck);
+                if (typeof saved.currentPlayerIndex === 'number') setCurrentPlayerIndex(saved.currentPlayerIndex);
+                if (saved.currentCard) setCurrentCard(saved.currentCard);
+                if (saved.currentStack) setCurrentStack(saved.currentStack);
+                if (saved.history) setHistory(saved.history);
+                if (saved.leaderboard) setLeaderboard(saved.leaderboard);
+                if (typeof saved.contrastMode === 'boolean') setContrastMode(saved.contrastMode);
+                if (typeof saved.textScale === 'number') setTextScale(saved.textScale);
+                if (typeof saved.soloMode === 'boolean') setSoloMode(saved.soloMode);
+            } catch (error) {
+                console.error('저장된 상태를 불러오지 못했습니다.', error);
+            }
+        }, []);
+
+        useEffect(() => {
+            stageRef.current = stage;
+        }, [stage]);
+
+        useEffect(() => {
+            if (typeof window === 'undefined') return;
+            const payload = {
+                stage,
+                players,
+                playerCount,
+                soloMode,
+                mode,
+                deck,
+                currentPlayerIndex,
+                currentCard,
+                currentStack,
+                history,
+                leaderboard,
+                contrastMode,
+                textScale
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            } catch (error) {
+                console.error('상태 저장 실패', error);
+            }
+        }, [stage, players, playerCount, mode, deck, currentPlayerIndex, currentCard, currentStack, history, leaderboard, contrastMode, textScale]);
+
+        useEffect(() => {
+            document.documentElement.style.setProperty('font-size', `${textScale}rem`);
+            document.documentElement.setAttribute('data-theme', contrastMode ? 'dark' : 'light');
+        }, [textScale, contrastMode]);
+        const playTone = (type) => {
+            if (!audioEnabled) return;
+            try {
+                if (!audioCtxRef.current) {
+                    audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const ctx = audioCtxRef.current;
+                const oscillator = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const now = ctx.currentTime;
+                const tones = { success: 660, error: 200, draw: 440, crown: 880 };
+                oscillator.frequency.setValueAtTime(tones[type] ?? 440, now);
+                oscillator.type = type === 'error' ? 'sawtooth' : 'sine';
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                oscillator.connect(gain);
+                gain.connect(ctx.destination);
+                oscillator.start(now);
+                oscillator.stop(now + 0.32);
+            } catch (error) {
+                console.warn('오디오 재생 실패', error);
+            }
+        };
+
+        const handleDrawCard = () => {
+            const sourceDeck = deck.length === 0 ? createDeck(mode) : deck;
+            const [nextCard, ...rest] = sourceDeck;
+            setDeck(rest.length ? rest : createDeck(mode));
+            setCurrentCard(nextCard);
+            setCurrentStack([]);
+            setStackFeedback(null);
+            playTone('draw');
+            setHistory(prev => [
+                { icon: '🃏', title: `${players[currentPlayerIndex].name} 카드 뽑기`, detail: `${nextCard.name} (${nextCard.pattern.length}단계)`, time: getTimestamp() },
+                ...prev
+            ].slice(0, 6));
+        };
+
+        const handleIngredientSelect = (ingredientId) => {
+            if (!currentCard) return;
+            const stepIndex = currentStack.length;
+            const expected = currentCard.pattern[stepIndex];
+            const updated = [...currentStack, ingredientId];
+            setCurrentStack(updated);
+            if (ingredientId === expected) {
+                setStackFeedback({ type: 'success', message: `${stepIndex + 1}번째 재료가 정확합니다!` });
+                playTone('success');
+            } else {
+                setStackFeedback({ type: 'error', message: '재료 순서가 어긋났어요. 되돌리고 다시 시도하세요.' });
+                playTone('error');
+            }
+        };
+
+        const handleResetStack = () => {
+            setCurrentStack([]);
+            setStackFeedback(null);
+        };
+
+        const evaluateBurger = () => {
+            if (!currentCard) return { ok: false, reason: '카드를 먼저 뽑아주세요.' };
+            if (currentStack.length !== currentCard.pattern.length) {
+                return { ok: false, reason: '카드 단계와 재료 개수가 다릅니다.' };
+            }
+            const mismatch = currentStack.some((id, index) => id !== currentCard.pattern[index]);
+            if (mismatch) {
+                return { ok: false, reason: '재료 순서가 카드와 다릅니다.' };
+            }
+            return { ok: true };
+        };
+
+        const handleCompleteBurger = (autoAdvance = false) => {
+            const result = evaluateBurger();
+            if (!result.ok) {
+                setStackFeedback({ type: 'error', message: result.reason });
+                playTone('error');
+                return;
+            }
+
+            setStackFeedback({ type: 'success', message: '완벽한 조합입니다!' });
+            playTone('success');
+
+            if (mode === 'practice') {
+                setHistory(prev => [
+                    { icon: '📚', title: `${players[currentPlayerIndex].name} 학습 완료`, detail: `${currentCard.name} 카드 분석`, time: getTimestamp() },
+                    ...prev
+                ].slice(0, 6));
+                if (autoAdvance) {
+                    setTimeout(() => {
+                        if (stageRef.current === 'game') {
+                            handleNextTurn();
+                        } else {
+                            computerAwaitingRef.current = false;
+                        }
+                    }, 900);
+                }
+                return;
+            }
+
+            setPlayers(prev => prev.map((player, index) => {
+                if (index !== currentPlayerIndex) return player;
+                const reward = MODES[mode].bonus(currentCard);
+                return {
+                    ...player,
+                    crowns: player.crowns + reward,
+                    history: [
+                        { card: currentCard.name, steps: currentCard.pattern.length, reward, time: getTimestamp() },
+                        ...player.history
+                    ].slice(0, 5)
+                };
+            }));
+
+            const reward = MODES[mode].bonus(currentCard);
+            setHistory(prev => [
+                { icon: '👑', title: `${players[currentPlayerIndex].name} 버거 완성!`, detail: `${currentCard.name} 성공 · +${reward}점`, time: getTimestamp() },
+                ...prev
+            ].slice(0, 6));
+            playTone('crown');
+
+            setPlayers(updatedPlayers => {
+                const player = updatedPlayers[currentPlayerIndex];
+                if (player.crowns >= VICTORY_THRESHOLD) {
+                    setWinner(player);
+                    setStage('results');
+                    setLeaderboard(prev => [
+                        { winner: player.name, crowns: player.crowns, modeLabel: MODES[mode].label, timestamp: getTimestamp() },
+                        ...prev
+                    ].slice(0, 6));
+                    computerAwaitingRef.current = false;
+                } else {
+                    setCurrentCard(null);
+                    setCurrentStack([]);
+                    if (autoAdvance) {
+                        setTimeout(() => {
+                            if (stageRef.current === 'game') {
+                                handleNextTurn();
+                            } else {
+                                computerAwaitingRef.current = false;
+                            }
+                        }, 900);
+                    }
+                }
+                return updatedPlayers;
+            });
+        };
+
+        const handleNextTurn = () => {
+            computerAwaitingRef.current = false;
+            const nextIndex = (currentPlayerIndex + 1) % players.length;
+            setCurrentStack([]);
+            setCurrentCard(null);
+            setStackFeedback(null);
+            setCurrentPlayerIndex(nextIndex);
+            setHistory(prev => [
+                { icon: '🔄', title: '턴 종료', detail: `다음 차례: ${players[nextIndex].name}`, time: getTimestamp() },
+                ...prev
+            ].slice(0, 6));
+        };
+        const handleResetGame = () => {
+            computerAwaitingRef.current = false;
+            setStage('landing');
+            const baseHumans = createPlayers(soloMode ? 1 : 2);
+            const roster = soloMode ? [...baseHumans, createComputerPlayer(baseHumans.length + 1)] : baseHumans;
+            setPlayers(roster);
+            setPlayerCount(soloMode ? 1 : baseHumans.length);
+            setMode('classic');
+            setDeck(createDeck('classic'));
+            setCurrentPlayerIndex(0);
+            setCurrentCard(null);
+            setCurrentStack([]);
+            setHistory([]);
+            setStackFeedback(null);
+            setWinner(null);
+        };
+
+        const handleStartSetup = () => {
+            computerAwaitingRef.current = false;
+            setStage('setup');
+            setCurrentCard(null);
+            setCurrentStack([]);
+            setStackFeedback(null);
+        };
+
+        const handleToggleSoloMode = () => {
+            computerAwaitingRef.current = false;
+            if (soloMode) {
+                const targetCount = Math.max(2, playerCount === 1 ? 2 : playerCount);
+                setSoloMode(false);
+                setPlayerCount(targetCount);
+                setPlayers(prevPlayers => {
+                    const humans = prevPlayers
+                        .filter(player => !player.isAI)
+                        .map((player, index) => ({
+                            ...player,
+                            id: index + 1,
+                            color: PLAYER_COLORS[index % PLAYER_COLORS.length],
+                            isAI: false
+                        }));
+                    while (humans.length < targetCount) {
+                        humans.push({
+                            id: humans.length + 1,
+                            name: `플레이어 ${humans.length + 1}`,
+                            crowns: 0,
+                            history: [],
+                            color: PLAYER_COLORS[humans.length % PLAYER_COLORS.length],
+                            isAI: false
+                        });
+                    }
+                    return humans;
+                });
+            } else {
+                setSoloMode(true);
+                setPlayerCount(1);
+                setPlayers(prevPlayers => {
+                    const humans = prevPlayers
+                        .filter(player => !player.isAI)
+                        .map((player, index) => ({
+                            ...player,
+                            id: index + 1,
+                            color: PLAYER_COLORS[index % PLAYER_COLORS.length],
+                            isAI: false
+                        }));
+                    if (humans.length === 0) {
+                        return createPlayers(1);
+                    }
+                    return [humans[0]];
+                });
+            }
+        };
+
+        const handleStartGame = () => {
+            computerAwaitingRef.current = false;
+            const humanCount = soloMode ? 1 : Math.max(1, playerCount);
+            const humanRoster = players
+                .filter(player => !player.isAI)
+                .slice(0, humanCount)
+                .map((player, index) => ({
+                    ...player,
+                    id: index + 1,
+                    name: (player.name || '').trim() || `플레이어 ${index + 1}`,
+                    crowns: 0,
+                    history: [],
+                    color: PLAYER_COLORS[index % PLAYER_COLORS.length],
+                    isAI: false
+                }));
+            while (humanRoster.length < humanCount) {
+                humanRoster.push({
+                    id: humanRoster.length + 1,
+                    name: `플레이어 ${humanRoster.length + 1}`,
+                    crowns: 0,
+                    history: [],
+                    color: PLAYER_COLORS[humanRoster.length % PLAYER_COLORS.length],
+                    isAI: false
+                });
+            }
+            const roster = soloMode
+                ? [...humanRoster, { ...createComputerPlayer(humanRoster.length + 1) }]
+                : humanRoster;
+            setPlayers(roster);
+            setPlayerCount(soloMode ? 1 : humanRoster.length);
+            setDeck(createDeck(mode));
+            setCurrentPlayerIndex(0);
+            setCurrentCard(null);
+            setCurrentStack([]);
+            setHistory([]);
+            setStackFeedback(null);
+            setWinner(null);
+            setStage('game');
+        };
+
+        const handleRestart = () => {
+            computerAwaitingRef.current = false;
+            setPlayers(prev => prev.map(player => ({ ...player, crowns: 0, history: [] })));
+            setDeck(createDeck(mode));
+            setCurrentPlayerIndex(0);
+            setCurrentCard(null);
+            setCurrentStack([]);
+            setHistory([]);
+            setStackFeedback(null);
+            setWinner(null);
+            setStage('game');
+        };
+
+        useEffect(() => {
+            if (stage !== 'game') return;
+            const activePlayer = players[currentPlayerIndex];
+            if (!activePlayer || !activePlayer.isAI) return;
+            if (computerAwaitingRef.current) return;
+
+            const hasCard = Boolean(currentCard);
+            const needsIngredient = hasCard && currentCard ? currentStack.length < currentCard.pattern.length : false;
+            const delay = !hasCard ? 700 : needsIngredient ? 500 : 850;
+
+            computerTimerRef.current = setTimeout(() => {
+                if (stageRef.current !== 'game') {
+                    computerAwaitingRef.current = false;
+                    return;
+                }
+                if (!currentCard) {
+                    handleDrawCard();
+                } else if (currentStack.length < currentCard.pattern.length) {
+                    const nextIngredient = currentCard.pattern[currentStack.length];
+                    handleIngredientSelect(nextIngredient);
+                } else {
+                    computerAwaitingRef.current = true;
+                    handleCompleteBurger(true);
+                }
+            }, delay);
+
+            return () => {
+                if (computerTimerRef.current) {
+                    clearTimeout(computerTimerRef.current);
+                    computerTimerRef.current = null;
+                }
+            };
+        }, [stage, players, currentPlayerIndex, currentCard, currentStack]);
+
+        const Landing = () => (
+            <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center px-6 py-16 text-center">
+                <div className="flex flex-col items-center gap-8 rounded-[40px] border border-white/60 bg-white/80 p-10 text-slate-700 shadow-2xl backdrop-blur">
+                    <div className="space-y-4">
+                        <p className="text-sm font-semibold uppercase tracking-[0.4em] text-burger-primary">Stack Burger</p>
+                        <h1 className="text-4xl font-black text-slate-900 sm:text-5xl">버거를 쌓으며 알고리즘을 배워요!</h1>
+                        <p className="mx-auto max-w-2xl text-sm text-slate-600">시퀀스, 패턴, 디버깅 개념을 자연스럽게 익히는 코딩 보드게임 StackBurger를 웹에서 체험해보세요.</p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-slate-600">
+                        <span className="rounded-full bg-amber-100 px-4 py-2 text-amber-600">플레이어 1-4명 (StackBot 지원)</span>
+                        <span className="rounded-full bg-emerald-100 px-4 py-2 text-emerald-600">게임 시간 약 15분</span>
+                        <span className="rounded-full bg-rose-100 px-4 py-2 text-rose-600">권장 연령 8세+</span>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <button onClick={handleStartSetup} className="flex items-center gap-3 rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary px-8 py-3 text-lg font-semibold text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400">
+                            게임 시작하기 <span aria-hidden="true">🍔</span>
+                        </button>
+                        <a href="../index.html" className="flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-6 py-3 text-sm font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-300">메인으로 돌아가기</a>
+                        <button onClick={() => setRuleModalOpen(true)} className="flex items-center gap-2 rounded-full bg-white/70 px-6 py-3 text-sm font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-300">규칙 살펴보기</button>
+                    </div>
+                    <div className="grid gap-4 rounded-3xl bg-white/60 p-6 text-left text-sm shadow-inner sm:grid-cols-2">
+                        <div className="space-y-2">
+                            <h3 className="text-base font-semibold text-slate-800">게임 구성품</h3>
+                            <ul className="space-y-1 text-slate-600">
+                                <li>ㆍ 버거 알고리즘 카드 36장</li>
+                                <li>ㆍ 재료 타일 28개</li>
+                                <li>ㆍ 왕관 토큰과 플레이 매트</li>
+                            </ul>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-base font-semibold text-slate-800">학습 포인트</h3>
+                            <ul className="space-y-1 text-slate-600">
+                                <li>ㆍ 순차/반복 구조 이해</li>
+                                <li>ㆍ 패턴 분석과 추상화</li>
+                                <li>ㆍ 디버깅 전략 연습</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <RuleModal open={ruleModalOpen} onClose={() => setRuleModalOpen(false)} />
+            </main>
+        );
+
+        const Setup = () => {
+            const editablePlayers = players.filter(player => !player.isAI);
+            const displayCount = soloMode ? 1 : playerCount;
+
+            return (
+                <main className="mx-auto max-w-5xl px-6 py-16">
+                    <div className="rounded-[36px] border border-white/60 bg-white/80 p-10 shadow-2xl backdrop-blur">
+                        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h1 className="text-3xl font-bold text-slate-900">플레이 설정</h1>
+                                <p className="text-sm text-slate-600">플레이어 정보를 입력하고 게임 모드를 고르세요.</p>
+                            </div>
+                            <ModeBadge mode={mode} />
+                        </header>
+                        <section className="mt-6 space-y-6">
+                            <div className="flex flex-col gap-3 rounded-3xl bg-white/70 p-5 shadow-inner">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-sm font-semibold text-slate-700">1인 모드 (StackBot)</h2>
+                                        <p className="text-xs text-slate-500">혼자 플레이할 때 AI StackBot과 대전합니다.</p>
+                                    </div>
+                                    <button
+                                        onClick={handleToggleSoloMode}
+                                        className={`relative inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold transition ${soloMode ? 'bg-emerald-500 text-white shadow' : 'bg-slate-200 text-slate-600'}`}
+                                    >
+                                        {soloMode ? 'ON' : 'OFF'}
+                                    </button>
+                                </div>
+                                {soloMode && (
+                                    <p className="text-xs font-medium text-emerald-600">StackBot이 두 번째 플레이어를 맡습니다.</p>
+                                )}
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <label className="block text-sm font-semibold text-slate-700">
+                                        {soloMode ? '플레이어 수 (나 + StackBot)' : '플레이어 수 (2-4명)'}
+                                    </label>
+                                    {!soloMode && <span className="text-xs text-slate-500">필요한 인원수를 선택하세요.</span>}
+                                </div>
+                                <input
+                                    type="range"
+                                    min={soloMode ? 1 : 2}
+                                    max="4"
+                                    value={soloMode ? 1 : displayCount}
+                                    onChange={event => {
+                                        if (soloMode) return;
+                                        const value = parseInt(event.target.value, 10);
+                                        setPlayerCount(value);
+                                        setPlayers(prevPlayers => {
+                                            const humans = prevPlayers
+                                                .filter(player => !player.isAI)
+                                                .map((player, index) => ({
+                                                    ...player,
+                                                    id: index + 1,
+                                                    color: PLAYER_COLORS[index % PLAYER_COLORS.length],
+                                                    isAI: false
+                                                }));
+                                            while (humans.length < value) {
+                                                humans.push({
+                                                    id: humans.length + 1,
+                                                    name: `플레이어 ${humans.length + 1}`,
+                                                    crowns: 0,
+                                                    history: [],
+                                                    color: PLAYER_COLORS[humans.length % PLAYER_COLORS.length],
+                                                    isAI: false
+                                                });
+                                            }
+                                            return humans;
+                                        });
+                                    }}
+                                    disabled={soloMode}
+                                    className="w-full accent-burger-primary disabled:opacity-60"
+                                />
+                                <p className="text-xs text-slate-500">
+                                    {soloMode ? '현재 구성: 나 + StackBot' : `현재 ${playerCount}명`}
+                                </p>
+                            </div>
+                            {soloMode && (
+                                <div className="rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-amber-50 px-6 py-4 text-sm text-slate-600 shadow-inner">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-3xl" aria-hidden="true">🤖</span>
+                                        <div>
+                                            <p className="font-semibold text-slate-700">StackBot 준비 완료</p>
+                                            <p className="text-xs text-slate-500">AI가 카드 순서를 따라 자동으로 행동합니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {editablePlayers.slice(0, displayCount).map((player, index) => (
+                                    <div key={player.id} className="rounded-3xl bg-white/80 p-6 shadow-inner">
+                                        <label className="block text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Player {index + 1}</label>
+                                        <input
+                                            type="text"
+                                            value={player.name}
+                                            onChange={event => {
+                                                const value = event.target.value;
+                                                setPlayers(prevPlayers => prevPlayers.map(existing => {
+                                                    if (existing.isAI) return existing;
+                                                    if (existing.id === player.id) {
+                                                        return { ...existing, name: value };
+                                                    }
+                                                    return existing;
+                                                }));
+                                            }}
+                                            className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 focus:border-burger-primary focus:outline-none focus:ring-2 focus:ring-amber-200"
+                                            placeholder={`플레이어 ${index + 1} 이름`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="space-y-3">
+                                <h2 className="text-lg font-semibold text-slate-800">게임 모드 선택</h2>
+                                <ModeSelector mode={mode} onChange={setMode} />
+                            </div>
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                    <AccessibilityPanel contrastMode={contrastMode} textScale={textScale} onToggleContrast={() => setContrastMode(prev => !prev)} onChangeScale={setTextScale} />
+                                    <AudioToggle enabled={audioEnabled} onToggle={() => setAudioEnabled(prev => !prev)} />
+                                </div>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setStage('landing')} className="rounded-full border border-white/80 bg-white/70 px-6 py-3 text-sm font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-200">뒤로 가기</button>
+                                    <button onClick={handleStartGame} className="flex items-center gap-2 rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary px-8 py-3 text-lg font-semibold text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400">게임 시작 <span aria-hidden="true">🚀</span></button>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <RuleModal open={ruleModalOpen} onClose={() => setRuleModalOpen(false)} />
+                </main>
+            );
+        };
+        const Game = () => (
+            <main className={`mx-auto max-w-6xl px-6 py-10 ${contrastMode ? 'text-amber-100' : 'text-slate-900'}`}>
+                <div className={`rounded-[36px] border border-white/60 ${contrastMode ? 'glass-card-dark text-amber-100' : 'glass-card text-slate-800'} shadow-2xl`}>
+                    <div className="flex flex-col gap-4 border-b border-white/60 px-8 py-6 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <div className="flex items-center gap-3 text-sm font-medium text-slate-500 dark:text-amber-200">
+                                <a href="../index.html" className="flex items-center gap-1 rounded-full bg-white/60 px-3 py-1 text-xs font-semibold text-slate-600 shadow">메인 홈</a>
+                                <span>›</span>
+                                <span>StackBurger 보드</span>
+                            </div>
+                            <h1 className="mt-2 text-3xl font-bold">StackBurger 플레이</h1>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <ModeBadge mode={mode} />
+                            <AudioToggle enabled={audioEnabled} onToggle={() => setAudioEnabled(prev => !prev)} />
+                            <AccessibilityPanel contrastMode={contrastMode} textScale={textScale} onToggleContrast={() => setContrastMode(prev => !prev)} onChangeScale={setTextScale} />
+                            <button onClick={() => setTutorialOpen(true)} className="rounded-full bg-white/70 px-4 py-2 text-xs font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-200">튜토리얼</button>
+                            <button onClick={() => setRuleModalOpen(true)} className="rounded-full bg-white/70 px-4 py-2 text-xs font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-200">규칙 보기</button>
+                        </div>
+                    </div>
+                    <div className="space-y-8 px-8 py-8">
+                        <ScoreBoard players={players} currentPlayerIndex={currentPlayerIndex} />
+                        {players[currentPlayerIndex]?.isAI && (
+                            <div className="rounded-2xl border border-white/60 bg-white/80 px-4 py-3 text-sm font-semibold text-slate-600 shadow-soft dark:bg-slate-900/80 dark:text-amber-100">
+                                StackBot이 미션을 수행 중입니다. 카드와 재료 선택을 잠시 지켜봐 주세요!
+                            </div>
+                        )}
+                        <section className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+                            <div className="space-y-6">
+                                <DeckPreview currentCard={currentCard} deckCount={deck.length} />
+                                <BurgerStack stack={currentStack} />
+                                <ControlsBar
+                                    hasCard={Boolean(currentCard)}
+                                    canComplete={Boolean(currentCard && currentStack.length === currentCard.pattern.length)}
+                                    onDraw={handleDrawCard}
+                                    onResetStack={handleResetStack}
+                                    onComplete={handleCompleteBurger}
+                                    onNextTurn={handleNextTurn}
+                                    onResetGame={handleResetGame}
+                                    isComputerTurn={Boolean(players[currentPlayerIndex]?.isAI)}
+                                />
+                                {stackFeedback && (
+                                    <div className={`rounded-2xl px-5 py-4 text-sm font-medium shadow ${stackFeedback.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                        {stackFeedback.message}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="space-y-6">
+                                <IngredientPalette
+                                    currentCard={currentCard}
+                                    currentStack={currentStack}
+                                    onSelect={handleIngredientSelect}
+                                    disabled={!currentCard || Boolean(players[currentPlayerIndex]?.isAI)}
+                                />
+                                <LearningCorner mode={mode} currentCard={currentCard} />
+                                <HistoryLog history={history} />
+                            </div>
+                        </section>
+                        <Leaderboard leaderboard={leaderboard} />
+                    </div>
+                </div>
+                <RuleModal open={ruleModalOpen} onClose={() => setRuleModalOpen(false)} />
+                <TutorialOverlay open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+            </main>
+        );
+
+        const Results = () => (
+            <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-16 text-center">
+                <div className="space-y-6 rounded-[40px] border border-white/60 bg-white/80 p-12 text-slate-700 shadow-2xl backdrop-blur">
+                    <p className="text-sm font-semibold uppercase tracking-[0.4em] text-burger-primary">Game Over</p>
+                    <h1 className="text-4xl font-black text-slate-900">축하합니다! {winner?.name} 님 승리!</h1>
+                    <div className="flex items-center justify-center gap-2 text-3xl">
+                        <span className="animate-crown" aria-hidden="true">👑</span>
+                        <span className="animate-crown" aria-hidden="true">🍔</span>
+                        <span className="animate-crown" aria-hidden="true">🎉</span>
+                    </div>
+                    <p className="text-sm text-slate-600">총 {winner?.crowns}개의 왕관을 모아 챔피언이 되었습니다.</p>
+                    <div className="grid gap-4 rounded-3xl bg-white/70 p-6 text-left shadow-inner sm:grid-cols-2">
+                        {players.map(player => (
+                            <div key={player.id} className="rounded-2xl border border-white/60 bg-white/80 px-4 py-3 text-sm shadow">
+                                <p className="font-semibold text-slate-800">
+                                    {player.name}
+                                    {player.isAI && <span className="ml-2 text-base" aria-hidden="true">🤖</span>}
+                                </p>
+                                <p className="text-xs text-slate-500">왕관 {player.crowns}개{player.isAI && ' · AI'}</p>
+                                <ul className="mt-2 space-y-1 text-xs text-slate-500">
+                                    {player.history.length > 0 ? player.history.map((entry, index) => (
+                                        <li key={`${entry.card}-${index}`} className="rounded-xl bg-white/70 px-3 py-2">{entry.card} · {entry.steps}단계 · +{entry.reward}점</li>
+                                    )) : <li className="rounded-xl bg-white/70 px-3 py-2 text-slate-400">기록 없음</li>}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-4">
+                        <button onClick={handleRestart} className="flex items-center gap-2 rounded-full bg-gradient-to-r from-burger-primary to-burger-secondary px-8 py-3 text-lg font-semibold text-white shadow-xl hover:-translate-y-1 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400">같은 플레이어로 재도전</button>
+                        <button onClick={() => setStage('setup')} className="rounded-full border border-white/80 bg-white/70 px-6 py-3 text-sm font-semibold text-slate-600 shadow focus:outline-none focus:ring-2 focus:ring-amber-300">다시 설정</button>
+                        <button onClick={handleResetGame} className="rounded-full border border-rose-200 bg-rose-50 px-6 py-3 text-sm font-semibold text-rose-600 shadow focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2">완전 초기화</button>
+                    </div>
+                </div>
+                <Leaderboard leaderboard={leaderboard} />
+            </main>
+        );
+
+        switch (stage) {
+            case 'landing':
+                return <Landing />;
+            case 'setup':
+                return <Setup />;
+            case 'game':
+                return <Game />;
+            case 'results':
+                return <Results />;
+            default:
+                return <Landing />;
+        }
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+    </script>
+</body>
+</html>
