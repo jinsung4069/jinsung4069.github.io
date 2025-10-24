@@ -7,19 +7,22 @@
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .cv-section {
-            background: #fff;
+            background: var(--color-white);
             border-radius: 20px;
             padding: 40px;
             margin: 40px auto;
             max-width: 900px;
+            border: 1px solid var(--color-gray-200);
+            box-shadow: var(--shadow-sm);
         }
 
         .cv-section h2 {
             font-size: 32px;
             font-weight: 600;
             margin-bottom: 30px;
-            border-bottom: 2px solid #f5f5f7;
+            border-bottom: 2px solid var(--color-gray-200);
             padding-bottom: 15px;
+            color: var(--color-gray-900);
         }
 
         .cv-section h3 {
@@ -27,7 +30,7 @@
             font-weight: 600;
             margin-top: 30px;
             margin-bottom: 15px;
-            color: #333;
+            color: var(--color-gray-900);
         }
 
         .cv-section ul {
@@ -38,11 +41,26 @@
         .cv-section li {
             margin-bottom: 10px;
             line-height: 1.6;
+            color: var(--color-gray-600);
+        }
+
+        .cv-section em {
+            color: var(--color-gray-600);
+        }
+
+        .cv-section a {
+            color: var(--color-picto-primary);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .cv-section a:hover {
+            text-decoration: underline;
         }
 
         .highlight {
             font-weight: 600;
-            color: #000;
+            color: var(--color-gray-900);
         }
     </style>
 </head>
@@ -127,6 +145,140 @@
                     <li>지도교수: 김정랑</li>
                 </ul>
             </section>
+            <section class="cv-section">
+                <h2>학술논문</h2>
+                <h3>국제학술지 (SCIE/SSCI)</h3>
+                <ul>
+                    <li><span class="highlight">[2024]</span> A Staged Framework for Computer Vision Education: Integrating AI, Data Science, and Computational Thinking. <em>Applied Sciences</em> (SCIE). <a href="https://doi.org/10.3390/app14219792" target="_blank">https://doi.org/10.3390/app14219792</a></li>
+                    <li><span class="highlight">[2024]</span> Developing Standards for Educational Datasets by School Level: A Framework for Sustainable K-12 Education. <em>Sustainability</em> (SSCI). <a href="https://doi.org/10.3390/su16124954" target="_blank">https://doi.org/10.3390/su16124954</a></li>
+                    <li><span class="highlight">[2024]</span> Integrating Data Science and Machine Learning to Chemistry Education: Predicting Classification and Boiling Point of Compounds. <em>Journal of Chemical Education</em> (SCIE). <a href="https://pubs.acs.org/doi/10.1021/acs.jchemed.3c01040" target="_blank">https://pubs.acs.org/doi/10.1021/acs.jchemed.3c01040</a></li>
+                </ul>
+                <h3>국내학술지 (KCI)</h3>
+                <ul>
+                    <li><span class="highlight">[2024]</span> LMS 기반 교수학습 플랫폼을 활용한 초등학생 대상 소프트웨어교육 프로그램의 효과성 분석. <em>컴퓨터교육학회논문지</em></li>
+                    <li><span class="highlight">[2024]</span> 초등학교 저학년을 위한 인공지능 교육용 콘텐츠 설계 및 개발. <em>에듀테인먼트연구</em></li>
+                    <li><span class="highlight">[2024]</span> 인공지능 융합 기후환경교육을 위한 수업 연구: 초등 사회과교육과정의 기후환경 내용을 중심으로. <em>사회과교육</em></li>
+                    <li><span class="highlight">[2024]</span> 청소년의 인공지능 및 디지털 윤리 문제와 교육방안 고찰: IoT와 생성형 AI를 중심으로. <em>학습자중심교과교육연구</em></li>
+                    <li><span class="highlight">[2023]</span> 예비 정보교사 대상 스토리텔링 기반 실생활 문제해결 인공지능 융합교육 프로그램의 교육적 효과. <em>학습자중심교과교육연구</em></li>
+                    <li><span class="highlight">[2022]</span> 자연어 처리 모델을 활용한 블록 코드 생성 및 추천 모델 개발. <em>정보교육학회논문지</em></li>
+                    <li><span class="highlight">[2022]</span> 개발도상국 예비교사 양성을 위한 ICT 전공 교육과정 설계 및 개발: 캄보디아 국가를 중심으로. <em>에듀테인먼트연구</em></li>
+                    <li><span class="highlight">[2021]</span> 교사를 위한 인공지능 소양교육 프로그램 개발 및 인공지능 융합교육 관심도 효과성 검증. <em>한국컴퓨터정보학회논문지</em></li>
+                    <li><span class="highlight">[2021]</span> 머신러닝 플랫폼을 활용한 인공지능융합교육이 융합인재소양과 학습몰입에 미치는 영향. <em>한국컴퓨터정보학회논문지</em></li>
+                    <li><span class="highlight">[2021]</span> 해외 교사를 위한 지속가능한 발전 기반 아두이노 교육과정 설계 및 개발. <em>에듀테인먼트연구</em></li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>저서</h2>
+                <ul>
+                    <li><span class="highlight">[2024]</span> 초등용 「빛고을 아이(AI)」 광주 AI교육 프로그램 교수학습자료. 광주광역시교육연구정보원</li>
+                    <li><span class="highlight">[2024]</span> 초등 AI와 함께하는 즐거운 사회수업. 광주광역시교육연구정보원</li>
+                    <li><span class="highlight">[2022]</span> 수업에 바로 쓰는 AI : 미래교육을 준비하다. 비상교육</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>연구보고서</h2>
+                <ul>
+                    <li><span class="highlight">[2023]</span> AI 디지털 환경에서 청소년이 경험하는 윤리적 이슈 및 개선 방안. 충청남도교육청</li>
+                    <li><span class="highlight">[2020]</span> 연수 효과성 제고를 위한 연수모형 개발. 교육부중앙교육연수원</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>연구과제 참여</h2>
+                <h3>2025 (진행중)</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 2025년 디지털 기반 교육혁신 교원연수 운영 성과관리 용역</li>
+                    <li><span class="highlight">참여기간:</span> 2025.08.25 착수</li>
+                    <li><span class="highlight">지원기관:</span> 광주광역시교육청</li>
+                    <li><span class="highlight">연구기관:</span> 광주교육대학교 산학협력단</li>
+                    <li><span class="highlight">역할:</span> 연구책임자</li>
+                </ul>
+                <h3>2025</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 2025 디지털 기반 교육혁신 교원연수 지원을 위한 연수자료 개발 용역</li>
+                    <li><span class="highlight">참여기간:</span> 2025.04.21 - 2025.05.20</li>
+                    <li><span class="highlight">지원기관:</span> 광주광역시교육청</li>
+                    <li><span class="highlight">연구기관:</span> 광주교육대학교 산학협력단</li>
+                    <li><span class="highlight">역할:</span> 연구책임자</li>
+                </ul>
+                <h3>2023-현재 (진행중)</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 온두라스 교원 ICT 활용능력 강화사업 PMC 용역</li>
+                    <li><span class="highlight">참여기간:</span> 2023.03.01 - 현재</li>
+                    <li><span class="highlight">지원기관:</span> 한국국제협력단</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구지원관리</li>
+                </ul>
+                <h3>2022-2023</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 머신 러닝을 이용한 학습자 집중도 감지 기반 교수 지원 시스템 개발</li>
+                    <li><span class="highlight">참여기간:</span> 2022.03.01 - 2023.02.28</li>
+                    <li><span class="highlight">지원기관:</span> 한국연구재단 (과학기술정보통신부)</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구보조원</li>
+                </ul>
+                <h3>2021-현재 (진행중)</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 캄보디아 중학교 ICT 교육역량 강화사업 사업수행용역(PMC)</li>
+                    <li><span class="highlight">참여기간:</span> 2021.09.10 - 현재</li>
+                    <li><span class="highlight">지원기관:</span> 한국국제협력단</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구보조원</li>
+                </ul>
+                <h3>2021-2022</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 머신 러닝을 이용한 학습자 집중도 감지 기반 교수 지원 시스템 개발</li>
+                    <li><span class="highlight">참여기간:</span> 2021.06.01 - 2022.02.28</li>
+                    <li><span class="highlight">지원기관:</span> 한국연구재단 (과학기술정보통신부)</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구보조원</li>
+                </ul>
+                <h3>2019-2022</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 온두라스 교원 ICT 활용능력 강화사업 PMC 용역</li>
+                    <li><span class="highlight">참여기간:</span> 2019.12.24 - 2022.10.31</li>
+                    <li><span class="highlight">지원기관:</span> 한국국제협력단</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구보조원</li>
+                </ul>
+                <h3>2019-2020</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 소프트웨어(SW)교육 전문강사(기초) 자격 충족 발굴 및 운영방안 연구</li>
+                    <li><span class="highlight">참여기간:</span> 2019.11.04 - 2020.02.11</li>
+                    <li><span class="highlight">지원기관:</span> 재단법인전라남도정보문화산업진흥원</li>
+                    <li><span class="highlight">연구책임자:</span> 광주교육대학교 컴퓨터교육과 김정랑 교수</li>
+                    <li><span class="highlight">역할:</span> 보조연구원</li>
+                </ul>
+                <h3>2019-2020</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 학습분석 기법을 적용한 소프트웨어교육 지원 시스템 개발</li>
+                    <li><span class="highlight">참여기간:</span> 2019.03.01 - 2020.02.29</li>
+                    <li><span class="highlight">지원기관:</span> 한국연구재단 (과학기술정보통신부)</li>
+                    <li><span class="highlight">연구기관:</span> 한국교원대학교 산학협력단</li>
+                    <li><span class="highlight">연구책임자:</span> 한국교원대학교 송기상 교수</li>
+                    <li><span class="highlight">역할:</span> 연구보조원</li>
+                </ul>
+                <h3>2018-2019</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 코딩교육 지도자를 양성하기 위한 교육용 콘텐츠 개발</li>
+                    <li><span class="highlight">참여기간:</span> 2018.12.10 - 2019.04.30</li>
+                    <li><span class="highlight">지원기관:</span> (주)티산북스</li>
+                    <li><span class="highlight">연구책임자:</span> 광주교육대학교 컴퓨터교육과 김정랑 교수</li>
+                    <li><span class="highlight">역할:</span> 공동연구원</li>
+                </ul>
+                <h3>2017-2018</h3>
+                <ul>
+                    <li><span class="highlight">연구과제명:</span> 디지털교과서 확산을 위한 일반학교 활용 모델 및 가이드라인 개발</li>
+                    <li><span class="highlight">참여기간:</span> 2017.07.11 - 2018.01.10</li>
+                    <li><span class="highlight">지원기관:</span> 한국교육학술정보원</li>
+                    <li><span class="highlight">연구책임자:</span> 광주교육대학교 컴퓨터교육과 김정랑 교수</li>
+                    <li><span class="highlight">역할:</span> 보조연구원</li>
+                </ul>
+            </section>
         </div>
 
         <div class="lang-content lang-en">
@@ -176,6 +328,140 @@
                     <li>Degree Awarding Institution: Gwangju National University of Education</li>
                     <li>Date of Degree Award: August 27, 2016</li>
                     <li>Supervisor: Kim Jeong-Rang</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Publications</h2>
+                <h3>International Journals (SCIE/SSCI)</h3>
+                <ul>
+                    <li><span class="highlight">[2024]</span> A Staged Framework for Computer Vision Education: Integrating AI, Data Science, and Computational Thinking. <em>Applied Sciences</em> (SCIE). <a href="https://doi.org/10.3390/app14219792" target="_blank">https://doi.org/10.3390/app14219792</a></li>
+                    <li><span class="highlight">[2024]</span> Developing Standards for Educational Datasets by School Level: A Framework for Sustainable K-12 Education. <em>Sustainability</em> (SSCI). <a href="https://doi.org/10.3390/su16124954" target="_blank">https://doi.org/10.3390/su16124954</a></li>
+                    <li><span class="highlight">[2024]</span> Integrating Data Science and Machine Learning to Chemistry Education: Predicting Classification and Boiling Point of Compounds. <em>Journal of Chemical Education</em> (SCIE). <a href="https://pubs.acs.org/doi/10.1021/acs.jchemed.3c01040" target="_blank">https://pubs.acs.org/doi/10.1021/acs.jchemed.3c01040</a></li>
+                </ul>
+                <h3>Domestic Journals (KCI)</h3>
+                <ul>
+                    <li><span class="highlight">[2024]</span> Effectiveness Analysis of Software Education Programs for Elementary School Students Using LMS-Based Teaching and Learning Platforms. <em>Journal of The Korean Association of Computer Education</em></li>
+                    <li><span class="highlight">[2024]</span> Design and Development of Artificial Intelligence Educational Content for Lower Elementary School Students. <em>Journal of Korea Entertainment Industry Association</em></li>
+                    <li><span class="highlight">[2024]</span> A Study on AI-Integrated Climate and Environmental Education: Focusing on Climate and Environmental Content in Elementary Social Studies Curriculum. <em>Social Studies Education</em></li>
+                    <li><span class="highlight">[2024]</span> A Study on Artificial Intelligence and Digital Ethics Issues and Educational Solutions for Adolescents: Focusing on IoT and Generative AI. <em>The Journal of Learner-Centered Curriculum and Instruction</em></li>
+                    <li><span class="highlight">[2023]</span> Educational Effects of AI Convergence Education Program Based on Storytelling for Real-Life Problem Solving for Pre-Service Information Teachers. <em>The Journal of Learner-Centered Curriculum and Instruction</em></li>
+                    <li><span class="highlight">[2022]</span> Development of Block Code Generation and Recommendation Model Using Natural Language Processing Model. <em>Journal of The Korean Association of Information Education</em></li>
+                    <li><span class="highlight">[2022]</span> Design and Development of ICT Major Curriculum for Pre-Service Teacher Training in Developing Countries: Focusing on Cambodia. <em>Journal of Korea Entertainment Industry Association</em></li>
+                    <li><span class="highlight">[2021]</span> Development of AI Literacy Education Program for Teachers and Verification of Effectiveness on AI Convergence Education Interest. <em>Journal of The Korea Society of Computer and Information</em></li>
+                    <li><span class="highlight">[2021]</span> The Effect of AI Convergence Education Using Machine Learning Platform on Convergence Talent Competency and Learning Flow. <em>Journal of The Korea Society of Computer and Information</em></li>
+                    <li><span class="highlight">[2021]</span> Design and Development of Arduino Curriculum Based on Sustainable Development for Overseas Teachers. <em>Journal of Korea Entertainment Industry Association</em></li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Books</h2>
+                <ul>
+                    <li><span class="highlight">[2024]</span> Bitgoeul AI (Artificial Intelligence) Gwangju AI Education Program Teaching and Learning Materials for Elementary School. Gwangju Metropolitan Office of Education Research and Information Institute</li>
+                    <li><span class="highlight">[2024]</span> Fun Social Studies Class with Elementary AI. Gwangju Metropolitan Office of Education Research and Information Institute</li>
+                    <li><span class="highlight">[2022]</span> AI Ready to Use in Class: Preparing for Future Education. Visang Education</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Research Reports</h2>
+                <ul>
+                    <li><span class="highlight">[2023]</span> Ethical Issues and Improvement Plans Experienced by Adolescents in AI Digital Environment. Chungcheongnam-do Office of Education</li>
+                    <li><span class="highlight">[2020]</span> Development of Training Model for Improving Training Effectiveness. Ministry of Education Central Education Training Institute</li>
+                </ul>
+            </section>
+            <section class="cv-section">
+                <h2>Research Projects</h2>
+                <h3>2025 (Ongoing)</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Performance Management Service for Digital-Based Educational Innovation Teacher Training Operation in 2025</li>
+                    <li><span class="highlight">Period:</span> Started August 25, 2025</li>
+                    <li><span class="highlight">Funding Agency:</span> Gwangju Metropolitan Office of Education</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Gwangju National University of Education</li>
+                    <li><span class="highlight">Role:</span> Principal Investigator</li>
+                </ul>
+                <h3>2025</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Training Materials for Supporting Digital-Based Educational Innovation Teacher Training in 2025</li>
+                    <li><span class="highlight">Period:</span> April 21, 2025 - May 20, 2025</li>
+                    <li><span class="highlight">Funding Agency:</span> Gwangju Metropolitan Office of Education</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Gwangju National University of Education</li>
+                    <li><span class="highlight">Role:</span> Principal Investigator</li>
+                </ul>
+                <h3>2023-Present (Ongoing)</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> PMC Service for Strengthening ICT Utilization Capability of Teachers in Honduras</li>
+                    <li><span class="highlight">Period:</span> March 1, 2023 - Present</li>
+                    <li><span class="highlight">Funding Agency:</span> Korea International Cooperation Agency (KOICA)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Support Manager</li>
+                </ul>
+                <h3>2022-2023</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Teaching Support System Based on Learner Concentration Detection Using Machine Learning</li>
+                    <li><span class="highlight">Period:</span> March 1, 2022 - February 28, 2023</li>
+                    <li><span class="highlight">Funding Agency:</span> National Research Foundation of Korea (Ministry of Science and ICT)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2021-Present (Ongoing)</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> PMC Service for Strengthening ICT Education Capacity in Middle Schools of Cambodia</li>
+                    <li><span class="highlight">Period:</span> September 10, 2021 - Present</li>
+                    <li><span class="highlight">Funding Agency:</span> Korea International Cooperation Agency (KOICA)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2021-2022</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Teaching Support System Based on Learner Concentration Detection Using Machine Learning</li>
+                    <li><span class="highlight">Period:</span> June 1, 2021 - February 28, 2022</li>
+                    <li><span class="highlight">Funding Agency:</span> National Research Foundation of Korea (Ministry of Science and ICT)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2019-2022</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> PMC Service for Strengthening ICT Utilization Capability of Teachers in Honduras</li>
+                    <li><span class="highlight">Period:</span> December 24, 2019 - October 31, 2022</li>
+                    <li><span class="highlight">Funding Agency:</span> Korea International Cooperation Agency (KOICA)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2019-2020</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Research on the Discovery and Operation Plan for Software (SW) Education Specialist (Basic) Qualification Requirements</li>
+                    <li><span class="highlight">Period:</span> November 4, 2019 - February 11, 2020</li>
+                    <li><span class="highlight">Funding Agency:</span> Jeonnam Regional Human Resources Development Corporation</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Kim Jeong-Rang, Department of Computer Education, Gwangju National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2019-2020</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Software Education Support System Applying Learning Analytics Techniques</li>
+                    <li><span class="highlight">Period:</span> March 1, 2019 - February 29, 2020</li>
+                    <li><span class="highlight">Funding Agency:</span> National Research Foundation of Korea (Ministry of Science and ICT)</li>
+                    <li><span class="highlight">Research Institute:</span> Industry-Academic Cooperation Foundation, Korea National University of Education</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Song Ki-Sang, Korea National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
+                </ul>
+                <h3>2018-2019</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Educational Content for Training Coding Education Leaders</li>
+                    <li><span class="highlight">Period:</span> December 10, 2018 - April 30, 2019</li>
+                    <li><span class="highlight">Funding Agency:</span> Tisan Books Co., Ltd.</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Kim Jeong-Rang, Department of Computer Education, Gwangju National University of Education</li>
+                    <li><span class="highlight">Role:</span> Co-Researcher</li>
+                </ul>
+                <h3>2017-2018</h3>
+                <ul>
+                    <li><span class="highlight">Project Title:</span> Development of Utilization Models and Guidelines for Digital Textbooks in General Schools</li>
+                    <li><span class="highlight">Period:</span> July 11, 2017 - January 10, 2018</li>
+                    <li><span class="highlight">Funding Agency:</span> Korea Education and Research Information Service</li>
+                    <li><span class="highlight">Principal Investigator:</span> Prof. Kim Jeong-Rang, Department of Computer Education, Gwangju National University of Education</li>
+                    <li><span class="highlight">Role:</span> Research Assistant</li>
                 </ul>
             </section>
         </div>
