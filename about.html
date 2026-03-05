@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="전인성 - CV / 이력서. 교육학박사(컴퓨터교육). AI교육, 소프트웨어교육, 학습분석 연구자.">
+    <title>CV - 전인성</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-inner">
+            <a href="index.html" class="site-title">
+                <span class="lang-content lang-ko active">전인성</span>
+                <span class="lang-content lang-en">Inseong Jeon</span>
+            </a>
+            <div class="header-right">
+                <nav class="site-nav" id="mainNav">
+                    <ul>
+                        <li class="nav-item"><a class="nav-text-link" href="index.html">
+                            <span class="lang-content lang-ko active">홈</span>
+                            <span class="lang-content lang-en">Home</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link active" href="about.html">
+                            <span class="lang-content lang-ko active">소개</span>
+                            <span class="lang-content lang-en">About</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="index.html#projects">
+                            <span class="lang-content lang-ko active">프로젝트</span>
+                            <span class="lang-content lang-en">Projects</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="index.html#contact">
+                            <span class="lang-content lang-ko active">연락처</span>
+                            <span class="lang-content lang-en">Contact</span>
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Dark mode toggle">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button id="languageToggle" class="language-toggle">ENG</button>
+                </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="index.html">
+                <span class="lang-content lang-ko active">홈</span>
+                <span class="lang-content lang-en">Home</span>
+            </a></li>
+            <li><a href="about.html">
+                <span class="lang-content lang-ko active">소개</span>
+                <span class="lang-content lang-en">About</span>
+            </a></li>
+            <li><a href="#education">
+                <span class="lang-content lang-ko active">학력</span>
+                <span class="lang-content lang-en">Education</span>
+            </a></li>
+            <li><a href="#publications">
+                <span class="lang-content lang-ko active">논문</span>
+                <span class="lang-content lang-en">Publications</span>
+            </a></li>
+            <li><a href="#research">
+                <span class="lang-content lang-ko active">연구과제</span>
+                <span class="lang-content lang-en">Research</span>
+            </a></li>
+            <li><a href="index.html#projects">
+                <span class="lang-content lang-ko active">프로젝트</span>
+                <span class="lang-content lang-en">Projects</span>
+            </a></li>
+            <li><a href="index.html#contact">
+                <span class="lang-content lang-ko active">연락처</span>
+                <span class="lang-content lang-en">Contact</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="container">
+            <div class="cover">
+                <!-- Mini Hero -->
+                <div class="cover-bg">
+                    <div class="cover-row">
+                        <div class="avatar-col">
+                            <div class="avatar">
+                                <img src="https://ui-avatars.com/api/?name=JS&size=200&background=ffffff&color=4A89DC&font-size=0.4&bold=true" alt="Inseong Jeon" width="200" height="200">
+                            </div>
+                        </div>
+                        <div class="info-col">
+                            <h1 class="cover-name">
+                                <span class="lang-content lang-ko active">전인성</span>
+                                <span class="lang-content lang-en">Inseong Jeon</span>
+                            </h1>
+                            <p class="cover-title">
+                                <span class="lang-content lang-ko active">교육학박사 (컴퓨터교육) | AI교육 연구자</span>
+                                <span class="lang-content lang-en">Ph.D. in Computer Education | AI Education Researcher</span>
+                            </p>
+                            <div class="cover-buttons">
+                                <a class="btn btn-light" href="mailto:jinsung4069@gmail.com">
+                                    <i class="fas fa-envelope"></i>&nbsp;
+                                    <span class="lang-content lang-ko active">이메일</span>
+                                    <span class="lang-content lang-en">Email</span>
+                                </a>
+                                <a class="btn btn-success" href="https://github.com/jinsung4069" target="_blank">
+                                    <i class="fab fa-github"></i>&nbsp; GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="about-section">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">개인정보</span>
+                        <span class="lang-content lang-en">Personal Information</span>
+                    </h2>
+                    <div class="about-info" style="flex: none;">
+                        <div class="info-row">
+                            <div class="info-label">
+                                <span class="lang-content lang-ko active">최종학위</span>
+                                <span class="lang-content lang-en">Degree</span>
+                            </div>
+                            <div class="info-value">
+                                <span class="lang-content lang-ko active">교육학박사 (컴퓨터교육)</span>
+                                <span class="lang-content lang-en">Ph.D. (Computer Education)</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <span class="lang-content lang-ko active">세부전공</span>
+                                <span class="lang-content lang-en">Major</span>
+                            </div>
+                            <div class="info-value">
+                                <span class="lang-content lang-ko active">초등컴퓨터교육전공</span>
+                                <span class="lang-content lang-en">Elementary Computer Education</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">
+                                <span class="lang-content lang-ko active">소속</span>
+                                <span class="lang-content lang-en">Affiliation</span>
+                            </div>
+                            <div class="info-value">
+                                <span class="lang-content lang-ko active">광주교육대학교</span>
+                                <span class="lang-content lang-en">Gwangju National University of Education</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">jinsung4069@gmail.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Education -->
+                <div class="education-section" id="education">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">학력사항</span>
+                        <span class="lang-content lang-en">Education</span>
+                    </h2>
+                    <div class="timeline">
+                        <div class="timeline-card timeline-card-success">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">교육학박사 (컴퓨터교육) <span class="text-muted">| 한국교원대학교</span></span>
+                                    <span class="lang-content lang-en">Ph.D. in Computer Education <span class="text-muted">| Korea National Univ. of Education</span></span>
+                                </div>
+                                <div class="card-date">2017.03 - 2023.02</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">초등컴퓨터교육전공</span>
+                                    <span class="lang-content lang-en">Elementary Computer Education</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-card timeline-card-success">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">교육학석사 (컴퓨터교육) <span class="text-muted">| 광주교육대학교</span></span>
+                                    <span class="lang-content lang-en">M.Ed. in Computer Education <span class="text-muted">| Gwangju Nat'l Univ. of Ed.</span></span>
+                                </div>
+                                <div class="card-date">2014.03 - 2016.08</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">초등컴퓨터교육전공</span>
+                                    <span class="lang-content lang-en">Elementary Computer Education</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-card timeline-card-success">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">교육학사 (컴퓨터교육) <span class="text-muted">| 광주교육대학교</span></span>
+                                    <span class="lang-content lang-en">B.Ed. in Computer Education <span class="text-muted">| Gwangju Nat'l Univ. of Ed.</span></span>
+                                </div>
+                                <div class="card-date">2010.03 - 2014.02</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Thesis -->
+                <div class="publications-section">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">학위논문</span>
+                        <span class="lang-content lang-en">Thesis</span>
+                    </h2>
+                    <div class="pub-category">
+                        <h3 class="pub-category-title">
+                            <span class="lang-content lang-ko active">박사학위논문</span>
+                            <span class="lang-content lang-en">Ph.D. Thesis</span>
+                        </h3>
+                        <ul class="pub-list">
+                            <li class="pub-item">
+                                <span class="pub-year">2023</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">
+                                        인공지능 및 학습분석을 적용한 블록 기반 소프트웨어·인공지능교육 교수 학습 지원 시스템 개발<br>
+                                        <em>한국교원대학교대학원 | 지도교수: 송기상</em>
+                                    </span>
+                                    <span class="lang-content lang-en">
+                                        Development of a Block-Based Software/AI Education Support System Integrating AI and Learning Analytics<br>
+                                        <em>Korea National University of Education | Supervisor: Song Ki-Sang</em>
+                                    </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pub-category">
+                        <h3 class="pub-category-title">
+                            <span class="lang-content lang-ko active">석사학위논문</span>
+                            <span class="lang-content lang-en">M.Ed. Thesis</span>
+                        </h3>
+                        <ul class="pub-list">
+                            <li class="pub-item">
+                                <span class="pub-year">2016</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">
+                                        마인크래프트를 활용한 게임기반학습 프로그램 개발 및 적용<br>
+                                        <em>광주교육대학교 교육대학원 | 지도교수: 김정랑</em>
+                                    </span>
+                                    <span class="lang-content lang-en">
+                                        Development and Application of Game-Based Learning Program Using Minecraft<br>
+                                        <em>Gwangju Nat'l Univ. of Education | Supervisor: Kim Jeong-Rang</em>
+                                    </span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Publications -->
+                <div class="publications-section" id="publications">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">학술논문</span>
+                        <span class="lang-content lang-en">Publications</span>
+                    </h2>
+                    <div class="pub-category">
+                        <h3 class="pub-category-title">
+                            <span class="lang-content lang-ko active">국제학술지 (SCIE/SSCI)</span>
+                            <span class="lang-content lang-en">International Journals (SCIE/SSCI)</span>
+                        </h3>
+                        <ul class="pub-list">
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    A Staged Framework for Computer Vision Education: Integrating AI, Data Science, and Computational Thinking. <em>Applied Sciences</em> (SCIE). <a href="https://doi.org/10.3390/app14219792" target="_blank">DOI</a>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    Developing Standards for Educational Datasets by School Level: A Framework for Sustainable K-12 Education. <em>Sustainability</em> (SSCI). <a href="https://doi.org/10.3390/su16124954" target="_blank">DOI</a>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    Integrating Data Science and Machine Learning to Chemistry Education: Predicting Classification and Boiling Point of Compounds. <em>Journal of Chemical Education</em> (SCIE). <a href="https://pubs.acs.org/doi/10.1021/acs.jchemed.3c01040" target="_blank">DOI</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pub-category">
+                        <h3 class="pub-category-title">
+                            <span class="lang-content lang-ko active">국내학술지 (KCI)</span>
+                            <span class="lang-content lang-en">Domestic Journals (KCI)</span>
+                        </h3>
+                        <ul class="pub-list">
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">LMS 기반 교수학습 플랫폼을 활용한 초등학생 대상 소프트웨어교육 프로그램의 효과성 분석. <em>컴퓨터교육학회논문지</em></span>
+                                    <span class="lang-content lang-en">Effectiveness Analysis of Software Education Programs for Elementary School Students Using LMS-Based Teaching and Learning Platforms. <em>J. Korean Assoc. Computer Education</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">초등학교 저학년을 위한 인공지능 교육용 콘텐츠 설계 및 개발. <em>에듀테인먼트연구</em></span>
+                                    <span class="lang-content lang-en">Design and Development of AI Educational Content for Lower Elementary School Students. <em>J. Korea Entertainment Industry Assoc.</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">인공지능 융합 기후환경교육을 위한 수업 연구. <em>사회과교육</em></span>
+                                    <span class="lang-content lang-en">A Study on AI-Integrated Climate and Environmental Education. <em>Social Studies Education</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2024</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">청소년의 인공지능 및 디지털 윤리 문제와 교육방안 고찰. <em>학습자중심교과교육연구</em></span>
+                                    <span class="lang-content lang-en">A Study on AI and Digital Ethics Issues and Educational Solutions for Adolescents. <em>The J. Learner-Centered Curriculum and Instruction</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2023</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">예비 정보교사 대상 스토리텔링 기반 실생활 문제해결 인공지능 융합교육 프로그램의 교육적 효과. <em>학습자중심교과교육연구</em></span>
+                                    <span class="lang-content lang-en">Educational Effects of AI Convergence Education Program Based on Storytelling for Real-Life Problem Solving for Pre-Service Information Teachers. <em>The J. Learner-Centered Curriculum and Instruction</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2022</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">자연어 처리 모델을 활용한 블록 코드 생성 및 추천 모델 개발. <em>정보교육학회논문지</em></span>
+                                    <span class="lang-content lang-en">Development of Block Code Generation and Recommendation Model Using Natural Language Processing. <em>J. Korean Assoc. Information Education</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2022</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">개발도상국 예비교사 양성을 위한 ICT 전공 교육과정 설계 및 개발: 캄보디아. <em>에듀테인먼트연구</em></span>
+                                    <span class="lang-content lang-en">Design and Development of ICT Major Curriculum for Pre-Service Teacher Training in Developing Countries: Cambodia. <em>J. Korea Entertainment Industry Assoc.</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2021</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">교사를 위한 인공지능 소양교육 프로그램 개발 및 인공지능 융합교육 관심도 효과성 검증. <em>한국컴퓨터정보학회논문지</em></span>
+                                    <span class="lang-content lang-en">Development of AI Literacy Education Program for Teachers and Verification of Effectiveness on AI Convergence Education Interest. <em>J. Korea Society of Computer and Information</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2021</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">머신러닝 플랫폼을 활용한 인공지능융합교육이 융합인재소양과 학습몰입에 미치는 영향. <em>한국컴퓨터정보학회논문지</em></span>
+                                    <span class="lang-content lang-en">The Effect of AI Convergence Education Using Machine Learning Platform on Convergence Talent Competency and Learning Flow. <em>J. Korea Society of Computer and Information</em></span>
+                                </div>
+                            </li>
+                            <li class="pub-item">
+                                <span class="pub-year">2021</span>
+                                <div class="pub-content">
+                                    <span class="lang-content lang-ko active">해외 교사를 위한 지속가능한 발전 기반 아두이노 교육과정 설계 및 개발. <em>에듀테인먼트연구</em></span>
+                                    <span class="lang-content lang-en">Design and Development of Arduino Curriculum Based on Sustainable Development for Overseas Teachers. <em>J. Korea Entertainment Industry Assoc.</em></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Books -->
+                <div class="publications-section">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">저서</span>
+                        <span class="lang-content lang-en">Books</span>
+                    </h2>
+                    <ul class="pub-list">
+                        <li class="pub-item">
+                            <span class="pub-year">2024</span>
+                            <div class="pub-content">
+                                <span class="lang-content lang-ko active">초등용 「빛고을 아이(AI)」 광주 AI교육 프로그램 교수학습자료. <em>광주광역시교육연구정보원</em></span>
+                                <span class="lang-content lang-en">Bitgoeul AI - Gwangju AI Education Program Teaching and Learning Materials for Elementary School. <em>Gwangju Metropolitan Office of Education</em></span>
+                            </div>
+                        </li>
+                        <li class="pub-item">
+                            <span class="pub-year">2024</span>
+                            <div class="pub-content">
+                                <span class="lang-content lang-ko active">초등 AI와 함께하는 즐거운 사회수업. <em>광주광역시교육연구정보원</em></span>
+                                <span class="lang-content lang-en">Fun Social Studies Class with Elementary AI. <em>Gwangju Metropolitan Office of Education</em></span>
+                            </div>
+                        </li>
+                        <li class="pub-item">
+                            <span class="pub-year">2022</span>
+                            <div class="pub-content">
+                                <span class="lang-content lang-ko active">수업에 바로 쓰는 AI : 미래교육을 준비하다. <em>비상교육</em></span>
+                                <span class="lang-content lang-en">AI Ready to Use in Class: Preparing for Future Education. <em>Visang Education</em></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Research Reports -->
+                <div class="publications-section">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">연구보고서</span>
+                        <span class="lang-content lang-en">Research Reports</span>
+                    </h2>
+                    <ul class="pub-list">
+                        <li class="pub-item">
+                            <span class="pub-year">2023</span>
+                            <div class="pub-content">
+                                <span class="lang-content lang-ko active">AI 디지털 환경에서 청소년이 경험하는 윤리적 이슈 및 개선 방안. <em>충청남도교육청</em></span>
+                                <span class="lang-content lang-en">Ethical Issues and Improvement Plans Experienced by Adolescents in AI Digital Environment. <em>Chungcheongnam-do Office of Education</em></span>
+                            </div>
+                        </li>
+                        <li class="pub-item">
+                            <span class="pub-year">2020</span>
+                            <div class="pub-content">
+                                <span class="lang-content lang-ko active">연수 효과성 제고를 위한 연수모형 개발. <em>교육부중앙교육연수원</em></span>
+                                <span class="lang-content lang-en">Development of Training Model for Improving Training Effectiveness. <em>Ministry of Education Central Education Training Institute</em></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Research Projects -->
+                <div class="experience-section" id="research">
+                    <h2 class="section-title">
+                        <span class="lang-content lang-ko active">연구과제 참여</span>
+                        <span class="lang-content lang-en">Research Projects</span>
+                    </h2>
+                    <div class="timeline">
+                        <!-- 2025 Ongoing -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">디지털 기반 교육혁신 교원연수 운영 성과관리 용역 <span class="text-muted">| 연구책임자</span></span>
+                                    <span class="lang-content lang-en">Performance Management Service for Digital-Based Educational Innovation Teacher Training <span class="text-muted">| Principal Investigator</span></span>
+                                </div>
+                                <div class="card-date">2025 - Present</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">광주광역시교육청 · 광주교육대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">Gwangju Metropolitan Office of Education · Gwangju Nat'l Univ. of Ed.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 2025 -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">디지털 기반 교육혁신 교원연수 연수자료 개발 용역 <span class="text-muted">| 연구책임자</span></span>
+                                    <span class="lang-content lang-en">Development of Training Materials for Digital-Based Educational Innovation Teacher Training <span class="text-muted">| Principal Investigator</span></span>
+                                </div>
+                                <div class="card-date">2025.04 - 2025.05</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">광주광역시교육청 · 광주교육대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">Gwangju Metropolitan Office of Education · Gwangju Nat'l Univ. of Ed.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Honduras 2023 -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">온두라스 교원 ICT 활용능력 강화사업 PMC 용역 <span class="text-muted">| 연구지원관리</span></span>
+                                    <span class="lang-content lang-en">PMC Service for Strengthening ICT Capability of Teachers in Honduras <span class="text-muted">| Research Support Manager</span></span>
+                                </div>
+                                <div class="card-date">2023 - Present</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국국제협력단(KOICA) · 한국교원대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">Korea International Cooperation Agency (KOICA) · KNUE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ML Teaching Support 2022-2023 -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">머신 러닝을 이용한 학습자 집중도 감지 기반 교수 지원 시스템 개발 <span class="text-muted">| 연구보조원</span></span>
+                                    <span class="lang-content lang-en">Development of Teaching Support System Based on Learner Concentration Detection Using ML <span class="text-muted">| Research Assistant</span></span>
+                                </div>
+                                <div class="card-date">2021 - 2023</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국연구재단 · 한국교원대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">National Research Foundation of Korea · KNUE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Cambodia -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">캄보디아 중학교 ICT 교육역량 강화사업 PMC <span class="text-muted">| 연구보조원</span></span>
+                                    <span class="lang-content lang-en">PMC Service for Strengthening ICT Education Capacity in Cambodia <span class="text-muted">| Research Assistant</span></span>
+                                </div>
+                                <div class="card-date">2021 - Present</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국국제협력단(KOICA) · 한국교원대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">Korea International Cooperation Agency (KOICA) · KNUE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Honduras 2019-2022 -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">온두라스 교원 ICT 활용능력 강화사업 PMC 용역 <span class="text-muted">| 연구보조원</span></span>
+                                    <span class="lang-content lang-en">PMC Service for Strengthening ICT Capability of Teachers in Honduras <span class="text-muted">| Research Assistant</span></span>
+                                </div>
+                                <div class="card-date">2019 - 2022</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국국제협력단(KOICA) · 한국교원대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">Korea International Cooperation Agency (KOICA) · KNUE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- SW Education 2019-2020 -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">학습분석 기법을 적용한 소프트웨어교육 지원 시스템 개발 <span class="text-muted">| 연구보조원</span></span>
+                                    <span class="lang-content lang-en">Development of SW Education Support System Applying Learning Analytics <span class="text-muted">| Research Assistant</span></span>
+                                </div>
+                                <div class="card-date">2019 - 2020</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국연구재단 · 한국교원대학교 산학협력단</span>
+                                    <span class="lang-content lang-en">National Research Foundation of Korea · KNUE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Coding Education Content -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">코딩교육 지도자를 양성하기 위한 교육용 콘텐츠 개발 <span class="text-muted">| 공동연구원</span></span>
+                                    <span class="lang-content lang-en">Development of Educational Content for Training Coding Education Leaders <span class="text-muted">| Co-Researcher</span></span>
+                                </div>
+                                <div class="card-date">2018 - 2019</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">(주)티산북스 · 광주교육대학교</span>
+                                    <span class="lang-content lang-en">Tisan Books Co., Ltd. · Gwangju Nat'l Univ. of Ed.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Digital Textbook -->
+                        <div class="timeline-card timeline-card-primary">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <span class="lang-content lang-ko active">디지털교과서 확산을 위한 일반학교 활용 모델 및 가이드라인 개발 <span class="text-muted">| 보조연구원</span></span>
+                                    <span class="lang-content lang-en">Development of Utilization Models and Guidelines for Digital Textbooks <span class="text-muted">| Research Assistant</span></span>
+                                </div>
+                                <div class="card-date">2017 - 2018</div>
+                                <div class="card-desc">
+                                    <span class="lang-content lang-ko active">한국교육학술정보원 · 광주교육대학교</span>
+                                    <span class="lang-content lang-en">Korea Education and Research Information Service · Gwangju Nat'l Univ. of Ed.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-name">
+                    <span class="lang-content lang-ko active">전인성</span>
+                    <span class="lang-content lang-en">Inseong Jeon</span>
+                </div>
+                <nav class="footer-nav">
+                    <ul>
+                        <li><a href="https://github.com/jinsung4069" title="Github" target="_blank"><i class="fab fa-github"></i></a></li>
+                        <li><a href="mailto:jinsung4069@gmail.com" title="Email"><i class="fas fa-envelope"></i></a></li>
+                        <li><a href="https://scholar.google.co.kr/citations?user=YOUR_ID" title="Google Scholar" target="_blank"><i class="fas fa-graduation-cap"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <span class="lang-content lang-ko active">&copy; 2024 전인성. All rights reserved.</span>
+                <span class="lang-content lang-en">&copy; 2024 Inseong Jeon. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

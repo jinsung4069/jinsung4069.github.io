@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="머신러닝 알고리즘 시뮬레이션: 선형회귀, KNN, K-Means, 의사결정트리, 나이브 베이즈">
+    <title>머신러닝 시뮬레이션 - 전인성</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .simulation-section {
+            padding: 4rem 2rem;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        .simulation-container {
+            max-width: 80rem;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            align-items: start;
+        }
+        .canvas-container {
+            background: var(--color-white);
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            position: relative;
+            cursor: crosshair;
+            box-shadow: var(--shadow-sm);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #fff;
+        }
+        .controls {
+            background: var(--color-gray-100);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--color-gray-200);
+        }
+        .controls h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: var(--color-gray-900);
+        }
+        .controls p {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--color-gray-600);
+            line-height: 1.6;
+        }
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .btn {
+             padding: 0.5rem 1rem;
+            background: var(--color-picto-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .btn:hover {
+            background: var(--color-picto-primary-dark);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--color-picto-primary);
+            color: var(--color-picto-primary);
+        }
+        .btn-outline:hover {
+            background: rgba(153, 41, 251, 0.1);
+        }
+        .stats {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-gray-300);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 900px) {
+            .simulation-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="../index.html" class="site-title">
+                <span class="lang-content lang-ko active">전인성</span>
+                <span class="lang-content lang-en">Inseong Jeon</span>
+            </a>
+            <div class="header-right">
+                <nav class="site-nav" id="mainNav">
+                    <ul>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html">
+                            <span class="lang-content lang-ko active">홈</span>
+                            <span class="lang-content lang-en">Home</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../about.html">
+                            <span class="lang-content lang-ko active">소개</span>
+                            <span class="lang-content lang-en">About</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html#projects">
+                            <span class="lang-content lang-ko active">프로젝트</span>
+                            <span class="lang-content lang-en">Projects</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html#contact">
+                            <span class="lang-content lang-ko active">연락처</span>
+                            <span class="lang-content lang-en">Contact</span>
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Dark mode toggle">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button id="languageToggle" class="language-toggle">ENG</button>
+                </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="../index.html">
+                <span class="lang-content lang-ko active">홈</span>
+                <span class="lang-content lang-en">Home</span>
+            </a></li>
+            <li><a href="../about.html">
+                <span class="lang-content lang-ko active">소개</span>
+                <span class="lang-content lang-en">About</span>
+            </a></li>
+            <li><a href="../index.html#projects">
+                <span class="lang-content lang-ko active">프로젝트</span>
+                <span class="lang-content lang-en">Projects</span>
+            </a></li>
+            <li><a href="../index.html#contact">
+                <span class="lang-content lang-ko active">연락처</span>
+                <span class="lang-content lang-en">Contact</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero lang-content lang-ko active" style="padding: 4rem 2rem;">
+            <h1>머신러닝 알고리즘 시뮬레이션</h1>
+            <p>다양한 머신러닝 알고리즘이 데이터를 어떻게 학습하고 분류하는지 직접 체험해보세요.</p>
+        </section>
+        <section class="hero lang-content lang-en" style="padding: 4rem 2rem;">
+            <h1>Machine Learning Simulations</h1>
+            <p>Interactive demonstrations of various machine learning algorithms.</p>
+        </section>
+
+        <!-- 1. Linear Regression -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="lrCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>선형 회귀 (Linear Regression)</h3>
+                    <p class="lang-content lang-ko active">
+                        데이터 포인트들의 경향성을 가장 잘 설명하는 하나의 직선을 찾습니다. 
+                        캔버스를 클릭하여 점을 추가해보세요. 실시간으로 최적의 회귀선이 계산됩니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Finds the best-fitting straight line through the points. 
+                        Click on the canvas to add points. The regression line updates in real-time.
+                    </p>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="lr.reset()">초기화 (Reset)</button>
+                    </div>
+                    <div id="lrStats" class="stats">
+                        기울기(Slope): 0<br>
+                        절편(Intercept): 0
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. KNN -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="knnCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>K-최근접 이웃 (KNN)</h3>
+                    <p class="lang-content lang-ko active">
+                        새로운 데이터의 클래스를 결정할 때, 가장 가까운 K개의 이웃 데이터를 참조합니다.
+                        버튼으로 클래스를 선택하고 점을 찍어보세요. 마우스를 움직이면 해당 위치의 분류 결과를 볼 수 있습니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Classifies new data based on the majority class of its K nearest neighbors.
+                        Select a class, add points, and move your mouse to see the classification.
+                    </p>
+                    <div class="control-group">
+                        <label>Class 선택:</label>
+                        <button class="btn" style="background-color: #ef4444;" onclick="knn.setLabel(0)">Red</button>
+                        <button class="btn" style="background-color: #3b82f6;" onclick="knn.setLabel(1)">Blue</button>
+                        <button class="btn" style="background-color: #22c55e;" onclick="knn.setLabel(2)">Green</button>
+                    </div>
+                    <div class="control-group">
+                        <label>K 값: <span id="kValue">3</span></label>
+                        <input type="range" min="1" max="20" value="3" oninput="knn.setK(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="knn.reset()">초기화 (Reset)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. K-Means -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="kmeansCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>K-평균 군집화 (K-Means)</h3>
+                    <p class="lang-content lang-ko active">
+                        데이터를 K개의 클러스터로 묶는 알고리즘입니다.
+                        점을 찍고 '실행'을 눌러보세요. 중심점(X)이 이동하며 군집을 형성하는 과정을 볼 수 있습니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Partitions data into K distinct clusters.
+                        Add points and click 'Run' to watch the centroids (X) move and form clusters.
+                    </p>
+                    <div class="control-group">
+                        <button class="btn" onclick="kmeans.step()">1단계 진행 (Step)</button>
+                        <button class="btn" onclick="kmeans.run()">자동 실행 (Run)</button>
+                    </div>
+                    <div class="control-group">
+                        <label>클러스터 개수 (K): <span id="kmeansKValue">3</span></label>
+                        <input type="range" min="2" max="5" value="3" oninput="kmeans.setK(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="kmeans.reset()">초기화 (Reset)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Decision Tree -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="dtCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>의사결정트리 (Decision Tree)</h3>
+                    <p class="lang-content lang-ko active">
+                        데이터의 속성(여기서는 X, Y 좌표)을 기준으로 영역을 분할하여 분류합니다.
+                        점을 찍으면 자동으로 공간을 직사각형 영역으로 분할하여 분류 경계를 만듭니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Splits the data space into rectangular regions to classify points.
+                         Add points to see how the tree partitions the space.
+                    </p>
+                    <div class="control-group">
+                        <label>Class 선택:</label>
+                        <button class="btn" style="background-color: #ef4444;" onclick="dt.setLabel(0)">Red</button>
+                        <button class="btn" style="background-color: #3b82f6;" onclick="dt.setLabel(1)">Blue</button>
+                    </div>
+                    <div class="control-group">
+                         <label>최대 깊이 (Max Depth): <span id="dtDepthValue">5</span></label>
+                        <input type="range" min="1" max="10" value="5" oninput="dt.setMaxDepth(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="dt.reset()">초기화 (Reset)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Naive Bayes -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="nbCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>나이브 베이즈 (Naive Bayes)</h3>
+                    <p class="lang-content lang-ko active">
+                        각 클래스의 데이터가 가우시안(정규) 분포를 따른다고 가정하고 확률을 계산합니다.
+                        점을 찍으면 배경색으로 각 위치에서의 확률적 분류 결과를 보여줍니다.
+                    </p>
+                     <p class="lang-content lang-en">
+                        Calculates probabilities assuming data follows a Gaussian distribution.
+                        Add points to visualize the probabilistic classification boundaries.
+                    </p>
+                    <div class="control-group">
+                        <label>Class 선택:</label>
+                        <button class="btn" style="background-color: #ef4444;" onclick="nb.setLabel(0)">Red</button>
+                        <button class="btn" style="background-color: #3b82f6;" onclick="nb.setLabel(1)">Blue</button>
+                        <button class="btn" style="background-color: #22c55e;" onclick="nb.setLabel(2)">Green</button>
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="nb.reset()">초기화 (Reset)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-name">
+                    <span class="lang-content lang-ko active">전인성</span>
+                    <span class="lang-content lang-en">Inseong Jeon</span>
+                </div>
+                <nav class="footer-nav">
+                    <ul>
+                        <li><a href="https://github.com/jinsung4069" title="Github" target="_blank"><i class="fab fa-github"></i></a></li>
+                        <li><a href="mailto:jinsung4069@gmail.com" title="Email"><i class="fas fa-envelope"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <span class="lang-content lang-ko active">&copy; 2024 전인성. All rights reserved.</span>
+                <span class="lang-content lang-en">&copy; 2024 Inseong Jeon. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Helper Classes
+        class Point {
+            constructor(x, y, label = null) {
+                this.x = x;
+                this.y = y;
+                this.label = label;
+            }
+        }
+
+        const COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6'];
+        const BG_COLORS = ['rgba(239, 68, 68, 0.2)', 'rgba(59, 130, 246, 0.2)', 'rgba(34, 197, 94, 0.2)'];
+
+        /* --- 1. Linear Regression --- */
+        const lr = {
+            canvas: document.getElementById('lrCanvas'),
+            ctx: document.getElementById('lrCanvas').getContext('2d'),
+            points: [],
+            
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.points.push(new Point(e.clientX - rect.left, e.clientY - rect.top));
+                    this.draw();
+                });
+                this.draw();
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawGrid();
+                
+                // Draw points
+                this.ctx.fillStyle = COLORS[1];
+                this.points.forEach(p => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+
+                if (this.points.length >= 2) {
+                    this.calculateAndDrawLine();
+                }
+            },
+
+            drawGrid() {
+                 this.ctx.strokeStyle = '#eee';
+                 this.ctx.lineWidth = 1;
+                 for(let i=0; i<this.canvas.width; i+=50) {
+                     this.ctx.beginPath(); this.ctx.moveTo(i,0); this.ctx.lineTo(i,this.canvas.height); this.ctx.stroke();
+                 }
+                 for(let i=0; i<this.canvas.height; i+=50) {
+                     this.ctx.beginPath(); this.ctx.moveTo(0,i); this.ctx.lineTo(this.canvas.width,i); this.ctx.stroke();
+                 }
+            },
+
+            calculateAndDrawLine() {
+                let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+                const n = this.points.length;
+                
+                this.points.forEach(p => {
+                    sumX += p.x;
+                    sumY += p.y;
+                    sumXY += p.x * p.y;
+                    sumXX += p.x * p.x;
+                });
+
+                const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+                const intercept = (sumY - slope * sumX) / n;
+
+                // Draw line
+                this.ctx.strokeStyle = COLORS[0];
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, intercept);
+                this.ctx.lineTo(this.canvas.width, slope * this.canvas.width + intercept);
+                this.ctx.stroke();
+
+                document.getElementById('lrStats').innerHTML = 
+                    `기울기(Slope): ${slope.toFixed(4)}<br>절편(Intercept): ${intercept.toFixed(4)}`;
+            },
+
+            reset() {
+                this.points = [];
+                this.draw();
+                document.getElementById('lrStats').innerHTML = '기울기(Slope): 0<br>절편(Intercept): 0';
+            }
+        };
+        lr.init();
+
+        /* --- 2. KNN --- */
+        const knn = {
+            canvas: document.getElementById('knnCanvas'),
+            ctx: document.getElementById('knnCanvas').getContext('2d'),
+            points: [],
+            currentLabel: 0,
+            k: 3,
+            mousePos: null,
+
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.points.push(new Point(e.clientX - rect.left, e.clientY - rect.top, this.currentLabel));
+                    this.draw();
+                });
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mousePos = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+                    this.draw();
+                });
+                this.canvas.addEventListener('mouseleave', () => {
+                    this.mousePos = null;
+                    this.draw();
+                });
+                this.draw();
+            },
+
+            setLabel(l) { this.currentLabel = l; },
+            setK(val) { 
+                this.k = parseInt(val); 
+                document.getElementById('kValue').innerText = this.k;
+                this.draw(); 
+            },
+
+            classify(x, y) {
+                if (this.points.length === 0) return -1;
+                
+                const distances = this.points.map(p => ({
+                    dist: Math.hypot(p.x - x, p.y - y),
+                    label: p.label
+                })).sort((a, b) => a.dist - b.dist).slice(0, this.k);
+
+                const counts = {};
+                distances.forEach(d => counts[d.label] = (counts[d.label] || 0) + 1);
+                
+                return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw points
+                this.points.forEach(p => {
+                    this.ctx.fillStyle = COLORS[p.label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                });
+
+                // Draw mouse classification
+                if (this.mousePos && this.points.length >= this.k) {
+                    const label = this.classify(this.mousePos.x, this.mousePos.y);
+                    
+                    // Draw range circle (approximate)
+                    const nearest = this.points.map(p => ({
+                        dist: Math.hypot(p.x - this.mousePos.x, p.y - this.mousePos.y),
+                        p: p
+                    })).sort((a, b) => a.dist - b.dist)[this.k - 1];
+                    
+                    if (nearest) {
+                         this.ctx.beginPath();
+                         this.ctx.arc(this.mousePos.x, this.mousePos.y, nearest.dist, 0, Math.PI * 2);
+                         this.ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                         this.ctx.stroke();
+                    }
+
+                    this.ctx.fillStyle = COLORS[label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.mousePos.x, this.mousePos.y, 8, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#000';
+                    this.ctx.stroke();
+                }
+            },
+
+            reset() {
+                this.points = [];
+                this.draw();
+            }
+        };
+        knn.init();
+
+        /* --- 3. K-Means --- */
+        const kmeans = {
+            canvas: document.getElementById('kmeansCanvas'),
+            ctx: document.getElementById('kmeansCanvas').getContext('2d'),
+            points: [],
+            centroids: [],
+            k: 3,
+            
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.points.push(new Point(e.clientX - rect.left, e.clientY - rect.top));
+                    this.draw();
+                });
+                this.draw();
+            },
+
+            setK(val) {
+                this.k = parseInt(val);
+                document.getElementById('kmeansKValue').innerText = this.k;
+                this.resetCentroids();
+                this.draw();
+            },
+
+            resetCentroids() {
+                this.centroids = [];
+            },
+
+            initializeCentroids() {
+                if(this.centroids.length > 0) return;
+                // Randomly pick unique points as centroids if possible
+                if(this.points.length < this.k) {
+                    for(let i=0; i<this.k; i++) {
+                        this.centroids.push(new Point(
+                            Math.random() * this.canvas.width,
+                            Math.random() * this.canvas.height,
+                            i
+                        ));
+                    }
+                } else {
+                     // K-Means++ initialization simplified (random points)
+                     const shuffled = [...this.points].sort(() => 0.5 - Math.random());
+                     for(let i=0; i<this.k; i++) {
+                         this.centroids.push(new Point(shuffled[i].x, shuffled[i].y, i));
+                     }
+                }
+            },
+
+            step() {
+                if(this.points.length === 0) return;
+                this.initializeCentroids();
+
+                // 1. Assign points to nearest centroid
+                this.points.forEach(p => {
+                    let minDist = Infinity;
+                    this.centroids.forEach(c => {
+                        const dist = Math.hypot(p.x - c.x, p.y - c.y);
+                        if(dist < minDist) {
+                            minDist = dist;
+                            p.label = c.label;
+                        }
+                    });
+                });
+
+                // 2. Update centroids
+                const sums = Array(this.k).fill(0).map(() => ({x:0, y:0, count:0}));
+                this.points.forEach(p => {
+                    if(p.label !== null) {
+                        sums[p.label].x += p.x;
+                        sums[p.label].y += p.y;
+                        sums[p.label].count++;
+                    }
+                });
+
+                this.centroids.forEach((c, i) => {
+                    if(sums[i].count > 0) {
+                        c.x = sums[i].x / sums[i].count;
+                        c.y = sums[i].y / sums[i].count;
+                    }
+                });
+
+                this.draw();
+            },
+
+            run() {
+                for(let i=0; i<10; i++) this.step();
+            },
+
+            draw() {
+                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                 // Draw regions (Voronoi-like background) if centroids exist
+                 if(this.centroids.length > 0) {
+                     // Optimization: don't draw pixel by pixel, just points
+                 }
+
+                 // Draw points
+                 this.points.forEach(p => {
+                     this.ctx.fillStyle = p.label !== null ? COLORS[p.label] : '#999';
+                     this.ctx.beginPath();
+                     this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                     this.ctx.fill();
+                 });
+
+                 // Draw centroids
+                 this.centroids.forEach(c => {
+                     this.ctx.strokeStyle = 'black';
+                     this.ctx.fillStyle = COLORS[c.label];
+                     this.ctx.lineWidth = 3;
+                     
+                     this.ctx.beginPath();
+                     this.ctx.moveTo(c.x - 8, c.y - 8);
+                     this.ctx.lineTo(c.x + 8, c.y + 8);
+                     this.ctx.moveTo(c.x + 8, c.y - 8);
+                     this.ctx.lineTo(c.x - 8, c.y + 8);
+                     this.ctx.stroke();
+                 });
+            },
+
+            reset() {
+                this.points = [];
+                this.centroids = [];
+                this.draw();
+            }
+        };
+        kmeans.init();
+
+        /* --- 4. Decision Tree --- */
+        const dt = {
+            canvas: document.getElementById('dtCanvas'),
+            ctx: document.getElementById('dtCanvas').getContext('2d'),
+            points: [],
+            currentLabel: 0,
+            maxDepth: 5,
+            tree: null,
+
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.points.push(new Point(e.clientX - rect.left, e.clientY - rect.top, this.currentLabel));
+                    this.buildTree();
+                    this.draw();
+                });
+                this.draw();
+            },
+
+            setLabel(l) { this.currentLabel = l; },
+            setMaxDepth(v) { 
+                this.maxDepth = parseInt(v); 
+                document.getElementById('dtDepthValue').innerHTML = this.maxDepth;
+                this.buildTree();
+                this.draw(); 
+            },
+
+            buildTree() {
+                if(this.points.length === 0) {
+                    this.tree = null;
+                    return;
+                }
+                this.tree = this.learn(this.points, 0);
+            },
+
+            // Simple ID3-like algorithm for 2D splitting
+            learn(points, depth) {
+                // Base cases
+                if (points.length === 0) return null;
+                const labels = points.map(p => p.label);
+                const uniqueLabels = [...new Set(labels)];
+                if (uniqueLabels.length === 1) return { label: uniqueLabels[0] };
+                if (depth >= this.maxDepth) {
+                     // Majority vote
+                     const counts = {};
+                     labels.forEach(l => counts[l] = (counts[l] || 0) + 1);
+                     const best = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+                     return { label: parseInt(best) };
+                }
+
+                // Find best split
+                let bestGini = Infinity;
+                let bestSplit = null;
+
+                // Try splits on X and Y for every point
+                ['x', 'y'].forEach(axis => {
+                    points.forEach(p => {
+                        const val = p[axis];
+                        const left = points.filter(pt => pt[axis] < val);
+                        const right = points.filter(pt => pt[axis] >= val);
+                        
+                        if(left.length === 0 || right.length === 0) return;
+
+                        const gini = (left.length * this.gini(left) + right.length * this.gini(right)) / points.length;
+                        
+                        if(gini < bestGini) {
+                            bestGini = gini;
+                            bestSplit = { axis, val, left, right };
+                        }
+                    });
+                });
+
+                if(!bestSplit) {
+                     // Unable to split further
+                     const counts = {};
+                     labels.forEach(l => counts[l] = (counts[l] || 0) + 1);
+                     const best = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+                     return { label: parseInt(best) };
+                }
+
+                return {
+                    axis: bestSplit.axis,
+                    val: bestSplit.val,
+                    left: this.learn(bestSplit.left, depth + 1),
+                    right: this.learn(bestSplit.right, depth + 1)
+                };
+            },
+
+            gini(points) {
+                const counts = {};
+                points.forEach(p => counts[p.label] = (counts[p.label] || 0) + 1);
+                let impurity = 1;
+                Object.values(counts).forEach(c => {
+                    const prob = c / points.length;
+                    impurity -= prob * prob;
+                });
+                return impurity;
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw regions
+                if(this.tree) {
+                    this.drawNode(this.tree, 0, 0, this.canvas.width, this.canvas.height);
+                }
+
+                // Draw points
+                this.points.forEach(p => {
+                    this.ctx.fillStyle = COLORS[p.label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'white';
+                    this.ctx.stroke();
+                });
+            },
+
+            drawNode(node, x, y, w, h) {
+                if(!node) return;
+
+                if(node.label !== undefined) {
+                    this.ctx.fillStyle = BG_COLORS[node.label] || 'rgba(0,0,0,0.1)';
+                    this.ctx.fillRect(x, y, w, h);
+                    return;
+                }
+
+                if(node.axis === 'x') {
+                    const splitX = node.val;
+                    // Ensure split is within bounds for drawing logic
+                    // (Simplification: just draw relative to current box)
+                    // Actually node.val is absolute coordinate
+                    
+                    // Left box
+                    this.drawNode(node.left, x, y,  Math.max(0, Math.min(w, splitX - x)), h);
+                    // Right box
+                    this.drawNode(node.right, Math.max(x, splitX), y, Math.min(w, x + w - splitX), h);
+                    
+                    // Draw split line
+                    if(splitX > x && splitX < x + w) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(splitX, y);
+                        this.ctx.lineTo(splitX, y + h);
+                        this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                        this.ctx.stroke();
+                    }
+                } else { // axis === 'y'
+                    const splitY = node.val;
+                    
+                    // Upper box
+                    this.drawNode(node.left, x, y, w, Math.max(0, Math.min(h, splitY - y)));
+                    // Lower box
+                    this.drawNode(node.right, x, Math.max(y, splitY), w, Math.min(h, y + h - splitY));
+
+                    // Draw split line
+                    if(splitY > y && splitY < y + h) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x, splitY);
+                        this.ctx.lineTo(x + w, splitY);
+                        this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                        this.ctx.stroke();
+                    }
+                }
+            },
+
+            reset() {
+                this.points = [];
+                this.tree = null;
+                this.draw();
+            }
+        };
+        dt.init();
+
+       /* --- 5. Naive Bayes --- */
+        const nb = {
+            canvas: document.getElementById('nbCanvas'),
+            ctx: document.getElementById('nbCanvas').getContext('2d'),
+            points: [],
+            currentLabel: 0,
+            
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.points.push(new Point(e.clientX - rect.left, e.clientY - rect.top, this.currentLabel));
+                    this.draw();
+                });
+                this.draw();
+            },
+
+            setLabel(l) { this.currentLabel = l; },
+
+            // Calculate Gaussian prob density
+            getGuanassianPdf(mean, variance, x) {
+                const eps = 1e-6; // Avoid division by zero
+                const sigma = Math.sqrt(variance) + eps;
+                return (1 / (sigma * Math.sqrt(2 * Math.PI))) * 
+                       Math.exp(-0.5 * Math.pow((x - mean) / sigma, 2));
+            },
+
+            calculateStats() {
+                const classes = {};
+                this.points.forEach(p => {
+                    if(!classes[p.label]) classes[p.label] = { xSum:0, ySum:0, xSqSum:0, ySqSum:0, count:0, color: p.label };
+                    classes[p.label].xSum += p.x;
+                    classes[p.label].ySum += p.y;
+                    classes[p.label].xSqSum += p.x*p.x;
+                    classes[p.label].ySqSum += p.y*p.y;
+                    classes[p.label].count++;
+                });
+
+                const stats = {};
+                for(let l in classes) {
+                    const c = classes[l];
+                    const meanX = c.xSum / c.count;
+                    const meanY = c.ySum / c.count;
+                    const varX = (c.xSqSum / c.count) - (meanX * meanX);
+                    const varY = (c.ySqSum / c.count) - (meanY * meanY);
+                    stats[l] = { meanX, meanY, varX, varY, prior: c.count / this.points.length };
+                }
+                return stats;
+            },
+
+            drawBackground(stats) {
+                if(Object.keys(stats).length === 0) return;
+                
+                const width = this.canvas.width;
+                const height = this.canvas.height;
+                const resolution = 10; // Pixel size for heatmap
+
+                for(let x = 0; x < width; x += resolution) {
+                    for(let y = 0; y < height; y += resolution) {
+                        let bestLabel = -1;
+                        let maxProb = -1;
+
+                        for(let l in stats) {
+                             const s = stats[l];
+                             const probX = this.getGuanassianPdf(s.meanX, s.varX, x + resolution/2);
+                             const probY = this.getGuanassianPdf(s.meanY, s.varY, y + resolution/2);
+                             // Naive assumption: independency
+                             const prob = probX * probY * s.prior;
+                             
+                             if(prob > maxProb) {
+                                 maxProb = prob;
+                                 bestLabel = l;
+                             }
+                        }
+
+                        if(bestLabel !== -1) {
+                            this.ctx.fillStyle = BG_COLORS[bestLabel];
+                            this.ctx.fillRect(x, y, resolution, resolution);
+                        }
+                    }
+                }
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                const stats = this.calculateStats();
+                // Only draw background if we have at least 2 points (optimization)
+                if(this.points.length > 1) {
+                    this.drawBackground(stats);
+                }
+
+                // Draw points
+                this.points.forEach(p => {
+                    this.ctx.fillStyle = COLORS[p.label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'white';
+                    this.ctx.stroke();
+                });
+            },
+
+             reset() {
+                this.points = [];
+                this.draw();
+            }
+        };
+        nb.init();
+
+    </script>
+</body>
+</html>
