@@ -933,7 +933,7 @@
                     const hIdx = Math.floor(i * step) * RES + Math.floor(j * step);
                     let h = (heightmap[hIdx] || 0) * heightScale * animProgress;
 
-                    positions[vIdx * 3 + 2] = -h; // Z becomes Y after rotation
+                    positions[vIdx * 3 + 2] = h; // Z becomes Y (upward) after rotation
 
                     if (h > peakH) {
                         peakH = h;
