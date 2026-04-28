@@ -446,8 +446,90 @@
     margin-top: 0.5rem;
 }
 
+.search-experience-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(240px, 0.42fr) minmax(0, 1fr);
+    margin-top: 1rem;
+}
+
+.search-panel {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+}
+
+.search-form {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+}
+
+.search-form label {
+    color: var(--color-gray-600);
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.search-form input,
+.search-form select {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-sm, 6px);
+    color: var(--color-gray-900);
+    font: inherit;
+    min-width: 0;
+    padding: 0.6rem 0.75rem;
+    width: 100%;
+}
+
+.search-form-row {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr 1fr;
+}
+
+.search-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.sql-preview-panel {
+    min-width: 0;
+}
+
+.generated-sql-block,
+.search-results-block {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.search-results-block {
+    margin-top: 1rem;
+}
+
+.generated-sql {
+    background: #101828;
+    border-radius: var(--border-radius-lg);
+    color: #e5e7eb;
+    font-family: Consolas, Monaco, 'Courier New', monospace;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    margin: 0;
+    max-height: 19rem;
+    overflow: auto;
+    padding: 1rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 [data-theme="dark"] .module-tabs,
-[data-theme="dark"] .choice-option {
+[data-theme="dark"] .choice-option,
+[data-theme="dark"] .search-panel {
     background: var(--color-gray-100);
 }
 
@@ -480,6 +562,10 @@
         grid-template-columns: 1fr;
     }
 
+    .search-experience-grid {
+        grid-template-columns: 1fr;
+    }
+
     .module-tabs {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         position: static;
@@ -498,6 +584,10 @@
 
     .module-heading {
         display: block;
+    }
+
+    .search-form-row {
+        grid-template-columns: 1fr;
     }
 
     .score-pill {

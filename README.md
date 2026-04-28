@@ -82,6 +82,7 @@ Deep Q-Network reinforcement learning demonstration with:
 ### Database Construction Lab
 Interactive practice for database construction topics:
 - Physical database design decisions
+- KCI article search frontend that reveals the generated SQL and real SQLite results
 - SQL application with DDL, DML, and TCL using KCI article data
 - SQL usage with joins, grouping, subqueries, and indexes in browser SQLite
 - Data conversion mapping, cleansing, deduplication, and validation
