@@ -72,12 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
             languageToggle.textContent = lang === 'ko' ? 'ENG' : 'KOR';
         }
 
-        // Update page title
-        if (lang === 'ko') {
-            document.title = '\uc804\uc778\uc131 - \ud3ec\ud2b8\ud3f4\ub9ac\uc624 & CV';
-        } else {
-            document.title = "Inseong Jeon - Portfolio & CV";
-        }
+        const titleKo = document.body?.dataset.titleKo || '\uc804\uc778\uc131 - \ud3ec\ud2b8\ud3f4\ub9ac\uc624 & CV';
+        const titleEn = document.body?.dataset.titleEn || 'Inseong Jeon - Portfolio & CV';
+        document.title = lang === 'ko' ? titleKo : titleEn;
     }
 
     function setTheme(theme) {
