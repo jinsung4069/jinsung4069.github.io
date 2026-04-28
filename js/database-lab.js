@@ -29,7 +29,7 @@
         datasetError: { ko: '데이터셋 오류', en: 'Dataset Error' },
         datasetTitle: { ko: 'KCI 논문 실습 데이터', en: 'KCI Article Practice Data' },
         datasetLoadingBody: { ko: 'KCI CSV와 SQLite 엔진을 불러오는 중입니다.', en: 'Loading the KCI CSV and SQLite engine.' },
-        datasetReadyBody: { ko: 'CSV를 브라우저 SQLite에 적재했습니다. SQL 응용/활용 모듈은 실제 질의 결과로 채점됩니다.', en: 'The CSV has been loaded into browser SQLite. SQL modules are graded by real query results.' },
+        datasetReadyBody: { ko: 'CSV를 브라우저 SQLite에 적재했습니다. 검색 체험과 SQL 응용/활용 모듈은 실제 질의 결과를 사용합니다.', en: 'The CSV has been loaded into browser SQLite. The search experience and SQL modules use real query results.' },
         datasetFallbackBody: { ko: 'CSV 또는 SQL 엔진 로딩에 실패했습니다. 선택형 모듈은 계속 사용할 수 있습니다.', en: 'CSV or SQL engine loading failed. Choice modules remain available.' },
         rows: { ko: '행', en: 'Rows' },
         columns: { ko: '컬럼', en: 'Columns' },
@@ -38,7 +38,14 @@
         resultPreview: { ko: '실행 결과 미리보기', en: 'Result Preview' },
         noRows: { ko: '표시할 결과 행이 없습니다.', en: 'No result rows to display.' },
         blockedSql: { ko: '원본 KCI 테이블은 직접 수정할 수 없습니다. article_review 같은 실습용 파생 테이블을 사용하세요.', en: 'Source KCI tables cannot be modified directly. Use derived practice tables such as article_review.' },
-        sqlUnavailable: { ko: 'KCI 데이터셋 또는 SQLite 엔진이 아직 준비되지 않았습니다.', en: 'The KCI dataset or SQLite engine is not ready yet.' }
+        sqlUnavailable: { ko: 'KCI 데이터셋 또는 SQLite 엔진이 아직 준비되지 않았습니다.', en: 'The KCI dataset or SQLite engine is not ready yet.' },
+        runSearch: { ko: '검색 실행', en: 'Run Search' },
+        resetSearch: { ko: '검색 초기화', en: 'Reset Search' },
+        generatedSql: { ko: '실제 실행 SQL', en: 'Generated SQL' },
+        searchResults: { ko: '검색 결과', en: 'Search Results' },
+        searchExperienceResult: { ko: '체험 조건 {total}개 중 {met}개를 만족했습니다.', en: 'You completed {met} of {total} experience requirements.' },
+        searchNotRun: { ko: '왼쪽 조건을 조정한 뒤 검색 실행을 눌러 SQL과 결과를 확인하세요.', en: 'Adjust filters on the left, then run the search to inspect SQL and results.' },
+        searchRunCount: { ko: '실행 횟수', en: 'Runs' }
     };
 
     const modules = [
@@ -97,6 +104,60 @@
             sample: {
                 ko: 'orders(order_no PK, member_id FK, order_date, total_amount DECIMAL, status CHECK)\norder_items(order_no FK, product_id FK, quantity CHECK, sale_price DECIMAL, PK(order_no, product_id))',
                 en: 'orders(order_no PK, member_id FK, order_date, total_amount DECIMAL, status CHECK)\norder_items(order_no FK, product_id FK, quantity CHECK, sale_price DECIMAL, PK(order_no, product_id))'
+            }
+        },
+        {
+            id: 'search-experience',
+            kind: 'search',
+            runtime: 'sqlite',
+            title: {
+                ko: '논문 검색 SQL 체험',
+                en: 'Article Search SQL Experience'
+            },
+            subtitle: {
+                ko: '검색 화면에서 조건을 선택하면 브라우저 SQLite가 어떤 SQL로 KCI 논문을 찾는지 확인합니다.',
+                en: 'Use a search screen and inspect the SQL that browser SQLite runs against KCI articles.'
+            },
+            summary: [
+                {
+                    ko: '웹 검색창의 검색어, 연도, 학술지, 키워드 필터는 SQL의 WHERE 조건으로 바뀝니다.',
+                    en: 'Search terms, years, journals, and keyword filters become SQL WHERE clauses.'
+                },
+                {
+                    ko: '정렬 옵션은 ORDER BY, 결과 개수 제한은 LIMIT으로 표현됩니다.',
+                    en: 'Sort options become ORDER BY, and result limits become LIMIT.'
+                },
+                {
+                    ko: '프론트엔드는 사용자가 이해하기 쉬운 화면을 제공하고, 데이터베이스는 SQL로 실제 행을 찾아 반환합니다.',
+                    en: 'The frontend provides an approachable interface, while the database finds and returns rows through SQL.'
+                }
+            ],
+            scenario: {
+                ko: '학습자가 KCI 논문을 검색하는 간단한 프론트엔드를 사용합니다. 왼쪽에서 검색어와 필터를 바꾸면 오른쪽에서 실제 실행 SQL과 결과 테이블을 바로 확인할 수 있습니다.',
+                en: 'A learner uses a compact KCI article search frontend. Changing filters on the left shows the actual SQL and result table on the right.'
+            },
+            prompt: {
+                ko: '검색어, 연도, 학술지 또는 키워드 조건을 바꿔 검색을 두 번 이상 실행해 보세요. 각 검색이 SELECT, WHERE, JOIN/EXISTS, ORDER BY, LIMIT으로 어떻게 표현되는지 관찰합니다.',
+                en: 'Run at least two searches with different terms, years, journals, or keyword filters. Observe how each search becomes SELECT, WHERE, JOIN/EXISTS, ORDER BY, and LIMIT.'
+            },
+            checks: [
+                { id: 'run-twice', label: { ko: '검색을 2회 이상 실행', en: 'Run the search at least twice' } },
+                { id: 'generated-select', label: { ko: '생성 SQL에 SELECT와 kci_articles 포함', en: 'Generated SQL includes SELECT and kci_articles' } },
+                { id: 'where-filter', label: { ko: '검색/연도/학술지/키워드 필터가 WHERE로 반영', en: 'Search, year, journal, or keyword filters appear in WHERE' } },
+                { id: 'keyword-link', label: { ko: '키워드 조건이 article_keywords와 연결', en: 'Keyword filtering connects to article_keywords' } },
+                { id: 'result-rows', label: { ko: '실제 SQLite 검색 결과 반환', en: 'SQLite returns real search rows' } }
+            ],
+            hint: {
+                ko: '왼쪽 필터를 바꾼 뒤 검색 실행을 두 번 이상 눌러 보세요. 키워드 필터를 입력하면 article_keywords 테이블과 연결되는 SQL을 볼 수 있습니다.',
+                en: 'Change filters on the left and run the search at least twice. Entering a keyword filter reveals SQL connected to article_keywords.'
+            },
+            explanation: {
+                ko: '검색 프론트엔드는 사용자가 SQL을 직접 쓰지 않아도 데이터베이스 질의를 만들 수 있게 해 줍니다. 검색어는 LIKE, 연도는 비교 조건, 학술지는 동등 조건, 키워드는 article_keywords를 참조하는 EXISTS 조건으로 바뀌며, 실제 SQLite 실행 결과가 화면에 표시됩니다.',
+                en: 'A search frontend lets users build database queries without writing SQL directly. Terms become LIKE, years become comparisons, journals become equality filters, keywords become EXISTS against article_keywords, and SQLite results are rendered on screen.'
+            },
+            sample: {
+                ko: "SELECT a.article_id, a.title, a.journal, a.publication_year\nFROM kci_articles a\nWHERE (a.title LIKE '%AI%' OR a.abstract LIKE '%AI%')\n  AND a.publication_year >= 2024\n  AND EXISTS (\n    SELECT 1 FROM article_keywords kw\n    WHERE kw.article_id = a.article_id\n      AND kw.keyword LIKE '%education%'\n  )\nORDER BY a.publication_year DESC\nLIMIT 20;",
+                en: "SELECT a.article_id, a.title, a.journal, a.publication_year\nFROM kci_articles a\nWHERE (a.title LIKE '%AI%' OR a.abstract LIKE '%AI%')\n  AND a.publication_year >= 2024\n  AND EXISTS (\n    SELECT 1 FROM article_keywords kw\n    WHERE kw.article_id = a.article_id\n      AND kw.keyword LIKE '%education%'\n  )\nORDER BY a.publication_year DESC\nLIMIT 20;"
             }
         },
         {
@@ -291,6 +352,13 @@
         journalCount: 0,
         keywordCount: 0,
         SQL: null
+    };
+    const searchExperienceState = {
+        runs: 0,
+        filters: null,
+        lastSql: '',
+        lastResult: null,
+        lastError: ''
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -497,7 +565,7 @@
             <section class="lab-section">
                 <h3>${escapeHtml(text(ui.task))}</h3>
                 <p>${escapeHtml(text(module.prompt))}</p>
-                ${module.kind === 'choice' ? renderChoiceExercise(module) : renderSqlExercise(module)}
+                ${renderExercise(module)}
                 <div class="lab-actions">
                     <button id="checkAnswer" type="button">${escapeHtml(text(ui.check))}</button>
                     <button id="nextModule" class="secondary-action" type="button">${escapeHtml(isLastModule(module) ? text(ui.restart) : text(ui.next))}</button>
@@ -514,6 +582,9 @@
 
         document.getElementById('checkAnswer').addEventListener('click', () => checkAnswer(module));
         document.getElementById('nextModule').addEventListener('click', () => goToNextModule(module));
+        if (module.kind === 'search') {
+            attachSearchExperience();
+        }
     }
 
     function renderDatasetPreview() {
@@ -548,6 +619,73 @@
         `;
     }
 
+    function renderExercise(module) {
+        if (module.kind === 'choice') return renderChoiceExercise(module);
+        if (module.kind === 'search') return renderSearchExperience();
+        return renderSqlExercise(module);
+    }
+
+    function renderSearchExperience() {
+        const filters = searchExperienceState.filters || {
+            term: 'AI',
+            yearFrom: '2024',
+            yearTo: '',
+            journal: '',
+            keyword: 'AI',
+            sort: 'year-desc'
+        };
+        const disabled = dataset.status !== 'ready' ? ' disabled' : '';
+        const outputHtml = renderSearchOutput();
+
+        return `
+            <div class="search-experience-grid">
+                <form id="paperSearchForm" class="search-form search-panel">
+                    <label>
+                        <span>${escapeHtml(text({ ko: '검색어', en: 'Search Term' }))}</span>
+                        <input id="searchTerm" type="text" value="${escapeHtml(filters.term)}" placeholder="AI">
+                    </label>
+                    <div class="search-form-row">
+                        <label>
+                            <span>${escapeHtml(text({ ko: '시작 연도', en: 'From Year' }))}</span>
+                            <input id="searchYearFrom" type="number" min="1900" max="2100" value="${escapeHtml(filters.yearFrom)}" placeholder="2024">
+                        </label>
+                        <label>
+                            <span>${escapeHtml(text({ ko: '종료 연도', en: 'To Year' }))}</span>
+                            <input id="searchYearTo" type="number" min="1900" max="2100" value="${escapeHtml(filters.yearTo)}" placeholder="2026">
+                        </label>
+                    </div>
+                    <label>
+                        <span>${escapeHtml(text({ ko: '학술지', en: 'Journal' }))}</span>
+                        <select id="searchJournal"${disabled}>
+                            <option value="">${escapeHtml(text({ ko: '전체 학술지', en: 'All Journals' }))}</option>
+                            ${getSearchJournalOptions(filters.journal)}
+                        </select>
+                    </label>
+                    <label>
+                        <span>${escapeHtml(text({ ko: '키워드 필터', en: 'Keyword Filter' }))}</span>
+                        <input id="searchKeyword" type="text" value="${escapeHtml(filters.keyword)}" placeholder="AI">
+                    </label>
+                    <label>
+                        <span>${escapeHtml(text({ ko: '정렬', en: 'Sort' }))}</span>
+                        <select id="searchSort">
+                            <option value="year-desc"${filters.sort === 'year-desc' ? ' selected' : ''}>${escapeHtml(text({ ko: '최신 연도순', en: 'Newest Year' }))}</option>
+                            <option value="year-asc"${filters.sort === 'year-asc' ? ' selected' : ''}>${escapeHtml(text({ ko: '오래된 연도순', en: 'Oldest Year' }))}</option>
+                            <option value="title-asc"${filters.sort === 'title-asc' ? ' selected' : ''}>${escapeHtml(text({ ko: '제목 가나다순', en: 'Title A-Z' }))}</option>
+                        </select>
+                    </label>
+                    <div class="search-actions">
+                        <button id="runSearchExperience" type="submit"${disabled}>${escapeHtml(text(ui.runSearch))}</button>
+                        <button id="resetSearchExperience" class="secondary-action" type="button">${escapeHtml(text(ui.resetSearch))}</button>
+                    </div>
+                    <p class="result-meta">${escapeHtml(text(ui.searchRunCount))}: ${searchExperienceState.runs}</p>
+                </form>
+                <div class="search-panel sql-preview-panel">
+                    ${outputHtml}
+                </div>
+            </div>
+        `;
+    }
+
     function renderSqlExercise(module) {
         return `
             <div class="sql-note">${escapeHtml(module.id === 'sql-application'
@@ -557,8 +695,158 @@
         `;
     }
 
+    function attachSearchExperience() {
+        const form = document.getElementById('paperSearchForm');
+        const resetButton = document.getElementById('resetSearchExperience');
+        if (form) {
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                runSearchExperience();
+            });
+        }
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                searchExperienceState.runs = 0;
+                searchExperienceState.filters = null;
+                searchExperienceState.lastSql = '';
+                searchExperienceState.lastResult = null;
+                searchExperienceState.lastError = '';
+                renderModule();
+            });
+        }
+    }
+
+    function runSearchExperience() {
+        const output = document.querySelector('.sql-preview-panel');
+        searchExperienceState.filters = readSearchFilters();
+
+        if (dataset.status !== 'ready') {
+            searchExperienceState.lastError = text(ui.sqlUnavailable);
+            searchExperienceState.lastSql = '';
+            searchExperienceState.lastResult = null;
+            if (output) output.innerHTML = renderSearchOutput();
+            return;
+        }
+
+        let db;
+        try {
+            const sql = buildSearchSql(searchExperienceState.filters);
+            searchExperienceState.lastSql = sql;
+            db = createKciDatabase();
+            const results = db.exec(sql);
+            searchExperienceState.runs += 1;
+            searchExperienceState.lastResult = results.length ? results[0] : null;
+            searchExperienceState.lastError = '';
+        } catch (error) {
+            searchExperienceState.lastError = error.message || String(error);
+            searchExperienceState.lastResult = null;
+        } finally {
+            if (db) db.close();
+        }
+
+        const runCount = document.querySelector('.search-form .result-meta');
+        if (runCount) {
+            runCount.textContent = `${text(ui.searchRunCount)}: ${searchExperienceState.runs}`;
+        }
+        if (output) {
+            output.innerHTML = renderSearchOutput();
+        }
+    }
+
+    function readSearchFilters() {
+        return {
+            term: document.getElementById('searchTerm')?.value.trim() || '',
+            yearFrom: document.getElementById('searchYearFrom')?.value.trim() || '',
+            yearTo: document.getElementById('searchYearTo')?.value.trim() || '',
+            journal: document.getElementById('searchJournal')?.value || '',
+            keyword: document.getElementById('searchKeyword')?.value.trim() || '',
+            sort: document.getElementById('searchSort')?.value || 'year-desc'
+        };
+    }
+
+    function buildSearchSql(filters) {
+        const where = [];
+        if (filters.term) {
+            const pattern = sqlLikePattern(filters.term);
+            where.push(`(a.title LIKE ${pattern} OR a.title_en LIKE ${pattern} OR a.abstract LIKE ${pattern} OR a.abstract_en LIKE ${pattern} OR a.authors LIKE ${pattern})`);
+        }
+        if (filters.yearFrom) {
+            where.push(`a.publication_year >= ${Number(filters.yearFrom) || 0}`);
+        }
+        if (filters.yearTo) {
+            where.push(`a.publication_year <= ${Number(filters.yearTo) || 9999}`);
+        }
+        if (filters.journal) {
+            where.push(`a.journal = ${sqlString(filters.journal)}`);
+        }
+        if (filters.keyword) {
+            const keywordPattern = sqlLikePattern(filters.keyword);
+            where.push(`EXISTS (
+    SELECT 1
+    FROM article_keywords kw
+    WHERE kw.article_id = a.article_id
+      AND kw.keyword LIKE ${keywordPattern}
+)`);
+        }
+
+        const orderBy = filters.sort === 'year-asc'
+            ? 'a.publication_year ASC, a.title ASC'
+            : filters.sort === 'title-asc'
+                ? 'a.title ASC, a.publication_year DESC'
+                : 'a.publication_year DESC, a.title ASC';
+
+        return `SELECT
+  a.article_id,
+  a.title,
+  a.journal,
+  a.publication_year,
+  a.authors,
+  SUBSTR(COALESCE(a.abstract, a.abstract_en, ''), 1, 120) AS abstract_preview
+FROM kci_articles a
+${where.length ? `WHERE ${where.join('\n  AND ')}` : ''}
+ORDER BY ${orderBy}
+LIMIT 20;`;
+    }
+
+    function renderSearchOutput() {
+        const sql = searchExperienceState.lastSql || `-- ${text(ui.searchNotRun)}`;
+        const result = searchExperienceState.lastResult;
+        return `
+            <div class="generated-sql-block">
+                <p class="overview-label">${escapeHtml(text(ui.generatedSql))}</p>
+                <pre class="generated-sql">${escapeHtml(sql)}</pre>
+            </div>
+            <div class="search-results-block">
+                <p class="overview-label">${escapeHtml(text(ui.searchResults))}</p>
+                ${searchExperienceState.lastError ? `<div class="feedback-box visible retry">${escapeHtml(searchExperienceState.lastError)}</div>` : ''}
+                ${result ? renderResultTable(result, 20) : `<p class="result-meta">${escapeHtml(text(ui.searchNotRun))}</p>`}
+                ${result ? `<p class="result-meta">${escapeHtml(text(ui.rows))}: ${result.values.length.toLocaleString()}</p>` : ''}
+            </div>
+        `;
+    }
+
+    function getSearchJournalOptions(selectedJournal) {
+        if (dataset.status !== 'ready') return '';
+        const journals = Array.from(new Set(dataset.rows.map(row => row.journal).filter(Boolean))).sort();
+        return journals.map(journal => `
+            <option value="${escapeHtml(journal)}"${journal === selectedJournal ? ' selected' : ''}>${escapeHtml(journal)}</option>
+        `).join('');
+    }
+
+    function sqlLikePattern(value) {
+        return sqlString(`%${value}%`);
+    }
+
+    function sqlString(value) {
+        return `'${String(value).replace(/'/g, "''")}'`;
+    }
+
     async function checkAnswer(module) {
-        const result = module.kind === 'choice' ? evaluateChoice(module) : await evaluateSql(module);
+        const result = module.kind === 'choice'
+            ? evaluateChoice(module)
+            : module.kind === 'search'
+                ? evaluateSearchExperience(module)
+                : await evaluateSql(module);
         progress.attempts[module.id] = (progress.attempts[module.id] || 0) + 1;
         progress.scores[module.id] = Math.max(progress.scores[module.id] || 0, result.score);
 
@@ -591,6 +879,32 @@
             wrongSelected,
             totalCorrect: module.correct.length,
             missing
+        };
+    }
+
+    function evaluateSearchExperience(module) {
+        const sql = searchExperienceState.lastSql.toLowerCase();
+        const filters = searchExperienceState.filters || {};
+        const resultRows = searchExperienceState.lastResult?.values?.length || 0;
+        const hasAnyFilter = Boolean(filters.term || filters.yearFrom || filters.yearTo || filters.journal || filters.keyword);
+        const details = [
+            detail('run-twice', searchExperienceState.runs >= 2),
+            detail('generated-select', /\bselect\b/.test(sql) && sql.includes('kci_articles')),
+            detail('where-filter', hasAnyFilter && /\bwhere\b/.test(sql)),
+            detail('keyword-link', Boolean(filters.keyword) && sql.includes('article_keywords')),
+            detail('result-rows', resultRows > 0)
+        ];
+        const metCount = details.filter(item => item.met).length;
+
+        return {
+            kind: 'experience',
+            passed: metCount === details.length,
+            score: Math.round(metCount / details.length * 100),
+            metCount,
+            total: details.length,
+            details,
+            errorMessage: searchExperienceState.lastError,
+            moduleId: module.id
         };
     }
 
@@ -718,10 +1032,16 @@
                 selected: result.correctSelected,
                 wrong: result.wrongSelected
             })
-            : format(text(ui.sqlResult), {
-                total: result.total,
-                met: result.metCount
-            });
+            : result.kind === 'experience'
+                ? format(text(ui.searchExperienceResult), {
+                    total: result.total,
+                    met: result.metCount
+                })
+                : format(text(ui.sqlResult), {
+                    total: result.total,
+                    met: result.metCount
+                });
+        const hasRequirementFeedback = result.kind === 'sql' || result.kind === 'experience';
 
         box.className = `feedback-box visible ${className}`;
         box.innerHTML = `
@@ -729,7 +1049,7 @@
             <p>${escapeHtml(summary)}</p>
             ${result.errorMessage ? `<p>${escapeHtml(result.errorMessage)}</p>` : ''}
             ${result.passed ? '' : `<p>${escapeHtml(text(module.hint))}</p>`}
-            ${result.kind === 'sql' ? renderRequirementFeedback(result.details) : ''}
+            ${hasRequirementFeedback ? renderRequirementFeedback(result.details) : ''}
             ${result.kind === 'sql' ? renderSqlResults(result.results) : ''}
         `;
     }
