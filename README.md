@@ -18,6 +18,7 @@ A personal portfolio website showcasing projects, interactive demos, and algorit
 3. **Interactive Quiz** - Multi-category quiz application
 4. **DQN Algorithm Demo** - Deep Q-Network reinforcement learning visualization
 5. **Attendance System** - Digital attendance tracking tool
+6. **Database Construction Lab** - Practice physical database design, SQL, and data conversion
 
 ### 📱 Responsive Design
 - Mobile-friendly layout
@@ -34,12 +35,18 @@ Visit the live website: **[https://jinsung4069.github.io](https://jinsung4069.gi
 jinsung4069.github.io/
 ├── index.html              # Main homepage with language toggle
 ├── css/
-│   └── style.css           # Main stylesheet
+│   ├── style.css           # Main stylesheet
+│   └── database-lab.css    # Database lab stylesheet
+├── data/
+│   ├── kci_articles.csv     # Normalized KCI article data for SQL practice
+│   └── kci_articles_raw.csv # Deduplicated raw KCI export columns
 ├── js/
-│   └── main.js            # Core JavaScript functionality
+│   ├── main.js            # Core JavaScript functionality
+│   └── database-lab.js    # Database lab practice and scoring logic
 ├── pages/
 │   ├── cv.html            # Resume/CV page
 │   ├── attendance.html    # Attendance tracking system
+│   ├── database-lab.html  # Database construction practice lab
 │   └── dqn-demo.html      # DQN algorithm demonstration
 ├── AlligatorChess/        # Chess variant game
 ├── astar-pathfinding/     # A* algorithm visualization
@@ -54,6 +61,7 @@ jinsung4069.github.io/
 - **Algorithms**: A* pathfinding, Deep Q-Network (DQN)
 - **Games**: Canvas-based game development
 - **Storage**: localStorage for user preferences
+- **SQL Practice**: sql.js browser SQLite with KCI CSV data
 - **Deployment**: GitHub Pages
 
 ## 🎯 Key Projects
@@ -70,6 +78,13 @@ Deep Q-Network reinforcement learning demonstration with:
 - Adjustable learning parameters (learning rate, epsilon, discount factor)
 - Real-time training statistics
 - Visual agent behavior observation
+
+### Database Construction Lab
+Interactive practice for database construction topics:
+- Physical database design decisions
+- SQL application with DDL, DML, and TCL using KCI article data
+- SQL usage with joins, grouping, subqueries, and indexes in browser SQLite
+- Data conversion mapping, cleansing, deduplication, and validation
 
 ### Alligator Chess
 Strategic chess variant featuring:
@@ -187,7 +202,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📊 Project Stats
 
-- **Total Projects**: 5+ interactive demonstrations
+- **Total Projects**: 6+ interactive demonstrations
 - **Languages**: Korean, English
 - **Framework**: Vanilla JavaScript (no dependencies)
 - **Hosting**: GitHub Pages

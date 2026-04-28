@@ -5,24 +5,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainNav = document.getElementById('mainNav');
 
     // Language toggle functionality
-    languageToggle.addEventListener('click', () => {
-        const currentLang = document.documentElement.lang;
-        const newLang = currentLang === 'ko' ? 'en' : 'ko';
-        setLanguage(newLang);
-    });
+    if (languageToggle) {
+        languageToggle.addEventListener('click', () => {
+            const currentLang = document.documentElement.lang;
+            const newLang = currentLang === 'ko' ? 'en' : 'ko';
+            setLanguage(newLang);
+        });
+    }
 
     // Mobile menu toggle
-    mobileMenuToggle.addEventListener('click', () => {
-        mainNav.classList.toggle('mobile-open');
-        mobileMenuToggle.textContent = mainNav.classList.contains('mobile-open') ? '✕' : '☰';
-    });
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('mobile-open');
+            mobileMenuToggle.textContent = mainNav.classList.contains('mobile-open') ? '✕' : '☰';
+        });
+    }
 
     // Dark mode toggle functionality
-    darkModeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-    });
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+    }
 
     function setLanguage(lang) {
         document.documentElement.lang = lang;
@@ -37,11 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (lang === 'ko') {
-            languageToggle.textContent = 'ENG';
-            document.title = '인성의 웹사이트 - 포트폴리오 & 프로젝트';
+            if (languageToggle) {
+                languageToggle.textContent = 'ENG';
+            }
+            document.title = document.body.dataset.titleKo || '인성의 웹사이트 - 포트폴리오 & 프로젝트';
         } else {
-            languageToggle.textContent = 'KOR';
-            document.title = "Inseong's Website - Portfolio & Projects";
+            if (languageToggle) {
+                languageToggle.textContent = 'KOR';
+            }
+            document.title = document.body.dataset.titleEn || "Inseong's Website - Portfolio & Projects";
         }
     }
 
@@ -95,11 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Listen for system theme changes
     if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
+        const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleSystemThemeChange = (e) => {
             // Only auto-switch if user hasn't manually set a preference
             if (!localStorage.getItem('theme')) {
                 setTheme(e.matches ? 'dark' : 'light');
             }
-        });
+        };
+
+        if (colorSchemeQuery.addEventListener) {
+            colorSchemeQuery.addEventListener('change', handleSystemThemeChange);
+        } else {
+            colorSchemeQuery.addListener(handleSystemThemeChange);
+        }
     }
 });

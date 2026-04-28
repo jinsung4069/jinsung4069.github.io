@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Practice physical database design, SQL application, SQL usage, and data conversion for database construction.">
+    <title>데이터베이스 구축 실습</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/database-lab.css">
+</head>
+<body data-title-ko="데이터베이스 구축 실습 - 포트폴리오 & 프로젝트" data-title-en="Database Lab - Portfolio & Projects">
+    <header>
+        <div class="logo">
+            <a href="../index.html">Inseong</a>
+        </div>
+        <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="메뉴 열기">☰</button>
+        <nav id="mainNav">
+            <ul class="lang-content lang-en" id="navMenuEn">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="cv.html">CV</a></li>
+                <li><a href="../simplequiz">Quiz</a></li>
+                <li><a href="attendance.html">Attendance</a></li>
+                <li><a href="../AlligatorChess">AlligatorChess</a></li>
+                <li><a href="../astar-pathfinding">A* Pathfinding</a></li>
+                <li><a href="dqn-demo.html">DQN Demo</a></li>
+                <li><a href="database-lab.html">Database Lab</a></li>
+                <li><a href="microrobot.html">Micro Robot</a></li>
+                <li><a href="stackburger.html">StackBurger</a></li>
+            </ul>
+            <ul class="lang-content lang-ko active" id="navMenuKo">
+                <li><a href="../index.html">홈</a></li>
+                <li><a href="cv.html">이력서</a></li>
+                <li><a href="../simplequiz">퀴즈</a></li>
+                <li><a href="attendance.html">출석</a></li>
+                <li><a href="../AlligatorChess">알리게이터 체스</a></li>
+                <li><a href="../astar-pathfinding">A* 길찾기</a></li>
+                <li><a href="dqn-demo.html">DQN 데모</a></li>
+                <li><a href="database-lab.html">DB 구축 실습</a></li>
+                <li><a href="microrobot.html">마이크로 로봇</a></li>
+                <li><a href="stackburger.html">StackBurger</a></li>
+            </ul>
+        </nav>
+        <div class="header-controls">
+            <button id="darkModeToggle" class="dark-mode-toggle" aria-label="다크모드 토글">
+                <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                    <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button id="languageToggle" class="language-toggle">ENG</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero database-hero">
+            <div class="lang-content lang-ko active">
+                <p class="hero-kicker">정보처리기사 데이터베이스 구축</p>
+                <h1>데이터베이스 구축 실습</h1>
+                <p>물리 설계, SQL 응용, SQL 활용, 데이터 전환을 작은 실습과 즉시 피드백으로 익힙니다.</p>
+            </div>
+            <div class="lang-content lang-en">
+                <p class="hero-kicker">Database Construction Practice</p>
+                <h1>Database Lab</h1>
+                <p>Practice physical design, SQL application, SQL usage, and data conversion with compact tasks and instant feedback.</p>
+            </div>
+        </section>
+
+        <section class="database-shell" aria-labelledby="databaseLabTitle">
+            <div class="lab-overview project-card">
+                <div>
+                    <p class="overview-label lang-content lang-ko active">전체 진행률</p>
+                    <p class="overview-label lang-content lang-en">Overall Progress</p>
+                    <h2 id="databaseLabTitle">
+                        <span id="progressText">0 / 4</span>
+                    </h2>
+                    <div class="progress-track" aria-hidden="true">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="overview-stat">
+                    <span class="lang-content lang-ko active">평균 점수</span>
+                    <span class="lang-content lang-en">Average Score</span>
+                    <strong id="averageScore">0</strong>
+                </div>
+                <div class="overview-stat">
+                    <span class="lang-content lang-ko active">현재 모듈</span>
+                    <span class="lang-content lang-en">Current Module</span>
+                    <strong id="currentModuleLabel">-</strong>
+                </div>
+                <button id="resetProgress" class="secondary-action" type="button">
+                    <span class="lang-content lang-ko active">진도 초기화</span>
+                    <span class="lang-content lang-en">Reset Progress</span>
+                </button>
+            </div>
+
+            <div id="datasetStatus" class="dataset-card project-card" aria-live="polite"></div>
+
+            <div class="lab-layout">
+                <nav id="moduleTabs" class="module-tabs" aria-label="Database lab modules"></nav>
+                <article id="moduleContent" class="lab-workspace project-card" aria-live="polite"></article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <div class="lang-content lang-en">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="lang-content lang-ko active">
+                    <a href="#">개인정보 처리방침</a>
+                    <a href="#">서비스 이용약관</a>
+                    <a href="#">문의하기</a>
+                </div>
+            </div>
+            <p class="lang-content lang-en">&copy; 2024 Inseong's Website. All rights reserved.</p>
+            <p class="lang-content lang-ko active">&copy; 2024 인성의 웹사이트. 모든 권리 보유.</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/sql-wasm.min.js"></script>
+    <script src="../js/database-lab.js"></script>
+</body>
+</html>

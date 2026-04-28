@@ -54,7 +54,7 @@ header {
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: var(--shadow-sm);
-    padding: 0 2rem;
+    padding: 0 clamp(1rem, 2vw, 2rem);
     z-index: 1000;
     display: flex;
     justify-content: space-between;
@@ -84,7 +84,7 @@ header:hover {
 nav ul {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: clamp(0.75rem, 1.35vw, 2rem);
     align-items: center;
 }
 
@@ -92,7 +92,7 @@ nav ul li a {
     text-decoration: none;
     color: var(--color-gray-600);
     font-weight: 500;
-    font-size: 1rem;
+    font-size: clamp(0.82rem, 0.9vw, 1rem);
     position: relative;
     padding: 0.5rem 0;
     transition: all var(--transition-duration) var(--transition-ease);
@@ -470,6 +470,42 @@ nav .lang-content.active {
     color: var(--color-picto-primary);
 }
 
+@media (max-width: 1100px) and (min-width: 769px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    nav {
+        display: none;
+        position: absolute;
+        top: 4.5rem;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--color-gray-200);
+        box-shadow: var(--shadow-lg);
+    }
+
+    nav.mobile-open {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    nav ul {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1.25rem 2rem;
+    }
+
+    nav ul li a {
+        font-size: 1rem;
+        padding: 0.6rem 0;
+    }
+}
+
 @media (max-width: 768px) {
     header {
         padding: 0 1.5rem;
@@ -810,6 +846,10 @@ html {
 }
 
 [data-theme="dark"] header:hover {
+    background: rgba(15, 15, 15, 0.95);
+}
+
+[data-theme="dark"] nav {
     background: rgba(15, 15, 15, 0.95);
 }
 
