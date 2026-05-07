@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="머신러닝 알고리즘 시뮬레이션: 선형회귀, KNN, K-Means, 의사결정트리, 나이브 베이즈">
+    <meta name="description" content="머신러닝 알고리즘 시뮬레이션: 지도학습, 비지도 학습, 군집화, 추천 시스템, 차원축소">
     <title>머신러닝 시뮬레이션 - 전인성</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -11,6 +11,34 @@
     </style>
     <link rel="stylesheet" href="../css/style.css">
     <style>
+        :root {
+            --ml-accent: var(--color-primary);
+            --ml-accent-dark: var(--color-primary-dark);
+            --ml-accent-soft: #dbeafe;
+            --ml-accent-soft-hover: #bfdbfe;
+            --color-gray-100: var(--color-bg);
+            --color-gray-200: var(--color-border);
+            --color-gray-300: #ccd1d9;
+            --color-gray-400: #aab2bd;
+            --color-gray-600: var(--color-text-muted);
+            --color-gray-700: var(--color-text);
+            --color-gray-900: #1f2937;
+            --color-picto-primary: var(--ml-accent);
+            --color-picto-primary-dark: var(--ml-accent-dark);
+            --border-radius-md: var(--radius-sm);
+            --border-radius-lg: var(--radius-md);
+        }
+        [data-theme="dark"] {
+            --ml-accent-soft: #284968;
+            --ml-accent-soft-hover: #315a7f;
+            --color-gray-100: #252a33;
+            --color-gray-200: #303743;
+            --color-gray-300: #434c5c;
+            --color-gray-400: #6b7280;
+            --color-gray-600: #c7ccd4;
+            --color-gray-700: #e5e7eb;
+            --color-gray-900: #f5f7fa;
+        }
         .simulation-section {
             padding: 4rem 2rem;
             border-bottom: 1px solid var(--color-gray-200);
@@ -65,19 +93,21 @@
             font-weight: 500;
         }
         .btn {
-             padding: 0.5rem 1rem;
-            background: var(--color-picto-primary);
-            color: white;
-            border: none;
+            padding: 0.5rem 1rem;
+            background: var(--ml-accent-soft);
+            color: #172033;
+            border: 1px solid #93c5fd;
             border-radius: var(--border-radius-md);
             cursor: pointer;
             font-size: 0.875rem;
+            font-weight: 700;
             transition: all 0.2s;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
         }
         .btn:hover {
-            background: var(--color-picto-primary-dark);
+            background: var(--ml-accent-soft-hover);
+            border-color: var(--color-picto-primary);
         }
         .btn-outline {
             background: transparent;
@@ -94,14 +124,215 @@
             font-family: monospace;
             font-size: 0.9rem;
         }
+        .category-section,
+        .category-header {
+            padding: 3rem 2rem;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        .category-container {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+        .category-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-picto-primary);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+        .category-container h2 {
+            margin: 0 0 0.75rem;
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            color: var(--color-gray-900);
+        }
+        .category-container p {
+            max-width: 52rem;
+            color: var(--color-gray-600);
+            line-height: 1.7;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .category-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .category-card h3 {
+            margin: 0 0 0.75rem;
+            color: var(--color-gray-900);
+        }
+        .category-card ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            color: var(--color-gray-600);
+            line-height: 1.7;
+        }
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.85rem;
+            color: var(--color-picto-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+        .demo-panel {
+            min-height: 500px;
+            padding: 1.25rem;
+            cursor: default;
+            box-sizing: border-box;
+        }
+        .demo-panel h4 {
+            margin: 0 0 0.9rem;
+            color: var(--color-gray-900);
+            font-size: 1rem;
+        }
+        .demo-note {
+            margin-top: 0.8rem;
+            color: var(--color-gray-600);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .matrix-wrapper {
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 88px repeat(6, minmax(42px, 1fr));
+            gap: 0.35rem;
+            min-width: 540px;
+        }
+        .matrix-cell {
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--color-gray-200);
+            background: var(--color-gray-100);
+            color: var(--color-gray-700);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .matrix-cell.header-cell {
+            font-weight: 700;
+            color: var(--color-gray-900);
+        }
+        .matrix-cell.rating-cell {
+            background: var(--color-white);
+            cursor: pointer;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .matrix-cell.rating-cell:hover {
+            transform: translateY(-1px);
+            border-color: var(--color-picto-primary);
+        }
+        .matrix-cell.missing {
+            color: var(--color-gray-400);
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--color-white),
+                var(--color-white) 6px,
+                var(--color-gray-100) 6px,
+                var(--color-gray-100) 12px
+            );
+        }
+        .matrix-cell.target-row {
+            border-color: var(--color-picto-primary);
+            box-shadow: inset 0 0 0 1px var(--color-picto-primary);
+        }
+        .recommendation-bars {
+            display: grid;
+            gap: 0.65rem;
+            margin-top: 1rem;
+        }
+        .bar-row {
+            display: grid;
+            grid-template-columns: minmax(96px, 1fr) 2fr 44px;
+            gap: 0.6rem;
+            align-items: center;
+            color: var(--color-gray-700);
+            font-size: 0.85rem;
+        }
+        .bar-track {
+            height: 10px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--color-gray-200);
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #14b8a6, var(--color-picto-primary));
+        }
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .choice-card {
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--border-radius-lg);
+            padding: 0.85rem;
+            background: var(--color-white);
+            cursor: pointer;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .choice-card:hover,
+        .choice-card.active {
+            border-color: var(--color-picto-primary);
+            transform: translateY(-1px);
+        }
+        .choice-card strong {
+            display: block;
+            margin-bottom: 0.35rem;
+            color: var(--color-gray-900);
+        }
+        .choice-card span {
+            color: var(--color-gray-600);
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+        .feature-readout {
+            display: grid;
+            gap: 0.55rem;
+            margin-bottom: 1rem;
+        }
+        .select-control {
+            width: 100%;
+            padding: 0.55rem 0.65rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: var(--border-radius-md);
+            background: var(--color-white);
+            color: var(--color-gray-900);
+        }
         @media (max-width: 900px) {
             .simulation-container {
+                grid-template-columns: 1fr;
+            }
+            .category-grid,
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+            .bar-row {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
-<body>
+<body data-title-ko="머신러닝 시뮬레이션 - 전인성" data-title-en="Machine Learning Simulations - Inseong Jeon">
     <header>
         <div class="header-inner">
             <a href="../index.html" class="site-title">
@@ -180,6 +411,54 @@
             <p>Interactive demonstrations of various machine learning algorithms.</p>
         </section>
 
+        <section class="category-section">
+            <div class="category-container">
+                <span class="category-eyebrow"><i class="fas fa-layer-group"></i> Learning Categories</span>
+                <h2>
+                    <span class="lang-content lang-ko active">지도학습과 비지도 학습으로 나누어 체험하기</span>
+                    <span class="lang-content lang-en">Explore Supervised and Unsupervised Learning</span>
+                </h2>
+                <p class="lang-content lang-ko active">
+                    정답 라벨을 바탕으로 예측 규칙을 배우는 지도학습과, 라벨 없이 데이터의 구조와 취향 패턴을 발견하는 비지도 학습을 구분해 살펴볼 수 있습니다.
+                </p>
+                <p class="lang-content lang-en">
+                    Compare supervised learning, which learns from labeled answers, with unsupervised learning, which discovers structure and preference patterns without labels.
+                </p>
+                <div class="category-grid">
+                    <article class="category-card">
+                        <div class="category-badge"><i class="fas fa-check-circle"></i> Supervised</div>
+                        <h3>지도학습</h3>
+                        <ul>
+                            <li>선형 회귀: 연속값 예측</li>
+                            <li>KNN, 의사결정트리, 나이브 베이즈: 분류 경계 체험</li>
+                            <li>라벨이 있는 데이터로 예측 규칙 학습</li>
+                        </ul>
+                    </article>
+                    <article class="category-card">
+                        <div class="category-badge"><i class="fas fa-project-diagram"></i> Unsupervised</div>
+                        <h3>비지도 학습</h3>
+                        <ul>
+                            <li>군집화: K-Means, 밀도 기반, 계층적 클러스터링</li>
+                            <li>추천 시스템: 협업, 콘텐츠, 모델, 딥러닝 기반 필터링</li>
+                            <li>시각화와 차원축소: PCA와 커널 기반 투영</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-header">
+            <div class="category-container">
+                <span class="category-eyebrow"><i class="fas fa-tags"></i> Supervised Learning</span>
+                <h2>
+                    <span class="lang-content lang-ko active">지도학습 체험</span>
+                    <span class="lang-content lang-en">Supervised Learning Demos</span>
+                </h2>
+                <p class="lang-content lang-ko active">정답 라벨이 주어진 데이터를 이용해 값과 클래스를 예측하는 과정을 직접 조작해봅니다.</p>
+                <p class="lang-content lang-en">Use labeled data to see how models predict values and classes.</p>
+            </div>
+        </section>
+
         <!-- 1. Linear Regression -->
         <section class="simulation-section">
             <div class="simulation-container">
@@ -240,38 +519,7 @@
             </div>
         </section>
 
-        <!-- 3. K-Means -->
-        <section class="simulation-section">
-            <div class="simulation-container">
-                <div class="canvas-container">
-                    <canvas id="kmeansCanvas" width="800" height="500"></canvas>
-                </div>
-                <div class="controls">
-                    <h3>K-평균 군집화 (K-Means)</h3>
-                    <p class="lang-content lang-ko active">
-                        데이터를 K개의 클러스터로 묶는 알고리즘입니다.
-                        점을 찍고 '실행'을 눌러보세요. 중심점(X)이 이동하며 군집을 형성하는 과정을 볼 수 있습니다.
-                    </p>
-                    <p class="lang-content lang-en">
-                        Partitions data into K distinct clusters.
-                        Add points and click 'Run' to watch the centroids (X) move and form clusters.
-                    </p>
-                    <div class="control-group">
-                        <button class="btn" onclick="kmeans.step()">1단계 진행 (Step)</button>
-                        <button class="btn" onclick="kmeans.run()">자동 실행 (Run)</button>
-                    </div>
-                    <div class="control-group">
-                        <label>클러스터 개수 (K): <span id="kmeansKValue">3</span></label>
-                        <input type="range" min="2" max="5" value="3" oninput="kmeans.setK(this.value)">
-                    </div>
-                    <div class="control-group">
-                        <button class="btn btn-outline" onclick="kmeans.reset()">초기화 (Reset)</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. Decision Tree -->
+        <!-- 3. Decision Tree -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -303,7 +551,7 @@
             </div>
         </section>
 
-        <!-- 5. Naive Bayes -->
+        <!-- 4. Naive Bayes -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -328,6 +576,276 @@
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="nb.reset()">초기화 (Reset)</button>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-header">
+            <div class="category-container">
+                <span class="category-eyebrow"><i class="fas fa-circle-nodes"></i> Unsupervised Learning</span>
+                <h2>
+                    <span class="lang-content lang-ko active">비지도 학습 체험</span>
+                    <span class="lang-content lang-en">Unsupervised Learning Demos</span>
+                </h2>
+                <p class="lang-content lang-ko active">
+                    라벨 없이 데이터의 묶임, 비슷한 취향, 숨은 요인, 낮은 차원 표현을 찾아내는 과정을 살펴봅니다.
+                </p>
+                <p class="lang-content lang-en">
+                    Explore clustering, recommendations, latent factors, and lower-dimensional structure without predefined labels.
+                </p>
+            </div>
+        </section>
+
+        <!-- 5. K-Means -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="kmeansCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>K-평균 군집화 (K-Means)</h3>
+                    <p class="lang-content lang-ko active">
+                        데이터를 K개의 클러스터로 묶는 알고리즘입니다.
+                        점을 찍고 '실행'을 눌러보세요. 중심점(X)이 이동하며 군집을 형성하는 과정을 볼 수 있습니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Partitions data into K distinct clusters.
+                        Add points and click 'Run' to watch the centroids (X) move and form clusters.
+                    </p>
+                    <div class="control-group">
+                        <button class="btn" onclick="kmeans.step()">1단계 진행 (Step)</button>
+                        <button class="btn" onclick="kmeans.run()">자동 실행 (Run)</button>
+                    </div>
+                    <div class="control-group">
+                        <label>클러스터 개수 (K): <span id="kmeansKValue">3</span></label>
+                        <input type="range" min="2" max="5" value="3" oninput="kmeans.setK(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="kmeans.reset()">초기화 (Reset)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Density-Based Clustering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="dbscanCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>밀도 기반 클러스터링 (DBSCAN)</h3>
+                    <p class="lang-content lang-ko active">
+                        반경 안에 충분한 이웃이 모인 곳을 하나의 군집으로 확장합니다. 흩어진 점은 노이즈로 남습니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Expands clusters from dense neighborhoods and leaves isolated points as noise.
+                    </p>
+                    <div class="control-group">
+                        <label>이웃 반경 (eps): <span id="dbscanEpsValue">54</span></label>
+                        <input type="range" min="25" max="110" value="54" oninput="dbscan.setEps(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>최소 점 수 (minPts): <span id="dbscanMinPtsValue">5</span></label>
+                        <input type="range" min="3" max="10" value="5" oninput="dbscan.setMinPts(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn" onclick="dbscan.run()">군집 찾기 (Run)</button>
+                        <button class="btn btn-outline" onclick="dbscan.sample()">샘플 데이터</button>
+                        <button class="btn btn-outline" onclick="dbscan.reset()">초기화</button>
+                    </div>
+                    <div id="dbscanStats" class="stats">클러스터: 0<br>노이즈: 0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Hierarchical Clustering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="hierCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>계층적 클러스터링 (Hierarchical Clustering)</h3>
+                    <p class="lang-content lang-ko active">
+                        가장 가까운 군집부터 차례대로 합치며, 거리 임계값에 따라 몇 개의 군집으로 남는지 확인합니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Repeatedly merges the closest groups and shows how the distance threshold changes the cluster count.
+                    </p>
+                    <div class="control-group">
+                        <label>연결 기준</label>
+                        <select class="select-control" onchange="hier.setLinkage(this.value)">
+                            <option value="single">Single linkage</option>
+                            <option value="average" selected>Average linkage</option>
+                            <option value="complete">Complete linkage</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>병합 거리: <span id="hierThresholdValue">95</span></label>
+                        <input type="range" min="35" max="180" value="95" oninput="hier.setThreshold(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="hier.sample()">샘플 데이터</button>
+                        <button class="btn btn-outline" onclick="hier.reset()">초기화</button>
+                    </div>
+                    <div id="hierStats" class="stats">클러스터: 0<br>마지막 병합 거리: -</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Collaborative Filtering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container demo-panel">
+                    <h4>사용자-콘텐츠 평점 행렬</h4>
+                    <div class="matrix-wrapper">
+                        <div class="matrix-grid" id="cfMatrix"></div>
+                    </div>
+                    <div class="demo-note">평점 칸을 클릭하면 1점부터 5점, 빈칸 순서로 바뀝니다.</div>
+                    <h4 style="margin-top: 1.5rem;">협업 필터링 기반 추천</h4>
+                    <div class="recommendation-bars" id="cfRecommendations"></div>
+                </div>
+                <div class="controls">
+                    <h3>협업 필터링 및 추천 시스템</h3>
+                    <p class="lang-content lang-ko active">
+                        나와 비슷한 사용자가 높게 평가한 콘텐츠를 추천합니다. 행렬의 빈칸은 예측해야 할 선호도입니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Recommends items that similar users liked. Blank cells are preferences to estimate.
+                    </p>
+                    <div class="control-group">
+                        <label>추천 대상 사용자</label>
+                        <select id="cfUserSelect" class="select-control" onchange="collab.setUser(this.value)"></select>
+                    </div>
+                    <div class="control-group">
+                        <button class="btn" onclick="collab.recommend()">추천 계산</button>
+                        <button class="btn btn-outline" onclick="collab.reset()">초기화</button>
+                    </div>
+                    <div id="cfStats" class="stats">비슷한 사용자: -</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Content-Based Filtering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container demo-panel">
+                    <h4>콘텐츠 특징과 사용자 프로필</h4>
+                    <div id="contentFeatureReadout" class="feature-readout"></div>
+                    <h4 style="margin-top: 1.5rem;">콘텐츠 기반 추천</h4>
+                    <div class="recommendation-bars" id="contentRecommendations"></div>
+                </div>
+                <div class="controls">
+                    <h3>콘텐츠 기반 필터링</h3>
+                    <p class="lang-content lang-ko active">
+                        콘텐츠의 특징 벡터와 사용자의 선호 벡터를 비교해 가장 잘 맞는 항목을 추천합니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Compares content feature vectors with a user preference vector to rank items.
+                    </p>
+                    <div class="control-group">
+                        <label>시각 자료 선호: <span id="contentVisualValue">4</span></label>
+                        <input type="range" min="1" max="5" value="4" oninput="contentFilter.setPreference('visual', this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>수학 난이도 선호: <span id="contentMathValue">3</span></label>
+                        <input type="range" min="1" max="5" value="3" oninput="contentFilter.setPreference('math', this.value)">
+                    </div>
+                    <div class="control-group">
+                        <label>코딩 활동 선호: <span id="contentCodeValue">5</span></label>
+                        <input type="range" min="1" max="5" value="5" oninput="contentFilter.setPreference('code', this.value)">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. Model-Based Collaborative Filtering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="mfCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>모델 기반 협력 필터링</h3>
+                    <p class="lang-content lang-ko active">
+                        평점 행렬을 사용자 요인과 콘텐츠 요인으로 분해해 숨은 취향 축을 학습합니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Factorizes the rating matrix into user and item factors to learn hidden taste dimensions.
+                    </p>
+                    <div class="control-group">
+                        <label>사용자 선택</label>
+                        <select id="mfUserSelect" class="select-control" onchange="modelFilter.setUser(this.value)"></select>
+                    </div>
+                    <div class="control-group">
+                        <button class="btn" onclick="modelFilter.train(80)">학습하기</button>
+                        <button class="btn btn-outline" onclick="modelFilter.train(1)">1단계</button>
+                        <button class="btn btn-outline" onclick="modelFilter.reset()">초기화</button>
+                    </div>
+                    <div id="mfStats" class="stats">반복: 0<br>추천: -</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. Deep Learning Filtering -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container demo-panel">
+                    <h4>최근 관심 콘텐츠</h4>
+                    <div class="choice-grid" id="deepChoices"></div>
+                    <h4 style="margin-top: 1.5rem;">딥러닝 기반 추천 점수</h4>
+                    <div class="recommendation-bars" id="deepRecommendations"></div>
+                </div>
+                <div class="controls">
+                    <h3>딥러닝 기반 필터링</h3>
+                    <p class="lang-content lang-ko active">
+                        클릭한 콘텐츠 이력을 임베딩으로 압축하고 비선형 은닉층을 거쳐 다음 추천 점수를 계산합니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Compresses clicked item history into embeddings and uses a nonlinear hidden layer to score recommendations.
+                    </p>
+                    <div class="control-group">
+                        <label>탐색 다양성: <span id="deepDiversityValue">2</span></label>
+                        <input type="range" min="0" max="5" value="2" oninput="deepFilter.setDiversity(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="deepFilter.reset()">이력 초기화</button>
+                    </div>
+                    <div id="deepStats" class="stats">은닉층 활성화: -</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12. Visualization and Dimensionality Reduction -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="dimCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>시각화와 차원축소 (PCA, Kernel)</h3>
+                    <p class="lang-content lang-ko active">
+                        3차원 특징 데이터를 2차원 화면으로 투영합니다. PCA는 분산이 큰 축을 찾고, 커널 투영은 비선형 구조를 드러냅니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Projects 3D feature data into 2D. PCA finds high-variance axes, while kernel projection exposes nonlinear structure.
+                    </p>
+                    <div class="control-group">
+                        <label>투영 방식</label>
+                        <select class="select-control" onchange="dimReduction.setMode(this.value)">
+                            <option value="pca" selected>PCA</option>
+                            <option value="kernel">Kernel projection</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>데이터 복잡도: <span id="dimNoiseValue">2</span></label>
+                        <input type="range" min="0" max="5" value="2" oninput="dimReduction.setNoise(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn btn-outline" onclick="dimReduction.sample()">새 데이터</button>
+                    </div>
+                    <div id="dimStats" class="stats">설명 분산: -<br>투영 방식: PCA</div>
                 </div>
             </div>
         </section>
@@ -949,6 +1467,937 @@
             }
         };
         nb.init();
+
+        function getCanvasPoint(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (event.clientX - rect.left) * (canvas.width / rect.width),
+                y: (event.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function drawLightGrid(ctx, canvas) {
+            ctx.strokeStyle = '#eef2f7';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        function normalRandom() {
+            const u = Math.random() || 0.0001;
+            const v = Math.random() || 0.0001;
+            return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        }
+
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function renderScoreBars(containerId, scores, maxValue = 5) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!scores.length) {
+                container.innerHTML = '<div class="demo-note">추천할 항목이 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = scores.map(item => {
+                const score = Number(item.score);
+                const percent = clamp(score / maxValue, 0, 1) * 100;
+                return `
+                    <div class="bar-row">
+                        <span>${item.name}</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: ${percent}%"></div></div>
+                        <strong>${score.toFixed(2)}</strong>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* --- 6. Density-Based Clustering --- */
+        const dbscan = {
+            canvas: document.getElementById('dbscanCanvas'),
+            ctx: document.getElementById('dbscanCanvas').getContext('2d'),
+            points: [],
+            eps: 54,
+            minPts: 5,
+            clusterCount: 0,
+            noiseCount: 0,
+
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const p = getCanvasPoint(this.canvas, e);
+                    this.points.push(new Point(p.x, p.y));
+                    this.run();
+                });
+                this.sample();
+            },
+
+            setEps(value) {
+                this.eps = parseInt(value);
+                document.getElementById('dbscanEpsValue').innerText = this.eps;
+                this.run();
+            },
+
+            setMinPts(value) {
+                this.minPts = parseInt(value);
+                document.getElementById('dbscanMinPtsValue').innerText = this.minPts;
+                this.run();
+            },
+
+            addBlob(cx, cy, spread, count) {
+                for (let i = 0; i < count; i++) {
+                    this.points.push(new Point(
+                        clamp(cx + normalRandom() * spread, 18, this.canvas.width - 18),
+                        clamp(cy + normalRandom() * spread, 18, this.canvas.height - 18)
+                    ));
+                }
+            },
+
+            sample() {
+                this.points = [];
+                this.addBlob(190, 160, 34, 22);
+                this.addBlob(440, 300, 44, 28);
+                this.addBlob(625, 145, 30, 18);
+                for (let i = 0; i < 10; i++) {
+                    this.points.push(new Point(
+                        40 + Math.random() * (this.canvas.width - 80),
+                        40 + Math.random() * (this.canvas.height - 80)
+                    ));
+                }
+                this.run();
+            },
+
+            regionQuery(index) {
+                const p = this.points[index];
+                const neighbors = [];
+                this.points.forEach((candidate, candidateIndex) => {
+                    if (Math.hypot(p.x - candidate.x, p.y - candidate.y) <= this.eps) {
+                        neighbors.push(candidateIndex);
+                    }
+                });
+                return neighbors;
+            },
+
+            run() {
+                const labels = Array(this.points.length).fill(undefined);
+                const visited = Array(this.points.length).fill(false);
+                const core = Array(this.points.length).fill(false);
+                let clusterId = 0;
+
+                for (let i = 0; i < this.points.length; i++) {
+                    if (visited[i]) continue;
+
+                    visited[i] = true;
+                    const neighbors = this.regionQuery(i);
+
+                    if (neighbors.length < this.minPts) {
+                        labels[i] = -1;
+                        continue;
+                    }
+
+                    core[i] = true;
+                    labels[i] = clusterId;
+                    const queue = [...neighbors];
+
+                    for (let q = 0; q < queue.length; q++) {
+                        const neighborIndex = queue[q];
+                        if (!visited[neighborIndex]) {
+                            visited[neighborIndex] = true;
+                            const neighborNeighbors = this.regionQuery(neighborIndex);
+                            if (neighborNeighbors.length >= this.minPts) {
+                                core[neighborIndex] = true;
+                                neighborNeighbors.forEach(nextIndex => {
+                                    if (!queue.includes(nextIndex)) queue.push(nextIndex);
+                                });
+                            }
+                        }
+
+                        if (labels[neighborIndex] === undefined || labels[neighborIndex] === -1) {
+                            labels[neighborIndex] = clusterId;
+                        }
+                    }
+
+                    clusterId++;
+                }
+
+                this.points.forEach((point, index) => {
+                    point.label = labels[index] === undefined ? -1 : labels[index];
+                    point.core = core[index];
+                });
+                this.clusterCount = clusterId;
+                this.noiseCount = this.points.filter(point => point.label === -1).length;
+                this.draw();
+                document.getElementById('dbscanStats').innerHTML = `클러스터: ${this.clusterCount}<br>노이즈: ${this.noiseCount}`;
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(this.ctx, this.canvas);
+
+                this.points.filter(point => point.core).forEach(point => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(point.x, point.y, this.eps, 0, Math.PI * 2);
+                    this.ctx.strokeStyle = 'rgba(20, 184, 166, 0.12)';
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+                });
+
+                this.points.forEach(point => {
+                    this.ctx.fillStyle = point.label === -1 ? '#94a3b8' : COLORS[point.label % COLORS.length];
+                    this.ctx.beginPath();
+                    this.ctx.arc(point.x, point.y, point.core ? 7 : 5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = point.core ? '#111827' : '#fff';
+                    this.ctx.lineWidth = point.core ? 2 : 1.5;
+                    this.ctx.stroke();
+                });
+            },
+
+            reset() {
+                this.points = [];
+                this.clusterCount = 0;
+                this.noiseCount = 0;
+                this.draw();
+                document.getElementById('dbscanStats').innerHTML = '클러스터: 0<br>노이즈: 0';
+            }
+        };
+        dbscan.init();
+
+        /* --- 7. Hierarchical Clustering --- */
+        const hier = {
+            canvas: document.getElementById('hierCanvas'),
+            ctx: document.getElementById('hierCanvas').getContext('2d'),
+            points: [],
+            threshold: 95,
+            linkage: 'average',
+            merges: [],
+
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const p = getCanvasPoint(this.canvas, e);
+                    this.points.push(new Point(p.x, p.y));
+                    this.compute();
+                });
+                this.sample();
+            },
+
+            setThreshold(value) {
+                this.threshold = parseInt(value);
+                document.getElementById('hierThresholdValue').innerText = this.threshold;
+                this.compute();
+            },
+
+            setLinkage(value) {
+                this.linkage = value;
+                this.compute();
+            },
+
+            sample() {
+                this.points = [];
+                [[180, 145], [250, 185], [460, 300], [570, 270], [625, 140]].forEach(([cx, cy], index) => {
+                    const count = index === 4 ? 7 : 9;
+                    for (let i = 0; i < count; i++) {
+                        this.points.push(new Point(
+                            clamp(cx + normalRandom() * 28, 18, this.canvas.width - 18),
+                            clamp(cy + normalRandom() * 26, 18, this.canvas.height - 18)
+                        ));
+                    }
+                });
+                this.compute();
+            },
+
+            clusterDistance(a, b) {
+                const distances = [];
+                a.indices.forEach(ai => {
+                    b.indices.forEach(bi => {
+                        const pa = this.points[ai];
+                        const pb = this.points[bi];
+                        distances.push(Math.hypot(pa.x - pb.x, pa.y - pb.y));
+                    });
+                });
+
+                if (this.linkage === 'single') return Math.min(...distances);
+                if (this.linkage === 'complete') return Math.max(...distances);
+                return distances.reduce((sum, value) => sum + value, 0) / distances.length;
+            },
+
+            centroid(indices) {
+                const total = indices.reduce((acc, index) => {
+                    acc.x += this.points[index].x;
+                    acc.y += this.points[index].y;
+                    return acc;
+                }, { x: 0, y: 0 });
+                return { x: total.x / indices.length, y: total.y / indices.length };
+            },
+
+            compute() {
+                let clusters = this.points.map((_, index) => ({ indices: [index] }));
+                this.merges = [];
+                let lastMergeDistance = null;
+
+                while (clusters.length > 1) {
+                    let best = { distance: Infinity, a: -1, b: -1 };
+
+                    for (let i = 0; i < clusters.length; i++) {
+                        for (let j = i + 1; j < clusters.length; j++) {
+                            const distance = this.clusterDistance(clusters[i], clusters[j]);
+                            if (distance < best.distance) {
+                                best = { distance, a: i, b: j };
+                            }
+                        }
+                    }
+
+                    if (best.distance > this.threshold) break;
+
+                    const left = clusters[best.a];
+                    const right = clusters[best.b];
+                    const leftCentroid = this.centroid(left.indices);
+                    const rightCentroid = this.centroid(right.indices);
+                    this.merges.push({ left: leftCentroid, right: rightCentroid, distance: best.distance });
+                    lastMergeDistance = best.distance;
+
+                    const merged = { indices: [...left.indices, ...right.indices] };
+                    clusters = clusters.filter((_, index) => index !== best.a && index !== best.b);
+                    clusters.push(merged);
+                }
+
+                clusters.forEach((cluster, clusterIndex) => {
+                    cluster.indices.forEach(pointIndex => {
+                        this.points[pointIndex].label = clusterIndex;
+                    });
+                });
+
+                this.draw();
+                document.getElementById('hierStats').innerHTML =
+                    `클러스터: ${clusters.length}<br>마지막 병합 거리: ${lastMergeDistance === null ? '-' : lastMergeDistance.toFixed(1)}`;
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(this.ctx, this.canvas);
+
+                this.merges.forEach(merge => {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(merge.left.x, merge.left.y);
+                    this.ctx.lineTo(merge.right.x, merge.right.y);
+                    this.ctx.strokeStyle = `rgba(17, 24, 39, ${clamp(1 - merge.distance / 200, 0.15, 0.65)})`;
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                });
+
+                this.points.forEach(point => {
+                    this.ctx.fillStyle = COLORS[(point.label || 0) % COLORS.length];
+                    this.ctx.beginPath();
+                    this.ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.lineWidth = 1.5;
+                    this.ctx.stroke();
+                });
+            },
+
+            reset() {
+                this.points = [];
+                this.merges = [];
+                this.draw();
+                document.getElementById('hierStats').innerHTML = '클러스터: 0<br>마지막 병합 거리: -';
+            }
+        };
+        hier.init();
+
+        const recommendationData = {
+            users: ['지민', '서윤', '민준', '하린', '도윤'],
+            items: [
+                { name: 'AI 기초', features: [4, 2, 3] },
+                { name: '데이터 시각화', features: [5, 2, 3] },
+                { name: '로봇 제어', features: [3, 3, 5] },
+                { name: '웹앱 제작', features: [4, 1, 5] },
+                { name: '강화학습', features: [2, 5, 4] },
+                { name: '통계 모델링', features: [2, 5, 2] }
+            ],
+            ratings: [
+                [5, 4, null, 4, null, 2],
+                [4, 5, 2, null, 1, null],
+                [null, 2, 5, 4, 5, 3],
+                [3, null, 4, 5, 4, null],
+                [2, 3, null, 2, 5, 5]
+            ]
+        };
+
+        function cloneRatings() {
+            return recommendationData.ratings.map(row => [...row]);
+        }
+
+        function cosineSimilarity(a, b) {
+            let dot = 0;
+            let normA = 0;
+            let normB = 0;
+
+            a.forEach((value, index) => {
+                if (value === null || b[index] === null) return;
+                dot += value * b[index];
+                normA += value * value;
+                normB += b[index] * b[index];
+            });
+
+            if (normA === 0 || normB === 0) return 0;
+            return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+        }
+
+        /* --- 8. Collaborative Filtering --- */
+        const collab = {
+            ratings: cloneRatings(),
+            selectedUser: 0,
+
+            init() {
+                const select = document.getElementById('cfUserSelect');
+                select.innerHTML = recommendationData.users
+                    .map((user, index) => `<option value="${index}">${user}</option>`)
+                    .join('');
+                this.renderMatrix();
+                this.recommend();
+            },
+
+            setUser(value) {
+                this.selectedUser = parseInt(value);
+                this.renderMatrix();
+                this.recommend();
+            },
+
+            cycleRating(userIndex, itemIndex) {
+                const current = this.ratings[userIndex][itemIndex];
+                this.ratings[userIndex][itemIndex] = current === null ? 1 : current >= 5 ? null : current + 1;
+                this.renderMatrix();
+                this.recommend();
+            },
+
+            renderMatrix() {
+                const matrix = document.getElementById('cfMatrix');
+                const header = ['<div class="matrix-cell header-cell">사용자</div>']
+                    .concat(recommendationData.items.map(item => `<div class="matrix-cell header-cell">${item.name}</div>`));
+
+                const rows = this.ratings.flatMap((row, userIndex) => {
+                    const rowClass = userIndex === this.selectedUser ? ' target-row' : '';
+                    return [`<div class="matrix-cell header-cell${rowClass}">${recommendationData.users[userIndex]}</div>`]
+                        .concat(row.map((rating, itemIndex) => `
+                            <button class="matrix-cell rating-cell${rating === null ? ' missing' : ''}${rowClass}"
+                                    onclick="collab.cycleRating(${userIndex}, ${itemIndex})">
+                                ${rating === null ? '-' : rating}
+                            </button>
+                        `));
+                });
+
+                matrix.innerHTML = header.concat(rows).join('');
+            },
+
+            recommend() {
+                const target = this.ratings[this.selectedUser];
+                const similarities = this.ratings
+                    .map((row, index) => ({
+                        index,
+                        user: recommendationData.users[index],
+                        similarity: index === this.selectedUser ? -1 : cosineSimilarity(target, row)
+                    }))
+                    .filter(item => item.index !== this.selectedUser)
+                    .sort((a, b) => b.similarity - a.similarity);
+
+                const scores = recommendationData.items
+                    .map((item, itemIndex) => {
+                        if (target[itemIndex] !== null) return null;
+
+                        let weighted = 0;
+                        let totalWeight = 0;
+                        similarities.forEach(similarUser => {
+                            const rating = this.ratings[similarUser.index][itemIndex];
+                            const weight = Math.max(0, similarUser.similarity);
+                            if (rating !== null && weight > 0) {
+                                weighted += rating * weight;
+                                totalWeight += weight;
+                            }
+                        });
+
+                        const fallbackRatings = this.ratings
+                            .map(row => row[itemIndex])
+                            .filter(rating => rating !== null);
+                        const fallback = fallbackRatings.reduce((sum, rating) => sum + rating, 0) / fallbackRatings.length;
+
+                        return {
+                            name: item.name,
+                            score: totalWeight > 0 ? weighted / totalWeight : fallback
+                        };
+                    })
+                    .filter(Boolean)
+                    .sort((a, b) => b.score - a.score);
+
+                renderScoreBars('cfRecommendations', scores);
+                const nearest = similarities
+                    .filter(item => item.similarity > 0)
+                    .slice(0, 2)
+                    .map(item => `${item.user}(${item.similarity.toFixed(2)})`)
+                    .join(', ');
+                document.getElementById('cfStats').innerHTML = `비슷한 사용자: ${nearest || '-'}`;
+            },
+
+            reset() {
+                this.ratings = cloneRatings();
+                this.renderMatrix();
+                this.recommend();
+            }
+        };
+        collab.init();
+
+        /* --- 9. Content-Based Filtering --- */
+        const contentFilter = {
+            preference: { visual: 4, math: 3, code: 5 },
+            labels: [
+                { key: 'visual', name: '시각 자료' },
+                { key: 'math', name: '수학 난이도' },
+                { key: 'code', name: '코딩 활동' }
+            ],
+
+            init() {
+                this.render();
+            },
+
+            setPreference(key, value) {
+                this.preference[key] = parseInt(value);
+                const id = key === 'visual' ? 'contentVisualValue' : key === 'math' ? 'contentMathValue' : 'contentCodeValue';
+                document.getElementById(id).innerText = this.preference[key];
+                this.render();
+            },
+
+            render() {
+                const profile = [this.preference.visual, this.preference.math, this.preference.code];
+                document.getElementById('contentFeatureReadout').innerHTML = this.labels.map((label, index) => `
+                    <div class="bar-row">
+                        <span>${label.name}</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: ${profile[index] * 20}%"></div></div>
+                        <strong>${profile[index]}</strong>
+                    </div>
+                `).join('');
+
+                const scores = recommendationData.items.map(item => ({
+                    name: item.name,
+                    score: cosineSimilarity(profile, item.features) * 5
+                })).sort((a, b) => b.score - a.score);
+                renderScoreBars('contentRecommendations', scores);
+            }
+        };
+        contentFilter.init();
+
+        /* --- 10. Model-Based Collaborative Filtering --- */
+        const modelFilter = {
+            canvas: document.getElementById('mfCanvas'),
+            ctx: document.getElementById('mfCanvas').getContext('2d'),
+            selectedUser: 0,
+            iteration: 0,
+            ratings: cloneRatings(),
+            users: [],
+            items: [],
+
+            init() {
+                const select = document.getElementById('mfUserSelect');
+                select.innerHTML = recommendationData.users
+                    .map((user, index) => `<option value="${index}">${user}</option>`)
+                    .join('');
+                this.reset();
+            },
+
+            reset() {
+                this.iteration = 0;
+                this.users = recommendationData.users.map((_, index) => ({
+                    x: Math.sin(index + 1) * 0.45,
+                    y: Math.cos(index + 2) * 0.45
+                }));
+                this.items = recommendationData.items.map((_, index) => ({
+                    x: Math.cos(index * 1.7) * 0.45,
+                    y: Math.sin(index * 1.3) * 0.45
+                }));
+                this.draw();
+                this.updateStats();
+            },
+
+            setUser(value) {
+                this.selectedUser = parseInt(value);
+                this.draw();
+                this.updateStats();
+            },
+
+            train(steps) {
+                const lrRate = 0.012;
+                const reg = 0.025;
+
+                for (let step = 0; step < steps; step++) {
+                    this.ratings.forEach((row, userIndex) => {
+                        row.forEach((rating, itemIndex) => {
+                            if (rating === null) return;
+
+                            const user = this.users[userIndex];
+                            const item = this.items[itemIndex];
+                            const prediction = user.x * item.x + user.y * item.y;
+                            const error = (rating - 3) - prediction;
+                            const oldUserX = user.x;
+                            const oldUserY = user.y;
+
+                            user.x += lrRate * (error * item.x - reg * user.x);
+                            user.y += lrRate * (error * item.y - reg * user.y);
+                            item.x += lrRate * (error * oldUserX - reg * item.x);
+                            item.y += lrRate * (error * oldUserY - reg * item.y);
+                        });
+                    });
+                    this.iteration++;
+                }
+
+                this.draw();
+                this.updateStats();
+            },
+
+            prediction(userIndex, itemIndex) {
+                const user = this.users[userIndex];
+                const item = this.items[itemIndex];
+                return clamp(3 + user.x * item.x + user.y * item.y, 1, 5);
+            },
+
+            recommendations() {
+                return recommendationData.items
+                    .map((item, index) => {
+                        if (this.ratings[this.selectedUser][index] !== null) return null;
+                        return { name: item.name, score: this.prediction(this.selectedUser, index) };
+                    })
+                    .filter(Boolean)
+                    .sort((a, b) => b.score - a.score);
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(this.ctx, this.canvas);
+
+                const origin = { x: this.canvas.width / 2, y: this.canvas.height / 2 };
+                const scale = 150;
+
+                this.ctx.strokeStyle = '#cbd5e1';
+                this.ctx.lineWidth = 1.5;
+                this.ctx.beginPath();
+                this.ctx.moveTo(40, origin.y);
+                this.ctx.lineTo(this.canvas.width - 40, origin.y);
+                this.ctx.moveTo(origin.x, 40);
+                this.ctx.lineTo(origin.x, this.canvas.height - 40);
+                this.ctx.stroke();
+
+                this.items.forEach((item, index) => {
+                    const x = origin.x + item.x * scale;
+                    const y = origin.y - item.y * scale;
+                    this.ctx.fillStyle = COLORS[index % COLORS.length];
+                    this.ctx.fillRect(x - 7, y - 7, 14, 14);
+                    this.ctx.fillStyle = '#111827';
+                    this.ctx.font = '13px Work Sans, sans-serif';
+                    this.ctx.fillText(recommendationData.items[index].name, x + 11, y + 4);
+                });
+
+                this.users.forEach((user, index) => {
+                    const x = origin.x + user.x * scale;
+                    const y = origin.y - user.y * scale;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, index === this.selectedUser ? 10 : 7, 0, Math.PI * 2);
+                    this.ctx.fillStyle = index === this.selectedUser ? '#111827' : '#64748b';
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#fff';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.fillStyle = '#111827';
+                    this.ctx.font = '13px Work Sans, sans-serif';
+                    this.ctx.fillText(recommendationData.users[index], x + 12, y - 10);
+                });
+
+                this.ctx.fillStyle = '#475569';
+                this.ctx.fillText('숨은 취향 축 1', this.canvas.width - 130, origin.y - 10);
+                this.ctx.fillText('숨은 취향 축 2', origin.x + 10, 55);
+            },
+
+            updateStats() {
+                const recommendations = this.recommendations();
+                const top = recommendations[0] ? `${recommendations[0].name} (${recommendations[0].score.toFixed(2)})` : '-';
+                document.getElementById('mfStats').innerHTML = `반복: ${this.iteration}<br>추천: ${top}`;
+            }
+        };
+        modelFilter.init();
+
+        /* --- 11. Deep Learning Filtering --- */
+        const deepFilter = {
+            history: [0, 3],
+            diversity: 2,
+            weights: [
+                [0.8, -0.3, 0.4],
+                [0.2, 0.9, -0.1],
+                [-0.4, 0.3, 0.8]
+            ],
+
+            init() {
+                this.renderChoices();
+                this.render();
+            },
+
+            setDiversity(value) {
+                this.diversity = parseInt(value);
+                document.getElementById('deepDiversityValue').innerText = this.diversity;
+                this.render();
+            },
+
+            toggleItem(index) {
+                this.history = this.history.filter(itemIndex => itemIndex !== index);
+                this.history.push(index);
+                if (this.history.length > 5) this.history.shift();
+                this.renderChoices();
+                this.render();
+            },
+
+            reset() {
+                this.history = [];
+                this.renderChoices();
+                this.render();
+            },
+
+            embeddingForItem(index) {
+                const features = recommendationData.items[index].features;
+                return features.map(value => (value - 3) / 2);
+            },
+
+            userEmbedding() {
+                if (!this.history.length) return [0, 0, 0];
+                const sum = this.history.reduce((acc, itemIndex) => {
+                    const embedding = this.embeddingForItem(itemIndex);
+                    embedding.forEach((value, index) => acc[index] += value);
+                    return acc;
+                }, [0, 0, 0]);
+                return sum.map(value => value / this.history.length);
+            },
+
+            hiddenLayer() {
+                const user = this.userEmbedding();
+                return this.weights.map(row => {
+                    const activation = row.reduce((sum, weight, index) => sum + weight * user[index], 0);
+                    return Math.tanh(activation);
+                });
+            },
+
+            renderChoices() {
+                document.getElementById('deepChoices').innerHTML = recommendationData.items.map((item, index) => {
+                    const active = this.history.includes(index) ? ' active' : '';
+                    return `
+                        <button class="choice-card${active}" onclick="deepFilter.toggleItem(${index})">
+                            <strong>${item.name}</strong>
+                            <span>특징 벡터: ${item.features.join(' / ')}</span>
+                        </button>
+                    `;
+                }).join('');
+            },
+
+            render() {
+                const hidden = this.hiddenLayer();
+                const counts = this.history.reduce((acc, index) => {
+                    acc[index] = (acc[index] || 0) + 1;
+                    return acc;
+                }, {});
+
+                const scores = recommendationData.items.map((item, index) => {
+                    const itemEmbedding = this.embeddingForItem(index);
+                    const neuralScore = hidden.reduce((sum, value, hiddenIndex) => {
+                        return sum + value * itemEmbedding[hiddenIndex];
+                    }, 0);
+                    const novelty = this.diversity * 0.12 * (1 / ((counts[index] || 0) + 1));
+                    return {
+                        name: item.name,
+                        score: clamp(3 + neuralScore + novelty, 0, 5)
+                    };
+                }).sort((a, b) => b.score - a.score);
+
+                renderScoreBars('deepRecommendations', scores);
+                document.getElementById('deepStats').innerHTML =
+                    `은닉층 활성화: ${hidden.map(value => value.toFixed(2)).join(', ')}<br>최근 이력: ${this.history.length}개`;
+            }
+        };
+        deepFilter.init();
+
+        /* --- 12. Visualization and Dimensionality Reduction --- */
+        const dimReduction = {
+            canvas: document.getElementById('dimCanvas'),
+            ctx: document.getElementById('dimCanvas').getContext('2d'),
+            points: [],
+            mode: 'pca',
+            noise: 2,
+            explainedVariance: 0,
+
+            init() {
+                this.sample();
+            },
+
+            setMode(value) {
+                this.mode = value;
+                this.draw();
+            },
+
+            setNoise(value) {
+                this.noise = parseInt(value);
+                document.getElementById('dimNoiseValue').innerText = this.noise;
+                this.sample();
+            },
+
+            sample() {
+                this.points = [];
+                const noiseScale = 0.04 + this.noise * 0.035;
+
+                for (let label = 0; label < 3; label++) {
+                    const radius = 0.65 + label * 0.48;
+                    for (let i = 0; i < 46; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const jitteredRadius = radius + normalRandom() * noiseScale;
+                        const x = Math.cos(angle) * jitteredRadius;
+                        const y = Math.sin(angle) * jitteredRadius;
+                        const z = Math.sin(angle * 2 + label * 0.6) * 0.45 + normalRandom() * noiseScale;
+                        this.points.push({ features: [x, y, z], label });
+                    }
+                }
+                this.draw();
+            },
+
+            meanVector() {
+                const mean = [0, 0, 0];
+                this.points.forEach(point => {
+                    point.features.forEach((value, index) => mean[index] += value);
+                });
+                return mean.map(value => value / this.points.length);
+            },
+
+            covariance(centered) {
+                const matrix = Array(3).fill(0).map(() => Array(3).fill(0));
+                centered.forEach(vector => {
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            matrix[i][j] += vector[i] * vector[j];
+                        }
+                    }
+                });
+                return matrix.map(row => row.map(value => value / Math.max(1, centered.length - 1)));
+            },
+
+            multiplyMatrixVector(matrix, vector) {
+                return matrix.map(row => row.reduce((sum, value, index) => sum + value * vector[index], 0));
+            },
+
+            normalizeVector(vector) {
+                const norm = Math.hypot(...vector) || 1;
+                return vector.map(value => value / norm);
+            },
+
+            powerIteration(matrix, seed) {
+                let vector = this.normalizeVector(seed);
+                for (let i = 0; i < 40; i++) {
+                    vector = this.normalizeVector(this.multiplyMatrixVector(matrix, vector));
+                }
+                return vector;
+            },
+
+            eigenValue(matrix, vector) {
+                const multiplied = this.multiplyMatrixVector(matrix, vector);
+                return vector.reduce((sum, value, index) => sum + value * multiplied[index], 0);
+            },
+
+            projectPca() {
+                const mean = this.meanVector();
+                const centered = this.points.map(point => point.features.map((value, index) => value - mean[index]));
+                const covariance = this.covariance(centered);
+                const pc1 = this.powerIteration(covariance, [1, 0.5, 0.25]);
+                const lambda1 = this.eigenValue(covariance, pc1);
+                const deflated = covariance.map((row, i) => row.map((value, j) => value - lambda1 * pc1[i] * pc1[j]));
+                const pc2 = this.powerIteration(deflated, [-0.2, 1, 0.4]);
+                const lambda2 = Math.max(0, this.eigenValue(covariance, pc2));
+                const totalVariance = covariance[0][0] + covariance[1][1] + covariance[2][2];
+                this.explainedVariance = totalVariance === 0 ? 0 : ((lambda1 + lambda2) / totalVariance) * 100;
+
+                return centered.map((vector, index) => ({
+                    x: vector.reduce((sum, value, featureIndex) => sum + value * pc1[featureIndex], 0),
+                    y: vector.reduce((sum, value, featureIndex) => sum + value * pc2[featureIndex], 0),
+                    label: this.points[index].label
+                }));
+            },
+
+            projectKernel() {
+                this.explainedVariance = 0;
+                return this.points.map(point => {
+                    const [x, y, z] = point.features;
+                    const radius = x * x + y * y;
+                    return {
+                        x: radius * Math.cos(z * 2.5),
+                        y: radius * Math.sin(z * 2.5),
+                        label: point.label
+                    };
+                });
+            },
+
+            drawProjection(projected) {
+                const xs = projected.map(point => point.x);
+                const ys = projected.map(point => point.y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
+                const margin = 56;
+                const width = this.canvas.width - margin * 2;
+                const height = this.canvas.height - margin * 2;
+                const rangeX = maxX - minX || 1;
+                const rangeY = maxY - minY || 1;
+
+                this.ctx.strokeStyle = '#cbd5e1';
+                this.ctx.lineWidth = 1.5;
+                this.ctx.beginPath();
+                this.ctx.moveTo(margin, this.canvas.height / 2);
+                this.ctx.lineTo(this.canvas.width - margin, this.canvas.height / 2);
+                this.ctx.moveTo(this.canvas.width / 2, margin);
+                this.ctx.lineTo(this.canvas.width / 2, this.canvas.height - margin);
+                this.ctx.stroke();
+
+                projected.forEach(point => {
+                    const x = margin + ((point.x - minX) / rangeX) * width;
+                    const y = this.canvas.height - margin - ((point.y - minY) / rangeY) * height;
+                    this.ctx.fillStyle = COLORS[point.label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+                });
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(this.ctx, this.canvas);
+
+                const projected = this.mode === 'pca' ? this.projectPca() : this.projectKernel();
+                this.drawProjection(projected);
+
+                const methodName = this.mode === 'pca' ? 'PCA' : 'Kernel';
+                const varianceText = this.mode === 'pca' ? `${this.explainedVariance.toFixed(1)}%` : '비선형 투영';
+                document.getElementById('dimStats').innerHTML = `설명 분산: ${varianceText}<br>투영 방식: ${methodName}`;
+
+                this.ctx.fillStyle = '#475569';
+                this.ctx.font = '14px Work Sans, sans-serif';
+                this.ctx.fillText(`${methodName} 2D projection`, 54, 38);
+            }
+        };
+        dimReduction.init();
 
     </script>
 </body>
