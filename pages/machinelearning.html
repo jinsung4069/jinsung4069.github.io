@@ -197,6 +197,11 @@
             color: var(--color-gray-900);
             font-size: 1rem;
         }
+        .demo-panel canvas {
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--border-radius-lg);
+        }
         .demo-note {
             margin-top: 0.8rem;
             color: var(--color-gray-600);
@@ -438,7 +443,7 @@
                         <div class="category-badge"><i class="fas fa-project-diagram"></i> Unsupervised</div>
                         <h3>비지도 학습</h3>
                         <ul>
-                            <li>군집화: K-Means, 밀도 기반, 계층적 클러스터링</li>
+                            <li>군집화: K-Means, 엘보우 기법, 밀도 기반, 계층적 클러스터링</li>
                             <li>추천 시스템: 협업, 콘텐츠, 모델, 딥러닝 기반 필터링</li>
                             <li>시각화와 차원축소: PCA와 커널 기반 투영</li>
                         </ul>
@@ -627,7 +632,36 @@
             </div>
         </section>
 
-        <!-- 6. Density-Based Clustering -->
+        <!-- 6. Elbow Method -->
+        <section class="simulation-section">
+            <div class="simulation-container">
+                <div class="canvas-container">
+                    <canvas id="elbowCanvas" width="800" height="500"></canvas>
+                </div>
+                <div class="controls">
+                    <h3>엘보우 기법 (Elbow Method)</h3>
+                    <p class="lang-content lang-ko active">
+                        K를 바꿔가며 군집 내 오차 제곱합(WCSS)이 얼마나 줄어드는지 확인합니다.
+                        꺾이는 지점은 더 많은 클러스터를 추가해도 개선 폭이 작아지는 후보 K입니다.
+                    </p>
+                    <p class="lang-content lang-en">
+                        Compares within-cluster sum of squares across K values. The bend suggests where extra clusters bring smaller gains.
+                    </p>
+                    <div class="control-group">
+                        <label>살펴볼 K: <span id="elbowKValue">3</span></label>
+                        <input type="range" min="1" max="8" value="3" oninput="elbow.setSelectedK(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <button class="btn" onclick="elbow.calculate()">오차 곡선 계산</button>
+                        <button class="btn btn-outline" onclick="elbow.sample()">샘플 데이터</button>
+                        <button class="btn btn-outline" onclick="elbow.reset()">초기화</button>
+                    </div>
+                    <div id="elbowStats" class="stats">추천 K: -<br>현재 WCSS: -</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Density-Based Clustering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -650,16 +684,18 @@
                         <input type="range" min="3" max="10" value="5" oninput="dbscan.setMinPts(this.value)">
                     </div>
                     <div class="control-group">
-                        <button class="btn" onclick="dbscan.run()">군집 찾기 (Run)</button>
+                        <button class="btn" onclick="dbscan.animate()">애니메이션 실행</button>
+                        <button class="btn btn-outline" onclick="dbscan.step()">1단계</button>
+                        <button class="btn btn-outline" onclick="dbscan.run()">즉시 결과</button>
                         <button class="btn btn-outline" onclick="dbscan.sample()">샘플 데이터</button>
                         <button class="btn btn-outline" onclick="dbscan.reset()">초기화</button>
                     </div>
-                    <div id="dbscanStats" class="stats">클러스터: 0<br>노이즈: 0</div>
+                    <div id="dbscanStats" class="stats">클러스터: 0<br>노이즈: 0<br>검사 상태: -</div>
                 </div>
             </div>
         </section>
 
-        <!-- 7. Hierarchical Clustering -->
+        <!-- 8. Hierarchical Clustering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -694,7 +730,7 @@
             </div>
         </section>
 
-        <!-- 8. Collaborative Filtering -->
+        <!-- 9. Collaborative Filtering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container demo-panel">
@@ -727,7 +763,7 @@
             </div>
         </section>
 
-        <!-- 9. Content-Based Filtering -->
+        <!-- 10. Content-Based Filtering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container demo-panel">
@@ -760,7 +796,7 @@
             </div>
         </section>
 
-        <!-- 10. Model-Based Collaborative Filtering -->
+        <!-- 11. Model-Based Collaborative Filtering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -788,10 +824,12 @@
             </div>
         </section>
 
-        <!-- 11. Deep Learning Filtering -->
+        <!-- 12. Deep Learning Filtering -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container demo-panel">
+                    <h4>입력층-은닉층-출력층 추천 네트워크</h4>
+                    <canvas id="deepCanvas" width="800" height="320"></canvas>
                     <h4>최근 관심 콘텐츠</h4>
                     <div class="choice-grid" id="deepChoices"></div>
                     <h4 style="margin-top: 1.5rem;">딥러닝 기반 추천 점수</h4>
@@ -817,7 +855,7 @@
             </div>
         </section>
 
-        <!-- 12. Visualization and Dimensionality Reduction -->
+        <!-- 13. Visualization and Dimensionality Reduction -->
         <section class="simulation-section">
             <div class="simulation-container">
                 <div class="canvas-container">
@@ -844,6 +882,7 @@
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="dimReduction.sample()">새 데이터</button>
+                        <button class="btn" onclick="dimReduction.animateProjection()">차원축소 애니메이션</button>
                     </div>
                     <div id="dimStats" class="stats">설명 분산: -<br>투영 방식: PCA</div>
                 </div>
@@ -1186,6 +1225,279 @@
         };
         kmeans.init();
 
+        function calculateKMeansClusters(points, k, iterations = 26) {
+            if (!points.length) {
+                return { labels: [], centroids: [], wcss: 0 };
+            }
+
+            const source = points.map(point => ({ x: point.x, y: point.y }));
+            const clusterCount = clamp(k, 1, source.length);
+            const centroids = [source.reduce((leftmost, point) => point.x < leftmost.x ? point : leftmost, source[0])];
+
+            while (centroids.length < clusterCount) {
+                let farthestPoint = source[0];
+                let farthestDistance = -1;
+                source.forEach(point => {
+                    const nearest = Math.min(...centroids.map(c => Math.hypot(point.x - c.x, point.y - c.y)));
+                    if (nearest > farthestDistance) {
+                        farthestDistance = nearest;
+                        farthestPoint = point;
+                    }
+                });
+                centroids.push({ x: farthestPoint.x, y: farthestPoint.y });
+            }
+
+            let labels = Array(source.length).fill(0);
+            for (let iteration = 0; iteration < iterations; iteration++) {
+                labels = source.map(point => {
+                    let bestLabel = 0;
+                    let bestDistance = Infinity;
+                    centroids.forEach((centroid, index) => {
+                        const distance = Math.hypot(point.x - centroid.x, point.y - centroid.y);
+                        if (distance < bestDistance) {
+                            bestDistance = distance;
+                            bestLabel = index;
+                        }
+                    });
+                    return bestLabel;
+                });
+
+                const sums = Array(clusterCount).fill(0).map(() => ({ x: 0, y: 0, count: 0 }));
+                source.forEach((point, index) => {
+                    const label = labels[index];
+                    sums[label].x += point.x;
+                    sums[label].y += point.y;
+                    sums[label].count++;
+                });
+
+                sums.forEach((sum, index) => {
+                    if (sum.count > 0) {
+                        centroids[index] = { x: sum.x / sum.count, y: sum.y / sum.count };
+                    }
+                });
+            }
+
+            const wcss = source.reduce((sum, point, index) => {
+                const centroid = centroids[labels[index]];
+                return sum + Math.pow(Math.hypot(point.x - centroid.x, point.y - centroid.y), 2);
+            }, 0);
+
+            return { labels, centroids, wcss };
+        }
+
+        /* --- 6. Elbow Method --- */
+        const elbow = {
+            canvas: document.getElementById('elbowCanvas'),
+            ctx: document.getElementById('elbowCanvas').getContext('2d'),
+            points: [],
+            results: [],
+            selectedK: 3,
+            maxK: 8,
+
+            init() {
+                this.canvas.addEventListener('click', (e) => {
+                    const point = getCanvasPoint(this.canvas, e);
+                    this.points.push(new Point(point.x, point.y));
+                    this.calculate();
+                });
+                this.sample();
+            },
+
+            addBlob(cx, cy, spread, count) {
+                for (let i = 0; i < count; i++) {
+                    this.points.push(new Point(
+                        clamp(cx + normalRandom() * spread, 28, this.canvas.width - 28),
+                        clamp(cy + normalRandom() * spread, 28, this.canvas.height - 28)
+                    ));
+                }
+            },
+
+            sample() {
+                this.points = [];
+                this.addBlob(165, 150, 28, 18);
+                this.addBlob(310, 340, 34, 22);
+                this.addBlob(510, 170, 30, 20);
+                this.addBlob(645, 330, 26, 16);
+                this.calculate();
+            },
+
+            setSelectedK(value) {
+                this.selectedK = parseInt(value);
+                document.getElementById('elbowKValue').innerText = this.selectedK;
+                this.draw();
+                this.updateStats();
+            },
+
+            calculate() {
+                const usableMaxK = Math.max(1, Math.min(this.maxK, this.points.length));
+                this.results = [];
+                for (let k = 1; k <= usableMaxK; k++) {
+                    this.results.push({
+                        k,
+                        ...calculateKMeansClusters(this.points, k)
+                    });
+                }
+                this.selectedK = clamp(this.selectedK, 1, usableMaxK);
+                document.getElementById('elbowKValue').innerText = this.selectedK;
+                this.draw();
+                this.updateStats();
+            },
+
+            suggestedK() {
+                if (this.results.length < 3) return this.results[0]?.k || 1;
+                const first = this.results[0];
+                const last = this.results[this.results.length - 1];
+                const dx = last.k - first.k || 1;
+                const dy = last.wcss - first.wcss || 1;
+                const denominator = Math.hypot(dx, dy) || 1;
+                let best = this.results[1];
+                let bestDistance = -1;
+
+                this.results.slice(1, -1).forEach(result => {
+                    const distance = Math.abs(dy * result.k - dx * result.wcss + last.k * first.wcss - last.wcss * first.k) / denominator;
+                    if (distance > bestDistance) {
+                        bestDistance = distance;
+                        best = result;
+                    }
+                });
+                return best.k;
+            },
+
+            currentResult() {
+                return this.results.find(result => result.k === this.selectedK) || this.results[this.results.length - 1];
+            },
+
+            drawScatter(result) {
+                const ctx = this.ctx;
+                const area = { x: 42, y: 58, w: 315, h: 365 };
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(area.x, area.y, area.w, area.h);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.strokeRect(area.x, area.y, area.w, area.h);
+                ctx.fillStyle = '#475569';
+                ctx.font = '14px Work Sans, sans-serif';
+                ctx.fillText(`K=${this.selectedK} 군집 결과`, area.x, 34);
+
+                this.points.forEach((point, index) => {
+                    const label = result?.labels[index] ?? -1;
+                    ctx.fillStyle = label >= 0 ? COLORS[label % COLORS.length] : '#94a3b8';
+                    ctx.beginPath();
+                    ctx.arc(point.x * 0.39 + area.x - 4, point.y * 0.73 + area.y - 22, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                });
+
+                result?.centroids.forEach((centroid, index) => {
+                    const x = centroid.x * 0.39 + area.x - 4;
+                    const y = centroid.y * 0.73 + area.y - 22;
+                    ctx.strokeStyle = COLORS[index % COLORS.length];
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(x - 8, y - 8);
+                    ctx.lineTo(x + 8, y + 8);
+                    ctx.moveTo(x + 8, y - 8);
+                    ctx.lineTo(x - 8, y + 8);
+                    ctx.stroke();
+                });
+            },
+
+            drawCurve() {
+                const ctx = this.ctx;
+                const area = { x: 430, y: 58, w: 315, h: 365 };
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(area.x, area.y, area.w, area.h);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.strokeRect(area.x, area.y, area.w, area.h);
+                ctx.fillStyle = '#475569';
+                ctx.font = '14px Work Sans, sans-serif';
+                ctx.fillText('K별 WCSS 곡선', area.x, 34);
+
+                if (!this.results.length) return;
+
+                const maxWcss = Math.max(...this.results.map(result => result.wcss)) || 1;
+                const minWcss = Math.min(...this.results.map(result => result.wcss));
+                const range = maxWcss - minWcss || 1;
+                const xForK = (k) => area.x + ((k - 1) / Math.max(1, this.maxK - 1)) * area.w;
+                const yForWcss = (wcss) => area.y + area.h - ((wcss - minWcss) / range) * (area.h - 36) - 18;
+
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 4; i++) {
+                    const y = area.y + (area.h / 4) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(area.x, y);
+                    ctx.lineTo(area.x + area.w, y);
+                    ctx.stroke();
+                }
+
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                this.results.forEach((result, index) => {
+                    const x = xForK(result.k);
+                    const y = yForWcss(result.wcss);
+                    if (index === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                const suggested = this.suggestedK();
+                this.results.forEach(result => {
+                    const x = xForK(result.k);
+                    const y = yForWcss(result.wcss);
+                    const isSelected = result.k === this.selectedK;
+                    const isSuggested = result.k === suggested;
+
+                    ctx.fillStyle = isSuggested ? '#f59e0b' : isSelected ? '#111827' : '#2563eb';
+                    ctx.beginPath();
+                    ctx.arc(x, y, isSelected || isSuggested ? 7 : 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#475569';
+                    ctx.font = '12px Work Sans, sans-serif';
+                    ctx.fillText(result.k, x - 3, area.y + area.h + 18);
+                });
+
+                const selected = this.currentResult();
+                if (selected) {
+                    const x = xForK(selected.k);
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = 'rgba(17, 24, 39, 0.45)';
+                    ctx.beginPath();
+                    ctx.moveTo(x, area.y);
+                    ctx.lineTo(x, area.y + area.h);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            },
+
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(this.ctx, this.canvas);
+                const result = this.currentResult();
+                this.drawScatter(result);
+                this.drawCurve();
+            },
+
+            updateStats() {
+                const current = this.currentResult();
+                const suggested = this.suggestedK();
+                document.getElementById('elbowStats').innerHTML =
+                    `추천 K: ${suggested || '-'}<br>현재 WCSS: ${current ? Math.round(current.wcss).toLocaleString() : '-'}`;
+            },
+
+            reset() {
+                this.points = [];
+                this.results = [];
+                this.draw();
+                document.getElementById('elbowStats').innerHTML = '추천 K: -<br>현재 WCSS: -';
+            }
+        };
+        elbow.init();
+
         /* --- 4. Decision Tree --- */
         const dt = {
             canvas: document.getElementById('dtCanvas'),
@@ -1525,13 +1837,21 @@
             }).join('');
         }
 
-        /* --- 6. Density-Based Clustering --- */
+        /* --- 7. Density-Based Clustering --- */
         const dbscan = {
             canvas: document.getElementById('dbscanCanvas'),
             ctx: document.getElementById('dbscanCanvas').getContext('2d'),
             points: [],
             eps: 54,
             minPts: 5,
+            actions: [],
+            actionIndex: 0,
+            animationTimer: null,
+            scanFrame: null,
+            scanner: null,
+            currentIndex: null,
+            currentNeighbors: [],
+            status: '-',
             clusterCount: 0,
             noiseCount: 0,
 
@@ -1539,7 +1859,8 @@
                 this.canvas.addEventListener('click', (e) => {
                     const p = getCanvasPoint(this.canvas, e);
                     this.points.push(new Point(p.x, p.y));
-                    this.run();
+                    this.prepare();
+                    this.draw();
                 });
                 this.sample();
             },
@@ -1547,13 +1868,15 @@
             setEps(value) {
                 this.eps = parseInt(value);
                 document.getElementById('dbscanEpsValue').innerText = this.eps;
-                this.run();
+                this.prepare();
+                this.draw();
             },
 
             setMinPts(value) {
                 this.minPts = parseInt(value);
                 document.getElementById('dbscanMinPtsValue').innerText = this.minPts;
-                this.run();
+                this.prepare();
+                this.draw();
             },
 
             addBlob(cx, cy, spread, count) {
@@ -1565,18 +1888,32 @@
                 }
             },
 
+            addArc(cx, cy, radius, startAngle, endAngle, count, jitter = 7) {
+                for (let i = 0; i < count; i++) {
+                    const t = count === 1 ? 0 : i / (count - 1);
+                    const angle = startAngle + (endAngle - startAngle) * t + normalRandom() * 0.035;
+                    const r = radius + normalRandom() * jitter;
+                    this.points.push(new Point(
+                        clamp(cx + Math.cos(angle) * r, 18, this.canvas.width - 18),
+                        clamp(cy + Math.sin(angle) * r, 18, this.canvas.height - 18)
+                    ));
+                }
+            },
+
             sample() {
+                this.stopAnimation();
                 this.points = [];
-                this.addBlob(190, 160, 34, 22);
-                this.addBlob(440, 300, 44, 28);
-                this.addBlob(625, 145, 30, 18);
-                for (let i = 0; i < 10; i++) {
+                this.addArc(230, 245, 118, Math.PI * 0.15, Math.PI * 1.35, 34, 8);
+                this.addArc(470, 245, 116, Math.PI * 1.12, Math.PI * 2.28, 34, 8);
+                this.addBlob(625, 150, 24, 14);
+                for (let i = 0; i < 12; i++) {
                     this.points.push(new Point(
                         40 + Math.random() * (this.canvas.width - 80),
                         40 + Math.random() * (this.canvas.height - 80)
                     ));
                 }
-                this.run();
+                this.prepare();
+                this.draw();
             },
 
             regionQuery(index) {
@@ -1590,10 +1927,34 @@
                 return neighbors;
             },
 
-            run() {
+            prepare() {
+                this.stopAnimation();
+                this.resetLabels();
+                this.actions = this.buildActions();
+                this.actionIndex = 0;
+                this.status = '실행 전: 애니메이션 실행 또는 1단계를 눌러보세요.';
+                this.updateStats();
+            },
+
+            resetLabels() {
+                this.points.forEach(point => {
+                    point.label = null;
+                    point.core = false;
+                    point.visited = false;
+                    point.noise = false;
+                });
+                this.currentIndex = null;
+                this.currentNeighbors = [];
+                this.scanner = null;
+                this.clusterCount = 0;
+                this.noiseCount = 0;
+            },
+
+            buildActions() {
                 const labels = Array(this.points.length).fill(undefined);
                 const visited = Array(this.points.length).fill(false);
                 const core = Array(this.points.length).fill(false);
+                const actions = [];
                 let clusterId = 0;
 
                 for (let i = 0; i < this.points.length; i++) {
@@ -1601,14 +1962,17 @@
 
                     visited[i] = true;
                     const neighbors = this.regionQuery(i);
+                    actions.push({ type: 'inspect', index: i, neighbors: [...neighbors], clusterId });
 
                     if (neighbors.length < this.minPts) {
                         labels[i] = -1;
+                        actions.push({ type: 'noise', index: i, neighbors: [...neighbors] });
                         continue;
                     }
 
                     core[i] = true;
                     labels[i] = clusterId;
+                    actions.push({ type: 'startCluster', index: i, neighbors: [...neighbors], clusterId });
                     const queue = [...neighbors];
 
                     for (let q = 0; q < queue.length; q++) {
@@ -1616,8 +1980,20 @@
                         if (!visited[neighborIndex]) {
                             visited[neighborIndex] = true;
                             const neighborNeighbors = this.regionQuery(neighborIndex);
+                            actions.push({
+                                type: 'inspect',
+                                index: neighborIndex,
+                                neighbors: [...neighborNeighbors],
+                                clusterId
+                            });
                             if (neighborNeighbors.length >= this.minPts) {
                                 core[neighborIndex] = true;
+                                actions.push({
+                                    type: 'expand',
+                                    index: neighborIndex,
+                                    neighbors: [...neighborNeighbors],
+                                    clusterId
+                                });
                                 neighborNeighbors.forEach(nextIndex => {
                                     if (!queue.includes(nextIndex)) queue.push(nextIndex);
                                 });
@@ -1626,51 +2002,212 @@
 
                         if (labels[neighborIndex] === undefined || labels[neighborIndex] === -1) {
                             labels[neighborIndex] = clusterId;
+                            actions.push({
+                                type: 'assign',
+                                index: neighborIndex,
+                                neighbors: this.regionQuery(neighborIndex),
+                                clusterId
+                            });
                         }
                     }
 
+                    actions.push({ type: 'completeCluster', clusterId });
                     clusterId++;
                 }
 
-                this.points.forEach((point, index) => {
-                    point.label = labels[index] === undefined ? -1 : labels[index];
-                    point.core = core[index];
-                });
-                this.clusterCount = clusterId;
+                actions.push({ type: 'finish', clusterCount: clusterId });
+                return actions;
+            },
+
+            applyAction(action) {
+                if (!action) return false;
+                this.currentIndex = action.index ?? this.currentIndex;
+                this.currentNeighbors = action.neighbors || [];
+
+                if (typeof action.index === 'number') {
+                    this.points[action.index].visited = true;
+                    this.moveScanner(action.index);
+                }
+
+                if (action.type === 'inspect') {
+                    this.status = `점 ${action.index + 1} 검사: 이웃 ${action.neighbors.length}개`;
+                }
+
+                if (action.type === 'noise') {
+                    const point = this.points[action.index];
+                    point.label = -1;
+                    point.noise = true;
+                    this.status = `밀도 부족: 점 ${action.index + 1}을 노이즈 후보로 표시`;
+                }
+
+                if (action.type === 'startCluster') {
+                    const point = this.points[action.index];
+                    point.label = action.clusterId;
+                    point.core = true;
+                    point.noise = false;
+                    this.status = `새 클러스터 ${action.clusterId + 1} 시작`;
+                }
+
+                if (action.type === 'expand') {
+                    const point = this.points[action.index];
+                    point.label = action.clusterId;
+                    point.core = true;
+                    point.noise = false;
+                    this.status = `충분한 밀도 발견: 클러스터 ${action.clusterId + 1} 확장`;
+                }
+
+                if (action.type === 'assign') {
+                    const point = this.points[action.index];
+                    point.label = action.clusterId;
+                    point.noise = false;
+                    this.status = `점 ${action.index + 1}을 클러스터 ${action.clusterId + 1}에 포함`;
+                }
+
+                if (action.type === 'completeCluster') {
+                    this.clusterCount = Math.max(this.clusterCount, action.clusterId + 1);
+                    this.status = `클러스터 ${action.clusterId + 1} 확장 완료`;
+                }
+
+                if (action.type === 'finish') {
+                    this.currentIndex = null;
+                    this.currentNeighbors = [];
+                    this.clusterCount = action.clusterCount;
+                    this.status = 'DBSCAN 완료';
+                    this.stopAnimation();
+                }
+
                 this.noiseCount = this.points.filter(point => point.label === -1).length;
+                this.clusterCount = Math.max(
+                    this.clusterCount,
+                    ...this.points.filter(point => point.label !== null && point.label >= 0).map(point => point.label + 1),
+                    0
+                );
+                this.updateStats();
                 this.draw();
-                document.getElementById('dbscanStats').innerHTML = `클러스터: ${this.clusterCount}<br>노이즈: ${this.noiseCount}`;
+                return action.type !== 'finish';
+            },
+
+            step() {
+                if (!this.actions.length || this.actionIndex >= this.actions.length) {
+                    this.prepare();
+                }
+                const action = this.actions[this.actionIndex++];
+                return this.applyAction(action);
+            },
+
+            animate() {
+                if (!this.actions.length || this.actionIndex >= this.actions.length) {
+                    this.prepare();
+                }
+                this.stopAnimation();
+                this.animationTimer = window.setInterval(() => {
+                    if (!this.step()) this.stopAnimation();
+                }, 620);
+            },
+
+            run() {
+                this.prepare();
+                while (this.actionIndex < this.actions.length) {
+                    const action = this.actions[this.actionIndex++];
+                    this.applyAction(action);
+                }
+            },
+
+            stopAnimation() {
+                if (this.animationTimer) {
+                    window.clearInterval(this.animationTimer);
+                    this.animationTimer = null;
+                }
+                if (this.scanFrame) {
+                    window.cancelAnimationFrame(this.scanFrame);
+                    this.scanFrame = null;
+                }
+            },
+
+            moveScanner(index) {
+                const point = this.points[index];
+                if (!point) return;
+                if (this.scanFrame) window.cancelAnimationFrame(this.scanFrame);
+
+                const start = this.scanner ? { ...this.scanner } : { x: point.x, y: point.y };
+                const target = { x: point.x, y: point.y };
+                const startedAt = performance.now();
+                const duration = 320;
+
+                const animateMove = (now) => {
+                    const t = clamp((now - startedAt) / duration, 0, 1);
+                    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    this.scanner = {
+                        x: start.x + (target.x - start.x) * eased,
+                        y: start.y + (target.y - start.y) * eased
+                    };
+                    this.draw();
+                    if (t < 1) {
+                        this.scanFrame = window.requestAnimationFrame(animateMove);
+                    }
+                };
+
+                this.scanFrame = window.requestAnimationFrame(animateMove);
+            },
+
+            updateStats() {
+                document.getElementById('dbscanStats').innerHTML =
+                    `클러스터: ${this.clusterCount}<br>노이즈: ${this.noiseCount}<br>검사 상태: ${this.status}`;
             },
 
             draw() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 drawLightGrid(this.ctx, this.canvas);
 
-                this.points.filter(point => point.core).forEach(point => {
+                if (this.scanner) {
                     this.ctx.beginPath();
-                    this.ctx.arc(point.x, point.y, this.eps, 0, Math.PI * 2);
-                    this.ctx.strokeStyle = 'rgba(20, 184, 166, 0.12)';
-                    this.ctx.lineWidth = 1;
+                    this.ctx.arc(this.scanner.x, this.scanner.y, this.eps, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#f59e0b';
+                    this.ctx.lineWidth = 3;
                     this.ctx.stroke();
-                });
+                }
+
+                if (typeof this.currentIndex === 'number') {
+                    const point = this.points[this.currentIndex];
+                    this.currentNeighbors.forEach(index => {
+                        const neighbor = this.points[index];
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(point.x, point.y);
+                        this.ctx.lineTo(neighbor.x, neighbor.y);
+                        this.ctx.strokeStyle = 'rgba(245, 158, 11, 0.22)';
+                        this.ctx.lineWidth = 1;
+                        this.ctx.stroke();
+                    });
+                }
 
                 this.points.forEach(point => {
-                    this.ctx.fillStyle = point.label === -1 ? '#94a3b8' : COLORS[point.label % COLORS.length];
+                    const isCurrent = point === this.points[this.currentIndex];
+                    const isNeighbor = this.currentNeighbors.includes(this.points.indexOf(point));
+                    this.ctx.fillStyle = point.label === null
+                        ? '#cbd5e1'
+                        : point.label === -1
+                            ? '#94a3b8'
+                            : COLORS[point.label % COLORS.length];
                     this.ctx.beginPath();
-                    this.ctx.arc(point.x, point.y, point.core ? 7 : 5, 0, Math.PI * 2);
+                    this.ctx.arc(point.x, point.y, isCurrent ? 9 : isNeighbor ? 7 : point.core ? 6.5 : 5, 0, Math.PI * 2);
                     this.ctx.fill();
-                    this.ctx.strokeStyle = point.core ? '#111827' : '#fff';
-                    this.ctx.lineWidth = point.core ? 2 : 1.5;
+                    this.ctx.strokeStyle = isCurrent ? '#f59e0b' : point.core ? '#111827' : '#fff';
+                    this.ctx.lineWidth = isCurrent ? 3 : point.core ? 2 : 1.5;
                     this.ctx.stroke();
                 });
             },
 
             reset() {
+                this.stopAnimation();
                 this.points = [];
-                this.clusterCount = 0;
-                this.noiseCount = 0;
+                this.actions = [];
+                this.actionIndex = 0;
+                this.resetLabels();
+                this.status = '-';
                 this.draw();
-                document.getElementById('dbscanStats').innerHTML = '클러스터: 0<br>노이즈: 0';
+                this.updateStats();
             }
         };
         dbscan.init();
@@ -2136,6 +2673,8 @@
 
         /* --- 11. Deep Learning Filtering --- */
         const deepFilter = {
+            canvas: document.getElementById('deepCanvas'),
+            ctx: document.getElementById('deepCanvas').getContext('2d'),
             history: [0, 3],
             diversity: 2,
             weights: [
@@ -2192,6 +2731,27 @@
                 });
             },
 
+            scoreItems(hidden) {
+                const counts = this.history.reduce((acc, index) => {
+                    acc[index] = (acc[index] || 0) + 1;
+                    return acc;
+                }, {});
+
+                return recommendationData.items.map((item, index) => {
+                    const itemEmbedding = this.embeddingForItem(index);
+                    const neuralScore = hidden.reduce((sum, value, hiddenIndex) => {
+                        return sum + value * itemEmbedding[hiddenIndex];
+                    }, 0);
+                    const novelty = this.diversity * 0.12 * (1 / ((counts[index] || 0) + 1));
+                    return {
+                        index,
+                        name: item.name,
+                        score: clamp(3 + neuralScore + novelty, 0, 5),
+                        embedding: itemEmbedding
+                    };
+                });
+            },
+
             renderChoices() {
                 document.getElementById('deepChoices').innerHTML = recommendationData.items.map((item, index) => {
                     const active = this.history.includes(index) ? ' active' : '';
@@ -2204,26 +2764,117 @@
                 }).join('');
             },
 
+            drawConnection(from, to, value) {
+                const alpha = clamp(Math.abs(value), 0.08, 0.78);
+                this.ctx.beginPath();
+                this.ctx.moveTo(from.x, from.y);
+                this.ctx.lineTo(to.x, to.y);
+                this.ctx.strokeStyle = value >= 0
+                    ? `rgba(37, 99, 235, ${alpha})`
+                    : `rgba(239, 68, 68, ${alpha})`;
+                this.ctx.lineWidth = 1 + Math.abs(value) * 2.4;
+                this.ctx.stroke();
+            },
+
+            drawNode(node, value, label, detail, options = {}) {
+                const radius = options.radius || 14;
+                const color = value >= 0 ? '#2563eb' : '#ef4444';
+                const intensity = clamp(Math.abs(value), 0.18, 1);
+                this.ctx.beginPath();
+                this.ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = options.fill || color;
+                this.ctx.globalAlpha = options.fill ? 1 : intensity;
+                this.ctx.fill();
+                this.ctx.globalAlpha = 1;
+                this.ctx.strokeStyle = options.stroke || '#111827';
+                this.ctx.lineWidth = options.highlight ? 3 : 1.5;
+                this.ctx.stroke();
+                this.ctx.fillStyle = '#111827';
+                this.ctx.font = '12px Work Sans, sans-serif';
+                this.ctx.fillText(label, node.x + radius + 8, node.y - 2);
+                if (detail) {
+                    this.ctx.fillStyle = '#64748b';
+                    this.ctx.fillText(detail, node.x + radius + 8, node.y + 13);
+                }
+            },
+
+            drawNetwork(hidden, scoredItems) {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                drawLightGrid(ctx, this.canvas);
+
+                const user = this.userEmbedding();
+                const inputNodes = [
+                    { x: 72, y: 88, label: '시각', value: user[0] },
+                    { x: 72, y: 160, label: '수학', value: user[1] },
+                    { x: 72, y: 232, label: '코딩', value: user[2] }
+                ];
+                const hiddenNodes = hidden.map((value, index) => ({
+                    x: 312,
+                    y: 88 + index * 72,
+                    label: `H${index + 1}`,
+                    value
+                }));
+                const outputNodes = scoredItems.map((item, index) => ({
+                    x: 585,
+                    y: 46 + index * 44,
+                    label: item.name,
+                    value: (item.score - 3) / 2,
+                    score: item.score,
+                    item
+                }));
+                const topIndexes = [...scoredItems]
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 2)
+                    .map(item => item.index);
+
+                ctx.fillStyle = '#475569';
+                ctx.font = '13px Work Sans, sans-serif';
+                ctx.fillText('입력층', 48, 28);
+                ctx.fillText('은닉층', 286, 28);
+                ctx.fillText('출력층', 558, 28);
+
+                inputNodes.forEach((input, inputIndex) => {
+                    hiddenNodes.forEach((hiddenNode, hiddenIndex) => {
+                        this.drawConnection(input, hiddenNode, this.weights[hiddenIndex][inputIndex]);
+                    });
+                });
+
+                hiddenNodes.forEach((hiddenNode, hiddenIndex) => {
+                    outputNodes.forEach(output => {
+                        this.drawConnection(hiddenNode, output, hidden[hiddenIndex] * output.item.embedding[hiddenIndex]);
+                    });
+                });
+
+                inputNodes.forEach(node => {
+                    this.drawNode(node, node.value, node.label, node.value.toFixed(2), { fill: '#dbeafe', stroke: '#2563eb' });
+                });
+
+                hiddenNodes.forEach(node => {
+                    this.drawNode(node, node.value, node.label, node.value.toFixed(2), {
+                        stroke: '#111827',
+                        radius: 16
+                    });
+                });
+
+                outputNodes.forEach(node => {
+                    const highlight = topIndexes.includes(node.item.index);
+                    this.drawNode(node, node.value, node.label, node.score.toFixed(2), {
+                        fill: highlight ? '#fde68a' : '#e2e8f0',
+                        stroke: highlight ? '#f59e0b' : '#64748b',
+                        radius: highlight ? 15 : 12,
+                        highlight
+                    });
+                });
+            },
+
             render() {
                 const hidden = this.hiddenLayer();
-                const counts = this.history.reduce((acc, index) => {
-                    acc[index] = (acc[index] || 0) + 1;
-                    return acc;
-                }, {});
-
-                const scores = recommendationData.items.map((item, index) => {
-                    const itemEmbedding = this.embeddingForItem(index);
-                    const neuralScore = hidden.reduce((sum, value, hiddenIndex) => {
-                        return sum + value * itemEmbedding[hiddenIndex];
-                    }, 0);
-                    const novelty = this.diversity * 0.12 * (1 / ((counts[index] || 0) + 1));
-                    return {
-                        name: item.name,
-                        score: clamp(3 + neuralScore + novelty, 0, 5)
-                    };
-                }).sort((a, b) => b.score - a.score);
+                const scoredItems = this.scoreItems(hidden);
+                const scores = [...scoredItems].sort((a, b) => b.score - a.score);
 
                 renderScoreBars('deepRecommendations', scores);
+                this.drawNetwork(hidden, scoredItems);
                 document.getElementById('deepStats').innerHTML =
                     `은닉층 활성화: ${hidden.map(value => value.toFixed(2)).join(', ')}<br>최근 이력: ${this.history.length}개`;
             }
@@ -2238,6 +2889,8 @@
             mode: 'pca',
             noise: 2,
             explainedVariance: 0,
+            morph: 1,
+            projectionFrame: null,
 
             init() {
                 this.sample();
@@ -2245,12 +2898,14 @@
 
             setMode(value) {
                 this.mode = value;
+                this.morph = 1;
                 this.draw();
             },
 
             setNoise(value) {
                 this.noise = parseInt(value);
                 document.getElementById('dimNoiseValue').innerText = this.noise;
+                this.morph = 1;
                 this.sample();
             },
 
@@ -2269,6 +2924,7 @@
                         this.points.push({ features: [x, y, z], label });
                     }
                 }
+                this.morph = 1;
                 this.draw();
             },
 
@@ -2346,39 +3002,178 @@
                 });
             },
 
-            drawProjection(projected) {
+            project3D(features, area) {
+                const [x, y, z] = features;
+                const angleY = 0.68;
+                const angleX = -0.48;
+                const cosY = Math.cos(angleY);
+                const sinY = Math.sin(angleY);
+                const cosX = Math.cos(angleX);
+                const sinX = Math.sin(angleX);
+                const rotatedX = x * cosY - z * sinY;
+                const rotatedZ = x * sinY + z * cosY;
+                const rotatedY = y * cosX - rotatedZ * sinX;
+                const depth = y * sinX + rotatedZ * cosX;
+                const perspective = 1.1 / (2.35 - depth * 0.26);
+
+                return {
+                    x: area.cx + rotatedX * area.scale * perspective,
+                    y: area.cy - rotatedY * area.scale * perspective,
+                    depth
+                };
+            },
+
+            draw3DAxes(area) {
+                const origin = this.project3D([0, 0, 0], area);
+                const axes = [
+                    { end: [1.65, 0, 0], label: 'x', color: '#ef4444' },
+                    { end: [0, 1.65, 0], label: 'y', color: '#22c55e' },
+                    { end: [0, 0, 1.65], label: 'z', color: '#3b82f6' }
+                ];
+
+                axes.forEach(axis => {
+                    const end = this.project3D(axis.end, area);
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(origin.x, origin.y);
+                    this.ctx.lineTo(end.x, end.y);
+                    this.ctx.strokeStyle = axis.color;
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    this.ctx.fillStyle = axis.color;
+                    this.ctx.font = '13px Work Sans, sans-serif';
+                    this.ctx.fillText(axis.label, end.x + 4, end.y - 4);
+                });
+            },
+
+            normalizeProjection(projected, area) {
                 const xs = projected.map(point => point.x);
                 const ys = projected.map(point => point.y);
                 const minX = Math.min(...xs);
                 const maxX = Math.max(...xs);
                 const minY = Math.min(...ys);
                 const maxY = Math.max(...ys);
-                const margin = 56;
-                const width = this.canvas.width - margin * 2;
-                const height = this.canvas.height - margin * 2;
+                const margin = 34;
+                const width = area.w - margin * 2;
+                const height = area.h - margin * 2;
                 const rangeX = maxX - minX || 1;
                 const rangeY = maxY - minY || 1;
 
+                return projected.map(point => ({
+                    x: area.x + margin + ((point.x - minX) / rangeX) * width,
+                    y: area.y + area.h - margin - ((point.y - minY) / rangeY) * height,
+                    label: point.label
+                }));
+            },
+
+            drawProjection(projected) {
+                const left = { x: 42, y: 58, w: 305, h: 365, cx: 194, cy: 245, scale: 180 };
+                const right = { x: 452, y: 58, w: 305, h: 365 };
+                const points3D = this.points.map(point => ({
+                    ...this.project3D(point.features, left),
+                    label: point.label
+                }));
+                const points2D = this.normalizeProjection(projected, right);
+                const t = this.morph;
+
+                this.ctx.fillStyle = '#f8fafc';
+                this.ctx.fillRect(left.x, left.y, left.w, left.h);
+                this.ctx.fillRect(right.x, right.y, right.w, right.h);
                 this.ctx.strokeStyle = '#cbd5e1';
                 this.ctx.lineWidth = 1.5;
-                this.ctx.beginPath();
-                this.ctx.moveTo(margin, this.canvas.height / 2);
-                this.ctx.lineTo(this.canvas.width - margin, this.canvas.height / 2);
-                this.ctx.moveTo(this.canvas.width / 2, margin);
-                this.ctx.lineTo(this.canvas.width / 2, this.canvas.height - margin);
-                this.ctx.stroke();
+                this.ctx.strokeRect(left.x, left.y, left.w, left.h);
+                this.ctx.strokeRect(right.x, right.y, right.w, right.h);
 
-                projected.forEach(point => {
-                    const x = margin + ((point.x - minX) / rangeX) * width;
-                    const y = this.canvas.height - margin - ((point.y - minY) / rangeY) * height;
+                this.ctx.fillStyle = '#475569';
+                this.ctx.font = '14px Work Sans, sans-serif';
+                this.ctx.fillText('3D feature space', left.x, 34);
+                this.ctx.fillText(`${this.mode === 'pca' ? 'PCA' : 'Kernel'} 2D projection`, right.x, 34);
+                this.ctx.fillText('차원축소', 363, 244);
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(360, 250);
+                this.ctx.lineTo(430, 250);
+                this.ctx.strokeStyle = '#94a3b8';
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                this.ctx.beginPath();
+                this.ctx.moveTo(430, 250);
+                this.ctx.lineTo(416, 242);
+                this.ctx.lineTo(416, 258);
+                this.ctx.closePath();
+                this.ctx.fillStyle = '#94a3b8';
+                this.ctx.fill();
+
+                this.draw3DAxes(left);
+
+                this.ctx.strokeStyle = '#dbeafe';
+                this.ctx.lineWidth = 1;
+                for (let i = 0; i <= 4; i++) {
+                    const x = right.x + (right.w / 4) * i;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, right.y);
+                    this.ctx.lineTo(x, right.y + right.h);
+                    this.ctx.stroke();
+                    const y = right.y + (right.h / 4) * i;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(right.x, y);
+                    this.ctx.lineTo(right.x + right.w, y);
+                    this.ctx.stroke();
+                }
+
+                points3D.forEach(point => {
+                    this.ctx.globalAlpha = 0.22;
                     this.ctx.fillStyle = COLORS[point.label];
                     this.ctx.beginPath();
-                    this.ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    this.ctx.arc(point.x, point.y, 4.5, 0, Math.PI * 2);
                     this.ctx.fill();
-                    this.ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                });
+                this.ctx.globalAlpha = 1;
+
+                points2D.forEach((point, index) => {
+                    const start = points3D.find((candidate, candidateIndex) => candidateIndex === index) || points3D[index];
+                    if (!start) return;
+                    this.ctx.globalAlpha = 0.09 + t * 0.18;
+                    this.ctx.strokeStyle = COLORS[point.label];
                     this.ctx.lineWidth = 1;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(start.x, start.y);
+                    this.ctx.lineTo(point.x, point.y);
+                    this.ctx.stroke();
+
+                    const x = start.x + (point.x - start.x) * t;
+                    const y = start.y + (point.y - start.y) * t;
+                    this.ctx.globalAlpha = 0.38 + t * 0.62;
+                    this.ctx.fillStyle = COLORS[point.label];
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, 5.2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.globalAlpha = 1;
+                    this.ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+                    this.ctx.lineWidth = 1.2;
                     this.ctx.stroke();
                 });
+
+                this.ctx.globalAlpha = 1;
+            },
+
+            animateProjection() {
+                if (this.projectionFrame) {
+                    window.cancelAnimationFrame(this.projectionFrame);
+                }
+                const startedAt = performance.now();
+                const duration = 1600;
+                this.morph = 0;
+
+                const animate = (now) => {
+                    const raw = clamp((now - startedAt) / duration, 0, 1);
+                    this.morph = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+                    this.draw();
+                    if (raw < 1) {
+                        this.projectionFrame = window.requestAnimationFrame(animate);
+                    }
+                };
+
+                this.projectionFrame = window.requestAnimationFrame(animate);
             },
 
             draw() {
