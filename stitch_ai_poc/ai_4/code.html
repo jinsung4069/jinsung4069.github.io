@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html lang="ko" style=""><head><script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15857" type="text/javascript"></script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>교사 수업 대시보드 - 우리반AI</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="custom-fonts">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      background-color: #f9fafb;
+    }
+  </style>
+<style>
+    *:focus-visible {
+      outline: 2px solid #ea580c !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Animation Keyframes */
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+
+    /* Entrance Animation Classes */
+    .fade-up-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .fade-up-item.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Card Lift Effect */
+    .card-lift {
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .card-lift:hover {
+        transform: translateY(-4px) scale(1.01);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    /* Progress Bar Animation */
+    .hcr-progress-container {
+      height: 4px;
+      background-color: #f3f4f6;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .hcr-progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #a04100;
+      transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    /* Respect Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .fade-up-item, .card-lift, .hcr-progress-bar, .animate-pulse-subtle {
+        transition: none !important;
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .hcr-progress-bar {
+        width: var(--target-width) !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+      }
+
+      header .max-w-\[1440px\] {
+        height: auto !important;
+        min-height: 64px;
+        padding: 12px 16px !important;
+      }
+
+      header nav,
+      header button[aria-label="검색"],
+      header button[aria-label="알림 3개"] {
+        display: none !important;
+      }
+
+      header .space-x-10 > :not([hidden]) ~ :not([hidden]) {
+        margin-left: 0 !important;
+      }
+
+      main.max-w-\[1440px\] {
+        padding: 24px 16px !important;
+      }
+
+      main > .flex.justify-between {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 16px;
+      }
+
+      main > .flex.justify-between > .flex {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      #summary-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      #classes-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      #classes-grid .border-t {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 8px;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+    }
+  </style>
+<link data-snapdom="injected-import" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/></head>
+<body class="min-h-screen text-slate-800">
+<!-- BEGIN: MainHeader -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center space-x-10">
+<!-- Logo Section -->
+<div class="flex items-center space-x-2">
+<div class="w-5 h-5 bg-orange-600 rotate-45"></div>
+<div class="flex items-center text-sm font-bold tracking-tight">
+<span class="">우리반AI</span>
+<span class="hidden md:inline ml-2 text-xs text-gray-400 font-normal">성취기준 기반 AI 학습·평가 플랫폼</span>
+<span class="mx-2 text-gray-300">/</span>
+<span class="text-xs text-gray-500 font-bold tracking-widest">교사 모드</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex items-center space-x-8 text-[15px] font-medium text-gray-400">
+<a class="text-orange-600 border-b-2 border-orange-600 h-16 flex items-center" href="#">대시보드</a>
+<a class="hover:text-gray-600 h-16 flex items-center transition-colors" href="#">시나리오 라이브러리</a>
+<a class="hover:text-gray-600 h-16 flex items-center transition-colors" href="#">Live 모니터링</a>
+<a class="hover:text-gray-600 h-16 flex items-center transition-colors" href="#">리포트</a>
+</nav>
+</div>
+<!-- Right Side Utils -->
+<div class="flex items-center space-x-6 text-gray-500">
+<button aria-label="검색" class="flex items-center space-x-1 text-sm hover:text-gray-800 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">검색</span>
+</button>
+<button aria-label="알림 3개" class="relative flex items-center space-x-1 text-sm hover:text-gray-800 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">알림</span>
+<span class="absolute -top-1 -right-4 bg-orange-200 text-orange-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">3</span>
+</button>
+<div aria-label="프로필: 선생님" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-500 font-bold cursor-pointer hover:bg-gray-300 transition-colors" role="img">T</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<main class="max-w-[1440px] mx-auto px-10 py-10">
+<!-- BEGIN: TitleArea -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="text-3xl font-bold text-gray-900 mb-2">내 수업</h1>
+<p class="text-gray-400 text-sm">오늘 5개 · 이번 학기 23개</p>
+</div>
+<div class="flex space-x-3">
+<button class="px-4 py-2.5 border border-gray-300 rounded-lg text-gray-600 text-sm font-medium hover:bg-gray-50 transition-all active:scale-95 flex items-center">
+알림 보내기
+      </button>
+<button class="px-6 py-2.5 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 transition-all active:scale-95 flex items-center shadow-sm" data-next-screen-id="SCREEN_18" onclick="location.href='../ai_1/code.html'">
+새 수업 만들기
+      </button>
+</div>
+</div>
+<!-- END: TitleArea -->
+<!-- BEGIN: SummaryCards -->
+<div class="grid grid-cols-4 gap-4 mb-10" id="summary-cards">
+<!-- Card 1 -->
+<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm fade-up-item is-visible">
+<p class="text-xs text-gray-400 font-medium mb-3">진행중 수업</p>
+<p class="text-3xl font-bold text-gray-900 mb-1">2</p>
+<p class="text-xs text-gray-400">학생 59명 접속</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm fade-up-item is-visible">
+<p class="text-xs text-gray-400 font-medium mb-3">주의 신호</p>
+<div class="flex items-baseline space-x-2">
+<p class="text-3xl font-bold text-orange-600 mb-1 animate-pulse-subtle">3</p>
+<span class="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded font-bold tracking-tighter">주의 신호</span>
+</div>
+<p class="text-xs text-gray-400">지원 필요 학생 발생</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm fade-up-item is-visible">
+<p class="text-xs text-gray-400 font-medium mb-3">평균 HCR</p>
+<p class="text-3xl font-bold text-gray-900 mb-1">0.67</p>
+<div class="hcr-progress-container">
+<div class="hcr-progress-bar" data-target="67" style="width: 67%; --target-width: 67%;"></div>
+</div>
+<p class="text-xs text-gray-400 mt-2">지난주 대비 <span class="text-blue-700 font-bold">+0.04</span> <span class="ml-1 text-orange-600 font-bold">(주의)</span></p>
+</div>
+<!-- Card 4 -->
+<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm fade-up-item is-visible">
+<p class="text-xs text-gray-400 font-medium mb-3">발행된 IR</p>
+<p class="text-3xl font-bold text-gray-900 mb-1">142</p>
+<p class="text-xs text-gray-400">이번 학기 누적</p>
+</div>
+</div>
+<!-- END: SummaryCards -->
+<!-- BEGIN: FilterBar -->
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center space-x-3">
+<span class="text-[11px] font-black text-gray-500 uppercase tracking-widest mr-2">Classes</span>
+<button class="px-5 py-1.5 bg-gray-800 text-white text-sm rounded-full font-medium transition-all active:scale-95">전체</button>
+<button class="px-5 py-1.5 bg-white border border-gray-200 text-gray-500 text-sm rounded-full font-medium hover:bg-gray-50 transition-all active:scale-95">진행중</button>
+<button class="px-5 py-1.5 bg-white border border-gray-200 text-gray-500 text-sm rounded-full font-medium hover:bg-gray-50 transition-all active:scale-95">종료</button>
+<button class="px-5 py-1.5 bg-white border border-gray-200 text-gray-500 text-sm rounded-full font-medium hover:bg-gray-50 transition-all active:scale-95">임시저장</button>
+</div>
+<div class="flex items-center text-xs text-gray-500 cursor-pointer hover:text-gray-800 transition-colors">
+        정렬 : 최근활동순
+        <svg class="w-3 h-3 ml-1" fill="currentColor" viewbox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path></svg>
+</div>
+</div>
+<!-- END: FilterBar -->
+<!-- BEGIN: ClassesGrid -->
+<div class="grid grid-cols-3 gap-5 mb-10" id="classes-grid">
+<!-- Class Card 1 -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden fade-up-item card-lift cursor-pointer group is-visible" data-next-screen-id="SCREEN_18" onclick="location.href='../ai_live/code.html'">
+<div class="p-5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors">2학년 4반 · 중학교 사회</h3>
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-[10px] text-green-700 font-bold" role="status">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+<span class="">진행중</span>
+</span>
+</div>
+<p class="text-sm text-gray-400 mb-4">시민 참여와 민주주의</p>
+</div>
+<div class="mt-auto border-t border-gray-100 px-6 py-4 flex justify-between items-center text-xs">
+<div class="flex items-center text-gray-600 font-medium">
+<svg class="w-3.5 h-3.5 mr-1.5 text-gray-400" fill="currentColor" viewbox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+          28명 · <span class="flex items-center ml-1 text-orange-800 font-bold"><svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> 지도 지원 2</span>
+</div>
+<button class="text-gray-400 font-medium flex items-center group-hover:text-orange-600 transition-all group-hover:translate-x-1">열기 <span class="ml-1">→</span></button>
+</div>
+</div>
+<!-- Class Card 2 -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden fade-up-item card-lift cursor-pointer group is-visible" onclick="location.href='../ai_live/code.html'">
+<div class="p-5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors">2학년 4반 · 중학교 사회</h3>
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-[10px] text-green-700 font-bold" role="status">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+<span class="">진행중</span>
+</span>
+</div>
+<p class="text-sm text-gray-400 mb-4">시민 참여와 민주주의</p>
+</div>
+<div class="mt-auto border-t border-gray-100 px-6 py-4 flex justify-between items-center text-xs">
+<div class="flex items-center text-gray-600 font-medium">
+<svg class="w-3.5 h-3.5 mr-1.5 text-gray-400" fill="currentColor" viewbox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+          31명 · 정상
+        </div>
+<button class="text-gray-400 font-medium flex items-center group-hover:text-orange-600 transition-all group-hover:translate-x-1">열기 <span class="ml-1">→</span></button>
+</div>
+</div>
+<!-- Class Card 3 -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden fade-up-item card-lift cursor-pointer group is-visible" onclick="location.href='../ai_live/code.html'">
+<div class="p-5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors">2학년 4반 · 중학교 사회</h3>
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-yellow-50 border border-yellow-200 rounded-full text-[10px] text-yellow-700 font-bold" role="status">
+<span class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span>
+<span class="">일시정지</span>
+</span>
+</div>
+<p class="text-sm text-gray-400 mb-4">시민 참여와 민주주의</p>
+</div>
+<div class="mt-auto border-t border-gray-100 px-6 py-4 flex justify-between items-center text-xs">
+<div class="flex items-center text-gray-600 font-medium">
+<svg class="w-3.5 h-3.5 mr-1.5 text-gray-400" fill="currentColor" viewbox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+          26명 · <span class="flex items-center ml-1 text-orange-800 font-bold"><svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg> 지도 지원 1</span>
+</div>
+<button class="text-gray-400 font-medium flex items-center group-hover:text-orange-600 transition-all group-hover:translate-x-1">열기 <span class="ml-1">→</span></button>
+</div>
+</div>
+<!-- Class Card 4 -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden fade-up-item card-lift cursor-pointer group is-visible" onclick="location.href='../ai_6/code.html'">
+<div class="p-5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors">2학년 4반 · 중학교 사회</h3>
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded-full text-[10px] text-gray-400 font-bold" role="status">
+<span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+<span class="">종료</span>
+</span>
+</div>
+<p class="text-sm text-gray-400 mb-4">시민 참여와 민주주의</p>
+</div>
+<div class="mt-auto border-t border-gray-100 px-6 py-4 flex justify-between items-center text-xs">
+<div class="flex items-center text-gray-600 font-medium">
+<svg class="w-3.5 h-3.5 mr-1.5 text-gray-400" fill="currentColor" viewbox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+          29명 · 정상
+        </div>
+<button class="text-gray-400 font-medium flex items-center group-hover:text-orange-600 transition-all group-hover:translate-x-1">열기 <span class="ml-1">→</span></button>
+</div>
+</div>
+<!-- Class Card 5 -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col overflow-hidden fade-up-item card-lift cursor-pointer group is-visible" onclick="location.href='../ai_1/code.html'">
+<div class="p-5">
+<div class="flex justify-between items-start mb-1">
+<h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors">2학년 4반 · 중학교 사회</h3>
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded-full text-[10px] text-gray-400 font-bold" role="status">
+<span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+<span class="">임시저장</span>
+</span>
+</div>
+<p class="text-sm text-gray-400 mb-4">시민 참여와 민주주의</p>
+</div>
+<div class="mt-auto border-t border-gray-100 px-6 py-4 flex justify-between items-center text-xs">
+<div class="flex items-center text-gray-600 font-medium">
+<svg class="w-3.5 h-3.5 mr-1.5 text-gray-400" fill="currentColor" viewbox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+          0명 · 정상
+        </div>
+<button class="text-gray-400 font-medium flex items-center group-hover:text-orange-600 transition-all group-hover:translate-x-1">열기 <span class="ml-1">→</span></button>
+</div>
+</div>
+</div>
+<!-- END: ClassesGrid -->
+</main>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Staggered Entrance Animation
+    const animatedItems = document.querySelectorAll('.fade-up-item');
+    animatedItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('is-visible');
+      }, index * 80); // 80ms stagger
+    });
+
+    // Progress Bar Animation
+    const progressBars = document.querySelectorAll('.hcr-progress-bar');
+    // Small timeout to ensure CSS transitions are ready after visibility
+    setTimeout(() => {
+      progressBars.forEach(bar => {
+        const target = bar.getAttribute('data-target');
+        bar.style.width = target + '%';
+        bar.style.setProperty('--target-width', target + '%');
+      });
+    }, 400);
+  });
+</script>
+<div class="w-full bg-surface-container-low text-secondary text-xs py-3 text-center font-medium">
+  사전기획용 프로토타입 · 일부 분석 수치와 리포트는 시연용 샘플 데이터
+</div>
+<footer class="w-full bg-surface-container-low py-10 px-10 border-t border-surface-container-highest">
+<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-2xl">psychology</span>
+<span class="font-headline-md text-headline-md text-primary">우리반 AI</span>
+</div>
+<nav class="flex flex-wrap justify-center gap-8 mt-6 md:mt-0">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+</nav>
+<div class="mt-6 md:mt-0">
+<p class="font-body-md text-body-md text-on-surface-variant">© 2026 사전 현장평가 우리반 AI. All rights reserved.</p>
+</div>
+</div>
+</footer>
+
+    <!-- Floating PoC Controller -->
+    <div id="poc-floating-controller" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3" style="font-family: 'Inter', sans-serif;">
+      <!-- Expandable Menu -->
+      <div id="poc-drawer" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 p-5 w-72 h-[450px] flex flex-col hidden opacity-0 translate-y-4 transition-all duration-300 text-left">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
+          </div>
+          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto pr-1 space-y-1.5 custom-scrollbar text-xs">
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">교사 &amp; 공동 여정</div>
+          <a id="step-portal" href="../index.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">0</span>
+            <span class="font-medium">0. PoC 메인 포털</span>
+          </a>
+          <a id="step-ai_2" href="../ai_2/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+            <span class="font-medium">1. 서비스 홈화면 (Landing)</span>
+          </a>
+          <a id="step-ai_4" href="../ai_4/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+            <span class="font-medium">2. 교사 대시보드 (Dashboard)</span>
+          </a>
+          <a id="step-ai_1" href="../ai_1/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">3</span>
+            <span class="font-medium">3. 튜터 디자이너 (Tutor Design)</span>
+          </a>
+          <a id="step-ai_3" href="../ai_3/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">4</span>
+            <span class="font-medium">4. 정밀 설정 (Advanced Setting)</span>
+          </a>
+          <a id="step-ai_8" href="../ai_8/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">5</span>
+            <span class="font-medium">5. 학생 미리보기 (Preview)</span>
+          </a>
+          <a id="step-ai_live" href="../ai_live/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">6</span>
+            <span class="font-medium">6. 실시간 모니터링 (Live)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">학생 여정</div>
+          <a id="step-ai_5" href="../ai_5/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">7</span>
+            <span class="font-medium">7. 학생 학습 공간 (Learning)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">평가 &amp; 보안</div>
+          <a id="step-ai_6" href="../ai_6/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">8</span>
+            <span class="font-medium">8. 과정 증빙 리포트 (Report)</span>
+          </a>
+          <a id="step-ai_7" href="../ai_7/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">9</span>
+            <span class="font-medium">9. 보안 및 동의 패널 (Consent)</span>
+          </a>
+        </div>
+        
+        <button onclick="location.href='../index.html'" class="mt-3 w-full py-2 bg-gray-800 hover:bg-black text-white text-[11px] font-bold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm border-none cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          시나리오 포털 홈으로
+        </button>
+      </div>
+
+      <!-- Floating Button -->
+      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      function togglePocDrawer() {
+          const drawer = document.getElementById('poc-drawer');
+          if (drawer.classList.contains('hidden')) {
+              drawer.classList.remove('hidden');
+              setTimeout(() => {
+                  drawer.classList.remove('opacity-0', 'translate-y-4');
+              }, 50);
+          } else {
+              drawer.classList.add('opacity-0', 'translate-y-4');
+              setTimeout(() => {
+                  drawer.classList.add('hidden');
+              }, 300);
+          }
+      }
+
+      // Highlight Current Step
+      (function() {
+          const pathParts = window.location.pathname.split('/');
+          const currentDir = pathParts[pathParts.length - 2];
+          const activeEl = document.getElementById('step-' + currentDir);
+          if (activeEl) {
+              activeEl.classList.remove('hover:bg-orange-50/50', 'text-gray-600');
+              activeEl.classList.add('bg-orange-100/70', 'text-[#ff6b00]', 'font-bold');
+              const circle = activeEl.querySelector('span');
+              if (circle) {
+                  circle.classList.remove('bg-gray-100');
+                  circle.classList.add('bg-[#ff6b00]', 'text-white');
+              }
+          }
+      })();
+    </script>
+    </body></html>

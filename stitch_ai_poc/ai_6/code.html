@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html lang="ko" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>과정 증빙 &amp; 평가 설명 리포트 - 우리반AI</title>
+<script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15859" type="text/javascript"></script>
+<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=839" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#1b1c1c",
+                    "inverse-primary": "#ffb693",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#ffdbcc",
+                    "tertiary-fixed-dim": "#c0c7d4",
+                    "surface": "#f8f9fa",
+                    "surface-tint": "#a04100",
+                    "on-primary-fixed-variant": "#7a3000",
+                    "primary-fixed-dim": "#ffb693",
+                    "on-secondary-fixed-variant": "#474747",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed": "#dce3f0",
+                    "tertiary": "#585f6a",
+                    "on-tertiary-fixed": "#151c26",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#e2bfb0",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f3f4f5",
+                    "on-surface-variant": "#5a4136",
+                    "on-surface": "#191c1d",
+                    "surface-dim": "#d9dadb",
+                    "inverse-surface": "#2e3132",
+                    "on-secondary-container": "#656464",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#9399a6",
+                    "on-tertiary-container": "#2b313c",
+                    "on-primary-fixed": "#351000",
+                    "outline": "#8e7164",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-container": "#edeeef",
+                    "primary-container": "#ff6b00",
+                    "secondary-container": "#e4e2e1",
+                    "secondary-fixed": "#e4e2e1",
+                    "secondary-fixed-dim": "#c8c6c6",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#572000",
+                    "on-tertiary-fixed-variant": "#414752",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "secondary": "#5f5e5e",
+                    "background": "#f8f9fa",
+                    "surface-variant": "#e1e3e4",
+                    "primary": "#a04100"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "unit": "8px",
+                    "margin-mobile": "16px",
+                    "panel-width": "380px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "0", "fontWeight": "700"}],
+                    "title-lg": ["20px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F8F9FA;
+            color: #191C1D;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ena-grid {
+            background-image: repeating-linear-gradient(45deg, #f1f3f5 0, #f1f3f5 1px, transparent 0, transparent 50%);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-50 backdrop-blur-xl bg-surface/80 shadow-sm flex items-center justify-between px-margin-mobile md:px-margin-desktop py-unit w-full">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary flex items-center gap-2"><span class="material-symbols-outlined" style='font-variation-settings: "FILL" 1;'>auto_awesome</span>우리반AI<span class="text-[12px] font-normal text-secondary ml-2 border-l border-outline-variant pl-2">성취기준 기반 AI 학습·평가 플랫폼</span></span>
+<div class="hidden md:flex items-center gap-6 ml-10">
+<a class="text-secondary font-body-md hover:text-primary transition-colors" href="#">대시보드</a>
+<a class="text-secondary font-body-md hover:text-primary transition-colors" href="#">시나리오 라이브러리</a>
+<a class="text-secondary font-body-md hover:text-primary transition-colors" href="#">Live 모니터링</a>
+<a class="text-primary font-bold font-body-md border-b-2 border-primary-container pb-1" href="#">리포트</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-200 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-primary-container text-[10px] text-white flex items-center justify-center rounded-full font-bold">3</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
+<img alt="AI Tutor Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChs9L8ovmoVuTRdz1ju8JE8fJeqBPfnWdZxSXNJbvkRMj9d8Xf_O7QOGv_EH-8iAZii-lJyCzrYSbwbsvB9a9sUzKsnuND9P6PX9Z9FHj9kVg7GNLwmxpvzzYWwiYZZg7j4NWodP5DJOowhdNCSwnpEKsAjYgbT6IGErdMC0hLMranzTmoV7svPJ9u14sXg41jNM6NCsnAZSMTZALimODQjOmgQCTwwmRBm3IeOBxOW8UxpXoNDOUFs2-N5P1ok7KAwE1wr1Ru36I"/>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-10">
+<!-- Breadcrumb & Header Title -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
+<div>
+<nav class="flex text-secondary text-label-md mb-2 items-center gap-1">
+<span class="">리포트</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="">학생별</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">최예린</span>
+</nav>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">과정 증빙 &amp; 평가 설명 리포트</h1>
+<div class="flex items-center gap-3 text-secondary font-body-md"><span class="bg-surface-container px-2 py-0.5 rounded">최예린</span><span class="w-1 h-1 bg-outline-variant rounded-full"></span><span>중학교 2학년 사회</span><span class="w-1 h-1 bg-outline-variant rounded-full"></span><span>2026 사전 현장평가</span><span class="w-1 h-1 bg-outline-variant rounded-full"></span><span class="italic text-primary">「시민 참여와 민주주의」</span></div>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-white border border-outline-variant px-5 py-2.5 rounded-lg text-secondary font-title-lg text-body-md hover:bg-surface-container-low transition-colors active:scale-95">PDF 내보내기</button>
+<button class="bg-white border border-outline-variant px-5 py-2.5 rounded-lg text-secondary font-title-lg text-body-md hover:bg-surface-container-low transition-colors active:scale-95">학부모 공유 링크</button>
+<button class="bg-inverse-surface text-white px-5 py-2.5 rounded-lg font-title-lg text-body-md hover:bg-on-surface transition-colors shadow-lg active:scale-95">학습 과정 인증서(IR) 모드</button>
+</div>
+</div>
+<!-- Key Notice -->
+<div class="mb-6 p-4 bg-surface-container-low border-l-4 border-primary-container rounded-r-xl">
+<p class="text-secondary text-body-md font-medium">※ 학생 사고 참여도(HCR)는 부정행위 판정 점수가 아니며, 최종 평가는 교사의 전문적 판단에 따릅니다.</p>
+</div><div class="mb-6 px-4 py-2 bg-surface-container-high/50 rounded-lg border border-outline-variant/30"><p class="text-secondary text-[13px]">본 리포트는 자동 성적 판정이 아닌, 과정 중심 평가의 근거 자료 및 학부모·학생 소명을 위한 참고 자료로 활용됩니다.</p></div>
+<!-- Tab Navigation -->
+<!-- Section 1: AI Analysis -->
+<div class="mb-10">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+        AI 분석 결과
+    </h2>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Overall Evaluation -->
+<div class="md:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col h-full">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">개념 연결 지도 <span class="ml-2 text-label-md font-normal text-secondary">(ENA: 학습자의 생각 변화를 시각화한 지도)</span></h3>
+<span class="text-label-md text-secondary">학생 사고 참여도 근거 포함</span>
+</div>
+<div class="flex items-baseline gap-4 mb-4">
+<span class="text-[64px] font-extrabold text-primary leading-none">B+</span>
+<div class="flex-1">
+<div class="flex justify-between text-label-md text-secondary mb-1">
+<span class="">총점 81/100</span>
+<span class="">학급 평균 74</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 81%;"></div>
+</div>
+</div>
+</div>
+<div class="mt-auto bg-surface p-4 rounded-xl border-l-4 border-primary-container">
+<p class="text-on-surface-variant font-body-md italic leading-relaxed">
+                            "자기 근거 제시는 우수하나, 반대 관점 수용에서 정체 구간이 관찰됨."
+                        </p>
+</div>
+</div>
+<!-- Human Contribution Rate (HCR) -->
+<div class="md:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col h-full">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">학습 주도성 지표 <span class="ml-2 text-label-md font-normal text-secondary">(HCR: 인공지능과 사람의 기여도 분석)</span></h3>
+<div class="flex gap-2 text-[10px] text-secondary">
+</div>
+</div>
+<div class="flex items-center justify-center flex-1 gap-8">
+<div class="relative w-36 h-36">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-surface-container" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-primary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="67 100" stroke-width="3"></circle>
+<circle class="stroke-tertiary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="23 100" stroke-dashoffset="-67" stroke-width="3"></circle>
+<circle class="stroke-outline" cx="18" cy="18" fill="none" r="16" stroke-dasharray="10 100" stroke-dashoffset="-90" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-label-md text-secondary">도넛 차트</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="text-body-md"><span class="font-bold">인간 기여</span> 67%</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-tertiary-container"></span>
+<span class="text-body-md"><span class="font-bold">AI 참조</span> 23%</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-outline"></span>
+<span class="text-body-md"><span class="font-bold">외부 인용</span> 10%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Rubric Scores -->
+<div class="md:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col h-full">
+<h3 class="font-headline-md text-headline-md mb-6">개념 연결 지도 <span class="ml-2 text-label-md font-normal text-secondary">(ENA: 학습자의 생각 변화를 시각화한 지도)</span></h3>
+<div class="space-y-5">
+<div>
+<div class="flex justify-between text-body-md mb-2">
+<span class="text-on-surface">텍스트 근거 제시</span>
+<span class="font-bold">22/25</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 88%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-md mb-2">
+<span class="text-on-surface">관점의 다양성</span>
+<span class="font-bold">16/25</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full opacity-60" style="width: 64%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-md mb-2">
+<span class="text-on-surface">추론의 타당성</span>
+<span class="font-bold">19/25</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full opacity-80" style="width: 76%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-md mb-2">
+<span class="text-on-surface">표현의 명료성</span>
+<span class="font-bold">24/25</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 96%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- ENA (Epistemic Network Analysis) -->
+<div class="md:col-span-12 mb-4 p-3 bg-error-container/20 border border-error/20 rounded-lg flex items-center gap-2 text-error font-medium"><span class="material-symbols-outlined">info</span><p class="text-body-md">AI 분석 수치는 학습 과정을 돕는 참고 지표입니다. 최종 성적 및 평가는 반드시 교사의 전문적인 검토와 판단을 거쳐 확정됩니다.</p></div><div class="md:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-6">개념 연결 지도 <span class="ml-2 text-label-md font-normal text-secondary">(ENA: 학습자의 생각 변화를 시각화한 지도)</span></h3>
+<div class="flex-1 min-h-[300px] ena-grid rounded-xl border border-dashed border-outline-variant flex items-center justify-center relative overflow-hidden">
+<div class="text-secondary text-body-md z-10 bg-white/80 px-4 py-2 rounded-lg">시간축 × 개념 노드 네트워크 시각화</div>
+<!-- Decorative SVG Elements to mimic ENA Graph -->
+<svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none">
+<circle cx="20%" cy="30%" fill="#ff6b00" r="6"></circle>
+<circle cx="40%" cy="60%" fill="#ff6b00" r="8"></circle>
+<circle cx="70%" cy="40%" fill="#ff6b00" r="5"></circle>
+<circle cx="85%" cy="75%" fill="#ff6b00" r="10"></circle>
+<path d="M 20% 30% L 40% 60% L 70% 40% L 85% 75%" fill="none" stroke="#ff6b00" stroke-dasharray="4" stroke-width="2"></path>
+</svg>
+</div>
+<div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-secondary">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call_made</span> 0:12에 「민주주의」 노드 진입</span>
+<span class="flex items-center gap-1">· 0:24에 「참여」와 연결</span>
+<span class="flex items-center gap-1">· 0:38 정체 6분</span>
+<span class="flex items-center gap-1">· 0:45 「갈등」으로 확장</span>
+</div>
+</div>
+<!-- Justification Support Basis -->
+<div class="md:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30">
+<h3 class="font-headline-md text-headline-md mb-6">개념 연결 지도 <span class="ml-2 text-label-md font-normal text-secondary">(ENA: 학습자의 생각 변화를 시각화한 지도)</span></h3>
+<div class="space-y-4">
+<div class="p-4 bg-surface rounded-xl border border-outline-variant/20 flex items-center justify-between group hover:border-primary-container transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">edit_note</span>
+<span class="text-body-md text-on-surface">자기 표현</span>
+</div>
+<span class="font-bold text-on-surface">12회 <span class="text-label-md font-normal text-secondary ml-2">평균 체류 42초</span></span>
+</div>
+<div class="p-4 bg-surface rounded-xl border border-outline-variant/20 flex items-center justify-between group hover:border-primary-container transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">smart_toy</span>
+<span class="text-body-md text-on-surface">AI 응답 참조</span>
+</div>
+<span class="font-bold text-on-surface">3회 <span class="text-label-md font-normal text-secondary ml-2">(전부 재해석 후 사용)</span></span>
+</div>
+<div class="p-4 bg-surface rounded-xl border border-outline-variant/20 flex items-center justify-between group hover:border-primary-container transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary transition-colors">content_paste</span>
+<span class="text-body-md text-on-surface">붙여넣기 이벤트</span>
+</div>
+<span class="font-bold text-on-surface">0회</span>
+</div>
+</div>
+<div class="mt-10 pt-6 border-t border-outline-variant/30">
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-surface-container-high rounded-xl text-secondary hover:bg-surface-container-highest transition-colors font-bold active:scale-[0.98]" onclick="location.href='../ai_7/code.html'"><span class="material-symbols-outlined">description</span>학습 과정 인증서 (지적 영수증) 보기</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Teacher's Final Opinion -->
+<div class="mt-10 border-t-2 border-outline-variant/50 pt-10">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_square</span>
+        교사 최종 의견
+    </h2>
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30">
+<textarea class="w-full h-32 p-4 rounded-xl border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-body-md text-on-surface placeholder-secondary" placeholder="학생의 학습 과정과 AI 분석 결과를 종합하여 최종 평가 의견을 작성해주세요..."></textarea>
+<div class="flex justify-end mt-4">
+<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-title-lg text-body-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                저장하기
+            </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Panel Trigger (Floating) -->
+<footer class="w-full py-gutter px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-lowest border-t border-outline-variant/20 font-label-md text-label-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+<span class="font-title-lg text-title-lg font-bold text-primary">우리반AI</span>
+</div>
+<div class="flex items-center gap-8">
+<a class="text-on-surface-variant dark:text-secondary-fixed-dim hover:text-primary transition-colors" href="../ai_7/code.html">Data/Security Privacy</a>
+<a class="text-on-surface-variant dark:text-secondary-fixed-dim hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-secondary-fixed-dim hover:text-primary transition-colors" href="#">Support</a>
+<a class="text-on-surface-variant dark:text-secondary-fixed-dim hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<p class="text-on-surface-variant dark:text-secondary-fixed-dim">
+            © 2024 우리반AI (성취기준 튜터). All rights reserved. 지적 영수증(IR) 발급 시스템
+        </p>
+</footer>
+<script>
+        // Micro-interactions and interactive bits
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                // Potential hover effect logic
+            });
+        });
+    </script>
+
+    <!-- Floating PoC Controller -->
+    <div id="poc-floating-controller" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3" style="font-family: 'Inter', sans-serif;">
+      <!-- Expandable Menu -->
+      <div id="poc-drawer" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 p-5 w-72 h-[450px] flex flex-col hidden opacity-0 translate-y-4 transition-all duration-300 text-left">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
+          </div>
+          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto pr-1 space-y-1.5 custom-scrollbar text-xs">
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">교사 &amp; 공동 여정</div>
+          <a id="step-portal" href="../index.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">0</span>
+            <span class="font-medium">0. PoC 메인 포털</span>
+          </a>
+          <a id="step-ai_2" href="../ai_2/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+            <span class="font-medium">1. 서비스 홈화면 (Landing)</span>
+          </a>
+          <a id="step-ai_4" href="../ai_4/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+            <span class="font-medium">2. 교사 대시보드 (Dashboard)</span>
+          </a>
+          <a id="step-ai_1" href="../ai_1/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">3</span>
+            <span class="font-medium">3. 튜터 디자이너 (Tutor Design)</span>
+          </a>
+          <a id="step-ai_3" href="../ai_3/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">4</span>
+            <span class="font-medium">4. 정밀 설정 (Advanced Setting)</span>
+          </a>
+          <a id="step-ai_8" href="../ai_8/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">5</span>
+            <span class="font-medium">5. 학생 미리보기 (Preview)</span>
+          </a>
+          <a id="step-ai_live" href="../ai_live/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">6</span>
+            <span class="font-medium">6. 실시간 모니터링 (Live)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">학생 여정</div>
+          <a id="step-ai_5" href="../ai_5/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">7</span>
+            <span class="font-medium">7. 학생 학습 공간 (Learning)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">평가 &amp; 보안</div>
+          <a id="step-ai_6" href="../ai_6/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">8</span>
+            <span class="font-medium">8. 과정 증빙 리포트 (Report)</span>
+          </a>
+          <a id="step-ai_7" href="../ai_7/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">9</span>
+            <span class="font-medium">9. 보안 및 동의 패널 (Consent)</span>
+          </a>
+        </div>
+        
+        <button onclick="location.href='../index.html'" class="mt-3 w-full py-2 bg-gray-800 hover:bg-black text-white text-[11px] font-bold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm border-none cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          시나리오 포털 홈으로
+        </button>
+      </div>
+
+      <!-- Floating Button -->
+      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      function togglePocDrawer() {
+          const drawer = document.getElementById('poc-drawer');
+          if (drawer.classList.contains('hidden')) {
+              drawer.classList.remove('hidden');
+              setTimeout(() => {
+                  drawer.classList.remove('opacity-0', 'translate-y-4');
+              }, 50);
+          } else {
+              drawer.classList.add('opacity-0', 'translate-y-4');
+              setTimeout(() => {
+                  drawer.classList.add('hidden');
+              }, 300);
+          }
+      }
+
+      // Highlight Current Step
+      (function() {
+          const pathParts = window.location.pathname.split('/');
+          const currentDir = pathParts[pathParts.length - 2];
+          const activeEl = document.getElementById('step-' + currentDir);
+          if (activeEl) {
+              activeEl.classList.remove('hover:bg-orange-50/50', 'text-gray-600');
+              activeEl.classList.add('bg-orange-100/70', 'text-[#ff6b00]', 'font-bold');
+              const circle = activeEl.querySelector('span');
+              if (circle) {
+                  circle.classList.remove('bg-gray-100');
+                  circle.classList.add('bg-[#ff6b00]', 'text-white');
+              }
+          }
+      })();
+    </script>
+    </body><whale-grammar data-role="tooltip"></whale-grammar><whale-grammar data-role="mirror"></whale-grammar></html>

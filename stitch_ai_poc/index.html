@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="우리반 AI (Stitch AI) - 성취기준 기반 AI 학습·평가 플랫폼 PoC 시나리오 센터">
+    <title>우리반 AI (Stitch AI) PoC 시나리오 센터</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    
+    <!-- CSS (Vanilla CSS for Rich Aesthetics & Glassmorphism) -->
+    <style>
+        :root {
+            --primary: #ff6b00;
+            --primary-hover: #e66000;
+            --primary-light: #fff0e6;
+            --dark: #191c1d;
+            --secondary: #5f5e5e;
+            --surface: #ffffff;
+            --background: #f8f9fa;
+            --outline: #e2bfb0;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 48px rgba(255, 107, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header Styles */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(226, 191, 176, 0.2);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+        }
+
+        .logo-box span {
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            transform: rotate(-45deg);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .logo-subtitle {
+            font-size: 9px;
+            color: var(--secondary);
+            margin-top: 2px;
+        }
+
+        .btn-back-portfolio {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--secondary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-back-portfolio:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 107, 0, 0.15);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.2); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            line-height: 1.15;
+            letter-spacing: 0;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #ffb693);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--secondary);
+            max-width: 780px;
+            margin: 0 auto 40px auto;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 36px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--dark);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Flow / Roadmap Section */
+        .flow-section {
+            padding: 60px 0;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 60px;
+            border: 1px solid rgba(226, 191, 176, 0.15);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 48px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .section-title p {
+            color: var(--secondary);
+            font-size: 15px;
+        }
+
+        .flow-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(0,0,0,0.06);
+            background: var(--background);
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+        }
+
+        /* Interactive Timeline Node Layout */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .flow-journey {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .flow-journey.active {
+            display: flex;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 24px;
+            background: var(--background);
+            padding: 20px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 40px;
+            bottom: -24px;
+            width: 2px;
+            height: 24px;
+            background: var(--outline);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(8px);
+            background: var(--primary-light);
+            border-color: var(--outline);
+        }
+
+        .timeline-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: white;
+            border: 2px solid var(--outline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--primary);
+            flex-shrink: 0;
+            z-index: 2;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-badge {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .timeline-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .timeline-step {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: var(--secondary);
+            line-height: 1.5;
+        }
+
+        /* Grid Section (All Pages) */
+        .pages-grid {
+            margin-bottom: 100px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .page-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(0,0,0,0.06);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .page-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--outline);
+        }
+
+        .card-img-container {
+            width: 100%;
+            height: 180px;
+            background: #e9ecef;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            transition: transform 0.5s ease;
+        }
+
+        .page-card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+
+        .tag-teacher {
+            background: #0066cc;
+            color: white;
+        }
+
+        .tag-student {
+            background: #008542;
+            color: white;
+        }
+
+        .tag-common {
+            background: var(--dark);
+            color: white;
+        }
+
+        .card-badge {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--secondary);
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--secondary);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            padding-top: 16px;
+            margin-top: auto;
+        }
+
+        .btn-view-screen {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-card:hover .btn-view-screen {
+            color: var(--primary-hover);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .footer-desc {
+            font-size: 14px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .footer-copyright {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero-desc {
+                font-size: 15px;
+            }
+            .timeline-item {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .timeline-item::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="logo">
+                <div class="logo-box">
+                    <span>AI</span>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">우리반 AI</span>
+                    <span class="logo-subtitle">2026 사전 현장평가 PoC</span>
+                </div>
+            </a>
+            <a href="../index.html" class="btn-back-portfolio">
+                <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+                박사 포트폴리오로
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">verified</span>
+                2026 사전기획용 프로토타입 시연 센터
+            </div>
+            <h1>성취기준 기반 AI 학습·평가 플랫폼 <span>우리반 AI</span></h1>
+            <p class="hero-desc">
+                현장 교사의 주도성과 교육의 본질적인 가치를 지키는 교육학적 설계.<br>
+                성취기준에 정확히 매칭된 AI 튜터 설정부터 실시간 데이터 분석, 과정 증빙 리포트까지 유기적으로 이어지는 3분 가상 시연 흐름을 경험하세요.
+            </p>
+            <div class="hero-actions">
+                <a href="ai_2/code.html" class="btn btn-primary">
+                    <span class="material-symbols-outlined">play_circle</span>
+                    교사 시나리오 전체 플레이 (추천)
+                </a>
+                <a href="ai_5/code.html" class="btn btn-secondary">
+                    <span class="material-symbols-outlined">person</span>
+                    학생 개별 학습 화면 바로가기
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Roadmap / Flow Section -->
+    <section class="container">
+        <div class="flow-section">
+            <div class="section-title">
+                <h2>시뮬레이션 시나리오 흐름</h2>
+                <p>화면정의서에 근거해 구성된 교사용 및 학생용 PoC 여정입니다. 원하는 단계를 선택해 직접 뛰어넘을 수도 있습니다.</p>
+            </div>
+            
+            <div class="flow-tabs">
+                <button id="tab-btn-teacher" class="tab-btn active" onclick="switchJourney('teacher')">교사 여정 (Teacher Journey)</button>
+                <button id="tab-btn-student" class="tab-btn" onclick="switchJourney('student')">학생 여정 (Student Journey)</button>
+            </div>
+            
+            <div class="flow-container">
+                <!-- Teacher Journey -->
+                <div id="journey-teacher" class="flow-journey active">
+                    <a href="ai_2/code.html" class="timeline-item">
+                        <div class="timeline-badge">1</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 1 · 공통 홈화면</span>
+                            <span class="timeline-title">서비스 랜딩 &amp; 시연 가이드 (ai_2)</span>
+                            <span class="timeline-desc">플랫폼의 비전과 3분 시연 가이드를 확인하는 입구입니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_4/code.html" class="timeline-item">
+                        <div class="timeline-badge">2</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 2 · 교사 대시보드</span>
+                            <span class="timeline-title">학급 및 수업 관리 대시보드 (ai_4)</span>
+                            <span class="timeline-desc">진행 중이거나 저장된 수업 현황을 확인하고, 신규 성취기준 기반 수업 설계를 시작합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_1/code.html" class="timeline-item">
+                        <div class="timeline-badge">3</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 3 · 성취기준 설계</span>
+                            <span class="timeline-title">성취기준 중심 AI 튜터 디자이너 (ai_1)</span>
+                            <span class="timeline-desc">교과목과 도달 목표 성취기준을 설정하여 AI 튜터 추천 페르소나 및 핵심 발문을 디자인합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_3/code.html" class="timeline-item">
+                        <div class="timeline-badge">4</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 4 · 정밀 조정</span>
+                            <span class="timeline-title">튜터링 로직 &amp; 루브릭 정밀 설정 (ai_3)</span>
+                            <span class="timeline-desc">질문 가중치, 복사 붙여넣기 주의 가드, 핵심 평가 지표 루브릭의 배점을 교사의 입맛에 맞게 편집합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_8/code.html" class="timeline-item">
+                        <div class="timeline-badge">5</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 5 · 시연용 프리뷰</span>
+                            <span class="timeline-title">학생 모드 미리보기 팝업 (ai_8)</span>
+                            <span class="timeline-desc">수업을 완전히 개시하기 전에, 가상 최예린 학생 프레임으로 AI 튜터의 상호작용 및 ENA 맵을 실시간 체험합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_live/code.html" class="timeline-item">
+                        <div class="timeline-badge">6</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 6 · 실시간 피드백</span>
+                            <span class="timeline-title">Live 지도 지원 &amp; 실시간 교사 개입 (ai_live)</span>
+                            <span class="timeline-desc">동시에 접속한 반 전체 학생들의 발화 히트맵을 보며 주의 신호가 발생한 학생에게 개별 가이드라인을 전달합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_6/code.html" class="timeline-item">
+                        <div class="timeline-badge">7</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 7 · 과정 증빙</span>
+                            <span class="timeline-title">과정 증빙 &amp; 평가 설명 리포트 (ai_6)</span>
+                            <span class="timeline-desc">수업 종료 후, AI가 요약한 인간 기여도(HCR) 지표 및 개념 연결 지도(ENA)를 바탕으로 교사 의견을 작성합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_7/code.html" class="timeline-item">
+                        <div class="timeline-badge">8</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 8 · 감사 및 개인정보</span>
+                            <span class="timeline-title">보안, 익명화 동의 관리 패널 (ai_7)</span>
+                            <span class="timeline-desc">수집된 분석 정보를 100% 비식별 암호화 처리하고, 상시 동의 철회가 가능한 보안 보증 시스템을 제공합니다.</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Student Journey -->
+                <div id="journey-student" class="flow-journey">
+                    <a href="ai_2/code.html" class="timeline-item">
+                        <div class="timeline-badge">1</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 1 · 홈화면</span>
+                            <span class="timeline-title">플랫폼 접속 (ai_2)</span>
+                            <span class="timeline-desc">학생 계정으로 로그인하여 나에게 할당된 수업 공간으로 접근합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_5/code.html" class="timeline-item">
+                        <div class="timeline-badge">2</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 2 · 학습 및 대화</span>
+                            <span class="timeline-title">학생 개별 학습 공간 (ai_5)</span>
+                            <span class="timeline-desc">중학교 사회 「시민 참여」 단원에서 AI 튜터의 발문에 논리적인 근거를 채우며 대화식으로 사고를 확장합니다.</span>
+                        </div>
+                    </a>
+                    
+                    <a href="ai_6/code.html" class="timeline-item">
+                        <div class="timeline-badge">3</div>
+                        <div class="timeline-content">
+                            <span class="timeline-step">Step 3 · 평가 증빙 확인</span>
+                            <span class="timeline-title">완료 결과 &amp; 지적 영수증 확인 (ai_6)</span>
+                            <span class="timeline-desc">제출 완료 후, 내 학습의 발자국을 요약한 '학습 과정 인증서 (지적 영수증)'을 즉시 확인합니다.</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grid Layout Section for All Screens -->
+    <section class="container pages-grid">
+        <div class="section-title">
+            <h2>화면 리스트 및 정의서 세부 내역</h2>
+            <p>화면정의서(pptx)에 수록된 각 화면별 목적과 시뮬레이션 코드 모형입니다.</p>
+        </div>
+        
+        <div class="grid-layout">
+            <!-- ai_2 -->
+            <a href="ai_2/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-common">Common</span>
+                    <img src="ai_2/screen.png" alt="ai_2 screen" class="card-img">
+                    <span class="card-badge">SLIDE 4</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">플랫폼 랜딩 홈화면 (ai_2)</h3>
+                    <p class="card-desc">교사와 학생의 시작점 역할을 합니다. PoC의 개괄적인 흐름과 주요 기능적 지표들을 직관적으로 설명하는 허브 페이지입니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_4 -->
+            <a href="ai_4/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-teacher">Teacher</span>
+                    <img src="ai_4/screen.png" alt="ai_4 screen" class="card-img">
+                    <span class="card-badge">SLIDE 5</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">교사 수업 대시보드 (ai_4)</h3>
+                    <p class="card-desc">교사의 전체 학급 수업 통계를 종합합니다. 학생 사고 참여 지수(Average HCR), 경고 주의 신호(Amber Light) 학생 비율, 누적 인증서(IR)를 관제합니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_1 -->
+            <a href="ai_1/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-teacher">Teacher</span>
+                    <img src="ai_1/screen.png" alt="ai_1 screen" class="card-img">
+                    <span class="card-badge">SLIDE 6</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">성취기준 튜터 디자이너 (ai_1)</h3>
+                    <p class="card-desc">선택한 교육과정 성취기준에 맞춰 AI 튜터의 성격, 프롬프트 지도 가이드, 시나리오별 넛지 발문을 교사가 능동적으로 제안 및 튜닝하는 공간입니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_3 -->
+            <a href="ai_3/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-teacher">Teacher</span>
+                    <img src="ai_3/screen.png" alt="ai_3 screen" class="card-img">
+                    <span class="card-badge">SLIDE 6 (ADV)</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">튜터 정밀 고급 설정 (ai_3)</h3>
+                    <p class="card-desc">AI 튜터의 비판적/확산적 넛지 비율을 슬라이더로 조절하고, 부정행위 방지 가드 레일 작동 상태 및 평가 배점 루브릭을 수치적으로 디테일하게 셋업합니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_8 -->
+            <a href="ai_8/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-teacher">Teacher</span>
+                    <img src="ai_8/screen.png" alt="ai_8 screen" class="card-img">
+                    <span class="card-badge">SLIDE 7</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">학생 모드 미리보기 팝업 (ai_8)</h3>
+                    <p class="card-desc">수업 배포 직전 가상의 학생 신분으로 AI의 동작 반응을 시연해보는 에뮬레이터입니다. 우측에서 가상의 학생용 사고 상태 맵이 연동됩니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_live -->
+            <a href="ai_live/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-teacher">Teacher</span>
+                    <img src="ai_live/screen.png" alt="ai_live screen" class="card-img">
+                    <span class="card-badge">SLIDE 8</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">실시간 분석 모니터링 (ai_live)</h3>
+                    <p class="card-desc">수업 현장에서 실시간으로 학급 전체의 사고 누적 히트맵을 봅니다. 복사 붙여넣기나 생각 멈춤 현상이 나타난 학생을 포착하여 즉각적인 피드백을 전달합니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_5 -->
+            <a href="ai_5/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-student">Student</span>
+                    <img src="ai_5/screen.png" alt="ai_5 screen" class="card-img">
+                    <span class="card-badge">SLIDE 10</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">학생 대화식 학습 공간 (ai_5)</h3>
+                    <p class="card-desc">최대한 심플하게 구성된 학생용 인터페이스입니다. 좌측의 단계별 사고 진도와 우측의 ENA 개념망을 참고하며 AI의 넛지 발문에 따라 자기 근거를 보강합니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_6 -->
+            <a href="ai_6/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-common">Common</span>
+                    <img src="ai_6/screen.png" alt="ai_6 screen" class="card-img">
+                    <span class="card-badge">SLIDE 9</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">과정 증빙 설명 리포트 (ai_6)</h3>
+                    <p class="card-desc">교사의 소명 및 증빙을 돕는 심화 평가 보고서입니다. 실시간 ENA 생각 관계 궤적, HCR 인적 기여도 지수 등이 체계적으로 기록되어 PDF 인쇄를 제공합니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+            
+            <!-- ai_7 -->
+            <a href="ai_7/code.html" class="page-card">
+                <div class="card-img-container">
+                    <span class="card-tag tag-common">Common</span>
+                    <img src="ai_7/screen.png" alt="ai_7 screen" class="card-img">
+                    <span class="card-badge">SLIDE 4 (SEC)</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">보안 및 개인정보 패널 (ai_7)</h3>
+                    <p class="card-desc">익명화 데이터 백업, 학부모 동의 서명 상태 체크, 상시 감사 로그를 모니터링하여 공교육에 바로 쓸 수 있는 완전무결한 신뢰 안정망 구축 상태를 나타냅니다.</p>
+                    <div class="card-footer">
+                        <span class="btn-view-screen">화면 작동하기 →</span>
+                    </div>
+                </a>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="footer-logo">
+                <div class="logo-box">
+                    <span>AI</span>
+                </div>
+                <span class="footer-logo-title">우리반 AI</span>
+            </div>
+            <p class="footer-desc">
+                성취기준 기반 과정 중심 평가 혁신 파트너. 본 페이지는 2026년 사전 현장평가 및 기술 실증을 위해 개발된 프로토타입 시연 가상 센터입니다.
+            </p>
+            <div class="footer-copyright">
+                © 2026 우리반 AI PoC Project. 본 사이트는 포트폴리오 시연용 가상 웹 서비스입니다.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Navigation Tab Script -->
+    <script>
+        function switchJourney(journeyType) {
+            // Update Tab Button Styles
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-btn-' + journeyType).classList.add('active');
+            
+            // Switch Active Timeline
+            document.querySelectorAll('.flow-journey').forEach(journey => journey.classList.remove('active'));
+            document.getElementById('journey-' + journeyType).classList.add('active');
+        }
+    </script>
+</body>
+</html>

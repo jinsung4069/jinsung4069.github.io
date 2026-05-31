@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>우리반AI - 실시간 사고 흐름 지도 지원</title>
+<script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15861" type="text/javascript"></script>
+<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=836" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#191c1d",
+                    "primary-fixed-dim": "#ffb693",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#a04100",
+                    "secondary-container": "#e4e2e1",
+                    "background": "#f8f9fa",
+                    "secondary-fixed": "#e4e2e1",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary-container": "#656464",
+                    "secondary-fixed-dim": "#c8c6c6",
+                    "on-primary-container": "#572000",
+                    "outline-variant": "#e2bfb0",
+                    "outline": "#8e7164",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-primary-fixed-variant": "#7a3000",
+                    "inverse-surface": "#2e3132",
+                    "inverse-primary": "#ffb693",
+                    "tertiary-container": "#9399a6",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#ffdbcc",
+                    "on-surface": "#191c1d",
+                    "on-secondary-fixed-variant": "#474747",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#c0c7d4",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-tint": "#a04100",
+                    "primary-container": "#ff6b00",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f3f4f5",
+                    "on-surface-variant": "#5a4136",
+                    "on-primary-fixed": "#351000",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "surface-dim": "#d9dadb",
+                    "secondary": "#5f5e5e",
+                    "on-tertiary-container": "#2b313c",
+                    "tertiary-fixed": "#dce3f0",
+                    "on-tertiary-fixed": "#151c26",
+                    "tertiary": "#585f6a",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#414752",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "surface-variant": "#e1e3e4",
+                    "surface-container": "#edeeef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "panel-width": "380px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "0", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "title-lg": ["20px", {"lineHeight": "1.5", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        @media (prefers-reduced-motion: no-preference) {
+            .heatmap-cell {
+                opacity: 0;
+                transform: scale(0.9);
+                animation: entrance 0.4s ease forwards;
+            }
+            @keyframes entrance {
+                to { opacity: 1; transform: scale(1); }
+            }
+            .alert-pulse {
+                animation: alertPulse 2s infinite ease-in-out;
+            }
+            @keyframes alertPulse {
+                0%, 100% { box-shadow: 0 0 0 0px rgba(255,107,0,0.4); transform: scale(1); }
+                50% { box-shadow: 0 0 20px 4px rgba(255,107,0,0.2); transform: scale(1.02); }
+            }
+            .value-tick {
+                animation: tick 0.3s ease-out;
+            }
+            @keyframes tick {
+                0% { transform: scale(1); color: #a04100; }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+            .ena-node {
+                animation: float 3s infinite ease-in-out;
+            }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-4px); }
+            }
+            .ena-line {
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                animation: draw 2s ease-out forwards;
+            }
+            @keyframes draw {
+                to { stroke-dashoffset: 0; }
+            }
+            .student-row {
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .student-row:hover {
+                background-color: rgba(225, 227, 228, 0.3);
+                transform: translateX(4px);
+            }
+            .panel-slide-in {
+                animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            @keyframes slideIn {
+                from { transform: translateX(20px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #191c1d;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .ena-mesh {
+            background-image: radial-gradient(circle at 2px 2px, #e1e3e4 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 10px;
+        }
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+        }
+        .scroll-fade-mask {
+            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            nav.fixed {
+                align-items: flex-start !important;
+                flex-direction: column !important;
+                gap: 10px;
+                padding: 14px 16px !important;
+                position: sticky !important;
+            }
+
+            nav.fixed .font-title-lg {
+                display: flex;
+                flex-direction: column;
+                line-height: 1.25;
+            }
+
+            nav.fixed .font-title-lg span {
+                border-left: 0 !important;
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+            }
+
+            nav.fixed > .flex:last-child {
+                display: none !important;
+            }
+
+            main.mt-24 {
+                margin-top: 16px !important;
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            main > header {
+                align-items: flex-start !important;
+                flex-direction: column !important;
+                gap: 16px;
+                padding: 18px !important;
+            }
+
+            main > header > .flex {
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+
+            main > header > .flex button {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
+
+            main > .flex.gap-gutter {
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+
+            main > .flex.gap-gutter > div,
+            #analysis-panel {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+
+            .bg-white.p-4.rounded-xl.flex.justify-between {
+                align-items: flex-start !important;
+                flex-direction: column !important;
+                gap: 12px;
+            }
+
+            .bg-white.p-4.rounded-xl .flex.gap-4 {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .bg-white.p-8.rounded-xl {
+                padding: 16px !important;
+                overflow-x: auto !important;
+            }
+
+            .bg-white.p-8.rounded-xl .grid.grid-cols-\[100px_1fr\] {
+                min-width: 620px;
+            }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-outline-variant/30">
+<div class="flex items-center gap-8">
+<span class="font-title-lg text-title-lg font-bold text-primary">우리반AI <span class="text-secondary font-normal text-body-md ml-2 border-l border-outline-variant/30 pl-3">성취기준 기반 AI 학습·평가 플랫폼</span></span>
+<div class="hidden md:flex gap-6">
+<a class="text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">대시보드</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">시나리오 라이브러리</a>
+<a class="text-primary font-bold border-b-2 border-primary font-body-md text-body-md" href="#">개념 연결 지도</a>
+<a class="text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">리포트</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-variant/50 rounded-full transition-colors text-secondary">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="relative p-2 hover:bg-surface-variant/50 rounded-full transition-colors text-secondary">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-primary-container text-on-primary-fixed text-[10px] flex items-center justify-center rounded-full font-bold">3</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-bold">T</div>
+</div>
+</nav>
+<main class="mt-24 px-margin-desktop pb-12">
+<!-- Session Header -->
+<header class="flex justify-between items-end mb-8 bg-white p-6 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<div>
+<h1 class="font-headline-md text-headline-md mb-2">Live 지도 지원 - 실시간 분석 및 교사 개입 가이드</h1><p class="text-secondary text-body-md mb-4">학생의 실시간 사고 과정을 분석하여 교사가 적절한 개입 시점을 포착하도록 돕습니다.</p><div class="mb-4"><span class="bg-surface-container px-3 py-1 rounded-full text-label-md text-secondary">사전기획용 프로토타입 · 분석 수치/리포트는 시연용 샘플 데이터</span></div>
+<div class="flex items-center gap-4 text-secondary">
+<span class="flex items-center gap-1.5 text-primary font-bold">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        진행 중
+                    </span>
+<span class="border-l border-outline-variant/30 pl-4 transition-all duration-300 value-tick" id="elapsed-time">경과 시간: 30:12</span>
+<span class="border-l border-outline-variant/30 pl-4 transition-all duration-300 value-tick" id="participation-count">참여 인원: 31명 중 28명 접속</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2 border border-outline-variant text-secondary rounded-lg font-bold hover:bg-surface-variant/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-body-md">pause</span>
+                    일시정지
+                </button>
+<button class="px-6 py-2 border border-outline-variant text-secondary rounded-lg font-bold hover:bg-surface-variant/50 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-body-md">send</span>
+                    알림 보내기
+                </button>
+<button class="px-6 py-2 bg-primary-container text-white rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary-container/20" onclick="location.href='../ai_6/code.html'">리포트로 넘어가기</button>
+</div>
+</header>
+<div class="flex gap-gutter">
+<!-- Main Monitoring Grid -->
+<div class="flex-1 space-y-6">
+<!-- Heatmap Controls -->
+<div class="bg-white p-4 rounded-xl flex justify-between items-center shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<div class="flex gap-4">
+<button class="px-4 py-1.5 bg-inverse-surface text-white rounded-full text-label-md font-label-md transition-all active:scale-95">학생 사고 참여도</button>
+<button class="px-4 py-1.5 text-secondary hover:bg-surface-variant/50 rounded-full text-label-md font-label-md transition-all active:scale-95">개념 연결 지도</button>
+<button class="px-4 py-1.5 text-secondary hover:bg-surface-variant/50 rounded-full text-label-md font-label-md transition-all active:scale-95">정체</button>
+</div>
+<div class="flex items-center gap-2 text-secondary text-label-md font-label-md">
+<span class="">학급 사고 흐름 · 5분 구간 히트맵</span>
+</div>
+</div>
+<!-- Heatmap Grid -->
+<div class="bg-white p-8 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="overflow-y-auto scroll-smooth pr-2 custom-scrollbar scroll-fade-mask h-[450px]">
+<div class="grid grid-cols-[100px_1fr] gap-4 relative">
+<div class="sticky top-0 bg-white z-20 h-8"></div>
+<div class="sticky top-0 bg-white z-30 grid grid-cols-10 gap-2 mb-4 pb-2 border-b border-outline-variant/10">
+<span class="text-center text-label-md text-secondary">+2m</span>
+<span class="text-center text-label-md text-secondary">+4m</span>
+<span class="text-center text-label-md text-secondary">+6m</span>
+<span class="text-center text-label-md text-secondary">+8m</span>
+<span class="text-center text-label-md text-secondary">+10m</span>
+<span class="text-center text-label-md text-secondary">+12m</span>
+<span class="text-center text-label-md text-secondary">+14m</span>
+<span class="text-center text-label-md text-secondary">+16m</span>
+<span class="text-center text-label-md text-secondary">+18m</span>
+<span class="text-center text-label-md text-secondary">+20m</span>
+</div>
+<div class="space-y-4 student-names-column"><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">김민준</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">이서연</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">박지호</div><div class="h-8 flex items-center font-bold text-primary gap-1 student-row px-2 rounded cursor-pointer active-glow ring-2 ring-primary-container/20"><span class="material-symbols-outlined text-[16px]">warning</span>최예린</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">김도윤</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">박서준</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">이민지</div><div class="h-8 flex items-center font-bold student-row px-2 rounded cursor-pointer">정하윤</div></div>
+<div class="space-y-4 heatmap-data-column" id="heatmap-grid">
+<!-- Rows populated via JS for staggered animation -->
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 0ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 50ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 100ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 150ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 200ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 250ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 300ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 350ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 400ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 450ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 100ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 150ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 200ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 250ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 300ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 350ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 400ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 450ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 500ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 550ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 200ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 250ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 300ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 350ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 400ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 450ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 500ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 550ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 600ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 650ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8 alert-pulse ring-2 ring-primary-container ring-offset-4 rounded-sm"><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 300ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 350ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 400ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 450ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 500ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 550ms;"></div><div class="heatmap-cell bg-primary-container rounded-sm shadow-[0_0_12px_rgba(255,107,0,0.4)]" style="animation-delay: 600ms;"></div><div class="heatmap-cell bg-primary-container rounded-sm shadow-[0_0_12px_rgba(255,107,0,0.4)]" style="animation-delay: 650ms;"></div><div class="heatmap-cell bg-primary-container rounded-sm shadow-[0_0_12px_rgba(255,107,0,0.4)]" style="animation-delay: 700ms;"></div><div class="heatmap-cell bg-primary-container rounded-sm shadow-[0_0_12px_rgba(255,107,0,0.4)]" style="animation-delay: 750ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 400ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 450ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 500ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm transition-all" style="animation-delay: 550ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 600ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 650ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 700ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 750ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 800ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 850ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 500ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 550ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 600ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 650ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 700ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 750ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 800ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 850ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 900ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 950ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 600ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 650ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 700ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 750ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 800ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 850ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 900ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 950ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1000ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1050ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 700ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 750ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 800ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 850ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 900ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 950ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1000ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1050ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 1100ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1150ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 800ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 850ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 900ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 950ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1000ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1050ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1100ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 1150ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1200ms;"></div><div class="heatmap-cell bg-surface-container rounded-sm" style="animation-delay: 1250ms;"></div></div>
+<div class="grid grid-cols-10 gap-2 h-8"><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 900ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 950ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1000ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1050ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 1100ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1150ms;"></div><div class="heatmap-cell bg-surface-dim rounded-sm" style="animation-delay: 1200ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1250ms;"></div><div class="heatmap-cell bg-secondary rounded-sm" style="animation-delay: 1300ms;"></div><div class="heatmap-cell bg-secondary-fixed-dim rounded-sm" style="animation-delay: 1350ms;"></div></div>
+</div>
+</div>
+</div>
+<div class="mt-12 flex justify-between items-center pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-4">
+<span class="text-label-md text-secondary">강도 범례</span>
+<div class="flex gap-1">
+<div class="w-6 h-3 bg-surface-container rounded-sm"></div>
+<div class="w-6 h-3 bg-surface-dim rounded-sm"></div>
+<div class="w-6 h-3 bg-secondary-fixed-dim rounded-sm"></div>
+<div class="w-6 h-3 bg-secondary rounded-sm"></div>
+<div class="w-6 h-3 bg-inverse-surface rounded-sm"></div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-primary font-bold text-label-md">
+<span class="w-2 h-2 rounded-full bg-primary-container alert-pulse"></span>
+                            정체/주의 신호 발생 구간
+                        </div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Panel -->
+<aside class="w-[380px] space-y-6 panel-slide-in" id="analysis-panel">
+<!-- Selection Status -->
+<div class="bg-white p-6 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] border-l-4 border-primary-container">
+<div class="flex items-center justify-between mb-4">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-wider">지원 필요 학생</span>
+<span class="text-primary font-bold">최 예 린</span>
+</div>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center font-bold text-secondary text-title-lg transition-transform hover:scale-105">예린</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-bold text-body-lg">최예린</span>
+<span class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded text-[10px] font-bold alert-pulse">주의 신호</span>
+</div>
+<p class="text-label-md text-error font-medium">주의 신호: 근거 제시가 같은 표현에 머무름</p>
+</div>
+</div>
+<!-- Metrics -->
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-bold text-secondary">
+<span class="">학생 사고 참여도 (사고 연속성 지수)</span>
+<span class="">0.34</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full transition-all duration-1000 ease-out" style="width: 34%"></div>
+</div>
+</div>
+<!-- ENA Minimap -->
+<div class="relative w-full aspect-video bg-surface-container rounded-lg overflow-hidden flex flex-col items-center justify-center border border-outline-variant/30 ena-mesh"><div class="flex flex-col items-center gap-2 p-4"><div class="flex items-center gap-2 text-primary font-bold text-label-md"><span class="px-2 py-1 bg-primary/10 rounded">문제 인식</span><span class="material-symbols-outlined text-[12px]">arrow_forward</span><span class="px-2 py-1 bg-primary/10 rounded">의견 모으기</span><span class="material-symbols-outlined text-[12px]">arrow_forward</span><span class="px-2 py-1 bg-primary-container text-white rounded">구청 건의</span><span class="material-symbols-outlined text-[12px]">arrow_forward</span><span class="px-2 py-1 bg-surface-variant rounded">시민 참여</span></div><span class="text-label-md text-secondary mt-2">진행 과정 분석: 구청 건의 단계에서 정체 중</span></div></div>
+</div>
+</div>
+<!-- Recent Speech -->
+<div class="bg-white p-6 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-body-lg">최근 발언 3개</h3>
+<span class="text-[10px] bg-surface-container px-2 py-1 rounded text-secondary font-bold">자동 발췌</span>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-surface rounded-lg border border-outline-variant/30 italic text-secondary text-body-md transition-all hover:bg-surface-variant/20 hover:border-primary/30">
+                            (2번째 동일 답변) "잘 모르겠어요"
+                        </div>
+<div class="p-3 bg-surface rounded-lg border border-outline-variant/30 italic text-secondary text-body-md transition-all hover:bg-surface-variant/20 hover:border-primary/30">
+                            (붙여넣기 1회 감지) "민주주의는..."
+                        </div>
+<div class="p-3 bg-surface rounded-lg border border-outline-variant/30 italic text-secondary text-body-md transition-all hover:bg-surface-variant/20 hover:border-primary/30">
+                            "이거 그냥 알려주시면 안 돼요?"
+                        </div>
+</div>
+</div>
+<!-- Recommended Actions -->
+<div class="bg-white p-6 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<h3 class="font-bold text-body-lg mb-4">권장 조치</h3>
+<div class="space-y-3"><div class="flex flex-col gap-2"><button class="w-full py-2.5 bg-primary-container text-white font-bold rounded-lg text-label-md flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">lightbulb</span>스캐폴딩 힌트 1단계 보내기</button><button class="w-full py-2.5 border border-outline-variant text-secondary font-bold rounded-lg text-label-md flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">chat_bubble</span>반대 관점 질문 보내기</button><button class="w-full py-2.5 border border-outline-variant text-secondary font-bold rounded-lg text-label-md flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">edit_note</span>개별 지도 메모 남기기</button></div></div>
+</div>
+</aside></div>
+</main>
+<footer class="w-full py-gutter px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 border-t border-outline-variant/20 bg-surface-container-lowest">
+<span class="font-label-md text-label-md text-on-surface-variant">© 2024 우리반AI. All rights reserved.</span>
+<div class="flex gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+</footer>
+<script>
+        // Staggered Entrance for Heatmap
+        document.addEventListener('DOMContentLoaded', () => {
+            const cells = document.querySelectorAll('.heatmap-cell');
+            cells.forEach((cell, index) => {
+                const delay = (index % 10) * 50 + Math.floor(index / 10) * 100;
+                cell.style.animationDelay = `${delay}ms`;
+            });
+        });
+
+        // Real-time Counter Animation (Elapsed Time)
+        const timeElement = document.getElementById('elapsed-time');
+        let seconds = 29 * 60 + 19;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            if (timeElement) {
+                timeElement.innerText = `경과 시간: ${mins}:${secs < 10 ? '0' + secs : secs}`;
+                timeElement.classList.remove('value-tick');
+                void timeElement.offsetWidth; // trigger reflow
+                timeElement.classList.add('value-tick');
+            }
+        }, 1000);
+
+        // Real-time Counter Simulation (Participation)
+        const participationElement = document.getElementById('participation-count');
+        setInterval(() => {
+            if (Math.random() > 0.8) {
+                participationElement.classList.remove('value-tick');
+                void participationElement.offsetWidth;
+                participationElement.classList.add('value-tick');
+            }
+        }, 5000);
+
+        // Student Selection Simulation (Smooth Panel Transition)
+        const studentRows = document.querySelectorAll('.student-row');
+        const analysisPanel = document.getElementById('analysis-panel');
+        
+        studentRows.forEach(row => {
+            row.addEventListener('click', () => {
+                analysisPanel.classList.remove('panel-slide-in');
+                void analysisPanel.offsetWidth;
+                analysisPanel.classList.add('panel-slide-in');
+                
+                // Visual feedback for selection
+                studentRows.forEach(r => r.classList.remove('active-glow', 'ring-2', 'ring-primary-container/20'));
+                row.classList.add('active-glow', 'ring-2', 'ring-primary-container/20');
+            });
+        });
+
+        // Cell hover micro-interactions
+        const heatmapCells = document.querySelectorAll('.heatmap-cell');
+        heatmapCells.forEach(cell => {
+            cell.addEventListener('mouseenter', () => {
+                cell.classList.add('z-10', 'scale-125', 'shadow-lg', 'transition-all');
+            });
+            cell.addEventListener('mouseleave', () => {
+                cell.classList.remove('z-10', 'scale-125', 'shadow-lg');
+            });
+        });
+    </script>
+
+    <!-- Floating PoC Controller -->
+    <div id="poc-floating-controller" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3" style="font-family: 'Inter', sans-serif;">
+      <!-- Expandable Menu -->
+      <div id="poc-drawer" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 p-5 w-72 h-[450px] flex flex-col hidden opacity-0 translate-y-4 transition-all duration-300 text-left">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
+          </div>
+          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto pr-1 space-y-1.5 custom-scrollbar text-xs">
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">교사 &amp; 공동 여정</div>
+          <a id="step-portal" href="../index.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">0</span>
+            <span class="font-medium">0. PoC 메인 포털</span>
+          </a>
+          <a id="step-ai_2" href="../ai_2/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+            <span class="font-medium">1. 서비스 홈화면 (Landing)</span>
+          </a>
+          <a id="step-ai_4" href="../ai_4/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+            <span class="font-medium">2. 교사 대시보드 (Dashboard)</span>
+          </a>
+          <a id="step-ai_1" href="../ai_1/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">3</span>
+            <span class="font-medium">3. 튜터 디자이너 (Tutor Design)</span>
+          </a>
+          <a id="step-ai_3" href="../ai_3/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">4</span>
+            <span class="font-medium">4. 정밀 설정 (Advanced Setting)</span>
+          </a>
+          <a id="step-ai_8" href="../ai_8/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">5</span>
+            <span class="font-medium">5. 학생 미리보기 (Preview)</span>
+          </a>
+          <a id="step-ai_live" href="../ai_live/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">6</span>
+            <span class="font-medium">6. 실시간 모니터링 (Live)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">학생 여정</div>
+          <a id="step-ai_5" href="../ai_5/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">7</span>
+            <span class="font-medium">7. 학생 학습 공간 (Learning)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">평가 &amp; 보안</div>
+          <a id="step-ai_6" href="../ai_6/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">8</span>
+            <span class="font-medium">8. 과정 증빙 리포트 (Report)</span>
+          </a>
+          <a id="step-ai_7" href="../ai_7/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">9</span>
+            <span class="font-medium">9. 보안 및 동의 패널 (Consent)</span>
+          </a>
+        </div>
+        
+        <button onclick="location.href='../index.html'" class="mt-3 w-full py-2 bg-gray-800 hover:bg-black text-white text-[11px] font-bold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm border-none cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          시나리오 포털 홈으로
+        </button>
+      </div>
+
+      <!-- Floating Button -->
+      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      function togglePocDrawer() {
+          const drawer = document.getElementById('poc-drawer');
+          if (drawer.classList.contains('hidden')) {
+              drawer.classList.remove('hidden');
+              setTimeout(() => {
+                  drawer.classList.remove('opacity-0', 'translate-y-4');
+              }, 50);
+          } else {
+              drawer.classList.add('opacity-0', 'translate-y-4');
+              setTimeout(() => {
+                  drawer.classList.add('hidden');
+              }, 300);
+          }
+      }
+
+      // Highlight Current Step
+      (function() {
+          const pathParts = window.location.pathname.split('/');
+          const currentDir = pathParts[pathParts.length - 2];
+          const activeEl = document.getElementById('step-' + currentDir);
+          if (activeEl) {
+              activeEl.classList.remove('hover:bg-orange-50/50', 'text-gray-600');
+              activeEl.classList.add('bg-orange-100/70', 'text-[#ff6b00]', 'font-bold');
+              const circle = activeEl.querySelector('span');
+              if (circle) {
+                  circle.classList.remove('bg-gray-100');
+                  circle.classList.add('bg-[#ff6b00]', 'text-white');
+              }
+          }
+      })();
+    </script>
+    </body><whale-grammar data-role="tooltip"></whale-grammar><whale-grammar data-role="mirror"></whale-grammar></html>

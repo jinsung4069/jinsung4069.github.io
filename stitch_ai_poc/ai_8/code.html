@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>우리반AI - 학생 모드 미리보기</title>
+<script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15862" type="text/javascript"></script>
+<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=828" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#572000",
+                        "tertiary-fixed-dim": "#c0c7d4",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#ff6b00",
+                        "surface": "#f8f9fa",
+                        "secondary": "#5f5e5e",
+                        "surface-tint": "#a04100",
+                        "primary-fixed": "#ffdbcc",
+                        "primary-fixed-dim": "#ffb693",
+                        "outline": "#8e7164",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474747",
+                        "inverse-on-surface": "#f0f1f2",
+                        "background": "#f8f9fa",
+                        "tertiary-fixed": "#dce3f0",
+                        "on-tertiary-container": "#2b313c",
+                        "surface-bright": "#f8f9fa",
+                        "outline-variant": "#e2bfb0",
+                        "surface-container-high": "#e7e8e9",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#a04100",
+                        "on-background": "#191c1d",
+                        "secondary-container": "#e4e2e1",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#5a4136",
+                        "tertiary-container": "#9399a6",
+                        "on-primary-fixed": "#351000",
+                        "inverse-primary": "#ffb693",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "secondary-fixed": "#e4e2e1",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container": "#edeeef",
+                        "surface-container-highest": "#e1e3e4",
+                        "tertiary": "#585f6a",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#656464",
+                        "surface-dim": "#d9dadb",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "on-tertiary-fixed-variant": "#414752",
+                        "on-surface": "#191c1d",
+                        "inverse-surface": "#2e3132",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#151c26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "unit": "8px",
+                        "panel-width": "380px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "display-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "0", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .chat-scrollbar::-webkit-scrollbar { width: 6px; }
+        .chat-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .chat-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        .chat-scrollbar::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .node-active { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow: auto !important;
+            }
+
+            #preview-overlay {
+                position: static !important;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            #preview-overlay > header {
+                align-items: flex-start !important;
+                flex-direction: column !important;
+                gap: 12px;
+                padding: 14px 16px !important;
+            }
+
+            #preview-overlay > header > .flex {
+                align-items: flex-start !important;
+                flex-wrap: wrap;
+                gap: 10px;
+                width: 100%;
+            }
+
+            #preview-overlay > header .h-8.w-\[1px\],
+            #preview-overlay > header .bg-primary-fixed\/50 {
+                display: none !important;
+            }
+
+            #preview-overlay > header button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            #preview-overlay > .bg-tertiary-fixed {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+                text-align: left;
+            }
+
+            #preview-overlay main {
+                flex-direction: column !important;
+                gap: 16px !important;
+                overflow: visible !important;
+                padding: 16px !important;
+            }
+
+            #preview-overlay main > div,
+            #preview-overlay main > aside {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+
+            #preview-overlay main .px-8 {
+                padding-left: 18px !important;
+                padding-right: 18px !important;
+            }
+
+            #preview-overlay main .py-10,
+            #preview-overlay main .p-8 {
+                padding-top: 18px !important;
+                padding-bottom: 18px !important;
+            }
+
+            #preview-overlay .max-w-\[85\%\],
+            #preview-overlay .max-w-\[80\%\] {
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-hidden">
+<div class="fixed inset-0 z-[100] bg-surface flex flex-col" id="preview-overlay">
+<!-- Top Bar: Service Info & Preview Status -->
+<header class="bg-white border-b border-surface-container px-margin-desktop py-4 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-6">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-display-lg text-[22px] text-primary font-bold">우리반AI</span>
+<span class="bg-surface-container-highest text-on-surface-variant text-[11px] px-2 py-0.5 rounded-full font-medium">STU-MODE</span>
+</div>
+<span class="text-secondary text-[12px]">성취기준 기반 AI 학습·평가 플랫폼</span>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex flex-col">
+<span class="text-on-surface font-semibold text-[14px]">中 2 Social · Citizen Participation and Democracy</span>
+<span class="text-secondary text-[12px]">2026 PoC</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-primary-fixed/50 text-on-primary-fixed px-4 py-1.5 rounded-full flex items-center gap-2 border border-primary-fixed">
+<span class="material-symbols-outlined text-[18px] fill-1" data-icon="person">person</span>
+<span class="text-[14px] font-bold">최예린 학생</span>
+</div>
+<button class="bg-primary text-white px-5 py-2 rounded-lg font-title-lg text-[14px] flex items-center gap-2 transition-all active:scale-95 shadow-md hover:bg-primary/90" onclick="if(document.referrer){location.href=document.referrer;}else{location.href='../ai_1/code.html';}">
+<span class="material-symbols-outlined text-[18px]" data-icon="logout">logout</span>
+                미리보기 종료
+            </button>
+</div>
+</header>
+<!-- Badge: Prototype Notice -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-margin-desktop py-1.5 text-center text-[12px] font-medium">
+        사전기획용 프로토타입 · 분석 수치/리포트는 시연용 샘플 데이터입니다.
+    </div>
+<!-- Main Content Area -->
+<main class="flex-grow flex p-gutter gap-gutter overflow-hidden relative">
+<!-- Left: AI Tutor Chat (Main Canvas) -->
+<div class="flex-grow flex flex-col min-w-0">
+<div class="flex-grow bg-white rounded-[24px] shadow-xl flex flex-col border border-outline-variant/30 overflow-hidden fade-in">
+<!-- Chat Header -->
+<div class="px-8 py-5 border-b border-surface-container flex items-center justify-between bg-white/80 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-white shadow-inner">
+<span class="material-symbols-outlined text-[28px]" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h2 class="font-headline-md text-[18px] text-on-surface">교과 튜터: 시민 참여 안내자</h2>
+<p class="text-secondary text-[13px]">정답은 알려주지 않아요. 내 근거를 함께 적어볼까요?</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 hover:bg-surface-container-low rounded-lg transition-colors text-primary font-medium text-[13px] border border-primary/20">
+<span class="material-symbols-outlined text-[18px]" data-icon="lightbulb">lightbulb</span>
+                            힌트 보기
+                        </button>
+</div>
+</div>
+<!-- Chat Conversation -->
+<div class="flex-grow overflow-y-auto px-8 py-10 chat-scrollbar space-y-8 bg-surface/20">
+<!-- AI Tutor Message 1 -->
+<div class="flex gap-4 max-w-[85%] fade-in">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-secondary font-bold text-[12px]">AI</div>
+<div class="bg-white border border-outline-variant/20 p-5 rounded-[4px] rounded-tr-[20px] rounded-br-[20px] rounded-bl-[20px] shadow-sm">
+<p class="text-on-surface leading-relaxed">우리 학교 주변 문제 중 시민 참여로 바꿀 수 있는 사례를 하나 떠올려 볼까요?</p>
+</div>
+</div>
+<!-- User Message 1 -->
+<div class="flex justify-end fade-in" style="animation-delay: 0.2s;">
+<div class="max-w-[80%] bg-primary-container text-white p-5 rounded-[20px] rounded-tr-[4px] shadow-lg shadow-primary-container/10">
+<p class="leading-relaxed">학교 앞 횡단보도 신호가 짧아서 위험하다고 생각해요. 학생 의견을 모아 구청에 건의할 수 있어요.</p>
+</div>
+</div>
+<!-- AI Tutor Message 2 -->
+<div class="flex gap-4 max-w-[85%] fade-in" style="animation-delay: 0.4s;">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-secondary font-bold text-[12px]">AI</div>
+<div class="bg-white border border-outline-variant/20 p-5 rounded-[4px] rounded-tr-[20px] rounded-br-[20px] rounded-bl-[20px] shadow-sm">
+<p class="text-on-surface leading-relaxed">좋아요. 그 의견을 뒷받침할 근거는 무엇이고, 참여 방법은 왜 적절하다고 생각하나요?</p>
+</div>
+</div>
+</div>
+<!-- Chat Input Area -->
+<div class="p-8 bg-white border-t border-surface-container">
+<div class="flex gap-3 mb-4">
+<button class="px-4 py-2 bg-surface-container-low hover:bg-surface-container-high rounded-full text-on-surface-variant text-[13px] font-medium transition-all border border-outline-variant/30">근거 확인</button>
+<button class="px-4 py-2 bg-surface-container-low hover:bg-surface-container-high rounded-full text-on-surface-variant text-[13px] font-medium transition-all border border-outline-variant/30">내 말로 설명하기</button>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface border border-outline-variant/40 rounded-[20px] px-6 py-5 pr-16 focus:ring-4 focus:ring-primary-container/10 focus:border-primary-container outline-none transition-all resize-none min-h-[80px]" placeholder="질문에 대한 내 생각을 근거와 함께 적어주세요..." rows="2"></textarea>
+<button class="absolute right-4 bottom-4 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg" onclick="location.href='#SCREEN_25'">
+<span class="material-symbols-outlined" data-icon="arrow_upward">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Analysis & Concept Map Panel -->
+<aside class="w-[380px] flex flex-col gap-gutter shrink-0">
+<!-- Thinking Participation & Feedback -->
+<div class="bg-white rounded-[24px] border border-outline-variant/30 shadow-lg p-6 flex flex-col gap-4 fade-in" style="animation-delay: 0.3s;">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="psychology">psychology</span>
+                        학생 사고 참여도
+                    </h3>
+<span class="text-[12px] text-secondary">실시간 분석 중</span>
+</div>
+<div class="space-y-4 mt-2">
+<div class="p-4 rounded-xl bg-primary-fixed/30 border border-primary-fixed/50">
+<p class="text-on-primary-fixed-variant font-bold text-[16px] leading-snug">내 생각이 충분히 쌓이고 있어요</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+<p class="text-secondary text-[14px]">근거를 한 번 더 적어보면 좋아요</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+<p class="text-secondary text-[14px]">AI 답변을 내 말로 바꿔 설명해 볼까요?</p>
+</div>
+</div>
+</div>
+<!-- Concept Connection Map (ENA) -->
+<div class="flex-grow bg-white rounded-[24px] border border-outline-variant/30 shadow-lg p-6 flex flex-col fade-in" style="animation-delay: 0.5s;">
+<h3 class="font-bold text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]" data-icon="account_tree">account_tree</span>
+                    개념 연결 지도
+                </h3>
+<div class="flex-grow relative flex items-center justify-center">
+<!-- Concept Map Visualization -->
+<div class="w-full h-full flex flex-col items-center justify-center gap-12 relative">
+<div class="flex flex-col items-center gap-1 text-center group">
+<div class="w-14 h-14 rounded-full bg-primary-container/10 border-2 border-primary-container text-primary flex items-center justify-center font-bold text-[13px] shadow-sm">문제 인식</div>
+<span class="text-[11px] text-secondary">COMPLETE</span>
+</div>
+<div class="w-[2px] h-8 bg-primary-container/30"></div>
+<div class="flex flex-col items-center gap-1 text-center">
+<div class="w-16 h-16 rounded-full bg-primary-container border-2 border-primary-container text-white flex items-center justify-center font-bold text-[14px] shadow-lg node-active">의견 모으기</div>
+<span class="text-[11px] text-primary font-bold">CURRENT</span>
+</div>
+<div class="w-[2px] h-8 bg-surface-container-highest"></div>
+<div class="flex flex-col items-center gap-1 text-center opacity-40">
+<div class="w-14 h-14 rounded-full bg-surface-container border-2 border-outline-variant text-secondary flex items-center justify-center font-bold text-[13px]">구청 건의</div>
+</div>
+<div class="w-[2px] h-8 bg-surface-container-highest"></div>
+<div class="flex flex-col items-center gap-1 text-center opacity-40">
+<div class="w-14 h-14 rounded-full bg-surface-container border-2 border-outline-variant text-secondary flex items-center justify-center font-bold text-[13px]">시민 참여</div>
+</div>
+</div>
+</div>
+<!-- Alert Signal -->
+<div class="mt-6 pt-6 border-t border-surface-container">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-on-surface font-medium text-[13px]">주의 신호: 정상 (학습 몰입 중)</span>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- Bottom Progress Bar -->
+<footer class="px-margin-desktop py-4 bg-white border-t border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-6 w-full max-w-xl">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-bold text-primary whitespace-nowrap">학습 달성도</span>
+<span class="text-label-md text-primary font-bold">42%</span>
+</div>
+<div class="flex-grow h-2.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[42%] rounded-full transition-all duration-1000 ease-out"></div>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="timer">timer</span>
+<span class="text-label-md font-medium">진행 시간 08:22</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant/40"></div>
+<button class="text-secondary hover:text-on-surface font-bold text-[14px] transition-colors">잠시 멈춤</button>
+</div>
+</footer>
+</div>
+<script>
+    // Simple micro-interaction for the chat auto-scroll
+    const chatContainer = document.querySelector('.chat-scrollbar');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Auto-expand textarea
+    const tx = document.querySelector("textarea");
+    if (tx) {
+        tx.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        }, false);
+    }
+</script>
+
+    <!-- Floating PoC Controller -->
+    <div id="poc-floating-controller" class="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3" style="font-family: 'Inter', sans-serif;">
+      <!-- Expandable Menu -->
+      <div id="poc-drawer" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 p-5 w-72 h-[450px] flex flex-col hidden opacity-0 translate-y-4 transition-all duration-300 text-left">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#ff6b00]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
+          </div>
+          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex-grow overflow-y-auto pr-1 space-y-1.5 custom-scrollbar text-xs">
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">교사 &amp; 공동 여정</div>
+          <a id="step-portal" href="../index.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">0</span>
+            <span class="font-medium">0. PoC 메인 포털</span>
+          </a>
+          <a id="step-ai_2" href="../ai_2/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+            <span class="font-medium">1. 서비스 홈화면 (Landing)</span>
+          </a>
+          <a id="step-ai_4" href="../ai_4/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+            <span class="font-medium">2. 교사 대시보드 (Dashboard)</span>
+          </a>
+          <a id="step-ai_1" href="../ai_1/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">3</span>
+            <span class="font-medium">3. 튜터 디자이너 (Tutor Design)</span>
+          </a>
+          <a id="step-ai_3" href="../ai_3/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">4</span>
+            <span class="font-medium">4. 정밀 설정 (Advanced Setting)</span>
+          </a>
+          <a id="step-ai_8" href="../ai_8/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">5</span>
+            <span class="font-medium">5. 학생 미리보기 (Preview)</span>
+          </a>
+          <a id="step-ai_live" href="../ai_live/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">6</span>
+            <span class="font-medium">6. 실시간 모니터링 (Live)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">학생 여정</div>
+          <a id="step-ai_5" href="../ai_5/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">7</span>
+            <span class="font-medium">7. 학생 학습 공간 (Learning)</span>
+          </a>
+          
+          <div class="h-px bg-gray-100 my-2"></div>
+          <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-1">평가 &amp; 보안</div>
+          <a id="step-ai_6" href="../ai_6/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">8</span>
+            <span class="font-medium">8. 과정 증빙 리포트 (Report)</span>
+          </a>
+          <a id="step-ai_7" href="../ai_7/code.html" class="flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50/50 text-gray-600 transition-all no-underline">
+            <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center font-bold text-[10px] flex-shrink-0">9</span>
+            <span class="font-medium">9. 보안 및 동의 패널 (Consent)</span>
+          </a>
+        </div>
+        
+        <button onclick="location.href='../index.html'" class="mt-3 w-full py-2 bg-gray-800 hover:bg-black text-white text-[11px] font-bold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-sm border-none cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          시나리오 포털 홈으로
+        </button>
+      </div>
+
+      <!-- Floating Button -->
+      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      function togglePocDrawer() {
+          const drawer = document.getElementById('poc-drawer');
+          if (drawer.classList.contains('hidden')) {
+              drawer.classList.remove('hidden');
+              setTimeout(() => {
+                  drawer.classList.remove('opacity-0', 'translate-y-4');
+              }, 50);
+          } else {
+              drawer.classList.add('opacity-0', 'translate-y-4');
+              setTimeout(() => {
+                  drawer.classList.add('hidden');
+              }, 300);
+          }
+      }
+
+      // Highlight Current Step
+      (function() {
+          const pathParts = window.location.pathname.split('/');
+          const currentDir = pathParts[pathParts.length - 2];
+          const activeEl = document.getElementById('step-' + currentDir);
+          if (activeEl) {
+              activeEl.classList.remove('hover:bg-orange-50/50', 'text-gray-600');
+              activeEl.classList.add('bg-orange-100/70', 'text-[#ff6b00]', 'font-bold');
+              const circle = activeEl.querySelector('span');
+              if (circle) {
+                  circle.classList.remove('bg-gray-100');
+                  circle.classList.add('bg-[#ff6b00]', 'text-white');
+              }
+          }
+      })();
+    </script>
+    </body><whale-grammar data-role="tooltip"></whale-grammar><whale-grammar data-role="mirror"></whale-grammar></html>
