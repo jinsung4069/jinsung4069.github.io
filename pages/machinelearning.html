@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="머신러닝 알고리즘 시뮬레이션: 지도학습, 비지도 학습, 군집화, 추천 시스템, 차원축소">
     <title>머신러닝 시뮬레이션 - 전인성</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
@@ -336,6 +339,17 @@
             }
         }
     </style>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script>
+        // 첫 페인트 전에 저장된 테마/언어를 적용해 화면 깜빡임(FOUC) 방지
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+            if (t) document.documentElement.setAttribute('data-theme', t);
+            var l = localStorage.getItem('language');
+            if (l) document.documentElement.lang = l;
+        })();
+    </script>
 </head>
 <body data-title-ko="머신러닝 시뮬레이션 - 전인성" data-title-en="Machine Learning Simulations - Inseong Jeon">
     <header>
@@ -901,13 +915,13 @@
                 <nav class="footer-nav">
                     <ul>
                         <li><a href="https://github.com/jinsung4069" title="Github" target="_blank"><i class="fab fa-github"></i></a></li>
-                        <li><a href="mailto:jinsung4069@gmail.com" title="Email"><i class="fas fa-envelope"></i></a></li>
+                        <li><a href="mailto:jinsung4069@gnue.ac.kr" title="Email"><i class="fas fa-envelope"></i></a></li>
                     </ul>
                 </nav>
             </div>
             <div class="footer-bottom">
-                <span class="lang-content lang-ko active">&copy; 2024 전인성. All rights reserved.</span>
-                <span class="lang-content lang-en">&copy; 2024 Inseong Jeon. All rights reserved.</span>
+                <span class="lang-content lang-ko active">&copy; 2026 전인성. All rights reserved.</span>
+                <span class="lang-content lang-en">&copy; 2026 Inseong Jeon. All rights reserved.</span>
             </div>
         </div>
     </footer>

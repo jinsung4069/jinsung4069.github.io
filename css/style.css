@@ -71,6 +71,29 @@ nav .lang-content.active {
     display: inline !important;
 }
 
+/* html[lang] 기준 표시 규칙: head의 조기 스크립트가 lang을 먼저 세팅하므로
+   JS(.active 토글)가 실행되기 전에도 저장된 언어로 렌더되어 깜빡임이 없다 */
+html[lang="en"] .lang-content.lang-ko {
+    display: none !important;
+}
+
+html[lang="en"] .lang-content.lang-en {
+    display: inline !important;
+}
+
+html[lang="en"] p.lang-content.lang-en,
+html[lang="en"] div.lang-content.lang-en {
+    display: block !important;
+}
+
+/* Keyboard focus visibility */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 /* ============================================
    Header
    ============================================ */

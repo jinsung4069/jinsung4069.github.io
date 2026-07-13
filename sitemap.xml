@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jinsung4069.github.io/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/about.html</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/dqn-demo.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/database-lab.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/programming-language.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/machinelearning.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/contour-simulator.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/pages/microrobot.html</loc>
+  </url>
+  <url>
+    <loc>https://jinsung4069.github.io/stitch_ai_poc/index.html</loc>
+  </url>
+</urlset>

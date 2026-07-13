@@ -72,14 +72,18 @@ document.addEventListener('DOMContentLoaded', function() {
             languageToggle.textContent = lang === 'ko' ? 'ENG' : 'KOR';
         }
 
-        const titleKo = document.body?.dataset.titleKo || '\uc804\uc778\uc131 - \ud3ec\ud2b8\ud3f4\ub9ac\uc624 & CV';
-        const titleEn = document.body?.dataset.titleEn || 'Inseong Jeon - Portfolio & CV';
-        document.title = lang === 'ko' ? titleKo : titleEn;
+        // data-title-ko/en\uc774 \uc788\ub294 \ud398\uc774\uc9c0\ub9cc \uc81c\ubaa9\uc744 \uc5b8\uc5b4\uc5d0 \ub9de\ucdb0 \uad50\uccb4 (\uc5c6\uc73c\uba74 \uc815\uc801 <title> \uc720\uc9c0)
+        const newTitle = lang === 'ko' ? document.body?.dataset.titleKo : document.body?.dataset.titleEn;
+        if (newTitle) document.title = newTitle;
     }
 
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
+
+        if (darkModeToggle) {
+            darkModeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        }
 
         // Update meta theme-color
         let metaThemeColor = document.querySelector('meta[name="theme-color"]');

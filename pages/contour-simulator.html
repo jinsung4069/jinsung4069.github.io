@@ -236,8 +236,19 @@
             border-color: #444;
         }
     </style>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script>
+        // 첫 페인트 전에 저장된 테마/언어를 적용해 화면 깜빡임(FOUC) 방지
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+            if (t) document.documentElement.setAttribute('data-theme', t);
+            var l = localStorage.getItem('language');
+            if (l) document.documentElement.lang = l;
+        })();
+    </script>
 </head>
-<body>
+<body data-title-ko="등고선 시뮬레이터 - 전인성" data-title-en="Contour Simulator - Inseong Jeon">
     <!-- Header -->
     <header>
         <div class="header-inner">

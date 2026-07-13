@@ -1,214 +1,109 @@
 # Inseong's Personal Website
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Active-brightgreen)](https://jinsung4069.github.io)
-[![Language](https://img.shields.io/badge/Language-KOR%2FENG-blue)](#language-toggle)
+[![Language](https://img.shields.io/badge/Language-KOR%2FENG-blue)](#-language-toggle)
 
-A personal portfolio website showcasing projects, interactive demos, and algorithms with bilingual support (Korean/English).
+A personal portfolio & CV website showcasing research, interactive educational demos, and algorithm visualizations with bilingual support (Korean/English).
+
+## 🚀 Live Site
+
+**[https://jinsung4069.github.io](https://jinsung4069.github.io)**
 
 ## 🌟 Features
 
-### 🔄 Language Toggle
-- **Bilingual Support**: Switch between Korean and English instantly
-- **Persistent Preference**: Language choice is saved in localStorage
-- **Complete Translation**: All content including navigation, descriptions, and UI elements
+- **🔄 Language Toggle** — Instant Korean/English switching, saved in `localStorage`
+- **🌙 Dark Mode** — Follows system preference, manual toggle, no flash on load
+- **📄 CV / About** — Education, publications, books, and research projects ([about.html](https://jinsung4069.github.io/about.html))
+- **📱 Responsive** — Mobile-friendly layout with touch navigation
+- **🔍 SEO** — Open Graph tags, sitemap.xml, robots.txt
 
-### 🎮 Interactive Projects
-1. **A* Pathfinding Algorithm** - Visual demonstration of the A* pathfinding algorithm
-2. **Alligator Chess** - Strategic chess variant with unique gameplay mechanics  
-3. **Interactive Quiz** - Multi-category quiz application
-4. **DQN Algorithm Demo** - Deep Q-Network reinforcement learning visualization
-5. **Attendance System** - Digital attendance tracking tool
-6. **Database Construction Lab** - Practice physical database design, SQL, and data conversion
+## 🎮 Interactive Projects
 
-### 📱 Responsive Design
-- Mobile-friendly layout
-- Clean, modern interface
-- Smooth animations and transitions
-
-## 🚀 Live Demo
-
-Visit the live website: **[https://jinsung4069.github.io](https://jinsung4069.github.io)**
+| Project | Description |
+|---|---|
+| [우리반 AI (Stitch AI) PoC](https://jinsung4069.github.io/stitch_ai_poc/index.html) | Competency-based AI platform proof-of-concept (10-screen scenario) |
+| [A* Pathfinding](https://jinsung4069.github.io/astar-pathfinding/) | Interactive A* pathfinding visualization (separate repo) |
+| [DQN Demo](https://jinsung4069.github.io/pages/dqn-demo.html) | Deep Q-Network reinforcement learning visualization |
+| [Database Lab](https://jinsung4069.github.io/pages/database-lab.html) | Physical design, SQL, and data conversion practice with KCI article data (sql.js) |
+| [Programming Language Lab](https://jinsung4069.github.io/pages/programming-language.html) | C / Python / Java side-by-side practice |
+| [ML Simulations](https://jinsung4069.github.io/pages/machinelearning.html) | 5 interactive machine learning algorithm simulations |
+| [Alligator Chess](https://jinsung4069.github.io/AlligatorChess/) | Strategic board game (separate repo) |
+| [Micro Robot](https://jinsung4069.github.io/pages/microrobot.html) | Strategic puzzle game (React) |
+| [Contour Simulator](https://jinsung4069.github.io/pages/contour-simulator.html) | Draw contours for 3D terrain & volcano simulation |
+| [Interactive Quiz](https://jinsung4069.github.io/simplequiz/) | Multi-topic quiz platform (separate repo) |
+| [StackBurger](https://jinsung4069.github.io/pages/stackburger.html) | Interactive coding board game |
+| [Attendance System](https://jinsung4069.github.io/pages/attendance.html) | Digital attendance tracking tool |
 
 ## 📂 Project Structure
 
 ```
 jinsung4069.github.io/
-├── index.html              # Main homepage with language toggle
+├── index.html                  # Landing page (hero, project cards, contact)
+├── about.html                  # CV: education, publications, research projects
+├── favicon.svg                 # Site favicon
+├── sitemap.xml / robots.txt    # SEO
 ├── css/
-│   ├── style.css           # Main stylesheet
-│   └── database-lab.css    # Database lab stylesheet
-├── data/
-│   ├── kci_articles.csv     # Normalized KCI article data for SQL practice
-│   └── kci_articles_raw.csv # Deduplicated raw KCI export columns
+│   ├── style.css               # Main stylesheet (light/dark themes)
+│   ├── database-lab.css
+│   ├── dqn-demo.css
+│   └── programming-language.css
 ├── js/
-│   ├── main.js            # Core JavaScript functionality
-│   └── database-lab.js    # Database lab practice and scoring logic
+│   ├── main.js                 # Language toggle, dark mode, mobile nav
+│   ├── attendance.js
+│   ├── database-lab.js
+│   ├── dqn-demo.js
+│   └── programming-language.js
+├── data/
+│   ├── kci_articles.csv        # Normalized KCI article data for SQL practice
+│   └── kci_articles_raw.csv    # Deduplicated raw KCI export columns
+├── images/
+│   └── profile.webp
 ├── pages/
-│   ├── cv.html            # Resume/CV page
-│   ├── attendance.html    # Attendance tracking system
-│   ├── database-lab.html  # Database construction practice lab
-│   └── dqn-demo.html      # DQN algorithm demonstration
-├── AlligatorChess/        # Chess variant game
-├── astar-pathfinding/     # A* algorithm visualization
-├── simplequiz/            # Interactive quiz application
-└── README.md              # This file
+│   ├── cv.html                 # Redirects to about.html
+│   ├── attendance.html
+│   ├── contour-simulator.html
+│   ├── database-lab.html
+│   ├── dqn-demo.html
+│   ├── machinelearning.html
+│   ├── microrobot.html
+│   ├── programming-language.html
+│   └── stackburger.html
+└── stitch_ai_poc/              # 우리반 AI platform PoC (portal + 9 screens)
 ```
 
-## 🛠️ Technologies Used
+External project repos served under the same domain: `astar-pathfinding`, `AlligatorChess`, `simplequiz`.
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: Custom CSS with responsive design
-- **Algorithms**: A* pathfinding, Deep Q-Network (DQN)
-- **Games**: Canvas-based game development
-- **Storage**: localStorage for user preferences
-- **SQL Practice**: sql.js browser SQLite with KCI CSV data
-- **Deployment**: GitHub Pages
+## 🛠️ Technologies
 
-## 🎯 Key Projects
+- **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+) — no build step
+- **SQL Practice**: sql.js (browser SQLite) with KCI CSV data
+- **Games/Demos**: Canvas API; React (CDN) for Micro Robot
+- **Storage**: `localStorage` for language & theme preferences
+- **Deployment**: GitHub Pages (auto-deploy on push to `main`)
 
-### A* Pathfinding Algorithm
-Interactive visualization of the A* pathfinding algorithm featuring:
-- Customizable grid size and obstacles
-- Real-time pathfinding demonstration
-- Visual representation of algorithm steps
+## 🖥️ Local Development
 
-### DQN Algorithm Demo
-Deep Q-Network reinforcement learning demonstration with:
-- Interactive grid environment
-- Adjustable learning parameters (learning rate, epsilon, discount factor)
-- Real-time training statistics
-- Visual agent behavior observation
+```bash
+git clone https://github.com/jinsung4069/jinsung4069.github.io.git
+cd jinsung4069.github.io
 
-### Database Construction Lab
-Interactive practice for database construction topics:
-- Physical database design decisions
-- KCI article search frontend that reveals the generated SQL and real SQLite results
-- SQL application with DDL, DML, and TCL using KCI article data
-- SQL usage with joins, grouping, subqueries, and indexes in browser SQLite
-- Data conversion mapping, cleansing, deduplication, and validation
-
-### Alligator Chess
-Strategic chess variant featuring:
-- Unique game mechanics
-- Interactive gameplay
-- Custom rules and piece movements
-
-### Interactive Quiz System
-Multi-category quiz application with:
-- Various question types
-- Score tracking
-- User-friendly interface
-
-## 🌍 Language Toggle Implementation
-
-The website features a sophisticated bilingual system:
-
-```javascript
-// Language toggle functionality
-function toggleToKorean() {
-    enContent.forEach(el => el.classList.remove('active'));
-    koContent.forEach(el => el.classList.add('active'));
-    toggleBtn.textContent = 'ENG';
-    document.documentElement.lang = 'ko';
-    document.title = '인성의 웹사이트 - 포트폴리오 & 프로젝트';
-    localStorage.setItem('language', 'ko');
-}
+# Any static server works, e.g.:
+python -m http.server 8000
+# then open http://localhost:8000
 ```
 
-### Features:
-- **Instant Switch**: No page reload required
-- **Content Separation**: Distinct Korean and English content blocks
-- **State Persistence**: Remembers user's language preference
-- **SEO Friendly**: Proper lang attributes and meta tags
+## 🔧 Conventions
 
-## 📱 Responsive Design
-
-The website is fully responsive with:
-- Mobile-first approach
-- Flexible grid layouts
-- Touch-friendly navigation
-- Optimized loading times
-
-## 🎨 Styling Highlights
-
-- **Modern Design**: Clean, minimalist interface
-- **Smooth Animations**: CSS transitions for enhanced UX
-- **Interactive Elements**: Hover effects and visual feedback
-- **Accessibility**: Proper contrast ratios and semantic HTML
-
-## 🚀 Getting Started
-
-### Local Development
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/jinsung4069/jinsung4069.github.io.git
-   cd jinsung4069.github.io
-   ```
-
-2. **Open in browser**:
-   - Open `index.html` in your preferred browser
-   - Or use a local server for development
-
-3. **Development Server** (optional):
-   ```bash
-   # Using Python
-   python -m http.server 8000
-   
-   # Using Node.js
-   npx http-server
-   ```
-
-### GitHub Pages Deployment
-
-The site is automatically deployed via GitHub Pages when changes are pushed to the main branch.
-
-## 🔧 Customization
-
-### Adding New Projects
-1. Create project folder in root directory
-2. Update navigation in `index.html` (both languages)
-3. Add project card to featured projects section
-
-### Modifying Language Content
-1. Locate the relevant `.lang-en` or `.lang-ko` class elements
-2. Update content in both language versions
-3. Ensure consistency across translations
-
-### Styling Changes
-- Main styles: `css/style.css`
-- Inline styles for specific components in individual HTML files
-
-## 🤝 Contributing
-
-While this is a personal portfolio, suggestions and improvements are welcome:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
+- **Bilingual content**: every visible string has paired `.lang-content.lang-ko` / `.lang-content.lang-en` spans; update both when editing
+- **Page titles**: set `data-title-ko` / `data-title-en` on `<body>` so the tab title switches with the language
+- **New project**: add a card to the `#projects` grid in `index.html` (both languages) and an entry in `sitemap.xml`
+- **Contact email**: use `jinsung4069@gnue.ac.kr` everywhere
 
 ## 📞 Contact
 
+- **Email**: jinsung4069@gnue.ac.kr
 - **GitHub**: [@jinsung4069](https://github.com/jinsung4069)
-- **Website**: [https://jinsung4069.github.io](https://jinsung4069.github.io)
 
 ---
 
-**Note**: This website serves as a portfolio demonstration and learning platform. All projects are developed for educational and showcase purposes.
-
-## 📊 Project Stats
-
-- **Total Projects**: 6+ interactive demonstrations
-- **Languages**: Korean, English
-- **Framework**: Vanilla JavaScript (no dependencies)
-- **Hosting**: GitHub Pages
-- **Last Updated**: December 2024
-
----
-
-*Built with ❤️ by Inseong*
+*Last updated: July 2026*

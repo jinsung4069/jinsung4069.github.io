@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/programming-language.css">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script>
+        // 첫 페인트 전에 저장된 테마/언어를 적용해 화면 깜빡임(FOUC) 방지
+        (function () {
+            var t = localStorage.getItem('theme');
+            if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+            if (t) document.documentElement.setAttribute('data-theme', t);
+            var l = localStorage.getItem('language');
+            if (l) document.documentElement.lang = l;
+        })();
+    </script>
 </head>
 <body data-title-ko="프로그래밍 언어 실습 - 전인성" data-title-en="Programming Language Lab - Inseong Jeon">
     <header>
@@ -171,13 +182,13 @@
                     <ul>
                         <li><a href="https://github.com/jinsung4069" title="Github" target="_blank"><i class="fab fa-github"></i></a></li>
                         <li><a href="mailto:jinsung4069@gnue.ac.kr" title="Email"><i class="fas fa-envelope"></i></a></li>
-                        <li><a href="https://scholar.google.co.kr/citations?user=uWwZXioAAAAJ" title="Google Scholar" target="_blank"><i class="fas fa-graduation-cap"></i></a></li>
+                        <li><a href="https://scholar.google.com/citations?user=uWwZXioAAAAJ&amp;hl=ko" title="Google Scholar" target="_blank"><i class="fas fa-graduation-cap"></i></a></li>
                     </ul>
                 </nav>
             </div>
             <div class="footer-bottom">
-                <span class="lang-content lang-ko active">&copy; 2024 전인성. All rights reserved.</span>
-                <span class="lang-content lang-en">&copy; 2024 Inseong Jeon. All rights reserved.</span>
+                <span class="lang-content lang-ko active">&copy; 2026 전인성. All rights reserved.</span>
+                <span class="lang-content lang-en">&copy; 2026 Inseong Jeon. All rights reserved.</span>
             </div>
         </div>
     </footer>
