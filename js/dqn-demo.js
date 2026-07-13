@@ -23,16 +23,45 @@ class DQNDemo {
     }
     
     generateObstacles() {
-        const obstacles = [];
-        for (let i = 0; i < 15; i++) {
-            let x, y;
-            do {
-                x = Math.floor(Math.random() * this.gridSize);
-                y = Math.floor(Math.random() * this.gridSize);
-            } while ((x === 0 && y === 0) || (x === 9 && y === 9));
-            obstacles.push({ x, y });
+        // 시작점(0,0)과 목표점(9,9) 및 그 인접 칸은 비워 두어 갇힘을 방지하고,
+        // BFS로 목표까지 경로가 있는 배치만 채택 (도달 불가능한 미로 방지)
+        const reserved = new Set([
+            '0,0', '1,0', '0,1',
+            '9,9', '8,9', '9,8'
+        ]);
+        for (let attempt = 0; attempt < 50; attempt++) {
+            const obstacles = [];
+            const taken = new Set();
+            while (obstacles.length < 15) {
+                const x = Math.floor(Math.random() * this.gridSize);
+                const y = Math.floor(Math.random() * this.gridSize);
+                const key = `${x},${y}`;
+                if (reserved.has(key) || taken.has(key)) continue;
+                taken.add(key);
+                obstacles.push({ x, y });
+            }
+            if (this.hasPath(taken)) return obstacles;
         }
-        return obstacles;
+        return []; // 50회 모두 실패하면 장애물 없이 시작 (사실상 도달 불가)
+    }
+
+    hasPath(blocked) {
+        const queue = ['0,0'];
+        const visited = new Set(queue);
+        while (queue.length > 0) {
+            const [x, y] = queue.shift().split(',').map(Number);
+            if (x === this.gridSize - 1 && y === this.gridSize - 1) return true;
+            [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
+                const nx = x + dx, ny = y + dy;
+                const key = `${nx},${ny}`;
+                if (nx >= 0 && nx < this.gridSize && ny >= 0 && ny < this.gridSize &&
+                    !blocked.has(key) && !visited.has(key)) {
+                    visited.add(key);
+                    queue.push(key);
+                }
+            });
+        }
+        return false;
     }
     
     initializeQTable() {
@@ -130,26 +159,41 @@ class DQNDemo {
         return actions;
     }
     
+    currentEpsilon() {
+        // 슬라이더 값을 초기 탐험율로 삼아 에피소드마다 감쇠 (최소 0.05)
+        const base = parseFloat(document.getElementById('epsilon').value);
+        return Math.max(0.05, base * Math.pow(0.98, this.episode));
+    }
+
     chooseAction(state) {
-        const epsilon = parseFloat(document.getElementById('epsilon').value);
+        const epsilon = this.currentEpsilon();
         const validActions = this.getValidActions(this.agent);
-        
+
+        // 사방이 막힌 경우에도 undefined 액션으로 죽지 않도록 임의 방향 반환
+        // (takeAction이 막힌 이동을 제자리+패널티로 처리한다)
+        if (validActions.length === 0) {
+            return Math.floor(Math.random() * 4);
+        }
+
         if (Math.random() < epsilon) {
             return validActions[Math.floor(Math.random() * validActions.length)];
         }
         
         const qValues = this.qTable[state];
-        let bestAction = 0;
         let bestValue = -Infinity;
-        
+        let bestActions = [];
+
+        // 동점인 행동들 사이에서는 무작위 선택 (초기 Q=0 동점 시 방향 편향 방지)
         validActions.forEach(action => {
             if (qValues[action] > bestValue) {
                 bestValue = qValues[action];
-                bestAction = action;
+                bestActions = [action];
+            } else if (qValues[action] === bestValue) {
+                bestActions.push(action);
             }
         });
-        
-        return bestAction;
+
+        return bestActions[Math.floor(Math.random() * bestActions.length)];
     }
     
     takeAction(action) {
@@ -187,9 +231,16 @@ class DQNDemo {
         
         const currentQ = this.qTable[state][action];
         let maxNextQ = 0;
-        
+
         if (!done) {
-            maxNextQ = Math.max(...this.qTable[nextState]);
+            // 다음 상태에서 실제로 가능한 행동들의 Q만 고려
+            // (벽/장애물 방향의 Q=0이 최댓값을 오염시키지 않도록)
+            const [nx, ny] = nextState.split(',').map(Number);
+            const validNext = this.getValidActions({ x: nx, y: ny });
+            const nextQs = this.qTable[nextState];
+            maxNextQ = validNext.length > 0
+                ? Math.max(...validNext.map(a => nextQs[a]))
+                : 0;
         }
         
         const newQ = currentQ + learningRate * (reward + discountFactor * maxNextQ - currentQ);
@@ -202,7 +253,7 @@ class DQNDemo {
         this.agent = { x: 0, y: 0 };
         let episodeReward = 0;
         let steps = 0;
-        const maxSteps = 100;
+        const maxSteps = 300;
         
         while (this.isRunning && steps < maxSteps) {
             const state = this.getState(this.agent);
@@ -250,6 +301,9 @@ class DQNDemo {
         
         const successRate = this.episode > 0 ? (this.successCount / this.episode * 100).toFixed(1) : 0;
         document.getElementById('successRate').textContent = successRate + '%';
+
+        // 감쇠 중인 현재 탐험율을 표시
+        document.getElementById('epsilonValue').textContent = this.currentEpsilon().toFixed(2);
     }
     
     render() {
