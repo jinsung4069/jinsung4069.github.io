@@ -1,4 +1,51 @@
+# Local agent instructions
 Prompt.txt
 AGENTS.md
 CLAUDE.md
-.claude
+.claude/
+.codex/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Dependencies, caches, and generated output
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.parcel-cache/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Local source data (the normalized browser dataset stays tracked)
+data/*_raw.csv
+data/*.xls
+data/*.xlsx
+data/*.db
+data/*.sqlite*
+
+# Development notes that are not part of the published site
+stitch_ai_poc/implementation_plan.md
+stitch_ai_poc/walkthrough.md

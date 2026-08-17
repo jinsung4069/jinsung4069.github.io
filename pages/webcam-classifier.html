@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="웹캠이나 이미지에서 사물을 찾아 분류하는 TensorFlow.js 기반 실시간 머신러닝 체험 도구">
+    <meta name="theme-color" content="#ffffff">
+    <title>웹캠 사물 분류기 - 전인성</title>
+    <link rel="canonical" href="https://jinsung4069.github.io/pages/webcam-classifier.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="웹캠 사물 분류기 - 전인성">
+    <meta property="og:description" content="카메라 화면에서 사물을 실시간으로 찾아 이름과 신뢰도를 표시하는 브라우저 머신러닝 데모">
+    <meta property="og:url" content="https://jinsung4069.github.io/pages/webcam-classifier.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/webcam-classifier.css">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script>
+        (function () {
+            var theme = localStorage.getItem('theme');
+            if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+            var language = localStorage.getItem('language');
+            if (language) document.documentElement.lang = language;
+        })();
+    </script>
+</head>
+
+<body data-title-ko="웹캠 사물 분류기 - 전인성" data-title-en="Webcam Object Classifier - Inseong Jeon">
+    <header>
+        <div class="header-inner">
+            <a href="../index.html" class="site-title">
+                <span class="lang-content lang-ko active">전인성</span>
+                <span class="lang-content lang-en">Inseong Jeon</span>
+            </a>
+            <div class="header-right">
+                <nav class="site-nav" id="mainNav" aria-label="Primary navigation">
+                    <ul>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html">
+                            <span class="lang-content lang-ko active">홈</span>
+                            <span class="lang-content lang-en">Home</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../about.html">
+                            <span class="lang-content lang-ko active">소개</span>
+                            <span class="lang-content lang-en">About</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link active" href="../index.html#projects">
+                            <span class="lang-content lang-ko active">프로젝트</span>
+                            <span class="lang-content lang-en">Projects</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html#contact">
+                            <span class="lang-content lang-ko active">연락처</span>
+                            <span class="lang-content lang-en">Contact</span>
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button id="darkModeToggle" class="dark-mode-toggle" type="button" aria-label="Dark mode toggle">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"></circle>
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+                    <button id="languageToggle" class="language-toggle" type="button">ENG</button>
+                </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" type="button" aria-label="Menu">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+        <ul>
+            <li><a href="../index.html">
+                <span class="lang-content lang-ko active">홈</span>
+                <span class="lang-content lang-en">Home</span>
+            </a></li>
+            <li><a href="../about.html">
+                <span class="lang-content lang-ko active">소개</span>
+                <span class="lang-content lang-en">About</span>
+            </a></li>
+            <li><a href="../index.html#projects">
+                <span class="lang-content lang-ko active">프로젝트</span>
+                <span class="lang-content lang-en">Projects</span>
+            </a></li>
+            <li><a href="../index.html#contact">
+                <span class="lang-content lang-ko active">연락처</span>
+                <span class="lang-content lang-en">Contact</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <main class="classifier-page">
+        <section class="classifier-hero" aria-labelledby="pageTitle">
+            <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+            <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+            <div class="classifier-container hero-content">
+                <a class="back-link" href="machinelearning.html">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span class="lang-content lang-ko active">머신러닝 시뮬레이션</span>
+                    <span class="lang-content lang-en">Machine Learning Simulations</span>
+                </a>
+                <div class="hero-badges" aria-label="Technology and privacy features">
+                    <span class="hero-badge"><i class="fas fa-microchip" aria-hidden="true"></i> TensorFlow.js</span>
+                    <span class="hero-badge"><i class="fas fa-lock" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">브라우저 내 분석</span>
+                        <span class="lang-content lang-en">On-device inference</span>
+                    </span>
+                </div>
+                <h1 id="pageTitle">
+                    <span class="lang-content lang-ko active">웹캠 사물 분류기</span>
+                    <span class="lang-content lang-en">Webcam Object Classifier</span>
+                </h1>
+                <p class="hero-description lang-content lang-ko active">
+                    카메라에 물건을 보여주세요. 머신러닝 모델이 화면 속 사물을 찾아 이름과 신뢰도를 실시간으로 표시합니다.
+                </p>
+                <p class="hero-description lang-content lang-en">
+                    Hold an object in front of the camera. A machine-learning model identifies visible objects and reports its confidence in real time.
+                </p>
+            </div>
+        </section>
+
+        <section class="classifier-workspace classifier-container" aria-label="Object classifier workspace">
+            <div class="viewer-card">
+                <div class="card-heading">
+                    <div>
+                        <span class="eyebrow">
+                            <span class="live-dot" aria-hidden="true"></span>
+                            <span class="lang-content lang-ko active">입력 화면</span>
+                            <span class="lang-content lang-en">Live input</span>
+                        </span>
+                        <h2>
+                            <span class="lang-content lang-ko active">카메라 또는 이미지</span>
+                            <span class="lang-content lang-en">Camera or image</span>
+                        </h2>
+                    </div>
+                    <span id="viewerMode" class="mode-chip">
+                        <span class="lang-content lang-ko active">대기 중</span>
+                        <span class="lang-content lang-en">Standby</span>
+                    </span>
+                </div>
+
+                <div id="mediaViewer" class="media-viewer">
+                    <video id="cameraVideo" autoplay muted playsinline aria-label="Webcam preview"></video>
+                    <img id="uploadedImage" alt="분류할 업로드 이미지">
+                    <canvas id="detectionOverlay" aria-hidden="true"></canvas>
+                    <div id="viewerPlaceholder" class="viewer-placeholder">
+                        <div class="placeholder-icon" aria-hidden="true"><i class="fas fa-camera"></i></div>
+                        <strong>
+                            <span class="lang-content lang-ko active">카메라를 시작하거나 이미지를 선택하세요</span>
+                            <span class="lang-content lang-en">Start the camera or choose an image</span>
+                        </strong>
+                        <p>
+                            <span class="lang-content lang-ko active">모델 준비가 끝나면 버튼이 활성화됩니다.</span>
+                            <span class="lang-content lang-en">Controls become available when the model is ready.</span>
+                        </p>
+                    </div>
+                    <div id="inferencePulse" class="inference-pulse" aria-hidden="true"></div>
+                </div>
+
+                <div class="viewer-controls" aria-label="Camera controls">
+                    <button id="startCameraButton" class="classifier-button button-primary" type="button" disabled>
+                        <i class="fas fa-video" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">카메라 시작</span>
+                        <span class="lang-content lang-en">Start camera</span>
+                    </button>
+                    <button id="stopCameraButton" class="classifier-button button-secondary" type="button" disabled>
+                        <i class="fas fa-stop" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">카메라 중지</span>
+                        <span class="lang-content lang-en">Stop camera</span>
+                    </button>
+                    <button id="switchCameraButton" class="classifier-button button-secondary" type="button" disabled>
+                        <i class="fas fa-rotate" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">카메라 전환</span>
+                        <span class="lang-content lang-en">Switch camera</span>
+                    </button>
+                    <label id="imageUploadLabel" class="classifier-button button-secondary upload-button" aria-disabled="true">
+                        <i class="fas fa-image" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">이미지 선택</span>
+                        <span class="lang-content lang-en">Choose image</span>
+                        <input id="imageInput" type="file" accept="image/*" disabled>
+                    </label>
+                </div>
+
+                <p id="cameraHint" class="camera-hint">
+                    <i class="fas fa-circle-info" aria-hidden="true"></i>
+                    <span class="lang-content lang-ko active">카메라는 HTTPS 또는 localhost에서만 사용할 수 있습니다.</span>
+                    <span class="lang-content lang-en">Camera access requires HTTPS or localhost.</span>
+                </p>
+            </div>
+
+            <aside class="results-column" aria-label="Classification results">
+                <section class="status-card">
+                    <div class="status-topline">
+                        <span class="status-label">
+                            <span class="lang-content lang-ko active">모델 상태</span>
+                            <span class="lang-content lang-en">Model status</span>
+                        </span>
+                        <span id="statusIndicator" class="status-indicator status-loading" aria-hidden="true"></span>
+                    </div>
+                    <strong id="modelStatus" class="model-status" role="status" aria-live="polite">모델을 불러오는 중...</strong>
+                    <div class="model-meta">
+                        <span><i class="fas fa-cube" aria-hidden="true"></i> COCO-SSD</span>
+                        <span id="backendLabel"><i class="fas fa-gauge-high" aria-hidden="true"></i> Backend: -</span>
+                    </div>
+                </section>
+
+                <section class="predictions-card">
+                    <div class="predictions-heading">
+                        <div>
+                            <span class="status-label">
+                                <span class="lang-content lang-ko active">분류 결과</span>
+                                <span class="lang-content lang-en">Predictions</span>
+                            </span>
+                            <h2 id="resultHeadline">
+                                <span class="lang-content lang-ko active">아직 인식된 사물이 없습니다</span>
+                                <span class="lang-content lang-en">No objects recognized yet</span>
+                            </h2>
+                        </div>
+                        <span id="objectCount" class="object-count" aria-label="Detected object count">0</span>
+                    </div>
+
+                    <div class="threshold-control">
+                        <div class="threshold-label-row">
+                            <label for="confidenceThreshold">
+                                <span class="lang-content lang-ko active">최소 신뢰도</span>
+                                <span class="lang-content lang-en">Minimum confidence</span>
+                            </label>
+                            <output id="thresholdValue" for="confidenceThreshold">45%</output>
+                        </div>
+                        <input id="confidenceThreshold" type="range" min="25" max="80" value="45" step="5" disabled>
+                    </div>
+
+                    <ol id="predictionList" class="prediction-list" aria-live="polite"></ol>
+                    <div id="emptyResults" class="empty-results">
+                        <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        <p>
+                            <span class="lang-content lang-ko active">사물이 화면 중앙에 잘 보이도록 비춰보세요.</span>
+                            <span class="lang-content lang-en">Place a clearly visible object near the center of the frame.</span>
+                        </p>
+                    </div>
+                    <p id="inferenceMeta" class="inference-meta">
+                        <span class="lang-content lang-ko active">추론 시간: -</span>
+                        <span class="lang-content lang-en">Inference time: -</span>
+                    </p>
+                </section>
+            </aside>
+        </section>
+
+        <section class="explanation-section classifier-container" aria-labelledby="howItWorksTitle">
+            <div class="section-heading-centered">
+                <span class="eyebrow">
+                    <span class="lang-content lang-ko active">작동 원리</span>
+                    <span class="lang-content lang-en">How it works</span>
+                </span>
+                <h2 id="howItWorksTitle">
+                    <span class="lang-content lang-ko active">브라우저에서 이루어지는 세 단계</span>
+                    <span class="lang-content lang-en">Three steps, all inside your browser</span>
+                </h2>
+            </div>
+            <div class="explanation-grid">
+                <article class="explanation-card">
+                    <span class="step-number">01</span>
+                    <div class="explanation-icon"><i class="fas fa-camera-retro" aria-hidden="true"></i></div>
+                    <h3>
+                        <span class="lang-content lang-ko active">영상 입력</span>
+                        <span class="lang-content lang-en">Capture</span>
+                    </h3>
+                    <p>
+                        <span class="lang-content lang-ko active">웹캠 프레임이나 선택한 이미지를 브라우저가 읽습니다.</span>
+                        <span class="lang-content lang-en">The browser reads a webcam frame or the image you select.</span>
+                    </p>
+                </article>
+                <article class="explanation-card">
+                    <span class="step-number">02</span>
+                    <div class="explanation-icon"><i class="fas fa-network-wired" aria-hidden="true"></i></div>
+                    <h3>
+                        <span class="lang-content lang-ko active">특징 분석</span>
+                        <span class="lang-content lang-en">Analyze</span>
+                    </h3>
+                    <p>
+                        <span class="lang-content lang-ko active">COCO 데이터로 학습된 신경망이 형태와 시각적 특징을 분석합니다.</span>
+                        <span class="lang-content lang-en">A neural network trained on COCO analyzes shapes and visual features.</span>
+                    </p>
+                </article>
+                <article class="explanation-card">
+                    <span class="step-number">03</span>
+                    <div class="explanation-icon"><i class="fas fa-tags" aria-hidden="true"></i></div>
+                    <h3>
+                        <span class="lang-content lang-ko active">사물 분류</span>
+                        <span class="lang-content lang-en">Classify</span>
+                    </h3>
+                    <p>
+                        <span class="lang-content lang-ko active">인식한 사물의 위치, 이름, 예측 신뢰도를 화면에 표시합니다.</span>
+                        <span class="lang-content lang-en">Detected locations, names, and confidence scores are drawn on screen.</span>
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="privacy-note classifier-container" aria-labelledby="privacyTitle">
+            <div class="privacy-icon" aria-hidden="true"><i class="fas fa-shield-halved"></i></div>
+            <div>
+                <h2 id="privacyTitle">
+                    <span class="lang-content lang-ko active">영상은 업로드되지 않습니다</span>
+                    <span class="lang-content lang-en">Your images are not uploaded</span>
+                </h2>
+                <p class="lang-content lang-ko active">
+                    모델 파일만 처음 한 번 내려받고, 카메라 영상과 선택한 이미지는 기기 안에서 분석합니다. COCO-SSD는 일상적인 80개 사물 범주를 인식하므로 낯선 물체나 작고 가려진 물체는 정확하지 않을 수 있습니다.
+                </p>
+                <p class="lang-content lang-en">
+                    Only the model files are downloaded. Camera frames and selected images are analyzed on your device. COCO-SSD recognizes 80 everyday categories, so unfamiliar, small, or obstructed objects may be less accurate.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Inseong Jeon</p>
+            <div class="footer-links">
+                <a href="machinelearning.html">
+                    <span class="lang-content lang-ko active">머신러닝 시뮬레이션</span>
+                    <span class="lang-content lang-en">ML Simulations</span>
+                </a>
+                <a href="../index.html#projects">
+                    <span class="lang-content lang-ko active">모든 프로젝트</span>
+                    <span class="lang-content lang-en">All Projects</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+    <script defer src="../js/main.js"></script>
+    <script defer src="../js/webcam-classifier.js"></script>
+</body>
+
+</html>

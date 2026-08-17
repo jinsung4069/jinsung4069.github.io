@@ -170,6 +170,49 @@
             padding: 1.5rem;
             box-shadow: var(--shadow-sm);
         }
+        .webcam-demo-link {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding: 1.15rem 1.25rem;
+            border: 1px solid var(--color-picto-primary);
+            border-radius: var(--border-radius-lg);
+            color: inherit;
+            background: linear-gradient(135deg, var(--color-white), var(--ml-accent-soft));
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .webcam-demo-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .webcam-demo-icon {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            color: #fff;
+            background: var(--color-picto-primary);
+            font-size: 1.15rem;
+        }
+        .webcam-demo-copy strong {
+            display: block;
+            color: var(--color-gray-900);
+            font-size: 1rem;
+        }
+        .webcam-demo-copy span {
+            display: block;
+            margin-top: 0.2rem;
+            color: var(--color-gray-600);
+            font-size: 0.82rem;
+        }
+        .webcam-demo-arrow {
+            color: var(--color-picto-primary);
+        }
         .category-card h3 {
             margin: 0 0 0.75rem;
             color: var(--color-gray-900);
@@ -443,6 +486,20 @@
                 <p class="lang-content lang-en">
                     Compare supervised learning, which learns from labeled answers, with unsupervised learning, which discovers structure and preference patterns without labels.
                 </p>
+                <a class="webcam-demo-link" href="webcam-classifier.html">
+                    <span class="webcam-demo-icon"><i class="fas fa-camera-retro" aria-hidden="true"></i></span>
+                    <span class="webcam-demo-copy">
+                        <strong>
+                            <span class="lang-content lang-ko active">웹캠 사물 분류기 체험</span>
+                            <span class="lang-content lang-en">Try the Webcam Object Classifier</span>
+                        </strong>
+                        <span>
+                            <span class="lang-content lang-ko active">카메라와 사전학습 모델을 이용해 실시간 사물 인식을 체험하세요.</span>
+                            <span class="lang-content lang-en">Use your camera and a pre-trained model for real-time object recognition.</span>
+                        </span>
+                    </span>
+                    <i class="fas fa-arrow-right webcam-demo-arrow" aria-hidden="true"></i>
+                </a>
                 <div class="category-grid">
                     <article class="category-card">
                         <div class="category-badge"><i class="fas fa-check-circle"></i> Supervised</div>

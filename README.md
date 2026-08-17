@@ -27,6 +27,7 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | [Database Lab](https://jinsung4069.github.io/pages/database-lab.html) | Physical design, SQL, and data conversion practice with KCI article data (sql.js) |
 | [Programming Language Lab](https://jinsung4069.github.io/pages/programming-language.html) | C / Python / Java side-by-side practice |
 | [ML Simulations](https://jinsung4069.github.io/pages/machinelearning.html) | 5 interactive machine learning algorithm simulations |
+| [Webcam Object Classifier](https://jinsung4069.github.io/pages/webcam-classifier.html) | Real-time, in-browser object detection with TensorFlow.js and COCO-SSD |
 | [Alligator Chess](https://jinsung4069.github.io/AlligatorChess/) | Strategic board game (separate repo) |
 | [Micro Robot](https://jinsung4069.github.io/pages/microrobot.html) | Strategic puzzle game (React) |
 | [Contour Simulator](https://jinsung4069.github.io/pages/contour-simulator.html) | Draw contours for 3D terrain & volcano simulation |
@@ -46,16 +47,17 @@ jinsung4069.github.io/
 │   ├── style.css               # Main stylesheet (light/dark themes)
 │   ├── database-lab.css
 │   ├── dqn-demo.css
-│   └── programming-language.css
+│   ├── programming-language.css
+│   └── webcam-classifier.css
 ├── js/
 │   ├── main.js                 # Language toggle, dark mode, mobile nav
 │   ├── attendance.js
 │   ├── database-lab.js
 │   ├── dqn-demo.js
-│   └── programming-language.js
+│   ├── programming-language.js
+│   └── webcam-classifier.js
 ├── data/
-│   ├── kci_articles.csv        # Normalized KCI article data for SQL practice
-│   └── kci_articles_raw.csv    # Deduplicated raw KCI export columns
+│   └── kci_articles.csv        # Normalized KCI article data for SQL practice
 ├── images/
 │   └── profile.webp
 ├── pages/
@@ -67,7 +69,8 @@ jinsung4069.github.io/
 │   ├── machinelearning.html
 │   ├── microrobot.html
 │   ├── programming-language.html
-│   └── stackburger.html
+│   ├── stackburger.html
+│   └── webcam-classifier.html
 └── stitch_ai_poc/              # 우리반 AI platform PoC (portal + 9 screens)
 ```
 
@@ -77,6 +80,7 @@ External project repos served under the same domain: `astar-pathfinding`, `Allig
 
 - **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+) — no build step
 - **SQL Practice**: sql.js (browser SQLite) with KCI CSV data
+- **Machine Learning**: TensorFlow.js + COCO-SSD for on-device webcam object detection
 - **Games/Demos**: Canvas API; React (CDN) for Micro Robot
 - **Storage**: `localStorage` for language & theme preferences
 - **Deployment**: GitHub Pages (auto-deploy on push to `main`)
