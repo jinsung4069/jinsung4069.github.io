@@ -186,6 +186,14 @@
     letter-spacing: -0.045em;
 }
 
+.orange-lab-hero h1 .lang-ko {
+    word-break: keep-all;
+}
+
+.nowrap-word {
+    white-space: nowrap;
+}
+
 .orange-lab-hero > .orange-lab-container > p {
     max-width: 850px;
     margin: 1.1rem 0 0;
@@ -759,16 +767,16 @@
 }
 
 .workflow-strip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    min-height: 132px;
+    display: block;
+    min-height: 182px;
     margin-bottom: 1rem;
-    padding: 0.8rem;
+    padding: 0.55rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
     border: 1px solid var(--orange-lab-line);
     border-radius: 3px;
     background: var(--orange-lab-canvas);
+    scrollbar-width: thin;
 }
 
 .workflow-node {
@@ -925,7 +933,19 @@
 }
 
 .recommendation-swipe-hint {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: -0.35rem 0 0.7rem;
+    color: var(--orange-lab-muted);
+    font-size: 0.62rem;
+    font-weight: 600;
+}
+
+.recommendation-swipe-hint svg {
+    width: 14px;
+    height: 14px;
+    color: var(--orange-lab-accent-dark);
 }
 
 .recommended-workflow {
@@ -973,53 +993,76 @@
     line-height: 1.5;
 }
 
-.recommendation-path-list {
-    display: grid;
-}
-
-.recommendation-path {
-    display: grid;
-    grid-template-columns: 88px minmax(0, 1fr);
-    align-items: center;
-    min-width: 0;
-    padding: 0.55rem 0.7rem;
-}
-
-.recommendation-path + .recommendation-path {
-    border-top: 1px dashed var(--orange-lab-line);
-}
-
-.recommendation-path-label {
-    align-self: stretch;
-    display: grid;
-    place-items: center start;
-    padding-right: 0.55rem;
-    color: var(--orange-lab-muted);
-    font-size: 0.63rem;
-    font-weight: 700;
-    line-height: 1.35;
-}
-
-.recommendation-flow-shell {
+.recommendation-graph-shell {
+    position: relative;
     min-width: 0;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
+    background: var(--orange-lab-canvas);
     scrollbar-width: thin;
 }
 
-.recommendation-flow {
-    display: flex;
-    width: max-content;
-    min-width: 100%;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0.2rem 0.35rem 0.35rem;
+.recommendation-graph-shell.compact {
+    width: min(100%, 980px);
+    margin-inline: auto;
+}
+
+.recommendation-graph-shell:focus-visible {
+    outline: 2px solid var(--orange-lab-accent);
+    outline-offset: -2px;
+}
+
+.recommendation-graph-canvas {
+    position: relative;
+    margin-inline: auto;
+    isolation: isolate;
+}
+
+.recommendation-graph-edges {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.recommendation-edge {
+    fill: none;
+    stroke: var(--orange-lab-connector);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.recommendation-edge-label {
+    fill: var(--orange-lab-muted);
+    stroke: var(--orange-lab-canvas);
+    stroke-width: 5px;
+    paint-order: stroke fill;
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 
 .recommendation-node.workflow-node {
-    min-width: 88px;
-    max-width: 108px;
-    flex: 0 0 88px;
+    position: absolute;
+    z-index: 1;
+    min-width: 0;
+    max-width: none;
     gap: 0.32rem;
     padding: 0.1rem 0.25rem;
     font-size: 0.62rem;
@@ -1068,19 +1111,6 @@
 
 .recommendation-node.optional-node .workflow-node-icon {
     border-style: dashed;
-}
-
-.recommendation-connector.workflow-connector {
-    position: relative;
-    min-width: 32px;
-    max-width: 52px;
-    height: 30px;
-    flex: 1 0 40px;
-    margin: 0 -0.45rem;
-}
-
-.recommendation-connector path {
-    stroke-width: 1.8;
 }
 
 .recommendation-principle {
@@ -1512,11 +1542,6 @@
         grid-template-columns: 1fr;
     }
 
-    .workflow-strip {
-        justify-content: flex-start;
-        overflow-x: auto;
-    }
-
     .recommendation-panel {
         padding: 0.75rem;
     }
@@ -1525,36 +1550,8 @@
         align-items: flex-start;
     }
 
-    .recommendation-path {
-        grid-template-columns: 1fr;
-        gap: 0.2rem;
-        padding-inline: 0.45rem;
-    }
-
-    .recommendation-swipe-hint {
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-        margin: -0.35rem 0 0.7rem;
-        color: var(--orange-lab-muted);
-        font-size: 0.62rem;
-        font-weight: 600;
-    }
-
-    .recommendation-swipe-hint svg {
-        width: 14px;
-        height: 14px;
-        color: var(--orange-lab-accent-dark);
-    }
-
-    .recommendation-path-label {
-        min-height: 24px;
-        place-items: end start;
-        padding: 0 0.35rem;
-    }
-
-    .recommendation-flow {
-        min-width: max-content;
+    .recommendation-graph-shell {
+        margin-inline: -0.25rem;
     }
 
     .workflow-node {

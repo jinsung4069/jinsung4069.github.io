@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/orange3-widget-lab.css?v=20260818f">
+    <link rel="stylesheet" href="../css/orange3-widget-lab.css?v=20260819a">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <script>
         (function () {
@@ -95,7 +95,7 @@
                     <span class="lang-content lang-en">ORANGE3 WIDGET LAB</span>
                 </span>
                 <h1 id="labTitle">
-                    <span class="lang-content lang-ko active">파라미터를 바꾸며 모델의 생각을 관찰하세요</span>
+                    <span class="lang-content lang-ko active">파라미터를 바꾸며 모델의 생각을 <span class="nowrap-word">관찰하세요</span></span>
                     <span class="lang-content lang-en">Change parameters and watch the model respond</span>
                 </h1>
                 <p class="lang-content lang-ko active">Orange3의 위젯 선택 흐름을 본뜬 교육용 실험실입니다. 지도학습과 비지도학습 위젯을 선택하고 설정을 조절하면 구조, 경계, 군집, 학습 곡선이 즉시 달라집니다.</p>
@@ -180,13 +180,7 @@
                     </aside>
 
                     <section class="simulation-panel" aria-labelledby="simulationTitle">
-                        <div class="workflow-strip" aria-label="Current Orange3-style workflow">
-                            <div class="workflow-node data-node"><span class="workflow-node-icon"><i data-lucide="table-2" aria-hidden="true"></i></span><span class="lang-content lang-ko active">데이터</span><span class="lang-content lang-en">Data</span></div>
-                            <span class="workflow-connector" aria-hidden="true"><svg viewBox="0 0 86 36" preserveAspectRatio="none"><path d="M2 18 C28 18 58 18 84 18"></path></svg></span>
-                            <div id="workflowModel" class="workflow-node model-node"><span class="workflow-node-icon"><i data-lucide="brain-circuit" aria-hidden="true"></i></span><span>뉴럴 네트워크</span></div>
-                            <span class="workflow-connector" aria-hidden="true"><svg viewBox="0 0 86 36" preserveAspectRatio="none"><path d="M2 18 C28 18 58 18 84 18"></path></svg></span>
-                            <div id="workflowOutput" class="workflow-node output-node"><span class="workflow-node-icon"><i data-lucide="bar-chart-3" aria-hidden="true"></i></span><span>평가</span></div>
-                        </div>
+                        <div id="currentWorkflowGraph" class="workflow-strip" aria-label="현재 Orange3 방식 연결 요약" aria-live="polite"></div>
 
                         <section class="recommendation-panel" aria-labelledby="recommendedWorkflowHeading">
                             <div class="recommendation-heading">
@@ -203,8 +197,8 @@
                             <p id="recommendedWorkflowDescription" class="recommendation-description">현재 선택에 알맞은 데이터 확인, 전처리, 학습, 평가 흐름을 불러오는 중입니다.</p>
                             <p class="recommendation-swipe-hint">
                                 <i data-lucide="move-horizontal" aria-hidden="true"></i>
-                                <span class="lang-content lang-ko active">긴 연결은 옆으로 밀어 끝까지 확인하세요.</span>
-                                <span class="lang-content lang-en">Swipe long connections sideways to see every widget.</span>
+                                <span class="lang-content lang-ko active">분기된 연결은 가로로 이동해 끝까지 확인하세요.</span>
+                                <span class="lang-content lang-en">Scroll sideways to inspect every branch.</span>
                             </p>
                             <div id="recommendedWorkflow" class="recommended-workflow" aria-live="polite" aria-atomic="true"></div>
                             <div id="recommendationPrinciple" class="recommendation-principle">
@@ -299,7 +293,7 @@
 
     <script defer src="../js/main.js"></script>
     <script defer src="https://unpkg.com/lucide@1.28.0/dist/umd/lucide.min.js"></script>
-    <script defer src="../js/orange3-widget-lab.js?v=20260818f"></script>
+    <script defer src="../js/orange3-widget-lab.js?v=20260819a"></script>
 </body>
 
 </html>

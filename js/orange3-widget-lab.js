@@ -141,7 +141,8 @@
         distributions: { role: 'output', icon: 'bar-chart-3', name: { ko: '분포', en: 'Distributions' }, detail: { ko: 'Distributions', en: 'Class distributions' } },
         preprocess: { role: 'data', icon: 'sliders-horizontal', name: { ko: '전처리', en: 'Preprocess' }, detail: { ko: 'Preprocess', en: 'Preprocessor' } },
         dataSampler: { role: 'data', icon: 'split', name: { ko: '데이터 샘플러', en: 'Data Sampler' }, detail: { ko: 'Data Sampler', en: 'Sample and remainder' } },
-        testAndScore: { role: 'output', icon: 'flask-conical', name: { ko: '테스트 및 점수', en: 'Test & Score' }, detail: { ko: 'Test & Score', en: 'Model evaluation' } },
+        testAndScore: { role: 'output', icon: 'flask-conical', name: { ko: '테스트 및 점수', en: 'Test and Score' }, detail: { ko: 'Test and Score', en: 'Model evaluation' } },
+        predictions: { role: 'output', icon: 'list-checks', name: { ko: '예측', en: 'Predictions' }, detail: { ko: 'Predictions', en: 'Apply a trained model' } },
         confusionMatrix: { role: 'output', icon: 'grid-3x3', name: { ko: '혼동행렬', en: 'Confusion Matrix' }, detail: { ko: 'Confusion Matrix', en: 'Classification errors' } },
         rocAnalysis: { role: 'output', icon: 'line-chart', name: { ko: 'ROC 분석', en: 'ROC Analysis' }, detail: { ko: 'ROC Analysis', en: 'Threshold trade-off' } },
         silhouettePlot: { role: 'output', icon: 'bar-chart-2', name: { ko: '실루엣 그림', en: 'Silhouette Plot' }, detail: { ko: 'Silhouette Plot', en: 'Cluster quality' } },
@@ -988,39 +989,256 @@
         elements.datasetSelect.value = state.dataset;
     }
 
-    function recommendationNode(key, detail, optional) {
-        return { key, detail, optional: Boolean(optional) };
+    function recommendationNode(key, detail, optional, instance) {
+        return { key, detail, optional: Boolean(optional), instance: instance || key };
     }
 
-    function renderRecommendationNode(node) {
+    function recommendationNodeMeta(node) {
         const widget = WIDGETS[state.widget];
-        const isModel = node.key === 'model';
-        const meta = isModel
-            ? { role: 'model', icon: widget.icon, name: widget.shortName, detail: { ko: '학습기', en: 'Learner' } }
-            : WORKFLOW_WIDGETS[node.key];
-        if (!meta) return '';
+        if (node.key === 'model') {
+            let detail = { ko: '학습기', en: 'Learner' };
+            if (state.widget === 'pca') detail = { ko: '변환', en: 'Transformation' };
+            else if (state.widget === 'hierarchical') detail = { ko: '덴드로그램', en: 'Dendrogram' };
+            else if (widget.category === 'unsupervised') detail = { ko: '군집화', en: 'Clustering' };
+            return { role: 'model', icon: widget.icon, name: widget.shortName, detail };
+        }
+        return WORKFLOW_WIDGETS[node.key];
+    }
 
+    function buildRecommendationGraph(lane, compact) {
+        const nodes = new Map();
+        const edges = [];
+        const edgeKeys = new Set();
+        let firstSeen = 0;
+
+        lane.paths.forEach((path) => {
+            const pathNodes = path.nodes.filter(node => recommendationNodeMeta(node));
+            pathNodes.forEach((node) => {
+                const existing = nodes.get(node.instance);
+                if (!existing) {
+                    nodes.set(node.instance, {
+                        ...node,
+                        order: firstSeen,
+                        details: node.detail ? [node.detail] : []
+                    });
+                    firstSeen += 1;
+                } else {
+                    existing.optional = existing.optional && node.optional;
+                    if (node.detail && !existing.details.includes(node.detail)) existing.details.push(node.detail);
+                }
+            });
+
+            const labelEdgeIndex = Math.max(0, Math.floor((pathNodes.length - 2) / 2));
+            pathNodes.slice(0, -1).forEach((source, edgeIndex) => {
+                const target = pathNodes[edgeIndex + 1];
+                const explicitLabel = path.edgeLabels && path.edgeLabels[edgeIndex];
+                const label = explicitLabel
+                    ? localized(explicitLabel)
+                    : (edgeIndex === labelEdgeIndex ? localized(path.label) : '');
+                const edgeKey = `${source.instance}|${target.instance}|${label}`;
+                if (edgeKeys.has(edgeKey)) return;
+                edgeKeys.add(edgeKey);
+                edges.push({ source: source.instance, target: target.instance, label });
+            });
+        });
+
+        const nodeList = Array.from(nodes.values());
+        const layoutEdges = [];
+        const layoutEdgeKeys = new Set();
+        edges.forEach((edge) => {
+            const key = `${edge.source}|${edge.target}`;
+            if (!layoutEdgeKeys.has(key)) {
+                layoutEdgeKeys.add(key);
+                layoutEdges.push(edge);
+            }
+        });
+
+        const indegree = new Map(nodeList.map(node => [node.instance, 0]));
+        const outgoing = new Map(nodeList.map(node => [node.instance, []]));
+        const levels = new Map(nodeList.map(node => [node.instance, 0]));
+        layoutEdges.forEach((edge) => {
+            indegree.set(edge.target, (indegree.get(edge.target) || 0) + 1);
+            outgoing.get(edge.source).push(edge.target);
+        });
+
+        const queue = nodeList.filter(node => indegree.get(node.instance) === 0).sort((a, b) => a.order - b.order);
+        let queueIndex = 0;
+        while (queueIndex < queue.length) {
+            const source = queue[queueIndex];
+            queueIndex += 1;
+            outgoing.get(source.instance).forEach((targetId) => {
+                levels.set(targetId, Math.max(levels.get(targetId), levels.get(source.instance) + 1));
+                indegree.set(targetId, indegree.get(targetId) - 1);
+                if (indegree.get(targetId) === 0) queue.push(nodes.get(targetId));
+            });
+        }
+
+        const maxLevel = Math.max(0, ...Array.from(levels.values()));
+        const columns = Array.from({ length: maxLevel + 1 }, () => []);
+        nodeList.sort((a, b) => a.order - b.order).forEach((node) => columns[levels.get(node.instance)].push(node));
+
+        const nodeWidth = compact ? 104 : 114;
+        const nodeHeight = compact ? 96 : 104;
+        const gapX = compact ? 72 : 118;
+        const gapY = compact ? 14 : 20;
+        const paddingX = compact ? 16 : 20;
+        const paddingY = compact ? 40 : 44;
+        const rowCount = Math.max(1, ...columns.map(column => column.length));
+        const width = (paddingX * 2) + ((maxLevel + 1) * nodeWidth) + (maxLevel * gapX);
+        const height = Math.max(compact ? 150 : 160, (paddingY * 2) + (rowCount * nodeHeight) + ((rowCount - 1) * gapY));
+        const positions = new Map();
+
+        columns.forEach((column, level) => {
+            const columnHeight = (column.length * nodeHeight) + (Math.max(0, column.length - 1) * gapY);
+            const startY = (height - columnHeight) / 2;
+            column.forEach((node, row) => {
+                positions.set(node.instance, {
+                    x: paddingX + (level * (nodeWidth + gapX)),
+                    y: startY + (row * (nodeHeight + gapY))
+                });
+            });
+        });
+
+        return { nodes: nodeList, edges, positions, levels, width, height, nodeWidth, nodeHeight, compact };
+    }
+
+    function renderRecommendationGraphNode(node, graph) {
+        const widget = WIDGETS[state.widget];
+        const meta = recommendationNodeMeta(node);
+        const isModel = node.key === 'model';
+        const position = graph.positions.get(node.instance);
         const name = localized(meta.name);
-        const detail = localized(node.detail || meta.detail);
+        const detailSource = node.details.length === 1 ? node.details[0] : meta.detail;
+        const detail = localized(detailSource || meta.detail);
         const roleClass = meta.role === 'data' ? 'data-node' : (meta.role === 'model' ? 'model-node' : 'output-node');
         const categoryClass = isModel && widget.category === 'unsupervised' ? ' unsupervised-node' : '';
         const optionalClass = node.optional ? ' optional-node' : '';
-        const accessibleLabel = detail ? `${name}, ${detail}` : name;
-        return `<div class="workflow-node recommendation-node ${roleClass}${categoryClass}${optionalClass}" aria-label="${escapeHtml(accessibleLabel)}"><span class="workflow-node-icon"><i data-lucide="${escapeHtml(meta.icon)}" aria-hidden="true"></i></span><span class="recommendation-node-name">${escapeHtml(name)}</span><span class="recommendation-node-detail">${escapeHtml(detail)}</span></div>`;
+        const optionalLabel = node.optional ? (currentLanguage() === 'ko' ? ', 선택 사항' : ', optional') : '';
+        const accessibleLabel = `${name}${detail ? `, ${detail}` : ''}${optionalLabel}`;
+        return `<div class="workflow-node recommendation-node ${roleClass}${categoryClass}${optionalClass}" style="left:${position.x}px;top:${position.y}px;width:${graph.nodeWidth}px" aria-label="${escapeHtml(accessibleLabel)}"><span class="workflow-node-icon"><i data-lucide="${escapeHtml(meta.icon)}" aria-hidden="true"></i></span><span class="recommendation-node-name">${escapeHtml(name)}</span><span class="recommendation-node-detail">${escapeHtml(detail)}</span></div>`;
     }
 
-    function renderRecommendationConnector() {
-        return '<span class="workflow-connector recommendation-connector" aria-hidden="true"><svg viewBox="0 0 86 30" preserveAspectRatio="none"><path d="M2 15 C28 15 58 15 84 15"></path></svg></span>';
-    }
+    function renderRecommendationGraphCanvas(lane, compact, accessibleName) {
+        const graph = buildRecommendationGraph(lane, compact);
+        const parallelGroups = new Map();
+        let topTrack = 0;
+        let bottomTrack = 0;
+        graph.edges.forEach((edge) => {
+            const key = `${edge.source}|${edge.target}`;
+            if (!parallelGroups.has(key)) parallelGroups.set(key, []);
+            parallelGroups.get(key).push(edge);
+        });
 
-    function renderRecommendationPath(path) {
-        const nodes = path.nodes.map(renderRecommendationNode).filter(Boolean);
-        const flow = nodes.map((node, index) => `${index ? renderRecommendationConnector() : ''}${node}`).join('');
-        return `<div class="recommendation-path"><span class="recommendation-path-label">${escapeHtml(localized(path.label))}</span><div class="recommendation-flow-shell"><div class="recommendation-flow">${flow}</div></div></div>`;
+        const edgeMarkup = graph.edges.map((edge) => {
+            const source = graph.positions.get(edge.source);
+            const target = graph.positions.get(edge.target);
+            const parallels = parallelGroups.get(`${edge.source}|${edge.target}`);
+            const parallelIndex = parallels.indexOf(edge);
+            const offset = (parallelIndex - ((parallels.length - 1) / 2)) * 12;
+            const portOffset = graph.compact ? 39 : 42;
+            const sourceX = source.x + (graph.nodeWidth / 2) + portOffset;
+            const targetX = target.x + (graph.nodeWidth / 2) - portOffset;
+            const sourceY = source.y + 30 + offset;
+            const targetY = target.y + 30 + offset;
+            const curve = Math.max(24, (targetX - sourceX) * 0.46);
+            const labelX = (sourceX + targetX) / 2;
+            const levelSpan = graph.levels.get(edge.target) - graph.levels.get(edge.source);
+            let pathData;
+            let labelY;
+
+            if (levelSpan > 1) {
+                const useTopTrack = sourceY <= targetY;
+                const trackIndex = useTopTrack ? topTrack : bottomTrack;
+                if (useTopTrack) topTrack += 1;
+                else bottomTrack += 1;
+                const trackY = useTopTrack
+                    ? 10 + (trackIndex * 8)
+                    : graph.height - 10 - (trackIndex * 8);
+                const bend = Math.min(68, Math.max(44, (targetX - sourceX) * 0.18));
+                pathData = `M${sourceX} ${sourceY} C${sourceX + 20} ${sourceY} ${sourceX + bend - 20} ${trackY} ${sourceX + bend} ${trackY} L${targetX - bend} ${trackY} C${targetX - bend + 20} ${trackY} ${targetX - 20} ${targetY} ${targetX} ${targetY}`;
+                labelY = trackY + (useTopTrack ? 12 : -6);
+            } else {
+                pathData = `M${sourceX} ${sourceY} C${sourceX + curve} ${sourceY} ${targetX - curve} ${targetY} ${targetX} ${targetY}`;
+                labelY = ((sourceY + targetY) / 2) - 6;
+            }
+            const labelMarkup = edge.label
+                ? `<text class="recommendation-edge-label" x="${labelX}" y="${labelY}" text-anchor="middle">${escapeHtml(edge.label)}</text>`
+                : '';
+            return `<path class="recommendation-edge" d="${pathData}"></path>${labelMarkup}`;
+        }).join('');
+
+        const nodeMarkup = graph.nodes.map(node => renderRecommendationGraphNode(node, graph)).join('');
+        const connectionMarkup = graph.edges.map((edge) => {
+            const sourceName = localized(recommendationNodeMeta(graph.nodes.find(node => node.instance === edge.source)).name);
+            const targetName = localized(recommendationNodeMeta(graph.nodes.find(node => node.instance === edge.target)).name);
+            const label = edge.label ? ` · ${edge.label}` : '';
+            return `<li>${escapeHtml(sourceName)} → ${escapeHtml(targetName)}${escapeHtml(label)}</li>`;
+        }).join('');
+        const compactClass = compact ? ' compact' : '';
+
+        const graphLabel = accessibleName || (currentLanguage() === 'ko' ? 'Orange3 위젯 연결 그래프' : 'Orange3 widget connection graph');
+        return `<div class="recommendation-graph-shell${compactClass}" role="region" tabindex="0" aria-label="${escapeHtml(graphLabel)}"><div class="recommendation-graph-canvas" style="width:${graph.width}px;height:${graph.height}px"><svg class="recommendation-graph-edges" viewBox="0 0 ${graph.width} ${graph.height}" aria-hidden="true">${edgeMarkup}</svg>${nodeMarkup}<ol class="sr-only">${connectionMarkup}</ol></div></div>`;
     }
 
     function renderRecommendationLane(lane, index) {
-        return `<section class="recommendation-lane"><div class="recommendation-lane-heading"><span class="recommendation-lane-number">${String(index + 1).padStart(2, '0')}</span><div><strong>${escapeHtml(localized(lane.title))}</strong><p>${escapeHtml(localized(lane.description))}</p></div></div><div class="recommendation-path-list">${lane.paths.map(renderRecommendationPath).join('')}</div></section>`;
+        const titleId = `recommendation-lane-${index + 1}`;
+        return `<section class="recommendation-lane" aria-labelledby="${titleId}"><div class="recommendation-lane-heading"><span class="recommendation-lane-number">${String(index + 1).padStart(2, '0')}</span><div><strong id="${titleId}">${escapeHtml(localized(lane.title))}</strong><p>${escapeHtml(localized(lane.description))}</p></div></div>${renderRecommendationGraphCanvas(lane, false, localized(lane.title))}</section>`;
+    }
+
+    function renderCurrentWorkflowGraph() {
+        const widget = WIDGETS[state.widget];
+        const isSupervised = widget.category === 'supervised';
+        const paths = [
+            { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataTable', null, false, 'sourceTable')] }
+        ];
+
+        if (isSupervised) {
+            paths.push(
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler')] },
+                { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('model')] },
+                { label: { ko: 'Preprocessor', en: 'Preprocessor' }, nodes: [recommendationNode('preprocess'), recommendationNode('model')] },
+                { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('testAndScore')] },
+                { label: { ko: 'Remaining Data', en: 'Remaining Data' }, nodes: [recommendationNode('dataSampler'), recommendationNode('predictions')] },
+                { label: { ko: 'Learner', en: 'Learner' }, nodes: [recommendationNode('model'), recommendationNode('testAndScore')] },
+                { label: { ko: 'Model', en: 'Model' }, nodes: [recommendationNode('model'), recommendationNode('predictions')] },
+                { label: { ko: 'Evaluation Results', en: 'Evaluation Results' }, nodes: [recommendationNode('testAndScore'), recommendationNode('confusionMatrix')] },
+                { label: { ko: 'Predictions', en: 'Predictions' }, nodes: [recommendationNode('predictions'), recommendationNode('dataTable', null, false, 'predictionTable')] }
+            );
+        } else if (state.widget === 'pca') {
+            paths.push(
+                {
+                    label: { ko: '주성분 분석 입력', en: 'PCA input' },
+                    nodes: [recommendationNode('file'), recommendationNode('preprocess'), recommendationNode('model')],
+                    edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Preprocessed Data', en: 'Preprocessed Data' }]
+                },
+                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model'), recommendationNode('scatterPlot')] },
+                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model'), recommendationNode('dataTable')] }
+            );
+        } else {
+            const preparation = [recommendationNode('file'), recommendationNode('preprocess')];
+            if (state.widget === 'hierarchical') preparation.push(recommendationNode('distances'));
+            preparation.push(recommendationNode('model'));
+            const preparationEdges = [
+                { ko: 'Data', en: 'Data' },
+                { ko: 'Preprocessed Data', en: 'Preprocessed Data' }
+            ];
+            if (state.widget === 'hierarchical') preparationEdges.push({ ko: 'Distances', en: 'Distances' });
+            paths.push(
+                { label: { ko: '군집 입력', en: 'Clustering input' }, nodes: preparation, edgeLabels: preparationEdges },
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('model'), recommendationNode('scatterPlot')] },
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('model'), recommendationNode('silhouettePlot')] },
+                { label: { ko: 'Selected Data', en: 'Selected Data' }, nodes: [recommendationNode('silhouettePlot'), recommendationNode('scatterPlot')] }
+            );
+        }
+
+        elements.currentWorkflowGraph.setAttribute('aria-label', currentLanguage() === 'ko'
+            ? `${localized(widget.name)}의 분기와 합류 연결 요약`
+            : `Branching and merging workflow for ${localized(widget.name)}`);
+        elements.currentWorkflowGraph.innerHTML = renderRecommendationGraphCanvas(
+            { paths },
+            true,
+            currentLanguage() === 'ko' ? `${localized(widget.name)} 연결 요약` : `${localized(widget.name)} workflow summary`
+        );
     }
 
     function supervisedRecommendationLanes(datasetRule, modelRule) {
@@ -1030,35 +1248,50 @@
                 title: { ko: '데이터 불러오기와 확인', en: 'Load and inspect data' },
                 description: { ko: '파일에서 변수 유형과 목표 변수를 확인한 뒤 표와 추천 시각화로 분기합니다.', en: 'Check variable types and the target in File, then branch to a table and the recommended visualizations.' },
                 paths: [
-                    { label: { ko: '표로 확인', en: 'Table check' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
-                    { label: { ko: '추천 시각화', en: 'Primary view' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
-                    { label: { ko: '보조 시각화', en: 'Secondary view' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
                 ]
             },
             {
                 title: { ko: '훈련·검증과 모델 평가', en: 'Train, validate, and evaluate' },
-                description: { ko: '표본 75%는 데이터(Data), 나머지 25%는 테스트 데이터(Test Data)로 보내고 학습기와 전처리기를 별도 입력으로 연결합니다.', en: 'Send the 75% sample to Data, the 25% remainder to Test Data, and connect the learner and preprocessor as separate inputs.' },
+                description: { ko: '데이터 샘플러와 모델을 테스트 및 점수와 예측에 각각 연결합니다. 하나의 출력은 여러 위젯으로 나뉘고, 각 목적 위젯에는 데이터와 모델 출력이 함께 모입니다.', en: 'Connect both Data Sampler and the model to Test and Score and Predictions. Outputs branch to multiple widgets, while data and model signals merge at each destination.' },
                 paths: [
-                    { label: { ko: '훈련 데이터', en: 'Training data' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '표본 데이터 출력 · 75%', en: 'Data Sample output · 75%' }), recommendationNode('testAndScore', { ko: '데이터 입력', en: 'Data input' })] },
-                    { label: { ko: '테스트 데이터', en: 'Test data' }, nodes: [recommendationNode('dataSampler', { ko: '남은 데이터 출력 · 25%', en: 'Remaining Data output · 25%' }), recommendationNode('testAndScore', { ko: '테스트 데이터 입력', en: 'Test Data input' })] },
-                    { label: { ko: '학습기 입력', en: 'Learner input' }, nodes: [recommendationNode('model', { ko: '학습기(Learner) 출력', en: 'Learner output' }), recommendationNode('testAndScore', { ko: '학습기 입력', en: 'Learner input' })] },
-                    { label: { ko: '전처리기 입력', en: 'Preprocessor input' }, nodes: [recommendationNode('preprocess', modelRule.preprocess), recommendationNode('testAndScore', { ko: '전처리기 입력', en: 'Preprocessor input' })] },
-                    { label: { ko: '평가 결과', en: 'Evaluation results' }, nodes: [recommendationNode('testAndScore', { ko: '평가 결과 출력', en: 'Evaluation Results output' }), recommendationNode('confusionMatrix')] }
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler')] },
+                    { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('testAndScore')] },
+                    { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('model')] },
+                    { label: { ko: 'Preprocessor', en: 'Preprocessor' }, nodes: [recommendationNode('preprocess', modelRule.preprocess), recommendationNode('model')] },
+                    { label: { ko: 'Learner', en: 'Learner' }, nodes: [recommendationNode('model'), recommendationNode('testAndScore')] },
+                    { label: { ko: 'Remaining Data', en: 'Remaining Data' }, nodes: [recommendationNode('dataSampler'), recommendationNode('predictions')] },
+                    { label: { ko: 'Model', en: 'Model' }, nodes: [recommendationNode('model'), recommendationNode('predictions')] },
+                    { label: { ko: 'Evaluation Results', en: 'Evaluation Results' }, nodes: [recommendationNode('testAndScore'), recommendationNode('confusionMatrix')] }
                 ]
             }
         ];
 
         const interpretationPaths = [
-            { label: { ko: '성능 곡선', en: 'Performance curve' }, nodes: [recommendationNode('testAndScore'), recommendationNode('rocAnalysis')] },
-            { label: { ko: '예측값 확인', en: 'Prediction table' }, nodes: [recommendationNode('testAndScore', { ko: '예측(Predictions) 출력', en: 'Predictions output' }), recommendationNode('dataTable', { ko: '예측 결과', en: 'Prediction results' })] }
+            { label: { ko: 'Evaluation Results', en: 'Evaluation Results' }, nodes: [recommendationNode('testAndScore'), recommendationNode('rocAnalysis')] },
+            { label: { ko: 'Predictions', en: 'Predictions' }, nodes: [recommendationNode('predictions'), recommendationNode('dataTable', { ko: '예측 결과', en: 'Prediction results' })] }
         ];
 
         if (state.widget === 'logisticRegression') {
-            interpretationPaths.push({ label: { ko: '계수 해석', en: 'Explain coefficients' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '모델 출력', en: 'Model output' }), recommendationNode('nomogram')] });
+            interpretationPaths.push({
+                label: { ko: '계수 해석', en: 'Explain coefficients' },
+                nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '모델 출력', en: 'Model output' }), recommendationNode('nomogram')],
+                edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Data Sample', en: 'Data Sample' }, { ko: 'Model', en: 'Model' }]
+            });
         } else if (state.widget === 'randomForest') {
-            interpretationPaths.push({ label: { ko: '트리 구조', en: 'Tree structure' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '포레스트 모델', en: 'Forest model' }), recommendationNode('pythagoreanForest'), recommendationNode('treeViewer')] });
+            interpretationPaths.push({
+                label: { ko: '트리 구조', en: 'Tree structure' },
+                nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '포레스트 모델', en: 'Forest model' }), recommendationNode('pythagoreanForest'), recommendationNode('treeViewer')],
+                edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Data Sample', en: 'Data Sample' }, { ko: 'Random Forest', en: 'Random Forest' }, { ko: 'Tree', en: 'Tree' }]
+            });
         } else if (state.widget === 'svm') {
-            interpretationPaths.push({ label: { ko: '경계 표본', en: 'Boundary samples' }, nodes: [recommendationNode('file'), recommendationNode('model', { ko: '서포트 벡터 출력', en: 'Support Vectors output' }), recommendationNode('scatterPlot', { ko: '데이터 부분집합 입력', en: 'Data Subset input' })] });
+            interpretationPaths.push(
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('model', { ko: '서포트 벡터 출력', en: 'Support Vectors output' })] },
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('scatterPlot', { ko: '데이터 입력', en: 'Data input' })] },
+                { label: { ko: 'Support Vectors', en: 'Support Vectors' }, nodes: [recommendationNode('model'), recommendationNode('scatterPlot', { ko: '데이터 부분집합 입력', en: 'Data Subset input' })] }
+            );
         }
 
         lanes.push({
@@ -1080,6 +1313,12 @@
             recommendationNode('preprocess', modelRule.preprocess)
         ];
         if (state.widget === 'hierarchical') modelPreparation.push(recommendationNode('distances'));
+        const modelPreparationEdges = [
+            { ko: 'Data', en: 'Data' },
+            { ko: 'Data Sample', en: 'Data Sample' },
+            { ko: 'Preprocessed Data', en: 'Preprocessed Data' }
+        ];
+        if (state.widget === 'hierarchical') modelPreparationEdges.push({ ko: 'Distances', en: 'Distances' });
         const modelDetail = state.widget === 'hierarchical'
             ? { ko: '덴드로그램 내장', en: 'Built-in dendrogram' }
             : (state.widget === 'dbscan'
@@ -1091,13 +1330,18 @@
 
         const resultPaths = state.widget === 'pca'
             ? [
-                { label: { ko: '성분 투영', en: 'Component projection' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('scatterPlot', { ko: '주성분 1 · 주성분 2', en: 'PC1 · PC2' })] },
-                { label: { ko: '변환값 확인', en: 'Inspect transformed data' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('dataTable', { ko: '변환된 표본값', en: 'Transformed sample values' })] },
-                { label: { ko: '성분 계수', en: 'Component loadings' }, nodes: [recommendationNode('model', { ko: '성분 출력', en: 'Components output' }), recommendationNode('dataTable', { ko: '고유벡터 · 적재량', en: 'Eigenvectors · loadings' })] }
+                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('scatterPlot', { ko: '주성분 1 · 주성분 2', en: 'PC1 · PC2' })] },
+                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('dataTable', { ko: '변환된 표본값', en: 'Transformed sample values' }, false, 'transformedTable')] },
+                { label: { ko: 'Components', en: 'Components' }, nodes: [recommendationNode('model', { ko: '성분 출력', en: 'Components output' }), recommendationNode('dataTable', { ko: '고유벡터 · 적재량', en: 'Eigenvectors · loadings' }, false, 'componentsTable')] }
             ]
             : [
-                { label: { ko: '군집 모양', en: 'Cluster shape' }, nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('scatterPlot', { ko: '색상 = 군집', en: 'Color = Cluster' })] },
-                { label: { ko: '군집 품질', en: 'Cluster quality' }, nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('silhouettePlot'), recommendationNode('dataTable', { ko: '경계·이상 표본', en: 'Boundary and outlier rows' })] }
+                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('scatterPlot', { ko: '색상 = 군집', en: 'Color = Cluster' })] },
+                {
+                    label: { ko: '군집 품질', en: 'Cluster quality' },
+                    nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('silhouettePlot'), recommendationNode('dataTable', { ko: '경계·이상 표본', en: 'Boundary and outlier rows' })],
+                    edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Selected Data', en: 'Selected Data' }]
+                },
+                { label: { ko: 'Selected Data', en: 'Selected Data' }, nodes: [recommendationNode('silhouettePlot'), recommendationNode('scatterPlot')] }
             ];
 
         return [
@@ -1105,9 +1349,9 @@
                 title: { ko: '데이터 불러오기와 확인', en: 'Load and inspect data' },
                 description: { ko: '정답 라벨은 특성에서 제외하고 데이터의 모양과 분포를 먼저 확인합니다.', en: 'Exclude any reference label from the features and inspect shape and distribution first.' },
                 paths: [
-                    { label: { ko: '표로 확인', en: 'Table check' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
-                    { label: { ko: '추천 시각화', en: 'Primary view' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
-                    { label: { ko: '보조 시각화', en: 'Secondary view' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
+                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
                 ]
             },
             {
@@ -1115,13 +1359,13 @@
                 description: state.widget === 'hierarchical'
                     ? { ko: '계층적 군집화는 데이터(Data) 입력이 없으므로 전처리된 데이터로 거리 행렬을 먼저 만듭니다.', en: 'Hierarchical Clustering has no Data input, so build a distance matrix from preprocessed data first.' }
                     : { ko: '데이터 샘플러(Data Sampler)는 훈련·검증 분리가 아니라 대용량 데이터의 재현 가능한 작업 표본에만 선택적으로 사용합니다.', en: 'Here Data Sampler is optional for a reproducible working sample, not a train/test split.' },
-                paths: [{ label: { ko: '모델 입력', en: 'Model input' }, nodes: modelPreparation }]
+                paths: [{ label: { ko: '모델 입력', en: 'Model input' }, nodes: modelPreparation, edgeLabels: modelPreparationEdges }]
             },
             {
                 title: state.widget === 'pca' ? { ko: '성분과 설명분산 확인', en: 'Inspect components and explained variance' } : { ko: '군집 결과와 품질 확인', en: 'Inspect cluster results and quality' },
                 description: state.widget === 'pca'
                     ? { ko: '주성분 분석 자체 스크리 도표와 변환된 데이터의 산점도를 함께 봅니다.', en: 'Use PCA\'s built-in scree plot together with a scatter plot of transformed data.' }
-                    : { ko: '테스트 및 점수(Test & Score)와 혼동행렬 대신 산점도와 실루엣 그림으로 구조와 품질을 확인합니다.', en: 'Use Scatter Plot and Silhouette Plot instead of Test & Score and Confusion Matrix.' },
+                    : { ko: '테스트 및 점수(Test and Score)와 혼동행렬 대신 산점도와 실루엣 그림으로 구조와 품질을 확인합니다.', en: 'Use Scatter Plot and Silhouette Plot instead of Test and Score and Confusion Matrix.' },
                 paths: resultPaths
             }
         ];
@@ -1148,16 +1392,16 @@
         const principle = widget.category === 'supervised'
             ? {
                 title: { ko: '평가 연결 원칙', en: 'Evaluation connection rule' },
-                text: { ko: '표본 데이터(Data Sample)는 테스트 및 점수(Test & Score)의 데이터(Data), 남은 데이터(Remaining Data)는 테스트 데이터(Test Data)로 연결합니다. 전체 데이터를 미리 바꾸지 말고 전처리(Preprocess)의 전처리기(Preprocessor) 출력을 평가 위젯에 연결해야 검증 표본의 정보가 학습에 새지 않습니다.', en: 'Connect Data Sample to Data and Remaining Data to Test Data in Test & Score. Feed the Preprocessor output into Test & Score instead of preprocessing the full dataset first, so validation information does not leak into training.' }
+                text: { ko: '표본 데이터(Data Sample)와 학습기(Learner)는 테스트 및 점수(Test and Score)로, 남은 데이터(Remaining Data)와 학습된 모델(Model)은 예측(Predictions)으로 연결합니다. 같은 두 출발 위젯이 두 목적 위젯으로 나뉘어 연결되는 다대다 구성입니다. 전처리기(Preprocessor)는 학습기 또는 테스트 및 점수 중 한 곳에만 연결해야 중복 전처리를 막을 수 있으며, 이 추천 구성에서는 예측에 쓸 학습 모델에 연결합니다.', en: 'Connect Data Sample and the Learner to Test and Score, then connect Remaining Data and the trained Model to Predictions. This is a many-to-many workflow in which the same two source widgets feed two destinations. Connect the Preprocessor to either the Learner or Test and Score, not both; this workflow connects it to the Learner used for prediction.' }
             }
             : (state.widget === 'pca'
                 ? {
                     title: { ko: '주성분 분석 연결 원칙', en: 'PCA connection rule' },
-                    text: { ko: 'PCA는 학습기나 군집 모델이 아니므로 테스트 및 점수(Test & Score) 또는 혼동행렬에 직접 연결하지 않습니다. 위젯 안의 스크리 도표와 설명분산, 변환 데이터 산점도를 함께 확인합니다.', en: 'PCA is neither a learner nor a clusterer, so do not connect it directly to Test & Score or Confusion Matrix. Inspect its scree plot, explained variance, and transformed-data scatter plot.' }
+                    text: { ko: 'PCA는 학습기나 군집 모델이 아니므로 테스트 및 점수(Test and Score) 또는 혼동행렬에 직접 연결하지 않습니다. 위젯 안의 스크리 도표와 설명분산, 변환 데이터 산점도를 함께 확인합니다.', en: 'PCA is neither a learner nor a clusterer, so do not connect it directly to Test and Score or Confusion Matrix. Inspect its scree plot, explained variance, and transformed-data scatter plot.' }
                 }
                 : {
                     title: { ko: '군집 평가 연결 원칙', en: 'Clustering connection rule' },
-                    text: { ko: '군집 위젯의 데이터(Data) 출력을 산점도와 실루엣 그림(Silhouette Plot)으로 보냅니다. 군집 위젯은 학습기(Learner)나 평가 결과(Evaluation Results)를 내보내지 않으므로 테스트 및 점수와 혼동행렬에 직접 연결하지 않습니다.', en: 'Send the cluster widget\'s Data output to Scatter Plot and Silhouette Plot. Cluster widgets do not output Learners or Evaluation Results, so they do not connect directly to Test & Score or Confusion Matrix.' }
+                    text: { ko: '군집 위젯의 데이터(Data) 출력을 산점도와 실루엣 그림(Silhouette Plot)으로 보냅니다. 군집 위젯은 학습기(Learner)나 평가 결과(Evaluation Results)를 내보내지 않으므로 테스트 및 점수와 혼동행렬에 직접 연결하지 않습니다.', en: 'Send the cluster widget\'s Data output to Scatter Plot and Silhouette Plot. Cluster widgets do not output Learners or Evaluation Results, so they do not connect directly to Test and Score or Confusion Matrix.' }
                 });
 
         elements.recommendationFit.textContent = localized(fitLabels[fitKey]);
@@ -1230,18 +1474,12 @@
         elements.widgetDescription.textContent = localized(widget.description);
         elements.selectedWidgetIcon.className = `selected-widget-icon${widget.category === 'unsupervised' ? ' unsupervised' : ''}`;
         elements.selectedWidgetIcon.innerHTML = `<i data-lucide="${widget.icon}" aria-hidden="true"></i>`;
-        elements.workflowModel.classList.toggle('unsupervised-node', widget.category === 'unsupervised');
-        elements.workflowModel.innerHTML = `<span class="workflow-node-icon"><i data-lucide="${widget.icon}" aria-hidden="true"></i></span><span>${escapeHtml(localized(widget.shortName))}</span>`;
-        elements.workflowOutput.innerHTML = widget.category === 'supervised'
-            ? `<span class="workflow-node-icon"><i data-lucide="bar-chart-3" aria-hidden="true"></i></span><span>${currentLanguage() === 'ko' ? '평가' : 'Test & Score'}</span>`
-            : (state.widget === 'pca'
-                ? `<span class="workflow-node-icon"><i data-lucide="line-chart" aria-hidden="true"></i></span><span>${currentLanguage() === 'ko' ? '스크리 도표' : 'Scree Plot'}</span>`
-                : `<span class="workflow-node-icon"><i data-lucide="scatter-chart" aria-hidden="true"></i></span><span>${currentLanguage() === 'ko' ? '실루엣 평가' : 'Silhouette'}</span>`);
         elements.simulationModeBadge.textContent = widget.category === 'supervised'
             ? (currentLanguage() === 'ko' ? '지도학습' : 'Supervised')
             : (currentLanguage() === 'ko' ? '비지도학습' : 'Unsupervised');
         elements.simulationModeBadge.classList.toggle('unsupervised', widget.category === 'unsupervised');
         renderWidgetButtons();
+        renderCurrentWorkflowGraph();
         renderRecommendedWorkflow();
         refreshLucideIcons();
     }
@@ -1906,7 +2144,7 @@
         const ids = [
             'datasetSelect', 'regenerateData', 'supervisedWidgets', 'unsupervisedWidgets',
             'selectedWidgetIcon', 'parameterPanelTitle', 'widgetDescription', 'parameterControls',
-            'resetParameters', 'workflowModel', 'workflowOutput', 'simulationModeBadge',
+            'resetParameters', 'currentWorkflowGraph', 'simulationModeBadge',
             'recommendationFit', 'recommendedWorkflowTitle', 'recommendedWorkflowDescription',
             'recommendedWorkflow', 'recommendationPrinciple',
             'metricOneLabel', 'metricOneValue', 'metricOneDelta', 'metricTwoLabel',
