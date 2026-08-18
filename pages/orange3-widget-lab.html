@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/orange3-widget-lab.css?v=20260819a">
+    <link rel="stylesheet" href="../css/orange3-widget-lab.css?v=20260819b">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <script>
         (function () {
@@ -179,96 +179,96 @@
                         </button>
                     </aside>
 
-                    <section class="simulation-panel" aria-labelledby="simulationTitle">
-                        <div id="currentWorkflowGraph" class="workflow-strip" aria-label="현재 Orange3 방식 연결 요약" aria-live="polite"></div>
-
-                        <section class="recommendation-panel" aria-labelledby="recommendedWorkflowHeading">
-                            <div class="recommendation-heading">
-                                <div>
-                                    <span class="panel-kicker"><span class="lang-content lang-ko active">데이터셋 · 모델 맞춤 구성</span><span class="lang-content lang-en">Dataset · model workflow</span></span>
-                                    <h2 id="recommendedWorkflowHeading">
-                                        <span class="lang-content lang-ko active">추천 Orange3 위젯 연결</span>
-                                        <span class="lang-content lang-en">Recommended Orange3 connections</span>
-                                    </h2>
+                    <section class="simulation-panel" aria-labelledby="resultCarouselTitle">
+                        <section id="resultCarousel" class="result-carousel" aria-labelledby="resultCarouselTitle" aria-roledescription="carousel" aria-keyshortcuts="ArrowLeft ArrowRight" tabindex="0">
+                            <div class="result-carousel-toolbar">
+                                <div class="result-carousel-heading">
+                                    <span class="panel-kicker"><span class="lang-content lang-ko active">실시간 결과</span><span class="lang-content lang-en">Live result</span></span>
+                                    <h2 id="resultCarouselTitle">위젯 전체 구성</h2>
                                 </div>
-                                <span id="recommendationFit" class="recommendation-fit">주요 실험</span>
+                                <div class="result-carousel-controls">
+                                    <span id="simulationModeBadge" class="simulation-mode-label">지도학습</span>
+                                    <button id="previousResultSlide" type="button" class="result-carousel-button" aria-label="이전 화면" aria-controls="resultCarouselViewport">
+                                        <i data-lucide="chevron-left" aria-hidden="true"></i>
+                                    </button>
+                                    <span id="resultCarouselPosition" class="result-carousel-position" aria-hidden="true">1 / 4</span>
+                                    <button id="nextResultSlide" type="button" class="result-carousel-button" aria-label="다음 화면" aria-controls="resultCarouselViewport">
+                                        <i data-lucide="chevron-right" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <p id="recommendedWorkflowTitle" class="recommendation-title">두 개의 달 데이터 · 뉴럴 네트워크</p>
-                            <p id="recommendedWorkflowDescription" class="recommendation-description">현재 선택에 알맞은 데이터 확인, 전처리, 학습, 평가 흐름을 불러오는 중입니다.</p>
-                            <p class="recommendation-swipe-hint">
-                                <i data-lucide="move-horizontal" aria-hidden="true"></i>
-                                <span class="lang-content lang-ko active">분기된 연결은 가로로 이동해 끝까지 확인하세요.</span>
-                                <span class="lang-content lang-en">Scroll sideways to inspect every branch.</span>
+                            <p class="result-carousel-hint">
+                                <i data-lucide="keyboard" aria-hidden="true"></i>
+                                <span class="lang-content lang-ko active">좌우 버튼이나 키보드 방향키로 이동하며, 마지막 다음에는 처음으로 돌아갑니다.</span>
+                                <span class="lang-content lang-en">Use the arrow buttons or keyboard arrow keys. Navigation loops from the last view to the first.</span>
                             </p>
-                            <div id="recommendedWorkflow" class="recommended-workflow" aria-live="polite" aria-atomic="true"></div>
-                            <div id="recommendationPrinciple" class="recommendation-principle">
-                                <span class="recommendation-principle-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span>
-                                <div><strong>연결 원칙</strong><p>전처리기는 평가 위젯의 전처리기 입력에 연결합니다.</p></div>
+
+                            <div id="resultCarouselViewport" class="result-carousel-viewport">
+                                <article class="result-carousel-slide" data-result-slide data-title-ko="위젯 전체 구성" data-title-en="Full widget workflow" role="group" aria-roledescription="slide" aria-label="1 / 4 · 위젯 전체 구성">
+                                    <div id="currentWorkflowGraph" class="workflow-strip" aria-label="현재 Orange3 방식 연결 요약" aria-live="polite"></div>
+                                </article>
+
+                                <article class="result-carousel-slide" data-result-slide data-title-ko="모델 변화 시뮬레이션" data-title-en="Model change simulation" role="group" aria-roledescription="slide" aria-label="2 / 4 · 모델 변화 시뮬레이션" hidden>
+                                    <div class="metric-grid" aria-live="polite">
+                                        <article class="metric-card">
+                                            <span id="metricOneLabel" class="metric-label">검증 정확도</span>
+                                            <strong id="metricOneValue">—</strong>
+                                            <span id="metricOneDelta" class="metric-context">—</span>
+                                        </article>
+                                        <article class="metric-card">
+                                            <span id="metricTwoLabel" class="metric-label">일반화 차이</span>
+                                            <strong id="metricTwoValue">—</strong>
+                                            <span id="metricTwoDelta" class="metric-context">—</span>
+                                        </article>
+                                        <article class="metric-card">
+                                            <span id="metricThreeLabel" class="metric-label">모델 복잡도</span>
+                                            <strong id="metricThreeValue">—</strong>
+                                            <span id="metricThreeDelta" class="metric-context">—</span>
+                                        </article>
+                                        <article class="metric-card">
+                                            <span id="metricFourLabel" class="metric-label">예상 학습 시간</span>
+                                            <strong id="metricFourValue">—</strong>
+                                            <span id="metricFourDelta" class="metric-context">—</span>
+                                        </article>
+                                    </div>
+
+                                    <article class="visual-panel primary-visual-panel">
+                                        <div class="visual-heading">
+                                            <h3 id="primaryVisualTitle"><span class="lang-content lang-ko active">결정 경계</span><span class="lang-content lang-en">Decision boundary</span></h3>
+                                            <span id="datasetSummary" class="visual-caption"></span>
+                                        </div>
+                                        <svg id="primaryVisual" viewBox="0 0 640 400" role="img" aria-label="Model result visualization"></svg>
+                                        <div id="plotLegend" class="plot-legend" aria-label="Plot legend"></div>
+                                    </article>
+                                </article>
+
+                                <article class="result-carousel-slide" data-result-slide data-title-ko="모델 구조" data-title-en="Model structure" role="group" aria-roledescription="slide" aria-label="3 / 4 · 모델 구조" hidden>
+                                    <article class="visual-panel structure-visual-panel">
+                                        <div class="visual-heading">
+                                            <h3><span class="lang-content lang-ko active">파라미터에 따른 모델 구조</span><span class="lang-content lang-en">Model structure by parameter</span></h3>
+                                            <span id="structureCaption" class="visual-caption"></span>
+                                        </div>
+                                        <svg id="structureVisual" viewBox="0 0 520 310" role="img" aria-label="Selected model structure"></svg>
+                                    </article>
+
+                                    <div id="insightPanel" class="insight-panel" role="status" aria-live="polite">
+                                        <span class="insight-icon"><i data-lucide="book-open-text" aria-hidden="true"></i></span>
+                                        <div><strong id="insightTitle"></strong><p id="insightText"></p></div>
+                                    </div>
+                                </article>
+
+                                <article class="result-carousel-slide" data-result-slide data-title-ko="학습·검증 오차 흐름" data-title-en="Training and validation flow" role="group" aria-roledescription="slide" aria-label="4 / 4 · 학습·검증 오차 흐름" hidden>
+                                    <article class="learning-panel">
+                                        <div class="visual-heading">
+                                            <h3 id="learningTitle"><span class="lang-content lang-ko active">학습 오차</span><span class="lang-content lang-en">Learning error</span></h3>
+                                            <span id="learningCaption" class="visual-caption"></span>
+                                        </div>
+                                        <svg id="learningVisual" viewBox="0 0 980 220" role="img" aria-label="Learning behavior across iterations or parameter stages"></svg>
+                                    </article>
+                                </article>
                             </div>
+                            <p id="resultCarouselStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true">1 / 4 · 위젯 전체 구성</p>
                         </section>
-
-                        <div class="simulation-heading">
-                            <div>
-                                <span class="panel-kicker"><span class="lang-content lang-ko active">실시간 결과</span><span class="lang-content lang-en">Live result</span></span>
-                                <h2 id="simulationTitle"><span class="lang-content lang-ko active">모델 변화 시뮬레이션</span><span class="lang-content lang-en">Model change simulation</span></h2>
-                            </div>
-                            <span id="simulationModeBadge" class="simulation-mode-label">지도학습</span>
-                        </div>
-
-                        <div class="metric-grid" aria-live="polite">
-                            <article class="metric-card">
-                                <span id="metricOneLabel" class="metric-label">검증 정확도</span>
-                                <strong id="metricOneValue">—</strong>
-                                <span id="metricOneDelta" class="metric-context">—</span>
-                            </article>
-                            <article class="metric-card">
-                                <span id="metricTwoLabel" class="metric-label">일반화 차이</span>
-                                <strong id="metricTwoValue">—</strong>
-                                <span id="metricTwoDelta" class="metric-context">—</span>
-                            </article>
-                            <article class="metric-card">
-                                <span id="metricThreeLabel" class="metric-label">모델 복잡도</span>
-                                <strong id="metricThreeValue">—</strong>
-                                <span id="metricThreeDelta" class="metric-context">—</span>
-                            </article>
-                            <article class="metric-card">
-                                <span id="metricFourLabel" class="metric-label">예상 학습 시간</span>
-                                <strong id="metricFourValue">—</strong>
-                                <span id="metricFourDelta" class="metric-context">—</span>
-                            </article>
-                        </div>
-
-                        <div class="visual-grid">
-                            <article class="visual-panel primary-visual-panel">
-                                <div class="visual-heading">
-                                    <h3 id="primaryVisualTitle"><span class="lang-content lang-ko active">결정 경계</span><span class="lang-content lang-en">Decision boundary</span></h3>
-                                    <span id="datasetSummary" class="visual-caption"></span>
-                                </div>
-                                <svg id="primaryVisual" viewBox="0 0 640 400" role="img" aria-label="Model result visualization"></svg>
-                                <div id="plotLegend" class="plot-legend" aria-label="Plot legend"></div>
-                            </article>
-
-                            <article class="visual-panel structure-visual-panel">
-                                <div class="visual-heading">
-                                    <h3><span class="lang-content lang-ko active">모델 구조</span><span class="lang-content lang-en">Model structure</span></h3>
-                                    <span id="structureCaption" class="visual-caption"></span>
-                                </div>
-                                <svg id="structureVisual" viewBox="0 0 520 310" role="img" aria-label="Selected model structure"></svg>
-                            </article>
-                        </div>
-
-                        <article class="learning-panel">
-                            <div class="visual-heading">
-                                <h3 id="learningTitle"><span class="lang-content lang-ko active">학습 오차</span><span class="lang-content lang-en">Learning error</span></h3>
-                                <span id="learningCaption" class="visual-caption"></span>
-                            </div>
-                            <svg id="learningVisual" viewBox="0 0 980 220" role="img" aria-label="Learning behavior across iterations or parameter stages"></svg>
-                        </article>
-
-                        <div id="insightPanel" class="insight-panel" role="status" aria-live="polite">
-                            <span class="insight-icon"><i data-lucide="book-open-text" aria-hidden="true"></i></span>
-                            <div><strong id="insightTitle"></strong><p id="insightText"></p></div>
-                        </div>
                     </section>
                 </div>
             </div>
@@ -293,7 +293,7 @@
 
     <script defer src="../js/main.js"></script>
     <script defer src="https://unpkg.com/lucide@1.28.0/dist/umd/lucide.min.js"></script>
-    <script defer src="../js/orange3-widget-lab.js?v=20260819a"></script>
+    <script defer src="../js/orange3-widget-lab.js?v=20260819b"></script>
 </body>
 
 </html>

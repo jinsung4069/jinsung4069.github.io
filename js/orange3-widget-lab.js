@@ -137,115 +137,13 @@
         file: { role: 'data', icon: 'file', name: { ko: '파일', en: 'File' }, detail: { ko: 'File', en: 'Data source' } },
         dataTable: { role: 'data', icon: 'table-2', name: { ko: '데이터 표', en: 'Data Table' }, detail: { ko: 'Data Table', en: 'Rows and columns' } },
         scatterPlot: { role: 'output', icon: 'scatter-chart', name: { ko: '산점도', en: 'Scatter Plot' }, detail: { ko: 'Scatter Plot', en: '2D patterns' } },
-        boxPlot: { role: 'output', icon: 'bar-chart-3', name: { ko: '상자 그림', en: 'Box Plot' }, detail: { ko: 'Box Plot', en: 'Spread and outliers' } },
-        distributions: { role: 'output', icon: 'bar-chart-3', name: { ko: '분포', en: 'Distributions' }, detail: { ko: 'Distributions', en: 'Class distributions' } },
         preprocess: { role: 'data', icon: 'sliders-horizontal', name: { ko: '전처리', en: 'Preprocess' }, detail: { ko: 'Preprocess', en: 'Preprocessor' } },
         dataSampler: { role: 'data', icon: 'split', name: { ko: '데이터 샘플러', en: 'Data Sampler' }, detail: { ko: 'Data Sampler', en: 'Sample and remainder' } },
         testAndScore: { role: 'output', icon: 'flask-conical', name: { ko: '테스트 및 점수', en: 'Test and Score' }, detail: { ko: 'Test and Score', en: 'Model evaluation' } },
         predictions: { role: 'output', icon: 'list-checks', name: { ko: '예측', en: 'Predictions' }, detail: { ko: 'Predictions', en: 'Apply a trained model' } },
         confusionMatrix: { role: 'output', icon: 'grid-3x3', name: { ko: '혼동행렬', en: 'Confusion Matrix' }, detail: { ko: 'Confusion Matrix', en: 'Classification errors' } },
-        rocAnalysis: { role: 'output', icon: 'line-chart', name: { ko: 'ROC 분석', en: 'ROC Analysis' }, detail: { ko: 'ROC Analysis', en: 'Threshold trade-off' } },
         silhouettePlot: { role: 'output', icon: 'bar-chart-2', name: { ko: '실루엣 그림', en: 'Silhouette Plot' }, detail: { ko: 'Silhouette Plot', en: 'Cluster quality' } },
-        distances: { role: 'data', icon: 'ruler', name: { ko: '거리', en: 'Distances' }, detail: { ko: 'Distances', en: 'Distance matrix' } },
-        nomogram: { role: 'output', icon: 'list-ordered', name: { ko: '노모그램', en: 'Nomogram' }, detail: { ko: 'Nomogram', en: 'Coefficient explanation' } },
-        pythagoreanForest: { role: 'output', icon: 'trees', name: { ko: '피타고라스 포레스트', en: 'Pythagorean Forest' }, detail: { ko: '개별 트리 선택', en: 'Select one tree' } },
-        treeViewer: { role: 'output', icon: 'network', name: { ko: '트리 뷰어', en: 'Tree Viewer' }, detail: { ko: 'Tree Viewer', en: 'Inspect selected tree' } }
-    };
-
-    const DATASET_WORKFLOW = {
-        moons: {
-            visualizations: ['scatterPlot', 'distributions'],
-            reason: {
-                ko: '두 특성이 만드는 굽은 클래스 경계와 겹치는 구간을 먼저 확인합니다.',
-                en: 'Inspect the curved class boundary and overlapping regions formed by the two features.'
-            }
-        },
-        circles: {
-            visualizations: ['scatterPlot', 'boxPlot'],
-            reason: {
-                ko: '중심과 바깥 고리의 비선형 관계를 산점도로 확인하고 특성별 범위와 이상치를 함께 봅니다.',
-                en: 'Use a scatter plot for the nonlinear inner/outer rings and a box plot for feature spread and outliers.'
-            }
-        },
-        linear: {
-            visualizations: ['scatterPlot', 'distributions'],
-            reason: {
-                ko: '직선 경계의 분리 정도와 클래스별 특성 분포를 함께 비교합니다.',
-                en: 'Compare the straight separating boundary with feature distributions by class.'
-            }
-        },
-        blobs: {
-            visualizations: ['scatterPlot', 'boxPlot'],
-            reason: {
-                ko: '세 군집의 중심, 퍼짐, 겹침을 산점도와 상자 그림으로 먼저 확인합니다.',
-                en: 'Inspect the centers, spread, and overlap of the three blobs before clustering.'
-            }
-        },
-        density: {
-            visualizations: ['scatterPlot', 'boxPlot'],
-            reason: {
-                ko: '군집마다 밀도가 달라 하나의 거리 기준이 어디에서 실패하는지 관찰하기 좋습니다.',
-                en: 'Mixed densities reveal where a single distance threshold can fail.'
-            }
-        },
-        rings: {
-            visualizations: ['scatterPlot', 'distributions'],
-            reason: {
-                ko: '세 고리의 비선형 구조를 산점도로 확인하고 각 특성의 분포가 구조를 얼마나 숨기는지 비교합니다.',
-                en: 'Inspect the nonlinear rings and compare them with the less revealing one-dimensional distributions.'
-            }
-        }
-    };
-
-    const MODEL_WORKFLOW = {
-        neuralNetwork: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '정규화한 입력으로 비선형 경계를 학습하고 ROC와 혼동행렬로 오류를 확인합니다.', en: 'Learn a nonlinear boundary from normalized inputs, then inspect ROC and classification errors.' }
-        },
-        logisticRegression: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '선형 결정 경계를 평가하고 노모그램으로 계수의 방향과 크기를 해석합니다.', en: 'Evaluate the linear decision boundary and explain coefficient direction and size with Nomogram.' }
-        },
-        randomForest: {
-            preprocess: { ko: '결측값 대치', en: 'Impute missing values' },
-            reason: { ko: '숲 전체를 본 뒤 한 트리를 골라 트리 뷰어에서 분기 구조를 자세히 확인합니다.', en: 'Inspect the forest, select one tree, and examine its splits in Tree Viewer.' }
-        },
-        svm: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '특성 스케일을 맞춘 뒤 서포트 벡터와 커널 경계를 산점도에서 확인합니다.', en: 'Scale features, then inspect support vectors and the kernel boundary in a scatter plot.' }
-        },
-        knn: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '거리 계산 전에 특성 스케일을 맞추고 검증 표본의 예측 오류를 비교합니다.', en: 'Scale features before distance calculation and compare errors on held-out samples.' }
-        },
-        kmeans: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '군집 라벨을 산점도에 색으로 표시하고 실루엣 그림에서 경계 표본을 찾습니다.', en: 'Color the scatter plot by cluster and use Silhouette Plot to find boundary cases.' }
-        },
-        hierarchical: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: '거리 행렬을 만든 뒤 덴드로그램에서 군집을 자르고 결과를 산점도로 보냅니다.', en: 'Build a distance matrix, cut clusters in the dendrogram, and send the result to a scatter plot.' }
-        },
-        dbscan: {
-            preprocess: { ko: '정규화 · 결측값 대치', en: 'Normalize · impute' },
-            reason: { ko: 'k번째 이웃 거리 그래프로 반경을 정하고 잡음과 군집을 산점도에서 구분합니다.', en: 'Choose the radius from the k-distance graph, then separate clusters and noise in a scatter plot.' }
-        },
-        pca: {
-            preprocess: { ko: '결측값 대치 · 필요 시 정규화', en: 'Impute · normalize if needed' },
-            reason: { ko: '위젯 안의 스크리 도표로 성분 수를 정하고 변환된 데이터를 산점도로 확인합니다.', en: 'Choose components with the built-in scree plot and inspect transformed data in a scatter plot.' }
-        }
-    };
-
-    const WORKFLOW_FIT = {
-        neuralNetwork: { moons: 'primary', circles: 'primary', linear: 'comparison' },
-        logisticRegression: { moons: 'diagnostic', circles: 'diagnostic', linear: 'primary' },
-        randomForest: { moons: 'primary', circles: 'primary', linear: 'comparison' },
-        svm: { moons: 'primary', circles: 'primary', linear: 'primary' },
-        knn: { moons: 'primary', circles: 'primary', linear: 'comparison' },
-        kmeans: { blobs: 'primary', density: 'diagnostic', rings: 'diagnostic' },
-        hierarchical: { blobs: 'primary', density: 'comparison', rings: 'comparison' },
-        dbscan: { blobs: 'comparison', density: 'diagnostic', rings: 'primary' },
-        pca: { blobs: 'primary', density: 'comparison', rings: 'diagnostic' }
+        distances: { role: 'data', icon: 'ruler', name: { ko: '거리', en: 'Distances' }, detail: { ko: 'Distances', en: 'Distance matrix' } }
     };
 
     const state = {
@@ -255,7 +153,8 @@
         values: {},
         points: [],
         result: null,
-        hierarchyCache: new Map()
+        hierarchyCache: new Map(),
+        activeResultSlide: 0
     };
 
     let elements = {};
@@ -1180,11 +1079,6 @@
         return `<div class="recommendation-graph-shell${compactClass}" role="region" tabindex="0" aria-label="${escapeHtml(graphLabel)}"><div class="recommendation-graph-canvas" style="width:${graph.width}px;height:${graph.height}px"><svg class="recommendation-graph-edges" viewBox="0 0 ${graph.width} ${graph.height}" aria-hidden="true">${edgeMarkup}</svg>${nodeMarkup}<ol class="sr-only">${connectionMarkup}</ol></div></div>`;
     }
 
-    function renderRecommendationLane(lane, index) {
-        const titleId = `recommendation-lane-${index + 1}`;
-        return `<section class="recommendation-lane" aria-labelledby="${titleId}"><div class="recommendation-lane-heading"><span class="recommendation-lane-number">${String(index + 1).padStart(2, '0')}</span><div><strong id="${titleId}">${escapeHtml(localized(lane.title))}</strong><p>${escapeHtml(localized(lane.description))}</p></div></div>${renderRecommendationGraphCanvas(lane, false, localized(lane.title))}</section>`;
-    }
-
     function renderCurrentWorkflowGraph() {
         const widget = WIDGETS[state.widget];
         const isSupervised = widget.category === 'supervised';
@@ -1239,179 +1133,6 @@
             true,
             currentLanguage() === 'ko' ? `${localized(widget.name)} 연결 요약` : `${localized(widget.name)} workflow summary`
         );
-    }
-
-    function supervisedRecommendationLanes(datasetRule, modelRule) {
-        const visualizations = datasetRule.visualizations;
-        const lanes = [
-            {
-                title: { ko: '데이터 불러오기와 확인', en: 'Load and inspect data' },
-                description: { ko: '파일에서 변수 유형과 목표 변수를 확인한 뒤 표와 추천 시각화로 분기합니다.', en: 'Check variable types and the target in File, then branch to a table and the recommended visualizations.' },
-                paths: [
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
-                ]
-            },
-            {
-                title: { ko: '훈련·검증과 모델 평가', en: 'Train, validate, and evaluate' },
-                description: { ko: '데이터 샘플러와 모델을 테스트 및 점수와 예측에 각각 연결합니다. 하나의 출력은 여러 위젯으로 나뉘고, 각 목적 위젯에는 데이터와 모델 출력이 함께 모입니다.', en: 'Connect both Data Sampler and the model to Test and Score and Predictions. Outputs branch to multiple widgets, while data and model signals merge at each destination.' },
-                paths: [
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataSampler')] },
-                    { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('testAndScore')] },
-                    { label: { ko: 'Data Sample', en: 'Data Sample' }, nodes: [recommendationNode('dataSampler'), recommendationNode('model')] },
-                    { label: { ko: 'Preprocessor', en: 'Preprocessor' }, nodes: [recommendationNode('preprocess', modelRule.preprocess), recommendationNode('model')] },
-                    { label: { ko: 'Learner', en: 'Learner' }, nodes: [recommendationNode('model'), recommendationNode('testAndScore')] },
-                    { label: { ko: 'Remaining Data', en: 'Remaining Data' }, nodes: [recommendationNode('dataSampler'), recommendationNode('predictions')] },
-                    { label: { ko: 'Model', en: 'Model' }, nodes: [recommendationNode('model'), recommendationNode('predictions')] },
-                    { label: { ko: 'Evaluation Results', en: 'Evaluation Results' }, nodes: [recommendationNode('testAndScore'), recommendationNode('confusionMatrix')] }
-                ]
-            }
-        ];
-
-        const interpretationPaths = [
-            { label: { ko: 'Evaluation Results', en: 'Evaluation Results' }, nodes: [recommendationNode('testAndScore'), recommendationNode('rocAnalysis')] },
-            { label: { ko: 'Predictions', en: 'Predictions' }, nodes: [recommendationNode('predictions'), recommendationNode('dataTable', { ko: '예측 결과', en: 'Prediction results' })] }
-        ];
-
-        if (state.widget === 'logisticRegression') {
-            interpretationPaths.push({
-                label: { ko: '계수 해석', en: 'Explain coefficients' },
-                nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '모델 출력', en: 'Model output' }), recommendationNode('nomogram')],
-                edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Data Sample', en: 'Data Sample' }, { ko: 'Model', en: 'Model' }]
-            });
-        } else if (state.widget === 'randomForest') {
-            interpretationPaths.push({
-                label: { ko: '트리 구조', en: 'Tree structure' },
-                nodes: [recommendationNode('file'), recommendationNode('dataSampler', { ko: '학습 표본', en: 'Training sample' }), recommendationNode('model', { ko: '포레스트 모델', en: 'Forest model' }), recommendationNode('pythagoreanForest'), recommendationNode('treeViewer')],
-                edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Data Sample', en: 'Data Sample' }, { ko: 'Random Forest', en: 'Random Forest' }, { ko: 'Tree', en: 'Tree' }]
-            });
-        } else if (state.widget === 'svm') {
-            interpretationPaths.push(
-                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('model', { ko: '서포트 벡터 출력', en: 'Support Vectors output' })] },
-                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('scatterPlot', { ko: '데이터 입력', en: 'Data input' })] },
-                { label: { ko: 'Support Vectors', en: 'Support Vectors' }, nodes: [recommendationNode('model'), recommendationNode('scatterPlot', { ko: '데이터 부분집합 입력', en: 'Data Subset input' })] }
-            );
-        }
-
-        lanes.push({
-            title: { ko: '결과 해석과 모델별 뷰어', en: 'Interpret results with model-specific viewers' },
-            description: state.widget === 'randomForest'
-                ? { ko: '랜덤 포레스트 전체에서 한 트리를 선택한 뒤 트리 뷰어로 보냅니다.', en: 'Select one tree from the random forest before sending it to Tree Viewer.' }
-                : { ko: '평가 결과와 선택한 모델이 제공하는 출력을 알맞은 시각화 위젯으로 보냅니다.', en: 'Send evaluation results and model-specific outputs to the appropriate visualization widgets.' },
-            paths: interpretationPaths
-        });
-
-        return lanes;
-    }
-
-    function unsupervisedRecommendationLanes(datasetRule, modelRule) {
-        const visualizations = datasetRule.visualizations;
-        const modelPreparation = [
-            recommendationNode('file'),
-            recommendationNode('dataSampler', { ko: '대용량일 때 작업 표본', en: 'Working sample for large data' }, true),
-            recommendationNode('preprocess', modelRule.preprocess)
-        ];
-        if (state.widget === 'hierarchical') modelPreparation.push(recommendationNode('distances'));
-        const modelPreparationEdges = [
-            { ko: 'Data', en: 'Data' },
-            { ko: 'Data Sample', en: 'Data Sample' },
-            { ko: 'Preprocessed Data', en: 'Preprocessed Data' }
-        ];
-        if (state.widget === 'hierarchical') modelPreparationEdges.push({ ko: 'Distances', en: 'Distances' });
-        const modelDetail = state.widget === 'hierarchical'
-            ? { ko: '덴드로그램 내장', en: 'Built-in dendrogram' }
-            : (state.widget === 'dbscan'
-                ? { ko: 'k-거리 그래프 내장', en: 'Built-in k-distance graph' }
-                : (state.widget === 'pca'
-                    ? { ko: '스크리 도표 내장', en: 'Built-in scree plot' }
-                    : { ko: '군집 라벨 출력', en: 'Cluster labels output' }));
-        modelPreparation.push(recommendationNode('model', modelDetail));
-
-        const resultPaths = state.widget === 'pca'
-            ? [
-                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('scatterPlot', { ko: '주성분 1 · 주성분 2', en: 'PC1 · PC2' })] },
-                { label: { ko: 'Transformed Data', en: 'Transformed Data' }, nodes: [recommendationNode('model', { ko: '변환 데이터', en: 'Transformed Data' }), recommendationNode('dataTable', { ko: '변환된 표본값', en: 'Transformed sample values' }, false, 'transformedTable')] },
-                { label: { ko: 'Components', en: 'Components' }, nodes: [recommendationNode('model', { ko: '성분 출력', en: 'Components output' }), recommendationNode('dataTable', { ko: '고유벡터 · 적재량', en: 'Eigenvectors · loadings' }, false, 'componentsTable')] }
-            ]
-            : [
-                { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('scatterPlot', { ko: '색상 = 군집', en: 'Color = Cluster' })] },
-                {
-                    label: { ko: '군집 품질', en: 'Cluster quality' },
-                    nodes: [recommendationNode('model', { ko: '데이터 출력', en: 'Data output' }), recommendationNode('silhouettePlot'), recommendationNode('dataTable', { ko: '경계·이상 표본', en: 'Boundary and outlier rows' })],
-                    edgeLabels: [{ ko: 'Data', en: 'Data' }, { ko: 'Selected Data', en: 'Selected Data' }]
-                },
-                { label: { ko: 'Selected Data', en: 'Selected Data' }, nodes: [recommendationNode('silhouettePlot'), recommendationNode('scatterPlot')] }
-            ];
-
-        return [
-            {
-                title: { ko: '데이터 불러오기와 확인', en: 'Load and inspect data' },
-                description: { ko: '정답 라벨은 특성에서 제외하고 데이터의 모양과 분포를 먼저 확인합니다.', en: 'Exclude any reference label from the features and inspect shape and distribution first.' },
-                paths: [
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode('dataTable')] },
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[0])] },
-                    { label: { ko: 'Data', en: 'Data' }, nodes: [recommendationNode('file'), recommendationNode(visualizations[1])] }
-                ]
-            },
-            {
-                title: state.widget === 'pca' ? { ko: '표본 준비와 차원 축소', en: 'Prepare a sample and reduce dimensions' } : { ko: '표본 준비와 군집 생성', en: 'Prepare a sample and build clusters' },
-                description: state.widget === 'hierarchical'
-                    ? { ko: '계층적 군집화는 데이터(Data) 입력이 없으므로 전처리된 데이터로 거리 행렬을 먼저 만듭니다.', en: 'Hierarchical Clustering has no Data input, so build a distance matrix from preprocessed data first.' }
-                    : { ko: '데이터 샘플러(Data Sampler)는 훈련·검증 분리가 아니라 대용량 데이터의 재현 가능한 작업 표본에만 선택적으로 사용합니다.', en: 'Here Data Sampler is optional for a reproducible working sample, not a train/test split.' },
-                paths: [{ label: { ko: '모델 입력', en: 'Model input' }, nodes: modelPreparation, edgeLabels: modelPreparationEdges }]
-            },
-            {
-                title: state.widget === 'pca' ? { ko: '성분과 설명분산 확인', en: 'Inspect components and explained variance' } : { ko: '군집 결과와 품질 확인', en: 'Inspect cluster results and quality' },
-                description: state.widget === 'pca'
-                    ? { ko: '주성분 분석 자체 스크리 도표와 변환된 데이터의 산점도를 함께 봅니다.', en: 'Use PCA\'s built-in scree plot together with a scatter plot of transformed data.' }
-                    : { ko: '테스트 및 점수(Test and Score)와 혼동행렬 대신 산점도와 실루엣 그림으로 구조와 품질을 확인합니다.', en: 'Use Scatter Plot and Silhouette Plot instead of Test and Score and Confusion Matrix.' },
-                paths: resultPaths
-            }
-        ];
-    }
-
-    function renderRecommendedWorkflow() {
-        const widget = WIDGETS[state.widget];
-        const datasetRule = DATASET_WORKFLOW[state.dataset];
-        const modelRule = MODEL_WORKFLOW[state.widget];
-        if (!widget || !datasetRule || !modelRule || !elements.recommendedWorkflow) return;
-
-        const fitKey = (WORKFLOW_FIT[state.widget] && WORKFLOW_FIT[state.widget][state.dataset]) || 'comparison';
-        const fitLabels = {
-            primary: { ko: '주요 실험', en: 'Primary scenario' },
-            comparison: { ko: '비교 실험', en: 'Comparison scenario' },
-            diagnostic: { ko: '한계 관찰', en: 'Stress test' }
-        };
-        const title = currentLanguage() === 'ko'
-            ? `${datasetLabel(state.dataset)} 데이터 · ${localized(widget.name)}`
-            : `${datasetLabel(state.dataset)} · ${localized(widget.name)}`;
-        const lanes = widget.category === 'supervised'
-            ? supervisedRecommendationLanes(datasetRule, modelRule)
-            : unsupervisedRecommendationLanes(datasetRule, modelRule);
-        const principle = widget.category === 'supervised'
-            ? {
-                title: { ko: '평가 연결 원칙', en: 'Evaluation connection rule' },
-                text: { ko: '표본 데이터(Data Sample)와 학습기(Learner)는 테스트 및 점수(Test and Score)로, 남은 데이터(Remaining Data)와 학습된 모델(Model)은 예측(Predictions)으로 연결합니다. 같은 두 출발 위젯이 두 목적 위젯으로 나뉘어 연결되는 다대다 구성입니다. 전처리기(Preprocessor)는 학습기 또는 테스트 및 점수 중 한 곳에만 연결해야 중복 전처리를 막을 수 있으며, 이 추천 구성에서는 예측에 쓸 학습 모델에 연결합니다.', en: 'Connect Data Sample and the Learner to Test and Score, then connect Remaining Data and the trained Model to Predictions. This is a many-to-many workflow in which the same two source widgets feed two destinations. Connect the Preprocessor to either the Learner or Test and Score, not both; this workflow connects it to the Learner used for prediction.' }
-            }
-            : (state.widget === 'pca'
-                ? {
-                    title: { ko: '주성분 분석 연결 원칙', en: 'PCA connection rule' },
-                    text: { ko: 'PCA는 학습기나 군집 모델이 아니므로 테스트 및 점수(Test and Score) 또는 혼동행렬에 직접 연결하지 않습니다. 위젯 안의 스크리 도표와 설명분산, 변환 데이터 산점도를 함께 확인합니다.', en: 'PCA is neither a learner nor a clusterer, so do not connect it directly to Test and Score or Confusion Matrix. Inspect its scree plot, explained variance, and transformed-data scatter plot.' }
-                }
-                : {
-                    title: { ko: '군집 평가 연결 원칙', en: 'Clustering connection rule' },
-                    text: { ko: '군집 위젯의 데이터(Data) 출력을 산점도와 실루엣 그림(Silhouette Plot)으로 보냅니다. 군집 위젯은 학습기(Learner)나 평가 결과(Evaluation Results)를 내보내지 않으므로 테스트 및 점수와 혼동행렬에 직접 연결하지 않습니다.', en: 'Send the cluster widget\'s Data output to Scatter Plot and Silhouette Plot. Cluster widgets do not output Learners or Evaluation Results, so they do not connect directly to Test and Score or Confusion Matrix.' }
-                });
-
-        elements.recommendationFit.textContent = localized(fitLabels[fitKey]);
-        elements.recommendationFit.className = `recommendation-fit${fitKey === 'primary' ? '' : ` ${fitKey}`}`;
-        elements.recommendedWorkflowTitle.textContent = title;
-        elements.recommendedWorkflowDescription.textContent = `${localized(datasetRule.reason)} ${localized(modelRule.reason)}`;
-        elements.recommendedWorkflow.setAttribute('aria-label', currentLanguage() === 'ko' ? `${title} 추천 위젯 연결` : `Recommended widget connections for ${title}`);
-        elements.recommendedWorkflow.innerHTML = lanes.map(renderRecommendationLane).join('');
-        elements.recommendationPrinciple.innerHTML = `<span class="recommendation-principle-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span><div><strong>${escapeHtml(localized(principle.title))}</strong><p>${escapeHtml(localized(principle.text))}</p></div>`;
-        refreshLucideIcons();
     }
 
     function updateRangeProgress(input, param) {
@@ -1480,7 +1201,6 @@
         elements.simulationModeBadge.classList.toggle('unsupervised', widget.category === 'unsupervised');
         renderWidgetButtons();
         renderCurrentWorkflowGraph();
-        renderRecommendedWorkflow();
         refreshLucideIcons();
     }
 
@@ -2131,6 +1851,59 @@
         else renderPcaLearning();
     }
 
+    function resultSlideTitle(slide, index) {
+        if (index === 3 && elements.learningTitle && elements.learningTitle.textContent.trim()) {
+            return elements.learningTitle.textContent.trim();
+        }
+        return currentLanguage() === 'ko' ? slide.dataset.titleKo : slide.dataset.titleEn;
+    }
+
+    function updateResultCarousel(announce) {
+        if (!elements.resultCarousel || !elements.resultSlides.length) return;
+        const count = elements.resultSlides.length;
+        state.activeResultSlide = ((state.activeResultSlide % count) + count) % count;
+
+        elements.resultSlides.forEach((slide, index) => {
+            const isActive = index === state.activeResultSlide;
+            const title = resultSlideTitle(slide, index);
+            slide.hidden = !isActive;
+            slide.setAttribute('aria-hidden', String(!isActive));
+            slide.setAttribute('aria-label', `${index + 1} / ${count} · ${title}`);
+            if ('inert' in slide) slide.inert = !isActive;
+        });
+
+        const activeSlide = elements.resultSlides[state.activeResultSlide];
+        const activeTitle = resultSlideTitle(activeSlide, state.activeResultSlide);
+        const position = `${state.activeResultSlide + 1} / ${count}`;
+        const language = currentLanguage();
+        elements.resultCarouselTitle.textContent = activeTitle;
+        elements.resultCarouselPosition.textContent = position;
+        elements.previousResultSlide.setAttribute('aria-label', language === 'ko' ? '이전 화면' : 'Previous view');
+        elements.nextResultSlide.setAttribute('aria-label', language === 'ko' ? '다음 화면' : 'Next view');
+        elements.resultCarousel.setAttribute('aria-label', language === 'ko' ? 'Orange3 결과 화면' : 'Orange3 result views');
+        const statusText = `${position} · ${activeTitle}`;
+        if (announce || elements.resultCarouselStatus.textContent !== statusText) {
+            elements.resultCarouselStatus.textContent = statusText;
+        }
+    }
+
+    function moveResultCarousel(step) {
+        state.activeResultSlide += step;
+        updateResultCarousel(true);
+    }
+
+    function handleResultCarouselKeydown(event) {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.target.closest('input, select, textarea, [contenteditable="true"], .recommendation-graph-shell')) return;
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            moveResultCarousel(-1);
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            moveResultCarousel(1);
+        }
+    }
+
     function updateSimulation() {
         simulateCurrentWidget();
         updateMetrics();
@@ -2138,15 +1911,16 @@
         renderStructureVisual();
         renderLearningVisual();
         updateInsight();
+        updateResultCarousel(false);
     }
 
     function collectElements() {
         const ids = [
             'datasetSelect', 'regenerateData', 'supervisedWidgets', 'unsupervisedWidgets',
             'selectedWidgetIcon', 'parameterPanelTitle', 'widgetDescription', 'parameterControls',
-            'resetParameters', 'currentWorkflowGraph', 'simulationModeBadge',
-            'recommendationFit', 'recommendedWorkflowTitle', 'recommendedWorkflowDescription',
-            'recommendedWorkflow', 'recommendationPrinciple',
+            'resetParameters', 'currentWorkflowGraph', 'simulationModeBadge', 'resultCarousel',
+            'resultCarouselTitle', 'resultCarouselViewport', 'previousResultSlide',
+            'nextResultSlide', 'resultCarouselPosition', 'resultCarouselStatus',
             'metricOneLabel', 'metricOneValue', 'metricOneDelta', 'metricTwoLabel',
             'metricTwoValue', 'metricTwoDelta', 'metricThreeLabel', 'metricThreeValue',
             'metricThreeDelta', 'metricFourLabel', 'metricFourValue', 'metricFourDelta',
@@ -2155,6 +1929,7 @@
             'learningVisual', 'insightTitle', 'insightText'
         ];
         ids.forEach(id => { elements[id] = document.getElementById(id); });
+        elements.resultSlides = Array.from(document.querySelectorAll('[data-result-slide]'));
     }
 
     function initializeLab() {
@@ -2169,7 +1944,6 @@
         elements.datasetSelect.addEventListener('change', () => {
             state.dataset = elements.datasetSelect.value;
             generatePoints();
-            renderRecommendedWorkflow();
             updateSimulation();
         });
 
@@ -2180,6 +1954,13 @@
         });
 
         elements.resetParameters.addEventListener('click', resetCurrentParameters);
+        elements.previousResultSlide.addEventListener('click', () => moveResultCarousel(-1));
+        elements.nextResultSlide.addEventListener('click', () => moveResultCarousel(1));
+        elements.resultCarousel.addEventListener('keydown', handleResultCarouselKeydown);
+        elements.resultCarouselViewport.addEventListener('pointerdown', event => {
+            if (event.target.closest('.recommendation-graph-shell')) return;
+            elements.resultCarousel.focus({ preventScroll: true });
+        });
 
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const mobileNav = document.getElementById('mobileNav');
