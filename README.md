@@ -26,7 +26,8 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | [DQN Demo](https://jinsung4069.github.io/pages/dqn-demo.html) | Deep Q-Network reinforcement learning visualization |
 | [Database Lab](https://jinsung4069.github.io/pages/database-lab.html) | Physical design, SQL, and data conversion practice with KCI article data (sql.js) |
 | [Programming Language Lab](https://jinsung4069.github.io/pages/programming-language.html) | C / Python / Java side-by-side practice |
-| [ML Simulations](https://jinsung4069.github.io/pages/machinelearning.html) | 5 interactive machine learning algorithm simulations |
+| [ML Simulations](https://jinsung4069.github.io/pages/machinelearning.html) | Interactive supervised and unsupervised learning simulations |
+| [Orange3 Widget Parameter Lab](https://jinsung4069.github.io/pages/orange3-widget-lab.html) | Simulations for 9 Orange3 widgets with dataset/model-specific workflow recommendations and parameter-driven structure, boundary, clustering, and performance views |
 | [Webcam Object Classifier](https://jinsung4069.github.io/pages/webcam-classifier.html) | Real-time, in-browser object detection with TensorFlow.js and COCO-SSD |
 | [Alligator Chess](https://jinsung4069.github.io/AlligatorChess/) | Strategic board game (separate repo) |
 | [Micro Robot](https://jinsung4069.github.io/pages/microrobot.html) | Strategic puzzle game (React) |
@@ -47,6 +48,7 @@ jinsung4069.github.io/
 │   ├── style.css               # Main stylesheet (light/dark themes)
 │   ├── database-lab.css
 │   ├── dqn-demo.css
+│   ├── orange3-widget-lab.css
 │   ├── programming-language.css
 │   └── webcam-classifier.css
 ├── js/
@@ -54,6 +56,7 @@ jinsung4069.github.io/
 │   ├── attendance.js
 │   ├── database-lab.js
 │   ├── dqn-demo.js
+│   ├── orange3-widget-lab.js
 │   ├── programming-language.js
 │   └── webcam-classifier.js
 ├── data/
@@ -68,6 +71,7 @@ jinsung4069.github.io/
 │   ├── dqn-demo.html
 │   ├── machinelearning.html
 │   ├── microrobot.html
+│   ├── orange3-widget-lab.html
 │   ├── programming-language.html
 │   ├── stackburger.html
 │   └── webcam-classifier.html
@@ -110,4 +114,4 @@ python -m http.server 8000
 
 ---
 
-*Last updated: July 2026*
+*Last updated: August 2026*

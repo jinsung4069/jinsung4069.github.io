@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orange3 방식의 화면에서 지도학습·비지도학습 위젯의 파라미터를 조절하고 모델 구조와 성능 변화를 확인하는 대화형 시뮬레이터">
+    <meta name="theme-color" content="#ffffff">
+    <title>Orange3 위젯 파라미터 실험실 - 전인성</title>
+    <link rel="canonical" href="https://jinsung4069.github.io/pages/orange3-widget-lab.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Orange3 위젯 파라미터 실험실 - 전인성">
+    <meta property="og:description" content="머신러닝 위젯의 설정이 모델 구조와 예측 결과에 미치는 영향을 직접 살펴보는 교육용 시뮬레이터">
+    <meta property="og:url" content="https://jinsung4069.github.io/pages/orange3-widget-lab.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/orange3-widget-lab.css?v=20260818f">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script>
+        (function () {
+            var theme = localStorage.getItem('theme');
+            if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+            var language = localStorage.getItem('language');
+            if (language) document.documentElement.lang = language;
+        })();
+    </script>
+</head>
+
+<body data-title-ko="Orange3 위젯 파라미터 실험실 - 전인성" data-title-en="Orange3 Widget Parameter Lab - Inseong Jeon">
+    <header>
+        <div class="header-inner">
+            <a href="../index.html" class="site-title">
+                <span class="lang-content lang-ko active">전인성</span>
+                <span class="lang-content lang-en">Inseong Jeon</span>
+            </a>
+            <div class="header-right">
+                <nav class="site-nav" id="mainNav" aria-label="Primary navigation">
+                    <ul>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html">
+                            <span class="lang-content lang-ko active">홈</span>
+                            <span class="lang-content lang-en">Home</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../about.html">
+                            <span class="lang-content lang-ko active">소개</span>
+                            <span class="lang-content lang-en">About</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link active" href="../index.html#projects">
+                            <span class="lang-content lang-ko active">프로젝트</span>
+                            <span class="lang-content lang-en">Projects</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="../index.html#contact">
+                            <span class="lang-content lang-ko active">연락처</span>
+                            <span class="lang-content lang-en">Contact</span>
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button id="darkModeToggle" class="dark-mode-toggle" type="button" aria-label="Dark mode toggle">
+                        <i class="sun-icon" data-lucide="sun" aria-hidden="true"></i>
+                        <i class="moon-icon" data-lucide="moon" aria-hidden="true"></i>
+                    </button>
+                    <button id="languageToggle" class="language-toggle" type="button">ENG</button>
+                </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" type="button" aria-label="Menu">
+                    <span class="menu-open-icon"><i data-lucide="menu" aria-hidden="true"></i></span>
+                    <span class="menu-close-icon"><i data-lucide="x" aria-hidden="true"></i></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+        <ul>
+            <li><a href="../index.html"><span class="lang-content lang-ko active">홈</span><span class="lang-content lang-en">Home</span></a></li>
+            <li><a href="../about.html"><span class="lang-content lang-ko active">소개</span><span class="lang-content lang-en">About</span></a></li>
+            <li><a href="../index.html#projects"><span class="lang-content lang-ko active">프로젝트</span><span class="lang-content lang-en">Projects</span></a></li>
+            <li><a href="../index.html#contact"><span class="lang-content lang-ko active">연락처</span><span class="lang-content lang-en">Contact</span></a></li>
+        </ul>
+    </nav>
+
+    <main class="orange-lab-page">
+        <section class="orange-lab-hero" aria-labelledby="labTitle">
+            <div class="orange-lab-container">
+                <a class="lab-back-link" href="machinelearning.html">
+                    <i data-lucide="arrow-left" aria-hidden="true"></i>
+                    <span class="lang-content lang-ko active">머신러닝 시뮬레이션</span>
+                    <span class="lang-content lang-en">Machine Learning Simulations</span>
+                </a>
+                <span class="lab-eyebrow">
+                    <i data-lucide="workflow" aria-hidden="true"></i>
+                    <span class="lang-content lang-ko active">ORANGE3 위젯 실험실</span>
+                    <span class="lang-content lang-en">ORANGE3 WIDGET LAB</span>
+                </span>
+                <h1 id="labTitle">
+                    <span class="lang-content lang-ko active">파라미터를 바꾸며 모델의 생각을 관찰하세요</span>
+                    <span class="lang-content lang-en">Change parameters and watch the model respond</span>
+                </h1>
+                <p class="lang-content lang-ko active">Orange3의 위젯 선택 흐름을 본뜬 교육용 실험실입니다. 지도학습과 비지도학습 위젯을 선택하고 설정을 조절하면 구조, 경계, 군집, 학습 곡선이 즉시 달라집니다.</p>
+                <p class="lang-content lang-en">An educational lab inspired by Orange3's widget workflow. Choose a supervised or unsupervised widget and see its structure, boundary, clusters, and learning behavior update instantly.</p>
+                <div class="hero-facts" aria-label="Lab features">
+                    <span><i data-lucide="boxes" aria-hidden="true"></i><strong>9</strong> <span class="lang-content lang-ko active">개 위젯</span><span class="lang-content lang-en">widgets</span></span>
+                    <span><i data-lucide="sliders-horizontal" aria-hidden="true"></i><span class="lang-content lang-ko active">실시간 파라미터 반영</span><span class="lang-content lang-en">Live parameters</span></span>
+                    <span><i data-lucide="monitor" aria-hidden="true"></i><span class="lang-content lang-ko active">설치 없이 실행</span><span class="lang-content lang-en">Runs in browser</span></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="orange-lab-container lab-section" aria-label="Orange3 widget simulator">
+            <div class="orange-app-shell">
+                <div class="orange-titlebar">
+                    <div class="orange-app-title">
+                        <span class="orange-mark" aria-hidden="true"><i data-lucide="citrus"></i></span>
+                        <strong><span class="lang-content lang-ko active">Orange3 위젯 실험실</span><span class="lang-content lang-en">Orange3 Widget Lab</span></strong>
+                        <span class="orange-document-mark" aria-hidden="true">*</span>
+                    </div>
+                    <div class="orange-window-controls" aria-hidden="true">
+                        <span><i data-lucide="minus"></i></span>
+                        <span><i data-lucide="square"></i></span>
+                        <span class="window-close"><i data-lucide="x"></i></span>
+                    </div>
+                </div>
+
+                <nav class="orange-menubar" aria-label="Orange3 menu">
+                    <div class="lang-content lang-ko active"><span>파일</span><span>편집</span><span>보기</span><span>위젯</span><span>옵션</span><span>도움말</span></div>
+                    <div class="lang-content lang-en"><span>File</span><span>Edit</span><span>View</span><span>Widget</span><span>Options</span><span>Help</span></div>
+                </nav>
+
+                <div class="orange-toolbar" aria-label="Dataset controls">
+                    <label for="datasetSelect">
+                        <i data-lucide="table-2" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">실험 데이터</span>
+                        <span class="lang-content lang-en">Dataset</span>
+                    </label>
+                    <select id="datasetSelect" aria-label="Dataset"></select>
+                    <button id="regenerateData" type="button" class="toolbar-button">
+                        <i data-lucide="refresh-cw" aria-hidden="true"></i>
+                        <span class="lang-content lang-ko active">새 표본</span>
+                        <span class="lang-content lang-en">New sample</span>
+                    </button>
+                    <p class="toolbar-note">
+                        <span class="lang-content lang-ko active">점의 25%는 검증 데이터입니다.</span>
+                        <span class="lang-content lang-en">25% of points are held out for validation.</span>
+                    </p>
+                </div>
+
+                <div class="orange-workspace">
+                    <aside class="widget-palette" aria-labelledby="widgetPaletteTitle">
+                        <div class="palette-heading">
+                            <h2 id="widgetPaletteTitle"><span class="lang-content lang-ko active">위젯</span><span class="lang-content lang-en">Widgets</span></h2>
+                            <span class="palette-count">9</span>
+                        </div>
+                        <section class="widget-group" aria-labelledby="supervisedTitle">
+                            <h3 id="supervisedTitle"><i class="group-icon supervised-icon" data-lucide="graduation-cap" aria-hidden="true"></i><span class="lang-content lang-ko active">지도학습</span><span class="lang-content lang-en">Supervised</span></h3>
+                            <div id="supervisedWidgets" class="widget-button-list"></div>
+                        </section>
+                        <section class="widget-group" aria-labelledby="unsupervisedTitle">
+                            <h3 id="unsupervisedTitle"><i class="group-icon unsupervised-icon" data-lucide="waypoints" aria-hidden="true"></i><span class="lang-content lang-ko active">비지도학습</span><span class="lang-content lang-en">Unsupervised</span></h3>
+                            <div id="unsupervisedWidgets" class="widget-button-list"></div>
+                        </section>
+                    </aside>
+
+                    <aside class="parameter-panel" aria-labelledby="parameterPanelTitle">
+                        <div class="selected-widget-heading">
+                            <span id="selectedWidgetIcon" class="selected-widget-icon"><i data-lucide="brain-circuit" aria-hidden="true"></i></span>
+                            <div>
+                                <span class="panel-kicker"><span class="lang-content lang-ko active">선택한 위젯</span><span class="lang-content lang-en">Selected widget</span></span>
+                                <h2 id="parameterPanelTitle">뉴럴 네트워크</h2>
+                            </div>
+                        </div>
+                        <p id="widgetDescription" class="widget-description"></p>
+                        <form id="parameterControls" class="parameter-controls"></form>
+                        <button id="resetParameters" type="button" class="reset-button">
+                            <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+                            <span class="lang-content lang-ko active">이 위젯 기본값으로</span>
+                            <span class="lang-content lang-en">Reset this widget</span>
+                        </button>
+                    </aside>
+
+                    <section class="simulation-panel" aria-labelledby="simulationTitle">
+                        <div class="workflow-strip" aria-label="Current Orange3-style workflow">
+                            <div class="workflow-node data-node"><span class="workflow-node-icon"><i data-lucide="table-2" aria-hidden="true"></i></span><span class="lang-content lang-ko active">데이터</span><span class="lang-content lang-en">Data</span></div>
+                            <span class="workflow-connector" aria-hidden="true"><svg viewBox="0 0 86 36" preserveAspectRatio="none"><path d="M2 18 C28 18 58 18 84 18"></path></svg></span>
+                            <div id="workflowModel" class="workflow-node model-node"><span class="workflow-node-icon"><i data-lucide="brain-circuit" aria-hidden="true"></i></span><span>뉴럴 네트워크</span></div>
+                            <span class="workflow-connector" aria-hidden="true"><svg viewBox="0 0 86 36" preserveAspectRatio="none"><path d="M2 18 C28 18 58 18 84 18"></path></svg></span>
+                            <div id="workflowOutput" class="workflow-node output-node"><span class="workflow-node-icon"><i data-lucide="bar-chart-3" aria-hidden="true"></i></span><span>평가</span></div>
+                        </div>
+
+                        <section class="recommendation-panel" aria-labelledby="recommendedWorkflowHeading">
+                            <div class="recommendation-heading">
+                                <div>
+                                    <span class="panel-kicker"><span class="lang-content lang-ko active">데이터셋 · 모델 맞춤 구성</span><span class="lang-content lang-en">Dataset · model workflow</span></span>
+                                    <h2 id="recommendedWorkflowHeading">
+                                        <span class="lang-content lang-ko active">추천 Orange3 위젯 연결</span>
+                                        <span class="lang-content lang-en">Recommended Orange3 connections</span>
+                                    </h2>
+                                </div>
+                                <span id="recommendationFit" class="recommendation-fit">주요 실험</span>
+                            </div>
+                            <p id="recommendedWorkflowTitle" class="recommendation-title">두 개의 달 데이터 · 뉴럴 네트워크</p>
+                            <p id="recommendedWorkflowDescription" class="recommendation-description">현재 선택에 알맞은 데이터 확인, 전처리, 학습, 평가 흐름을 불러오는 중입니다.</p>
+                            <p class="recommendation-swipe-hint">
+                                <i data-lucide="move-horizontal" aria-hidden="true"></i>
+                                <span class="lang-content lang-ko active">긴 연결은 옆으로 밀어 끝까지 확인하세요.</span>
+                                <span class="lang-content lang-en">Swipe long connections sideways to see every widget.</span>
+                            </p>
+                            <div id="recommendedWorkflow" class="recommended-workflow" aria-live="polite" aria-atomic="true"></div>
+                            <div id="recommendationPrinciple" class="recommendation-principle">
+                                <span class="recommendation-principle-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span>
+                                <div><strong>연결 원칙</strong><p>전처리기는 평가 위젯의 전처리기 입력에 연결합니다.</p></div>
+                            </div>
+                        </section>
+
+                        <div class="simulation-heading">
+                            <div>
+                                <span class="panel-kicker"><span class="lang-content lang-ko active">실시간 결과</span><span class="lang-content lang-en">Live result</span></span>
+                                <h2 id="simulationTitle"><span class="lang-content lang-ko active">모델 변화 시뮬레이션</span><span class="lang-content lang-en">Model change simulation</span></h2>
+                            </div>
+                            <span id="simulationModeBadge" class="simulation-mode-label">지도학습</span>
+                        </div>
+
+                        <div class="metric-grid" aria-live="polite">
+                            <article class="metric-card">
+                                <span id="metricOneLabel" class="metric-label">검증 정확도</span>
+                                <strong id="metricOneValue">—</strong>
+                                <span id="metricOneDelta" class="metric-context">—</span>
+                            </article>
+                            <article class="metric-card">
+                                <span id="metricTwoLabel" class="metric-label">일반화 차이</span>
+                                <strong id="metricTwoValue">—</strong>
+                                <span id="metricTwoDelta" class="metric-context">—</span>
+                            </article>
+                            <article class="metric-card">
+                                <span id="metricThreeLabel" class="metric-label">모델 복잡도</span>
+                                <strong id="metricThreeValue">—</strong>
+                                <span id="metricThreeDelta" class="metric-context">—</span>
+                            </article>
+                            <article class="metric-card">
+                                <span id="metricFourLabel" class="metric-label">예상 학습 시간</span>
+                                <strong id="metricFourValue">—</strong>
+                                <span id="metricFourDelta" class="metric-context">—</span>
+                            </article>
+                        </div>
+
+                        <div class="visual-grid">
+                            <article class="visual-panel primary-visual-panel">
+                                <div class="visual-heading">
+                                    <h3 id="primaryVisualTitle"><span class="lang-content lang-ko active">결정 경계</span><span class="lang-content lang-en">Decision boundary</span></h3>
+                                    <span id="datasetSummary" class="visual-caption"></span>
+                                </div>
+                                <svg id="primaryVisual" viewBox="0 0 640 400" role="img" aria-label="Model result visualization"></svg>
+                                <div id="plotLegend" class="plot-legend" aria-label="Plot legend"></div>
+                            </article>
+
+                            <article class="visual-panel structure-visual-panel">
+                                <div class="visual-heading">
+                                    <h3><span class="lang-content lang-ko active">모델 구조</span><span class="lang-content lang-en">Model structure</span></h3>
+                                    <span id="structureCaption" class="visual-caption"></span>
+                                </div>
+                                <svg id="structureVisual" viewBox="0 0 520 310" role="img" aria-label="Selected model structure"></svg>
+                            </article>
+                        </div>
+
+                        <article class="learning-panel">
+                            <div class="visual-heading">
+                                <h3 id="learningTitle"><span class="lang-content lang-ko active">학습 오차</span><span class="lang-content lang-en">Learning error</span></h3>
+                                <span id="learningCaption" class="visual-caption"></span>
+                            </div>
+                            <svg id="learningVisual" viewBox="0 0 980 220" role="img" aria-label="Learning behavior across iterations or parameter stages"></svg>
+                        </article>
+
+                        <div id="insightPanel" class="insight-panel" role="status" aria-live="polite">
+                            <span class="insight-icon"><i data-lucide="book-open-text" aria-hidden="true"></i></span>
+                            <div><strong id="insightTitle"></strong><p id="insightText"></p></div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <p class="simulation-disclaimer">
+                <i data-lucide="info" aria-hidden="true"></i>
+                <span class="lang-content lang-ko active">이 페이지는 파라미터의 상대적 영향을 이해하기 위한 교육용 시뮬레이션입니다. 표시되는 점수와 시간은 실제 Orange3 실행 결과가 아니라 현재 표본을 이용한 브라우저 내 계산 및 추정값입니다. 파라미터 명칭은 <a href="https://orange3.readthedocs.io/projects/orange-visual-programming/en/latest/index.html" target="_blank" rel="noopener noreferrer">Orange3 공식 위젯 문서</a>를 기준으로 했습니다.</span>
+                <span class="lang-content lang-en">This educational simulation illustrates relative parameter effects. Scores and timing are browser calculations and estimates for the current sample, not results produced by the Orange3 application. Parameter names follow the <a href="https://orange3.readthedocs.io/projects/orange-visual-programming/en/latest/index.html" target="_blank" rel="noopener noreferrer">official Orange3 widget documentation</a>.</span>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 <span class="lang-content lang-ko active">전인성</span><span class="lang-content lang-en">Inseong Jeon</span></p>
+            <div class="footer-links">
+                <a href="machinelearning.html"><span class="lang-content lang-ko active">머신러닝 시뮬레이션</span><span class="lang-content lang-en">ML Simulations</span></a>
+                <a href="../index.html#projects"><span class="lang-content lang-ko active">모든 프로젝트</span><span class="lang-content lang-en">All Projects</span></a>
+            </div>
+        </div>
+    </footer>
+
+    <script defer src="../js/main.js"></script>
+    <script defer src="https://unpkg.com/lucide@1.28.0/dist/umd/lucide.min.js"></script>
+    <script defer src="../js/orange3-widget-lab.js?v=20260818f"></script>
+</body>
+
+</html>
