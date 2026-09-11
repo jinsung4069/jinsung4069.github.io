@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function courseMenu(mobile) {
         const li = document.createElement('li');
         li.className = 'nav-item course-nav' + (mobile ? ' course-nav-mobile' : '');
-        li.innerHTML = `<button class="nav-text-link course-trigger" aria-expanded="false"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" hidden><a class="course-heading" href="${courseUrl}">AI알고리즘</a><a href="${weekUrl}">2주차 데이터 과학의 이해와 분석</a></div>`;
+        li.innerHTML = `<button class="nav-text-link course-trigger" aria-expanded="false"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" hidden><a class="course-heading" href="${courseUrl}">AI알고리즘</a><a href="${weekUrl}">2주차 데이터 과학의 이해와 분석</a><a class="course-heading" href="${new URL('computer-education2.html', courseUrl).href}">컴퓨터과교육2</a><a href="${new URL('computer-education2.html', courseUrl).href}">2. 컴퓨팅 시스템부터 11. 피지컬 컴퓨팅까지</a></div>`;
         const button = li.querySelector('button'), panel = li.querySelector('.course-dropdown');
         const setOpen = open => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
         button.addEventListener('click', () => setOpen(panel.hidden));
         if (!mobile) {
-            li.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) setOpen(true); });
+            li.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover) and (min-width: 769px)').matches) setOpen(true); });
             li.addEventListener('mouseleave', () => { if (!li.contains(document.activeElement)) setOpen(false); });
         }
         li.addEventListener('focusout', () => setTimeout(() => { if (!li.contains(document.activeElement)) setOpen(false); }, 0));
