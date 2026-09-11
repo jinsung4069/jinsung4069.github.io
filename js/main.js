@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Course menu supports hover, keyboard and touch on all shared headers.
+    const courseUrl = new URL('/pages/lectures.html', location.origin).href;
+    const weekUrl = new URL('ai-algorithm-week2.html', courseUrl).href;
+    function courseMenu(mobile) {
+        const li = document.createElement('li');
+        li.className = 'nav-item course-nav' + (mobile ? ' course-nav-mobile' : '');
+        li.innerHTML = `<button class="nav-text-link course-trigger" aria-expanded="false"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" hidden><a class="course-heading" href="${courseUrl}">AI알고리즘</a><a href="${weekUrl}">2주차 데이터 과학의 이해와 분석</a></div>`;
+        const button = li.querySelector('button'), panel = li.querySelector('.course-dropdown');
+        const setOpen = open => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
+        button.addEventListener('click', () => setOpen(panel.hidden));
+        if (!mobile) {
+            li.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) setOpen(true); });
+            li.addEventListener('mouseleave', () => { if (!li.contains(document.activeElement)) setOpen(false); });
+        }
+        li.addEventListener('focusout', () => setTimeout(() => { if (!li.contains(document.activeElement)) setOpen(false); }, 0));
+        li.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); button.focus(); e.stopPropagation(); } });
+        document.addEventListener('click', e => { if (!li.contains(e.target)) setOpen(false); });
+        return li;
+    }
+    document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(ul => {
+        if (!ul.querySelector('.course-nav')) ul.appendChild(courseMenu(!!ul.closest('#mobileNav')));
+    });
+
     const languageToggle = document.getElementById('languageToggle');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -17,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mobileMenuToggle && mobileNav) {
         mobileMenuToggle.addEventListener('click', () => {
             mobileNav.classList.toggle('open');
+            mobileMenuToggle.setAttribute('aria-expanded', String(mobileNav.classList.contains('open')));
             const icon = mobileMenuToggle.querySelector('i');
             if (icon) {
                 icon.className = mobileNav.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
@@ -27,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         mobileNav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileNav.classList.remove('open');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
                 const icon = mobileMenuToggle.querySelector('i');
                 if (icon) icon.className = 'fas fa-bars';
             });
@@ -38,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mobileMenuToggle && mainNav && !mobileNav) {
         mobileMenuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('mobile-open');
+            mobileMenuToggle.setAttribute('aria-expanded', String(mainNav.classList.contains('mobile-open')));
             const icon = mobileMenuToggle.querySelector('i');
             if (icon) {
                 icon.className = mainNav.classList.contains('mobile-open') ? 'fas fa-times' : 'fas fa-bars';

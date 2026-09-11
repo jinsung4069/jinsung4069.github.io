@@ -1594,3 +1594,20 @@ th {
 .footer-links a:hover {
     color: var(--color-primary);
 }
+
+/* Shared course navigation */
+.course-nav { position: relative; }
+.course-trigger { background: transparent; border: 0; cursor: pointer; white-space: nowrap; }
+.course-dropdown { position: absolute; top: 100%; right: 0; width: 310px; max-width: 85vw; padding: 12px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 6px; box-shadow: 0 10px 30px #15274220; z-index: 110; }
+.course-dropdown[hidden] { display: none; }
+.course-dropdown a { display: block; color: var(--color-text); text-decoration: none; font-size: 14px; line-height: 1.6; padding: 9px 10px; border-radius: 4px; }
+.course-dropdown a:hover,.course-dropdown a:focus-visible { background: var(--color-bg); color: var(--color-primary); }
+.course-dropdown .course-heading { font-weight: 700; color: var(--color-primary); border-bottom: 1px solid var(--color-border); margin-bottom: 3px; }
+.course-nav-mobile .course-trigger { width: 100%; padding: 14px 0; text-align: left; }
+.course-nav-mobile .course-dropdown { position: static; width: 100%; max-width: none; box-shadow: none; margin-bottom: 10px; }
+@media (max-width: 768px) { .site-nav.mobile-open .course-dropdown { position: static; width: 100%; box-shadow: none; } }
+
+@media(max-width:768px) {
+ .site-nav.mobile-open { display:block; position:absolute; top:56px; left:0; right:0; background:var(--color-white); border-bottom:1px solid var(--color-border); padding:15px; z-index:105; }
+ .site-nav.mobile-open>ul { flex-direction:column; align-items:stretch; }
+}

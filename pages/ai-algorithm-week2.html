@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI알고리즘 2주차, 데이터 과학의 이해와 분석. AICE 1장부터 6장에 연결되는 슬라이드, 데이터 체험과 코랩 실습.">
+  <title>2주차 데이터 과학의 이해와 분석 | AI알고리즘</title>
+  <link rel="canonical" href="https://jinsung4069.github.io/pages/ai-algorithm-week2.html">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/ai-week2.css">
+  <script src="../js/main.js" defer></script>
+  <script src="../js/ai-week2-content.js" defer></script>
+  <script src="../js/ai-week2.js" defer></script>
+</head>
+<body class="lecture-page">
+  <a class="skip-link" href="#presentation">강의 내용으로 이동</a>
+  <header><div class="header-inner">
+    <a class="site-title" href="../index.html">전인성</a>
+    <div class="header-right">
+      <nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul>
+        <li class="nav-item"><a class="nav-text-link" href="../index.html">홈</a></li>
+        <li class="nav-item"><a class="nav-text-link" href="../about.html">소개</a></li>
+      </ul></nav>
+      <button id="darkModeToggle" class="language-toggle" aria-label="어두운 화면 전환">화면 테마</button>
+      <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+    </div>
+  </div></header>
+  <main id="presentation" tabindex="-1">
+    <div class="lecture-toolbar">
+      <div class="course-label"><a href="lectures.html">강의자료</a><span aria-hidden="true"> / </span><span>AI알고리즘</span><span class="week-label">2주차</span></div>
+      <div class="tool-actions"><button id="tocButton" aria-haspopup="dialog">목차</button><button id="notesButton" aria-expanded="false" aria-controls="teacherNotes">해설</button><button id="fullscreenButton">전체 화면</button><button id="printButton">인쇄</button></div>
+    </div>
+    <noscript><p>슬라이드 이동과 체험을 사용하려면 브라우저의 JavaScript를 허용해 주세요. <a href="../data/lectures/ai-week2.ipynb">실습 노트북 다운로드</a></p></noscript>
+    <div id="stage" class="stage" aria-roledescription="슬라이드 쇼" aria-label="2주차 데이터 과학의 이해와 분석"></div>
+    <nav class="slide-controls" aria-label="슬라이드 이동">
+      <button id="previous" aria-label="이전 슬라이드">← 이전</button>
+      <div class="slide-position"><label for="slideSelect" class="sr-only">슬라이드 선택</label><select id="slideSelect"></select><span id="counter" aria-live="polite" aria-atomic="true"></span></div>
+      <button id="next" aria-label="다음 슬라이드">다음 →</button>
+    </nav>
+    <div class="progress-track"><div id="progressFill"></div></div>
+    <p class="keyboard-hint">키보드 ← →로 이동합니다. 입력 칸에서는 입력을 우선합니다. 체험 기록은 새로고침 전에 저장해 주세요.</p>
+    <aside id="teacherNotes" hidden><h2>수업 해설</h2><p id="notesText"></p></aside>
+  </main>
+  <dialog id="tocDialog" aria-labelledby="tocTitle"><div class="dialog-heading"><h2 id="tocTitle">2주차 목차</h2><button id="closeToc" aria-label="목차 닫기">닫기 ×</button></div><div id="tocContents"></div></dialog>
+</body>
+</html>
