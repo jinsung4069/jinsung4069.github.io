@@ -11,10 +11,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/ai-week2.css">
+  <link rel="preload" href="../fonts/freesentation/Freesentation-6SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/freesentation/Freesentation-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../css/ai-week2.css?v=20260911-fonts">
   <script src="../js/main.js" defer></script>
-  <script src="../js/ai-week2-content.js" defer></script>
-  <script src="../js/ai-week2.js" defer></script>
+  <script src="../js/ai-week2-content.js?v=20260911-fonts" defer></script>
+  <script src="../js/ai-week2.js?v=20260911-fonts" defer></script>
 </head>
 <body class="lecture-page">
   <a class="skip-link" href="#presentation">강의 내용으로 이동</a>
@@ -32,7 +34,7 @@
   <main id="presentation" tabindex="-1">
     <div class="lecture-toolbar">
       <div class="course-label"><a href="lectures.html">강의자료</a><span aria-hidden="true"> / </span><span>AI알고리즘</span><span class="week-label">2주차</span></div>
-      <div class="tool-actions"><button id="tocButton" aria-haspopup="dialog">목차</button><button id="notesButton" aria-expanded="false" aria-controls="teacherNotes">해설</button><button id="fullscreenButton">전체 화면</button><button id="printButton">인쇄</button></div>
+      <div class="tool-actions"><button id="tocButton" aria-haspopup="dialog">목차</button><button id="fullscreenButton">전체 화면</button><button id="printButton">인쇄</button></div>
     </div>
     <noscript><p>슬라이드 이동과 체험을 사용하려면 브라우저의 JavaScript를 허용해 주세요. <a href="../data/lectures/ai-week2.ipynb">실습 노트북 다운로드</a></p></noscript>
     <div id="stage" class="stage" aria-roledescription="슬라이드 쇼" aria-label="2주차 데이터 과학의 이해와 분석"></div>
@@ -43,7 +45,6 @@
     </nav>
     <div class="progress-track"><div id="progressFill"></div></div>
     <p class="keyboard-hint">키보드 ← →로 이동합니다. 입력 칸에서는 입력을 우선합니다. 체험 기록은 새로고침 전에 저장해 주세요.</p>
-    <aside id="teacherNotes" hidden><h2>수업 해설</h2><p id="notesText"></p></aside>
   </main>
   <dialog id="tocDialog" aria-labelledby="tocTitle"><div class="dialog-heading"><h2 id="tocTitle">2주차 목차</h2><button id="closeToc" aria-label="목차 닫기">닫기 ×</button></div><div id="tocContents"></div></dialog>
 </body>
