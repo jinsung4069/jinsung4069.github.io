@@ -2,51 +2,51 @@
   {
     "number": 2,
     "title": "컴퓨팅 시스템",
-    "count": 41
+    "count": 42
   },
   {
     "number": 3,
     "title": "데이터의 이해와 표현방법",
-    "count": 37
+    "count": 38
   },
   {
     "number": 4,
     "title": "데이터 구조와 분석",
-    "count": 38
+    "count": 39
   },
   {
     "number": 5,
     "title": "컴퓨팅 사고 기반의 문제 해결",
-    "count": 64
+    "count": 65
   },
   {
     "number": 6,
     "title": "알고리즘의 구조와 종류",
-    "count": 38
+    "count": 39
   },
   {
     "number": 7,
     "title": "프로그래밍 언어의 이해 및 프로그래밍 교육의 실제",
-    "count": 30
+    "count": 31
   },
   {
     "number": 8,
     "title": "인공지능의 이해, 역사",
-    "count": 77
+    "count": 78
   },
   {
     "number": 9,
     "title": "인공지능의 이해",
-    "count": 28
+    "count": 29
   },
   {
     "number": 10,
     "title": "디지털 윤리와 저작권",
-    "count": 58
+    "count": 59
   },
   {
     "number": 11,
     "title": "피지컬 컴퓨팅",
-    "count": 42
+    "count": 43
   }
 ]

@@ -1,8 +1,58 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="순차와 선택, 반복, 정렬과 탐색 알고리즘"><title>6. 알고리즘의 구조와 종류 | 컴퓨터과교육2 | 전인성</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/computer-education2.css"><script src="../js/main.js" defer></script></head><body><header><div class="header-inner"><a class="site-title" href="../index.html">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="../index.html">홈</a></li><li><a class="nav-text-link" href="../about.html">소개</a></li></ul></nav><button id="darkModeToggle" class="language-toggle" aria-label="어두운 화면 전환">화면 테마</button><button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button></div></div></header>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="순차와 선택, 반복, 정렬과 탐색 알고리즘"><title>6. 알고리즘의 구조와 종류 | 컴퓨터과교육2 | 전인성</title><link rel="icon" href="../favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/computer-education2.css?v=glass2"><script src="../js/main.js" defer></script></head><body><header><div class="header-inner"><a class="site-title" href="../index.html">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="../index.html">홈</a></li><li><a class="nav-text-link" href="../about.html">소개</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button><button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button></div></div></header>
 <main class="ce-viewer" data-chapter="6"><div class="ce-heading"><div><a href="lectures.html">강의자료</a> <span aria-hidden="true">›</span> <a href="computer-education2.html">컴퓨터과교육2</a><h1>6. 알고리즘의 구조와 종류</h1></div><a href="computer-education2.html">전체 강의 보기</a></div>
-<div class="ce-stage" id="ce-stage"><img id="ce-image" width="2000" height="1125" alt="강의 슬라이드" src="../images/lectures/computer-education2/6/001.webp"><button id="ce-media-jump" class="ce-media-jump" hidden>동영상 보기 ↓</button><span class="ce-loading" id="ce-loading">불러오는 중</span></div><div class="ce-progress"><span id="ce-progress"></span></div>
-<div class="ce-toolbar"><div class="ce-actions"><button id="ce-prev" aria-label="이전 슬라이드">← 이전</button><label class="ce-page"><span class="sr-only">페이지</span><input id="ce-page" type="number" min="1" max="38" value="1" aria-label="이동할 페이지"> / <span id="ce-total">38</span></label><button id="ce-next" aria-label="다음 슬라이드">다음 →</button></div><div class="ce-actions"><button id="ce-open-toc">목차 검색</button><button id="ce-text-toggle" aria-pressed="false" aria-controls="ce-text">본문 보기</button><button id="ce-lab-toggle" aria-pressed="false" aria-controls="ce-lab">직접 체험</button><button id="ce-zoom" aria-pressed="false">확대</button><button id="ce-fullscreen">전체 화면</button><button id="ce-print">인쇄</button></div></div>
-<p class="ce-help">← → 키로 이동, 모바일에서는 좌우로 밀기, 페이지 숫자로 바로 이동</p><p id="ce-status" class="sr-only" aria-live="polite"></p>
-<section class="ce-panel" id="ce-text" hidden aria-label="슬라이드 본문"></section><section class="ce-panel ce-lab" id="ce-lab" hidden aria-label="직접 체험"></section><section class="ce-panel" id="ce-media" hidden aria-label="동영상과 관련 링크"></section>
-<nav class="ce-after" aria-label="이전과 다음 강의"><a href="computer-education2-5.html">← 5. 컴퓨팅 사고 기반의 문제 해결</a><a href="computer-education2-7.html">7. 프로그래밍 언어의 이해 및 프로그래밍 교육의 실제 →</a></nav>
-<dialog class="ce-dialog" id="ce-dialog"><header><h2>목차 검색</h2><button id="ce-close-toc">닫기</button></header><label for="ce-search">제목 또는 본문으로 찾기</label><input id="ce-search" type="search" placeholder="검색어를 입력하세요"><div class="ce-toc" id="ce-toc"></div></dialog></main><noscript><p>슬라이드 이동과 체험에는 자바스크립트가 필요합니다.</p></noscript><script src="../js/computer-education2.js"></script><script src="../js/computer-education2-labs.js"></script></body></html>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ce-icon-chevron-left" viewBox="0 0 24 24">
+  <path d="m15 18-6-6 6-6" />
+</symbol><symbol id="ce-icon-chevron-right" viewBox="0 0 24 24">
+  <path d="m9 18 6-6-6-6" />
+</symbol><symbol id="ce-icon-list-filter" viewBox="0 0 24 24">
+  <path d="M2 5h20" />
+  <path d="M6 12h12" />
+  <path d="M9 19h6" />
+</symbol><symbol id="ce-icon-printer" viewBox="0 0 24 24">
+  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+  <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" />
+  <rect x="6" y="14" width="12" height="8" rx="1" />
+</symbol><symbol id="ce-icon-maximize" viewBox="0 0 24 24">
+  <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+  <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+  <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+  <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+</symbol><symbol id="ce-icon-minimize" viewBox="0 0 24 24">
+  <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+  <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+  <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+  <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+</symbol><symbol id="ce-icon-zoom-in" viewBox="0 0 24 24">
+  <circle cx="11" cy="11" r="8" />
+  <line x1="21" x2="16.65" y1="21" y2="16.65" />
+  <line x1="11" x2="11" y1="8" y2="14" />
+  <line x1="8" x2="14" y1="11" y2="11" />
+</symbol><symbol id="ce-icon-zoom-out" viewBox="0 0 24 24">
+  <circle cx="11" cy="11" r="8" />
+  <line x1="21" x2="16.65" y1="21" y2="16.65" />
+  <line x1="8" x2="14" y1="11" y2="11" />
+</symbol><symbol id="ce-icon-x" viewBox="0 0 24 24">
+  <path d="M18 6 6 18" />
+  <path d="m6 6 12 12" />
+</symbol><symbol id="ce-icon-link" viewBox="0 0 24 24">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+</symbol><symbol id="ce-icon-hash" viewBox="0 0 24 24">
+  <line x1="4" x2="20" y1="9" y2="9" />
+  <line x1="4" x2="20" y1="15" y2="15" />
+  <line x1="10" x2="8" y1="3" y2="21" />
+  <line x1="16" x2="14" y1="3" y2="21" />
+</symbol><symbol id="ce-icon-play" viewBox="0 0 24 24">
+  <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" />
+</symbol></defs></svg><div class="ce-stage" id="ce-stage"><div class="ce-viewport"><div class="ce-canvas"><img class="ce-slide-image" id="ce-image" width="2000" height="1125" alt="강의 슬라이드" aria-describedby="ce-slide-text" src="../images/lectures/computer-education2/6/001.webp"><div id="ce-media"></div><section class="ce-lab" id="ce-lab" hidden aria-label="체험 슬라이드"></section></div></div><button id="ce-prev" type="button" class="ce-glass ce-prev" aria-label="이전 슬라이드" data-tip="이전 슬라이드" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-chevron-left"></use></svg></button><button id="ce-next" type="button" class="ce-glass ce-next" aria-label="다음 슬라이드" data-tip="다음 슬라이드" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-chevron-right"></use></svg></button><div class="ce-toolbar" role="toolbar" aria-label="슬라이드 도구"><button id="ce-open-toc" type="button" class="ce-glass " aria-label="목차 검색" data-tip="목차 검색" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-list-filter"></use></svg></button><button id="ce-open-page" type="button" class="ce-glass " aria-label="페이지 이동" data-tip="페이지 이동" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-hash"></use></svg></button><button id="ce-open-links" type="button" class="ce-glass " aria-label="관련 링크" data-tip="관련 링크" hidden><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-link"></use></svg></button><button id="ce-zoom" type="button" class="ce-glass " aria-label="확대" data-tip="확대" aria-pressed="false"><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-zoom-in"></use></svg></button><button id="ce-fullscreen" type="button" class="ce-glass " aria-label="전체 화면" data-tip="전체 화면" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-maximize"></use></svg></button><button id="ce-print" type="button" class="ce-glass " aria-label="인쇄" data-tip="인쇄" ><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-printer"></use></svg></button></div><span class="ce-loading" id="ce-loading">불러오는 중</span></div><p id="ce-status" class="sr-only" aria-live="polite"></p><p id="ce-slide-text" class="sr-only"></p><span id="ce-page-label" class="sr-only"></span><nav class="ce-after" aria-label="이전과 다음 강의"><a href="computer-education2-5.html">← 5. 컴퓨팅 사고 기반의 문제 해결</a><a href="computer-education2-7.html">7. 프로그래밍 언어의 이해 및 프로그래밍 교육의 실제 →</a></nav>
+<dialog class="ce-dialog" id="ce-dialog"><header><h2>목차 검색</h2><button id="ce-close-toc" type="button" class="ce-glass " aria-label="닫기" data-tip="닫기" data-close><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-x"></use></svg></button></header><label for="ce-search">제목 또는 본문으로 찾기</label><input id="ce-search" type="search" placeholder="검색어를 입력하세요"><div class="ce-toc" id="ce-toc"></div></dialog>
+<dialog class="ce-dialog ce-small-dialog" id="ce-page-dialog"><header><h2>페이지 이동</h2><button id="ce-close-page" type="button" class="ce-glass " aria-label="닫기" data-tip="닫기" data-close><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-x"></use></svg></button></header><form id="ce-go-page"><label for="ce-page">전체 <span id="ce-total">39</span>쪽</label><input id="ce-page" type="number" min="1" max="39" value="1" required><button class="ce-submit" type="submit">이동</button></form></dialog>
+<dialog class="ce-dialog ce-small-dialog" id="ce-links-dialog"><header><h2>관련 링크</h2><button id="ce-close-links" type="button" class="ce-glass " aria-label="닫기" data-tip="닫기" data-close><svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-x"></use></svg></button></header><div class="ce-links" id="ce-links"></div></dialog></main><noscript><p>슬라이드 이동과 체험에는 자바스크립트가 필요합니다.</p></noscript><script src="../js/computer-education2-labs.js?v=glass2"></script><script src="../js/computer-education2.js?v=glass2"></script></body></html>

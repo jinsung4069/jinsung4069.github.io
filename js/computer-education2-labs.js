@@ -1,8 +1,7 @@
 (()=>{
  'use strict';
- const panel=document.getElementById('ce-lab'),toggle=document.getElementById('ce-lab-toggle');if(!panel||!toggle)return;
+ const panel=document.getElementById('ce-lab');if(!panel)return;
  const chapter=Number(document.querySelector('.ce-viewer').dataset.chapter),q=s=>panel.querySelector(s);
- toggle.addEventListener('click',()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-pressed',String(!panel.hidden));if(!panel.hidden)panel.scrollIntoView({behavior:'smooth',block:'nearest'})});
  const box=(title,intro,controls)=>{panel.innerHTML=`<h2>${title}</h2><p>${intro}</p><div class="ce-lab-controls">${controls}</div><div class="ce-result" id="lab-result" role="status" aria-live="polite"></div>`};
  const result=t=>q('#lab-result').textContent=t;
  if(chapter===2){
