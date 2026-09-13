@@ -595,3 +595,10 @@
         margin-top: 1rem;
     }
 }
+
+/* Allow responsive grid tracks and module labels to shrink to the viewport. */
+.database-shell .lab-layout > *, .database-shell .lab-workspace > *, .database-shell .module-tabs { min-width: 0; }
+.database-shell .module-tab { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 660px) {
+    .database-shell .lab-layout, .database-shell .module-tabs { grid-template-columns: minmax(0, 1fr); }
+}

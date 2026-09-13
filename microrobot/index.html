@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이크로 로봇 - 웹 버전</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #07090d;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+    </style>
+<link rel="canonical" href="https://jinsung4069.github.io/microrobot/">
+<script defer src="/js/clean-url.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // === 색상 및 유틸 ===
+        const COLOR_NAMES = ["blue", "yellow", "green", "red", "pink", "white"];
+        const KOREAN_LABELS = {
+          blue: "파랑",
+          yellow: "노랑",
+          green: "초록",
+          red: "빨강",
+          pink: "분홍",
+          white: "흰색",
+        };
+        const COLOR_HEX = {
+          blue: "#3498db",
+          yellow: "#f1c40f",
+          green: "#2ecc71",
+          red: "#e74c3c",
+          pink: "#e84393",
+          white: "#ecf0f1",
+        };
+
+        function textColorFor(bg) {
+          if (bg === "#f1c40f" || bg === "#ecf0f1") return "#111";
+          return "#fff";
+        }
+
+        // 보드 구조: 6x6, 각 숫자(1~6) 6회, 각 색상 6회, (num,color) 쌍은 정확히 1회씩 등장
+        function buildNumbersLayout() {
+          // 각 숫자를 정확히 6번씩 배치한 배열 생성
+          const numbers = [];
+          for (let num = 1; num <= 6; num++) {
+            for (let count = 0; count < 6; count++) {
+              numbers.push(num);
+            }
+          }
+
+          // Fisher-Yates 셔플로 완전히 랜덤하게 섞기
+          const shuffled = shuffle(numbers);
+
+          // 6x6 그리드로 변환
+          const rows = [];
+          for (let r = 0; r < 6; r++) {
+            rows.push(shuffled.slice(r * 6, (r + 1) * 6));
+          }
+
+          return rows;
+        }
+
+        function shuffle(arr) {
+          const a = [...arr];
+          for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+          }
+          return a;
+        }
+
+        function buildColorsLayout(numbers) {
+          // 아이디어: 각 숫자(1~6)가 등장하는 6개의 좌표에 6가지 색상을 정확히 한 번씩 배정
+          const coordsByNum = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+          for (let r = 0; r < 6; r++) {
+            for (let c = 0; c < 6; c++) {
+              coordsByNum[numbers[r][c]].push({ r, c });
+            }
+          }
+          const colors = Array.from({ length: 6 }, () => Array(6).fill("white"));
+          for (let n = 1; n <= 6; n++) {
+            const order = shuffle([...COLOR_NAMES]);
+            const spots = coordsByNum[n];
+            for (let i = 0; i < 6; i++) {
+              const { r, c } = spots[i];
+              colors[r][c] = order[i];
+            }
+          }
+          return colors;
+        }
+
+        function buildBoard() {
+          const numbers = buildNumbersLayout();
+          const colors = buildColorsLayout(numbers);
+          return Array.from({ length: 6 }, (_, r) =>
+            Array.from({ length: 6 }, (_, c) => ({ r, c, num: numbers[r][c], color: colors[r][c] }))
+          );
+        }
+
+        // 인접(이동 가능) 정점 계산: 같은 행/열 & (대상.num==현재.num || 대상.color==현재.color)
+        function neighbors(board, from) {
+          const out = [];
+          const R = from.r, C = from.c;
+          // 같은 행
+          for (let c = 0; c < 6; c++) {
+            if (c === C) continue;
+            const dst = board[R][c];
+            if (dst.num === from.num || dst.color === from.color) out.push(dst);
+          }
+          // 같은 열
+          for (let r = 0; r < 6; r++) {
+            if (r === R) continue;
+            const dst = board[r][C];
+            if (dst.num === from.num || dst.color === from.color) out.push(dst);
+          }
+          return out;
+        }
+
+        // BFS로 최단 경로 탐색
+        function bfs(board, start, goal) {
+          const key = (x) => `${x.r},${x.c}`;
+          const q = [];
+          const prev = new Map();
+          q.push(start);
+          prev.set(key(start), null);
+          for (let qi = 0; qi < q.length; qi++) {
+            const cur = q[qi];
+            if (cur.r === goal.r && cur.c === goal.c) {
+              // 경로 복원
+              const path = [];
+              let k = key(cur);
+              while (k) {
+                const [r, c] = k.split(",").map(Number);
+                path.push(board[r][c]);
+                k = prev.get(k) ?? null;
+              }
+              return path.reverse();
+            }
+            for (const nxt of neighbors(board, cur)) {
+              const nk = key(nxt);
+              if (!prev.has(nk)) {
+                prev.set(nk, key(cur));
+                q.push(nxt);
+              }
+            }
+          }
+          return null;
+        }
+
+        // 주사위 굴리기
+        function rollNumber() { return Math.floor(Math.random() * 6) + 1; }
+        function rollColor() { return COLOR_NAMES[Math.floor(Math.random() * 6)]; }
+
+        // 셀 키
+        const cellKey = (r, c) => `${r}-${c}`;
+
+        // === 시각 구성(영상 스타일) ===
+        const PIP_LAYOUT = {
+          1: [[1,1]],
+          2: [[0,0],[2,2]],
+          3: [[0,0],[1,1],[2,2]],
+          4: [[0,0],[0,2],[2,0],[2,2]],
+          5: [[0,0],[0,2],[1,1],[2,0],[2,2]],
+          6: [[0,0],[0,2],[1,0],[1,2],[2,0],[2,2]],
+        };
+
+        function PipTile({num, color}) {
+          // 주사위 같은 원형 눈금
+          const pipColor = COLOR_HEX[color];
+          const cells = Array.from({length:9}, (_,i)=>({r:Math.floor(i/3), c:i%3}));
+          const on = new Set(PIP_LAYOUT[num].map(([r,c])=>`${r}-${c}`));
+          return (
+            <div className="grid grid-cols-3 grid-rows-3 w-full h-full p-2 gap-1">
+              {cells.map(({r,c})=>{
+                const active = on.has(`${r}-${c}`);
+                return (
+                  <div key={`${r}-${c}`} className="rounded-full" style={{
+                    background: active? pipColor: "#0c0f14",
+                    boxShadow: active? `0 0 8px ${pipColor}`: undefined,
+                    border: active? "1px solid rgba(255,255,255,0.25)":"1px solid rgba(255,255,255,0.06)",
+                  }}/>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // 투명 로봇 말(글래스 느낌)
+        function PawnGlass({size=32}){
+          return (
+            <svg width={size} height={size} viewBox="0 0 64 64" aria-label="robot pawn">
+              <defs>
+                <radialGradient id="g" cx="50%" cy="30%" r="70%">
+                  <stop offset="0%" stopColor="rgba(255,255,255,0.95)"/>
+                  <stop offset="60%" stopColor="rgba(255,255,255,0.55)"/>
+                  <stop offset="100%" stopColor="rgba(255,255,255,0.25)"/>
+                </radialGradient>
+                <filter id="pawnShadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="2" dy="3" stdDeviation="3" floodColor="rgba(0,0,0,0.8)"/>
+                </filter>
+              </defs>
+              <g filter="url(#pawnShadow)">
+                <circle cx="32" cy="18" r="10" fill="url(#g)" stroke="rgba(255,255,255,0.9)"/>
+                <path d="M16 50c0-9 7-16 16-16s16 7 16 16v4H16v-4z" fill="url(#g)" stroke="rgba(255,255,255,0.85)"/>
+                <rect x="14" y="50" width="36" height="6" rx="3" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.7)"/>
+              </g>
+            </svg>
+          );
+        }
+
+        // 승점칩(코인)
+        function Coin({filled=false, size=18}){
+          return (
+            <svg width={size} height={size} viewBox="0 0 40 40" aria-label={filled?"coin":"empty-coin"}>
+              <defs>
+                <radialGradient id="cg" cx="50%" cy="35%" r="60%">
+                  <stop offset="0%" stopColor="#fff59d"/>
+                  <stop offset="60%" stopColor="#f4d03f"/>
+                  <stop offset="100%" stopColor="#d4ac0d"/>
+                </radialGradient>
+              </defs>
+              <circle cx="20" cy="20" r="17" fill={filled?"url(#cg)":"transparent"} stroke="#e1c16e" strokeWidth="3"/>
+            </svg>
+          );
+        }
+
+        // === (간단) 자체 테스트 ===
+        function runSelfTests(board) {
+          // 1) (num,color) 조합 유일성
+          const keys = new Set();
+          board.flat().forEach((c)=>{
+            const k = `${c.num}-${c.color}`;
+            console.assert(!keys.has(k), "중복 조합 발견", k);
+            keys.add(k);
+          });
+          console.assert(keys.size === 36, "조합 개수는 36이어야 함", keys.size);
+          // 2) 숫자/색 각각 6회씩
+          const numCount = {1:0,2:0,3:0,4:0,5:0,6:0};
+          const colCount = {blue:0,yellow:0,green:0,red:0,pink:0,white:0};
+          board.flat().forEach(c=>{ numCount[c.num]++; colCount[c.color]++; });
+          for (let n=1;n<=6;n++) console.assert(numCount[n]===6, `숫자${n} 개수=6`, numCount[n]);
+          for (const k of COLOR_NAMES) console.assert(colCount[k]===6, `색상 ${k} 개수=6`, colCount[k]);
+        }
+
+        // 컴포넌트 시작
+        function App() {
+          const [board, setBoard] = useState(() => buildBoard());
+          const flat = board.flat();
+
+          // 시작/목표/중간목표(전문가 모드)
+          const [start, setStart] = useState(null);
+          const [target, setTarget] = useState(null);
+          const [mid, setMid] = useState(null);
+          const [expert, setExpert] = useState(false);
+          const [showLabels, setShowLabels] = useState(false);
+          const [score, setScore] = useState(0);
+          const [claimed, setClaimed] = useState(false);
+          const [win, setWin] = useState(false);
+          const [usedAnswer, setUsedAnswer] = useState(false);
+
+          // 플레이 경로
+          const [path, setPath] = useState([]);
+          const current = path.length ? path[path.length - 1] : start;
+
+          const [par, setPar] = useState(null);
+          const [parPath, setParPath] = useState(null);
+          const [reseed, setReseed] = useState(0);
+
+          // 새 보드
+          function reshuffleBoard() {
+            const b = buildBoard();
+            setBoard(b);
+            setStart(null); setTarget(null); setMid(null);
+            setPath([]); setPar(null); setParPath(null);
+            setClaimed(false); setWin(false); setUsedAnswer(false);
+            setReseed((x) => x + 1);
+            // 테스트
+            runSelfTests(b);
+          }
+
+          // 특정 (num,color) 조합의 좌표 찾기
+          function cellBy(num, color) {
+            const found = flat.find((c) => c.num === num && c.color === color);
+            if (!found) throw new Error("해당 조합을 보드에서 찾을 수 없습니다.");
+            return found;
+          }
+
+          // 라운드 생성 (시작/목표/중간목표)
+          function newRound() {
+            let s, t, m = null;
+            s = cellBy(rollNumber(), rollColor());
+            do { t = cellBy(rollNumber(), rollColor()); } while (t.r === s.r && t.c === s.c);
+            if (expert) {
+              do { m = cellBy(rollNumber(), rollColor()); } while ((m.r === s.r && m.c === s.c) || (m.r === t.r && t.c === t.c));
+            }
+            setStart(s); setTarget(t); setMid(m);
+            setPath([s]);
+            setClaimed(false); setUsedAnswer(false);
+          }
+
+          // 이동 시 검증
+          function canMove(from, to) {
+            if (!from) return false;
+            if (from.r !== to.r && from.c !== to.c) return false; // 수평/수직만
+            if (!(from.num === to.num || from.color === to.color)) return false; // 숫자 또는 색 일치
+            if (path.find((p) => p.r === to.r && p.c === to.c)) return false; // 같은 칸 재방문 방지(선택 사항)
+            return true;
+          }
+
+          function onCellClick(dst) {
+            const from = current;
+            if (!from) return;
+            if (!canMove(from, dst)) return;
+            setPath((p) => [...p, dst]);
+          }
+
+          function undo() {
+            if (path.length > 1) setPath((p) => p.slice(0, -1));
+          }
+          function resetPath() {
+            if (start) setPath([start]);
+          }
+
+          // 목표 달성 여부
+          const reached = useMemo(() => {
+            if (!target || !current) return false;
+            if (!expert) return current.r === target.r && current.c === target.c;
+            const hasMid = mid ? path.some((x) => x.r === mid.r && x.c === mid.c) : true;
+            return hasMid && current.r === target.r && current.c === target.c;
+          }, [target, current, expert, mid, path]);
+
+          function claimPoint(){
+            if (claimed || !reached) return;
+            const next = score + 1;
+            setScore(next);
+            setClaimed(true);
+            if (next >= 5) setWin(true);
+          }
+
+          // 파(최단 이동 수) 계산
+          useEffect(() => {
+            if (!start || !target) { setPar(null); setParPath(null); return; }
+            const solveSimple = () => bfs(board, start, target);
+            const solveExpert = () => {
+              if (!mid) return null;
+              const p1 = bfs(board, start, mid);
+              if (!p1) return null;
+              const p2 = bfs(board, mid, target);
+              if (!p2) return null;
+              return [...p1, ...p2.slice(1)];
+            };
+
+            let best = expert ? solveExpert() : solveSimple();
+            if (!best) { setPar(null); setParPath(null); return; }
+            setPar(best.length - 1);
+            setParPath(best);
+          }, [board, start, target, expert, mid, reseed]);
+
+          // 스타일 함수 — 영상 느낌으로 테두리 색, 내부는 어두운 칩 + LED
+          function cellStyle(c) {
+            const borderCol = COLOR_HEX[c.color];
+            const isStart = !!start && c.r === start.r && c.c === start.c;
+            const isTarget = !!target && c.r === target.r && c.c === target.c;
+            const isMid = !!mid && c.r === mid.r && c.c === mid.c;
+            const isCurrent = !!current && c.r === current.r && c.c === current.c;
+            return {
+              background: "#0b0f14",
+              color: "#e5e7eb",
+              borderRadius: 10,
+              padding: 4,
+              border: `2px solid ${borderCol}`,
+              outline: isCurrent ? `3px solid #fff` : isTarget ? `2px dashed #fff` : isStart ? `2px solid #fff` : isMid ? `2px dotted #fff` : undefined,
+              cursor: canMove(current ?? start, c) ? "pointer" : "default",
+              userSelect: "none",
+              boxShadow: `inset 0 0 0 2px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.3)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+              aspectRatio: "1 / 1",
+            };
+          }
+
+          function Legend() {
+            return (
+              <div className="flex flex-wrap gap-2 text-xs items-center">
+                {COLOR_NAMES.map((c) => (
+                  <div key={c} className="flex items-center gap-1">
+                    <span style={{ width: 16, height: 16, background: COLOR_HEX[c], display: "inline-block", borderRadius: 4, border: "1px solid rgba(0,0,0,0.2)" }} />
+                    <span>{KOREAN_LABELS[c]}({c})</span>
+                  </div>
+                ))}
+              </div>
+            );
+          }
+
+          function Header() {
+            return (
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col gap-2">
+                  <h1 className="text-2xl font-bold">마이크로 로봇 — 웹 버전</h1>
+                  <p className="text-sm text-gray-300">규칙: 같은 <b>숫자</b> 또는 같은 <b>색</b>인 칸으로만 상하좌우로 이동합니다. (가까운 칸일 필요 없음)</p>
+                  <Legend />
+                </div>
+                <HUD />
+              </div>
+            );
+          }
+
+          function Controls() {
+            const sLab = start ? `${start.num} / ${KOREAN_LABELS[start.color]}` : "—";
+            const tLab = target ? `${target.num} / ${KOREAN_LABELS[target.color]}` : "—";
+            const mLab = mid ? `${mid.num} / ${KOREAN_LABELS[mid.color]}` : "—";
+            return (
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <button className="px-3 py-2 rounded-2xl bg-black text-white" onClick={newRound}>새 라운드</button>
+                <button className="px-3 py-2 rounded-2xl bg-gray-800 text-white" onClick={reshuffleBoard}>보드 섞기</button>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={expert} onChange={(e)=>{setExpert(e.target.checked); setMid(null);}} /> 전문가 모드(중간 목표 포함)
+                </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={showLabels} onChange={(e)=>setShowLabels(e.target.checked)} /> 라벨 표시
+                </label>
+                <div className="text-sm">시작: <b>{sLab}</b> / 목표: <b>{tLab}</b> {expert && <>/ 중간: <b>{mLab}</b></>}</div>
+                <div className="text-sm">이동 수: <b>{Math.max(0, path.length - 1)}</b>{par!==null && <span> / 최단: <b>{par}</b></span>}</div>
+                <button className="px-3 py-2 rounded-xl bg-gray-200 text-black" onClick={undo} disabled={path.length<=1}>되돌리기</button>
+                <button className="px-3 py-2 rounded-xl bg-gray-200 text-black" onClick={resetPath} disabled={!start}>다시</button>
+                {parPath && <button className="px-3 py-2 rounded-xl bg-indigo-600 text-white" onClick={()=>{setPath(parPath); setUsedAnswer(true);}}>정답 보기</button>}
+              </div>
+            );
+          }
+
+          function Board() {
+            return (
+              <div className="grid grid-cols-6 gap-2 select-none bg-[#0a0d12] p-3 rounded-xl shadow-inner">
+                {board.map((row, r) => row.map((cell, c) => {
+                  const isCurrent = !!current && cell.r===current.r && cell.c===current.c;
+                  const isTarget = !!target && cell.r===target.r && cell.c===target.c;
+                  return (
+                    <div key={cellKey(r,c)} style={cellStyle(cell)} onClick={() => onCellClick(cell)} aria-label={`${cell.num} ${cell.color}`} title={`${cell.num} / ${KOREAN_LABELS[cell.color]}`} className="aspect-square">
+                      <PipTile num={cell.num} color={cell.color} />
+                      {isCurrent && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <PawnGlass size={34} />
+                        </div>
+                      )}
+                      {isTarget && (
+                        <div className="absolute top-1 left-1">
+                          <Coin filled size={18} />
+                        </div>
+                      )}
+                      {showLabels && (
+                        <div className="absolute bottom-1 right-1 text-[10px] bg-black/50 px-1 py-[2px] rounded text-white font-semibold">
+                          {cell.num} {KOREAN_LABELS[cell.color]}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }))}
+              </div>
+            );
+          }
+
+          function Footer() {
+            return (
+              <div className="text-xs text-gray-400 mt-3">
+                <p>표시 — 굵은 실선: 현재, 점선: 시작, 파선: 목표, 점선점: 중간 목표</p>
+                <p>최단경로는 BFS. 라운드 승점칩을 획득하면 HUD 점수가 +1 되고 5점에 도달하면 승리합니다.</p>
+              </div>
+            );
+          }
+
+          function HUD(){
+            return (
+              <div className="flex flex-col items-end gap-1">
+                <div className="text-sm">승점칩</div>
+                <div className="flex items-center gap-1">
+                  {Array.from({length:5}).map((_,i)=> <Coin key={i} filled={i<score} />)}
+                </div>
+                <div className="text-xs text-gray-300">{score} / 5</div>
+              </div>
+            );
+          }
+
+          // 초기 라운드 자동 생성 (최초 1회) + 보드 테스트 1회 수행
+          useEffect(() => {
+            if (!start && !target) newRound();
+            runSelfTests(board);
+          }, []);
+
+          return (
+            <div className="p-4 max-w-5xl mx-auto text-white" style={{background:"#07090d"}}>
+              <Header />
+              <Controls />
+              <div className="mt-4">
+                <Board />
+              </div>
+              {reached && (
+                <div className="mt-3 p-3 bg-green-200/20 border border-green-400/50 rounded-xl text-green-200 flex items-center gap-3">
+                  <span className="font-semibold">목표 도달! 이동 {path.length - 1}회</span>
+                  {!usedAnswer && <button className="px-2 py-1 rounded bg-green-500 text-white text-sm" onClick={claimPoint} disabled={claimed}>승점칩 획득</button>}
+                  <button className="px-2 py-1 rounded bg-gray-700 text-white text-sm" onClick={newRound}>다음 라운드</button>
+                </div>
+              )}
+              {win && (
+                <div className="mt-3 p-4 bg-yellow-200/20 border border-yellow-400/50 rounded-xl text-yellow-200">
+                  <div className="font-bold text-lg mb-2">🎉 승리! 5점 달성</div>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-2 rounded bg-yellow-500 text-black" onClick={()=>{setScore(0); setWin(false);}}>점수 초기화</button>
+                    <button className="px-3 py-2 rounded bg-black text-white" onClick={()=>{setScore(0); setWin(false); reshuffleBoard(); newRound();}}>새 게임</button>
+                  </div>
+                </div>
+              )}
+              <Footer />
+            </div>
+          );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

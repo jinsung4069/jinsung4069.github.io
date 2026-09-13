@@ -1,177 +1,156 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Course menu supports hover, keyboard and touch on all shared headers.
-    const courseUrl = new URL('/pages/lectures.html', location.origin).href;
-    const weekUrl = new URL('ai-algorithm-week2.html', courseUrl).href;
-    function courseMenu(mobile) {
-        const li = document.createElement('li');
-        li.className = 'nav-item course-nav' + (mobile ? ' course-nav-mobile' : '');
-        li.innerHTML = `<button class="nav-text-link course-trigger" aria-expanded="false"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" hidden><a class="course-heading" href="${courseUrl}">AI알고리즘</a><a href="${weekUrl}">2주차 데이터 과학의 이해와 분석</a><a class="course-heading" href="${new URL('computer-education2.html', courseUrl).href}">컴퓨터과교육2</a><a href="${new URL('computer-education2.html', courseUrl).href}">2. 컴퓨팅 시스템부터 11. 피지컬 컴퓨팅까지</a></div>`;
-        const button = li.querySelector('button'), panel = li.querySelector('.course-dropdown');
-        const setOpen = open => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
-        button.addEventListener('click', () => setOpen(panel.hidden));
-        if (!mobile) {
-            li.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover) and (min-width: 769px)').matches) setOpen(true); });
-            li.addEventListener('mouseleave', () => { if (!li.contains(document.activeElement)) setOpen(false); });
-        }
-        li.addEventListener('focusout', () => setTimeout(() => { if (!li.contains(document.activeElement)) setOpen(false); }, 0));
-        li.addEventListener('keydown', e => { if (e.key === 'Escape') { setOpen(false); button.focus(); e.stopPropagation(); } });
-        document.addEventListener('click', e => { if (!li.contains(e.target)) setOpen(false); });
-        return li;
-    }
-    document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(ul => {
-        if (!ul.querySelector('.course-nav')) ul.appendChild(courseMenu(!!ul.closest('#mobileNav')));
-    });
-
+document.addEventListener('DOMContentLoaded', function () {
+    const preferences = window.sitePreferences;
+    const bilingual = document.documentElement.dataset.bilingual === 'true';
     const languageToggle = document.getElementById('languageToggle');
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const mobileNav = document.getElementById('mobileNav');
-
-    // Language toggle functionality
-    if (languageToggle) {
-        languageToggle.addEventListener('click', () => {
-            const currentLang = document.documentElement.lang;
-            const newLang = currentLang === 'ko' ? 'en' : 'ko';
-            setLanguage(newLang);
-        });
-    }
-
-    // Mobile menu toggle
-    if (mobileMenuToggle && mobileNav) {
-        mobileMenuToggle.addEventListener('click', () => {
-            mobileNav.classList.toggle('open');
-            mobileMenuToggle.setAttribute('aria-expanded', String(mobileNav.classList.contains('open')));
-            const icon = mobileMenuToggle.querySelector('i');
-            if (icon) {
-                icon.className = mobileNav.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
-            }
-        });
-
-        // Close mobile nav on link click
-        mobileNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileNav.classList.remove('open');
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                const icon = mobileMenuToggle.querySelector('i');
-                if (icon) icon.className = 'fas fa-bars';
-            });
-        });
-    }
-
-    // Legacy mobile menu support (for sub-pages using mainNav)
     const mainNav = document.getElementById('mainNav');
-    if (mobileMenuToggle && mainNav && !mobileNav) {
-        mobileMenuToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('mobile-open');
-            mobileMenuToggle.setAttribute('aria-expanded', String(mainNav.classList.contains('mobile-open')));
-            const icon = mobileMenuToggle.querySelector('i');
-            if (icon) {
-                icon.className = mainNav.classList.contains('mobile-open') ? 'fas fa-times' : 'fas fa-bars';
-            } else {
-                mobileMenuToggle.textContent = mainNav.classList.contains('mobile-open') ? '\u2715' : '\u2630';
+    const mobilePanel = mobileNav || mainNav;
+    const mobileClass = mobileNav ? 'open' : 'mobile-open';
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+    let manualTheme = preferences.read('theme');
+    if (!['light', 'dark'].includes(manualTheme)) manualTheme = null;
+
+    function label(ko, en) { return document.documentElement.lang === 'en' ? en : ko; }
+    function closeCourses() {
+        document.querySelectorAll('.course-nav').forEach(item => {
+            item.querySelector('.course-dropdown').hidden = true;
+            item.querySelector('.course-trigger').setAttribute('aria-expanded', 'false');
+        });
+    }
+    function courseMenu(mobile) {
+        const item = document.createElement('li');
+        item.className = 'nav-item course-nav' + (mobile ? ' course-nav-mobile' : '');
+        const id = mobile ? 'mobile-course-links' : 'desktop-course-links';
+        item.innerHTML = `<button type="button" class="nav-text-link course-trigger" aria-expanded="false" aria-controls="${id}"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" id="${id}" hidden><a class="course-heading" href="/lectures/"><span class="lang-content lang-ko active">강의자료 전체 보기</span><span class="lang-content lang-en">All courses</span></a><a href="/ai-algorithm-week2/"><span class="lang-content lang-ko active">AI알고리즘, 2주차</span><span class="lang-content lang-en">AI Algorithms, Week 2</span></a><a href="/computer-education2/"><span class="lang-content lang-ko active">컴퓨터과교육2</span><span class="lang-content lang-en">Computer Education 2</span></a></div>`;
+        const button = item.querySelector('button');
+        const panel = item.querySelector('.course-dropdown');
+        let openedByHover = false;
+        function setOpen(open) {
+            panel.hidden = !open;
+            button.setAttribute('aria-expanded', String(open));
+            if (!open) openedByHover = false;
+        }
+        button.addEventListener('click', () => {
+            setOpen(openedByHover || panel.hidden);
+            openedByHover = false;
+        });
+        if (!mobile) {
+            item.addEventListener('mouseenter', () => {
+                if (matchMedia('(hover: hover) and (min-width: 769px)').matches && panel.hidden) {
+                    setOpen(true);
+                    openedByHover = true;
+                }
+            });
+            item.addEventListener('mouseleave', () => {
+                if (!item.contains(document.activeElement)) setOpen(false);
+            });
+        }
+        item.addEventListener('focusout', () => setTimeout(() => {
+            if (!item.contains(document.activeElement)) setOpen(false);
+        }, 0));
+        item.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !panel.hidden) {
+                setOpen(false); button.focus(); event.preventDefault(); event.stopPropagation();
+            }
+            if (event.target === button && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+                setOpen(true); openedByHover = false;
+                const links = panel.querySelectorAll('a');
+                links[event.key === 'ArrowDown' ? 0 : links.length - 1].focus();
+                event.preventDefault();
             }
         });
+        document.addEventListener('click', event => { if (!item.contains(event.target)) setOpen(false); });
+        return item;
     }
+    document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(list => {
+        if (!list.querySelector('.course-nav')) list.appendChild(courseMenu(!!list.closest('#mobileNav')));
+    });
 
-    // Dark mode toggle functionality
-    if (darkModeToggle) {
-        darkModeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
+    function setMobileOpen(open, restoreFocus = false) {
+        if (!mobileMenuToggle || !mobilePanel) return;
+        mobilePanel.classList.toggle(mobileClass, open);
+        mobileMenuToggle.setAttribute('aria-expanded', String(open));
+        mobileMenuToggle.setAttribute('aria-controls', mobilePanel.id);
+        mobileMenuToggle.setAttribute('aria-label', open ? label('메뉴 닫기', 'Close menu') : label('메뉴 열기', 'Open menu'));
+        const icon = mobileMenuToggle.querySelector('i');
+        if (icon) icon.className = open ? 'fas fa-times' : 'fas fa-bars';
+        else mobileMenuToggle.textContent = open ? '✕' : '☰';
+        if (!open) closeCourses();
+        if (restoreFocus) mobileMenuToggle.focus();
+    }
+    if (mobileMenuToggle && mobilePanel) {
+        setMobileOpen(false);
+        mobileMenuToggle.addEventListener('click', () => setMobileOpen(!mobilePanel.classList.contains(mobileClass)));
+        mobilePanel.addEventListener('click', event => {
+            if (event.target.closest('a')) setMobileOpen(false);
         });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && mobilePanel.classList.contains(mobileClass)) {
+                setMobileOpen(false, true); event.preventDefault();
+            }
+        });
+        document.addEventListener('click', event => {
+            if (mobilePanel.classList.contains(mobileClass) && !mobilePanel.contains(event.target) && !mobileMenuToggle.contains(event.target)) setMobileOpen(false);
+        });
+        matchMedia('(min-width: 769px)').addEventListener('change', event => { if (event.matches) setMobileOpen(false); });
     }
 
-    function setLanguage(lang) {
+    function setLanguage(requested, persist = false) {
+        const lang = bilingual && requested === 'en' ? 'en' : 'ko';
         document.documentElement.lang = lang;
-        localStorage.setItem('language', lang);
-
-        document.querySelectorAll('.lang-content').forEach(el => {
-            if (el.classList.contains('lang-' + lang)) {
-                el.classList.add('active');
-            } else {
-                el.classList.remove('active');
-            }
+        if (persist && bilingual) preferences.write('language', lang);
+        document.querySelectorAll('.lang-content').forEach(element => {
+            element.classList.toggle('active', element.classList.contains('lang-' + lang));
         });
-
         if (languageToggle) {
             languageToggle.textContent = lang === 'ko' ? 'ENG' : 'KOR';
+            languageToggle.setAttribute('aria-label', lang === 'ko' ? 'Switch to English' : '한국어로 전환');
         }
-
-        // data-title-ko/en\uc774 \uc788\ub294 \ud398\uc774\uc9c0\ub9cc \uc81c\ubaa9\uc744 \uc5b8\uc5b4\uc5d0 \ub9de\ucdb0 \uad50\uccb4 (\uc5c6\uc73c\uba74 \uc815\uc801 <title> \uc720\uc9c0)
-        const newTitle = lang === 'ko' ? document.body?.dataset.titleKo : document.body?.dataset.titleEn;
-        if (newTitle) document.title = newTitle;
-    }
-
-    function setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-
-        if (darkModeToggle) {
-            darkModeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        const title = lang === 'ko' ? document.body.dataset.titleKo : document.body.dataset.titleEn;
+        if (title) document.title = title;
+        if (mobileMenuToggle && mobilePanel) {
+            setMobileOpen(mobilePanel.classList.contains(mobileClass));
         }
+    }
+    if (languageToggle) languageToggle.addEventListener('click', () => {
+        setLanguage(document.documentElement.lang === 'ko' ? 'en' : 'ko', true);
+    });
 
-        // Update meta theme-color
-        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
-        if (!metaThemeColor) {
-            metaThemeColor = document.createElement('meta');
-            metaThemeColor.name = 'theme-color';
-            document.head.appendChild(metaThemeColor);
+    function setTheme(theme, animate = false) {
+        document.documentElement.dataset.theme = theme;
+        if (darkModeToggle) darkModeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta); }
+        meta.content = theme === 'dark' ? '#1a1d23' : '#ffffff';
+        if (animate && !reducedMotion.matches) {
+            document.body.classList.add('theme-transition');
+            setTimeout(() => document.body.classList.remove('theme-transition'), 300);
         }
-        metaThemeColor.content = theme === 'dark' ? '#1a1d23' : '#ffffff';
-
-        // Add smooth transition class
-        document.body.classList.add('theme-transition');
-        setTimeout(() => {
-            document.body.classList.remove('theme-transition');
-        }, 300);
     }
-
-    function getPreferredTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) return savedTheme;
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-        return 'light';
-    }
-
-    // Set initial language
-    const savedLang = localStorage.getItem('language') || 'ko';
-    setLanguage(savedLang);
-
-    // Set initial theme
-    const preferredTheme = getPreferredTheme();
-    setTheme(preferredTheme);
-
-    // Listen for system theme changes
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) {
-                setTheme(e.matches ? 'dark' : 'light');
-            }
-        });
-    }
-
-    // Animate progress bars on scroll
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const bars = entry.target.querySelectorAll('.progress-bar');
-                bars.forEach(bar => {
-                    const width = bar.style.width;
-                    bar.style.width = '0%';
-                    setTimeout(() => {
-                        bar.style.width = width;
-                    }, 100);
-                });
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.3 });
+    if (darkModeToggle) darkModeToggle.addEventListener('click', () => {
+        manualTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        preferences.write('theme', manualTheme);
+        setTheme(manualTheme, true);
+    });
+    setLanguage(preferences.read('language'));
+    setTheme(preferences.theme());
+    systemTheme.addEventListener('change', event => { if (!manualTheme) setTheme(event.matches ? 'dark' : 'light'); });
 
     const skillsSection = document.querySelector('.skills-section');
-    if (skillsSection) {
+    if (skillsSection && !reducedMotion.matches && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.querySelectorAll('.progress-bar').forEach(bar => {
+                    const width = bar.style.width; bar.style.width = '0%';
+                    setTimeout(() => { bar.style.width = width; }, 100);
+                });
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.3 });
         observer.observe(skillsSection);
     }
 });

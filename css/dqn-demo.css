@@ -90,3 +90,9 @@
 .algorithm-steps {
     margin: 20px 0;
 }
+
+@media (max-width: 760px) {
+    .game-area { flex-direction: column; }
+    .game-canvas-container, .game-area .controls { min-width: 0; width: 100%; }
+    .game-canvas { width: min(400px, 100%); height: auto; }
+}

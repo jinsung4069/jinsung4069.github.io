@@ -25,3 +25,9 @@
 
 .ce-bits{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));width:min(680px,100%)}.ce-bits button{min-width:0}
 @media(max-width:700px){.ce-bits{gap:4px}.ce-bits button{padding:8px 2px;font-size:12px}.ce-stage:has(.ce-video-frame) .ce-prev,.ce-stage:has(.ce-video-frame) .ce-next{top:8px}}
+
+/* Edge tooltips must stay inside the slide at phone widths. */
+@media (max-width: 700px) {
+    .ce-prev::after { left: 0; transform: none; }
+    .ce-next::after { left: auto; right: 0; transform: none; }
+}

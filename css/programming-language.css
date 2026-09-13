@@ -599,3 +599,10 @@
         font-size: 0.86rem;
     }
 }
+
+/* Allow responsive grid tracks and module labels to shrink to the viewport. */
+.programming-shell .lab-layout > *, .programming-shell .lab-workspace > *, .programming-shell .module-tabs { min-width: 0; }
+.programming-shell .module-tab { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 660px) {
+    .programming-shell .lab-layout, .programming-shell .module-tabs { grid-template-columns: minmax(0, 1fr); }
+}

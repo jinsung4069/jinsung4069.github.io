@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html data-bilingual="true" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js/preferences.js?v=20260913a"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DQN 알고리즘 데모</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css?v=20260913a">
+    <link rel="stylesheet" href="/css/dqn-demo.css?v=20260913a">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<link rel="canonical" href="https://jinsung4069.github.io/dqn-demo/">
+<script defer src="/js/clean-url.js"></script>
+</head>
+<body data-title-ko="DQN 알고리즘 데모 - 전인성" data-title-en="DQN Algorithm Demo - Inseong Jeon">
+    <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a>
+    <header>
+        <div class="header-inner">
+            <a href="/" class="site-title">
+                <span class="lang-content lang-ko active">전인성</span>
+                <span class="lang-content lang-en">Inseong Jeon</span>
+            </a>
+            <div class="header-right">
+                <nav class="site-nav" id="mainNav">
+                    <ul>
+                        <li class="nav-item"><a class="nav-text-link" href="/">
+                            <span class="lang-content lang-ko active">홈</span>
+                            <span class="lang-content lang-en">Home</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="/about/">
+                            <span class="lang-content lang-ko active">소개</span>
+                            <span class="lang-content lang-en">About</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="/#projects">
+                            <span class="lang-content lang-ko active">프로젝트</span>
+                            <span class="lang-content lang-en">Projects</span>
+                        </a></li>
+                        <li class="nav-item"><a class="nav-text-link" href="/#contact">
+                            <span class="lang-content lang-ko active">연락처</span>
+                            <span class="lang-content lang-en">Contact</span>
+                        </a></li>
+                    </ul>
+                </nav>
+                <div class="header-controls">
+                    <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Dark mode toggle">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button id="languageToggle" class="language-toggle">ENG</button>
+                </div>
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="/">
+                <span class="lang-content lang-ko active">홈</span>
+                <span class="lang-content lang-en">Home</span>
+            </a></li>
+            <li><a href="/about/">
+                <span class="lang-content lang-ko active">소개</span>
+                <span class="lang-content lang-en">About</span>
+            </a></li>
+            <li><a href="/#projects">
+                <span class="lang-content lang-ko active">프로젝트</span>
+                <span class="lang-content lang-en">Projects</span>
+            </a></li>
+            <li><a href="/#contact">
+                <span class="lang-content lang-ko active">연락처</span>
+                <span class="lang-content lang-en">Contact</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+        <section class="hero">
+            <div class="lang-content lang-ko active">
+                <h1>DQN (Deep Q-Network) 알고리즘 데모</h1>
+            </div>
+            <div class="lang-content lang-en">
+                <h1>DQN (Deep Q-Network) Algorithm Demo</h1>
+            </div>
+        </section>
+
+        <div class="demo-container">
+            <div class="explanation project-card">
+                <div class="lang-content lang-ko active">
+                    <h2>DQN이란?</h2>
+                    <p><strong>Deep Q-Network (DQN)</strong>은 강화학습의 한 방법으로, 딥러닝과 Q-Learning을 결합한 알고리즘입니다. 
+                    에이전트가 환경과 상호작용하면서 보상을 최대화하는 행동을 학습합니다.</p>
+                    <h3>주요 특징:</h3>
+                    <ul>
+                        <li><strong>Experience Replay</strong>: 과거 경험을 저장하고 무작위로 샘플링하여 학습</li>
+                        <li><strong>Target Network</strong>: 안정적인 학습을 위한 별도의 타겟 네트워크 사용</li>
+                        <li><strong>ε-greedy 정책</strong>: 탐험과 활용의 균형을 위한 행동 선택 전략</li>
+                    </ul>
+                </div>
+                <div class="lang-content lang-en">
+                    <h2>What is DQN?</h2>
+                    <p><strong>Deep Q-Network (DQN)</strong> is a reinforcement learning method that combines deep learning with Q-Learning. 
+                    The agent learns to take actions that maximize rewards through interaction with the environment.</p>
+                    <h3>Key Features:</h3>
+                    <ul>
+                        <li><strong>Experience Replay</strong>: Stores past experiences and samples them randomly for learning.</li>
+                        <li><strong>Target Network</strong>: Uses a separate target network for stable learning.</li>
+                        <li><strong>ε-greedy Policy</strong>: An action selection strategy to balance exploration and exploitation.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="game-canvas-container">
+                    <canvas id="gameCanvas" class="game-canvas" width="400" height="400"></canvas>
+                    <p class="lang-content lang-ko active">간단한 격자 게임에서 DQN 에이전트가 목표에 도달하는 과정을 관찰하세요.</p>
+                    <p class="lang-content lang-en">Watch the DQN agent reach the goal in a simple grid game.</p>
+                </div>
+
+                <div class="controls project-card">
+                    <div class="control-group">
+                        <label class="lang-content lang-ko active">게임 상태</label>
+                        <label class="lang-content lang-en">Game State</label>
+                        <button id="startBtn" class="lang-content lang-ko active">학습 시작</button>
+                        <button id="startBtnEn" class="lang-content lang-en">Start Training</button>
+                        <button id="pauseBtn" class="lang-content lang-ko active" disabled>일시정지</button>
+                        <button id="pauseBtnEn" class="lang-content lang-en" disabled>Pause</button>
+                        <button id="resetBtn" class="lang-content lang-ko active">리셋</button>
+                        <button id="resetBtnEn" class="lang-content lang-en">Reset</button>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="learningRate">학습률 (α)</label>
+                        <input type="range" id="learningRate" min="0.01" max="0.5" step="0.01" value="0.1">
+                        <span id="learningRateValue">0.1</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="epsilon">초기 탐험률 (ε, 에피소드마다 감쇠)</label>
+                        <input type="range" id="epsilon" min="0" max="1" step="0.01" value="0.9">
+                        <span id="epsilonValue">0.9</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="discountFactor">할인인자 (γ)</label>
+                        <input type="range" id="discountFactor" min="0.1" max="1" step="0.01" value="0.95">
+                        <span id="discountFactorValue">0.95</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="lang-content lang-ko active">학습 속도</label>
+                        <label class="lang-content lang-en">Training Speed</label>
+                        <select id="speed">
+                            <option value="50" class="lang-content lang-ko active">매우 빠름</option>
+                            <option value="50" class="lang-content lang-en">Very Fast</option>
+                            <option value="100" class="lang-content lang-ko active">빠름</option>
+                            <option value="100" class="lang-content lang-en">Fast</option>
+                            <option value="200" selected class="lang-content lang-ko active">보통</option>
+                            <option value="200" selected class="lang-content lang-en">Normal</option>
+                            <option value="500" class="lang-content lang-ko active">느림</option>
+                            <option value="500" class="lang-content lang-en">Slow</option>
+                            <option value="1000" class="lang-content lang-ko active">매우 느림</option>
+                            <option value="1000" class="lang-content lang-en">Very Slow</option>
+                        </select>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="lang-content lang-ko active">에피소드</div>
+                            <div class="lang-content lang-en">Episode</div>
+                            <div class="stat-value" id="episode">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="lang-content lang-ko active">총 보상</div>
+                            <div class="lang-content lang-en">Total Reward</div>
+                            <div class="stat-value" id="totalReward">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="lang-content lang-ko active">평균 보상</div>
+                            <div class="lang-content lang-en">Avg Reward</div>
+                            <div class="stat-value" id="avgReward">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="lang-content lang-ko active">성공률</div>
+                            <div class="lang-content lang-en">Success Rate</div>
+                            <div class="stat-value" id="successRate">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="algorithm-steps project-card">
+                <div class="lang-content lang-ko active">
+                    <h2>DQN 알고리즘 단계</h2>
+                    <ol>
+                        <li><strong>환경 관찰</strong>: 현재 상태 s를 관찰합니다</li>
+                        <li><strong>행동 선택</strong>: ε-greedy 정책으로 행동 a를 선택합니다</li>
+                        <li><strong>행동 실행</strong>: 환경에서 행동을 실행하여 보상 r과 다음 상태 s'를 얻습니다</li>
+                        <li><strong>경험 저장</strong>: (s, a, r, s') 튜플을 경험 버퍼에 저장합니다</li>
+                        <li><strong>배치 학습</strong>: 경험 버퍼에서 배치를 샘플링하여 Q-네트워크를 업데이트합니다</li>
+                        <li><strong>타겟 업데이트</strong>: 주기적으로 타겟 네트워크를 업데이트합니다</li>
+                    </ol>
+                </div>
+                <div class="lang-content lang-en">
+                    <h2>DQN Algorithm Steps</h2>
+                    <ol>
+                        <li><strong>Observe Environment</strong>: Observe the current state s.</li>
+                        <li><strong>Choose Action</strong>: Choose action a using the ε-greedy policy.</li>
+                        <li><strong>Execute Action</strong>: Execute the action in the environment to get reward r and next state s'.</li>
+                        <li><strong>Store Experience</strong>: Store the (s, a, r, s') tuple in the experience buffer.</li>
+                        <li><strong>Batch Learning</strong>: Sample a batch from the experience buffer to update the Q-network.</li>
+                        <li><strong>Update Target</strong>: Periodically update the target network.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-name">
+                    <span class="lang-content lang-ko active">전인성</span>
+                    <span class="lang-content lang-en">Inseong Jeon</span>
+                </div>
+                <nav class="footer-nav">
+                    <ul>
+                        <li><a href="https://github.com/jinsung4069" title="Github" target="_blank"><i class="fab fa-github"></i></a></li>
+                        <li><a href="mailto:jinsung4069@gnue.ac.kr" title="Email"><i class="fas fa-envelope"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <span class="lang-content lang-ko active">&copy; 2026 전인성. All rights reserved.</span>
+                <span class="lang-content lang-en">&copy; 2026 Inseong Jeon. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js?v=20260913a"></script>
+    <script src="/js/dqn-demo.js"></script>
+</body>
+</html>

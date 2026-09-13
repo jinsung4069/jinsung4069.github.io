@@ -32,7 +32,7 @@
  }else if(chapter===9){
   box('분류 임계값 바꾸기','가상의 모델이 양성 점수 0.72를 출력했습니다. 임계값을 바꾸고 최종 분류가 어떻게 달라지는지 확인하세요.','<label>임계값 <input id="threshold" type="range" min="0" max="100" value="50"></label>');
   const draw=()=>{const threshold=Number(q('#threshold').value)/100;result(`모델의 양성 점수: 0.72\n임계값: ${threshold.toFixed(2)}\n분류 결과: ${0.72>=threshold?'양성':'음성'}\n점수가 임계값 이상이면 양성으로 분류합니다.`)};q('#threshold').oninput=draw;draw();
-  const a=document.createElement('a');a.href='ai-understanding-lab.html';a.textContent='추가 실습: 데이터로 인공지능 학습시키기 →';panel.append(a);
+  const a=document.createElement('a');a.href='/ai-understanding-lab/';a.textContent='추가 실습: 데이터로 인공지능 학습시키기 →';panel.append(a);
  }else if(chapter===10){
   box('공유 전 정보 가리기','가상의 게시물에서 이름과 연락처를 숨겨 보세요. 아래 자료는 체험을 위한 예시입니다.','<label><input id="name" type="checkbox" checked> 이름 숨기기</label><label><input id="contact" type="checkbox" checked> 연락처 숨기기</label>');
   const draw=()=>result(`이름: ${q('#name').checked?'익명':'가상 학생 A'}\n연락처: ${q('#contact').checked?'비공개':'student@example.invalid'}\n내용: 오늘 만든 프로그램의 화면을 공유합니다.`);q('#name').onchange=draw;q('#contact').onchange=draw;draw();

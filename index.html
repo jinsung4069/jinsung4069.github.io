@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html data-bilingual="true" lang="ko">
 
 <head>
     <meta charset="UTF-8">
+    <script src="/js/preferences.js?v=20260913a"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="전인성 - 교육학박사(컴퓨터교육). AI교육, 소프트웨어교육, 학습분석 연구자. Portfolio & CV.">
@@ -18,36 +19,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <script>
-        // 첫 페인트 전에 저장된 테마/언어를 적용해 화면 깜빡임(FOUC) 방지
-        (function () {
-            var t = localStorage.getItem('theme');
-            if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
-            if (t) document.documentElement.setAttribute('data-theme', t);
-            var l = localStorage.getItem('language');
-            if (l) document.documentElement.lang = l;
-        })();
-    </script>
+    <link rel="stylesheet" href="/css/style.css?v=20260913a">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<script defer src="/js/clean-url.js"></script>
 </head>
 
 <body data-title-ko="전인성 - 포트폴리오 & CV" data-title-en="Inseong Jeon - Portfolio & CV">
+    <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a>
     <!-- Header -->
     <header>
         <div class="header-inner">
-            <a href="index.html" class="site-title">
+            <a href="/" class="site-title">
                 <span class="lang-content lang-ko active">전인성</span>
                 <span class="lang-content lang-en">Inseong Jeon</span>
             </a>
             <div class="header-right">
                 <nav class="site-nav" id="mainNav">
                     <ul>
-                        <li class="nav-item"><a class="nav-text-link active" href="index.html">
+                        <li class="nav-item"><a class="nav-text-link active" href="/">
                             <span class="lang-content lang-ko active">홈</span>
                             <span class="lang-content lang-en">Home</span>
                         </a></li>
-                        <li class="nav-item"><a class="nav-text-link" href="about.html">
+                        <li class="nav-item"><a class="nav-text-link" href="/about/">
                             <span class="lang-content lang-ko active">소개</span>
                             <span class="lang-content lang-en">About</span>
                         </a></li>
@@ -83,11 +77,11 @@
     <!-- Mobile Nav -->
     <nav class="mobile-nav" id="mobileNav">
         <ul>
-            <li><a href="index.html">
+            <li><a href="/">
                 <span class="lang-content lang-ko active">홈</span>
                 <span class="lang-content lang-en">Home</span>
             </a></li>
-            <li><a href="about.html">
+            <li><a href="/about/">
                 <span class="lang-content lang-ko active">소개</span>
                 <span class="lang-content lang-en">About</span>
             </a></li>
@@ -103,14 +97,14 @@
     </nav>
 
     <!-- Page Content -->
-    <div class="page-content">
+    <main class="page-content" id="main-content" tabindex="-1">
         <div class="container">
             <!-- Landing Hero -->
             <div class="landing-hero">
                 <div class="landing-hero-bg">
                     <div class="landing-hero-content">
                         <div class="avatar">
-                            <img src="images/profile.webp" alt="Inseong Jeon" width="200" height="200" style="border-radius: 50%; object-fit: cover;">
+                            <img src="/images/profile.webp" alt="Inseong Jeon" width="200" height="200" style="border-radius: 50%; object-fit: cover;">
                         </div>
                         <h1 class="landing-name">
                             <span class="lang-content lang-ko active">전인성</span>
@@ -131,7 +125,7 @@
             <!-- Navigation Cards -->
             <div class="landing-nav-section">
                 <div class="landing-nav-grid">
-                    <a href="about.html" class="landing-nav-card">
+                    <a href="/about/" class="landing-nav-card">
                         <div class="landing-nav-icon"><i class="fas fa-user-graduate"></i></div>
                         <h3>
                             <span class="lang-content lang-ko active">소개 / CV</span>
@@ -178,7 +172,7 @@
                         <span class="lang-content lang-en">Interactive Projects</span>
                     </h2>
                     <div class="project-grid">
-                        <a href="pages/ai-understanding-lab.html" class="project-card-link">
+                        <a href="/ai-understanding-lab/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-brain"></i></div>
                                 <h3>
@@ -191,7 +185,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="astar-pathfinding" class="project-card-link">
+                        <a href="/astar-pathfinding/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-route"></i></div>
                                 <h3>
@@ -204,7 +198,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/dqn-demo.html" class="project-card-link">
+                        <a href="/dqn-demo/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-brain"></i></div>
                                 <h3>
@@ -217,7 +211,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/database-lab.html" class="project-card-link">
+                        <a href="/database-lab/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-database"></i></div>
                                 <h3>
@@ -230,7 +224,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/programming-language.html" class="project-card-link">
+                        <a href="/programming-language/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-laptop-code"></i></div>
                                 <h3>
@@ -243,7 +237,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/machinelearning.html" class="project-card-link">
+                        <a href="/machinelearning/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-chart-line"></i></div>
                                 <h3>
@@ -256,7 +250,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/orange3-widget-lab.html" class="project-card-link">
+                        <a href="/orange3-widget-lab/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon" style="color: #f58220;"><i class="fas fa-diagram-project"></i></div>
                                 <h3>
@@ -269,7 +263,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/webcam-classifier.html" class="project-card-link">
+                        <a href="/webcam-classifier/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-camera-retro"></i></div>
                                 <h3>
@@ -282,7 +276,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="AlligatorChess" class="project-card-link">
+                        <a href="/alligator-chess/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-chess"></i></div>
                                 <h3>
@@ -295,7 +289,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/microrobot.html" class="project-card-link">
+                        <a href="/microrobot/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-robot"></i></div>
                                 <h3>
@@ -308,7 +302,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="pages/contour-simulator.html" class="project-card-link">
+                        <a href="/contour-simulator/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-mountain"></i></div>
                                 <h3>
@@ -321,7 +315,7 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="simplequiz" class="project-card-link">
+                        <a href="/simplequiz/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-question-circle"></i></div>
                                 <h3>
@@ -370,7 +364,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -395,7 +389,7 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="/js/main.js?v=20260913a"></script>
 </body>
 
 </html>

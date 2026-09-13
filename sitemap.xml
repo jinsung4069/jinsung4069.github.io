@@ -5,47 +5,51 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/about.html</loc>
+    <loc>https://jinsung4069.github.io/about/</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/dqn-demo.html</loc>
+    <loc>https://jinsung4069.github.io/dqn-demo/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/database-lab.html</loc>
+    <loc>https://jinsung4069.github.io/database-lab/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/programming-language.html</loc>
+    <loc>https://jinsung4069.github.io/programming-language/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/machinelearning.html</loc>
+    <loc>https://jinsung4069.github.io/machinelearning/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/orange3-widget-lab.html</loc>
+    <loc>https://jinsung4069.github.io/orange3-widget-lab/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/webcam-classifier.html</loc>
+    <loc>https://jinsung4069.github.io/webcam-classifier/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/contour-simulator.html</loc>
+    <loc>https://jinsung4069.github.io/contour-simulator/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/pages/microrobot.html</loc>
+    <loc>https://jinsung4069.github.io/microrobot/</loc>
   </url>
   <url>
-    <loc>https://jinsung4069.github.io/stitch_ai_poc/index.html</loc>
+    <loc>https://jinsung4069.github.io/stitch_ai_poc/</loc>
   </url>
-  <url><loc>https://jinsung4069.github.io/pages/lectures.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/ai-algorithm-week2.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-2.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-3.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-4.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-5.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-6.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-7.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-8.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-9.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-10.html</loc></url>
-  <url><loc>https://jinsung4069.github.io/pages/computer-education2-11.html</loc></url>
+  <url><loc>https://jinsung4069.github.io/lectures/</loc></url>
+  <url><loc>https://jinsung4069.github.io/ai-algorithm-week2/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-2/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-3/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-4/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-5/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-6/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-7/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-8/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-9/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-10/</loc></url>
+  <url><loc>https://jinsung4069.github.io/computer-education2-11/</loc></url>
+  <url><loc>https://jinsung4069.github.io/ai-understanding-lab/</loc></url>
+  <url><loc>https://jinsung4069.github.io/attendance/</loc></url>
+  <url><loc>https://jinsung4069.github.io/stackburger/</loc></url>
+  <url><loc>https://jinsung4069.github.io/alligator-chess/</loc></url>
 </urlset>

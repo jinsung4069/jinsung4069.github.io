@@ -186,11 +186,12 @@
 
   function getCurrentPage() {
     const parts = window.location.pathname.split("/").filter(Boolean);
-    const lastDir = parts.length > 1 ? parts[parts.length - 2] : "index";
-    if (lastDir in PAGE_CONTEXT) return lastDir;
-    return window.location.pathname.endsWith("/index.html") || parts[parts.length - 1] === "stitch_ai_poc"
-      ? "index"
-      : "index";
+    // Folder URLs end in the screen name; explicit file URLs add one segment.
+    const screen = parts[parts.length - 1];
+    const parent = parts[parts.length - 2];
+    if (screen in PAGE_CONTEXT) return screen;
+    if (parent in PAGE_CONTEXT) return parent;
+    return "index";
   }
 
   function normalizeLabel(text) {
