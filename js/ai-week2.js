@@ -109,15 +109,89 @@
     }
   });
   function download(content,name,type){const url=URL.createObjectURL(new Blob(['\ufeff',content],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  const select=$('#slideSelect');select.innerHTML=slides.map((s,i)=>`<option value="${i}">${i+1}. ${esc(s.title.replace('\n',' '))}</option>`).join('');
-  $('#tocContents').innerHTML=chapters.map((ch,j)=>`<section><h3>${ch}</h3>${slides.map((s,i)=>s.ch===j?`<button data-slide="${i}">${i+1}. ${esc(s.title.replace('\n',' '))}</button>`:'').join('')}</section>`).join('');
-  let current=-1;
-  const fromHash=()=>{const m=location.hash.match(/^#slide-(\d+)$/);return m?Math.min(slides.length-1,Math.max(0,Number(m[1])-1)):0;};
-  function go(i,hash=true){i=Math.max(0,Math.min(slides.length-1,i));document.querySelectorAll('.slide').forEach((s,j)=>s.hidden=i!==j);current=i;select.value=String(i);$('#counter').textContent=`${i+1} / ${slides.length}`;$('#previous').disabled=i===0;$('#next').disabled=i===slides.length-1;$('#progressFill').style.width=((i+1)/slides.length*100)+'%';if(hash&&location.hash!==`#slide-${i+1}`)history.pushState(null,'',`#slide-${i+1}`);}
-  $('#previous').addEventListener('click',()=>go(current-1));$('#next').addEventListener('click',()=>go(current+1));select.addEventListener('change',()=>go(Number(select.value)));window.addEventListener('hashchange',()=>go(fromHash(),false));
-  const dialog=$('#tocDialog');$('#tocButton').addEventListener('click',()=>dialog.showModal());$('#closeToc').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target.dataset.slide!==undefined){go(Number(e.target.dataset.slide));dialog.close();}});
-  $('#fullscreenButton').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('#presentation').requestFullscreen();}catch{$('#fullscreenButton').textContent='전체 화면 사용 불가';}});
-  document.addEventListener('fullscreenchange',()=>$('#fullscreenButton').textContent=document.fullscreenElement?'전체 화면 종료':'전체 화면');$('#printButton').addEventListener('click',()=>window.print());
-  document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||dialog.open||e.target.closest('input,textarea,select,[contenteditable=true],summary,.lab,header')||(e.key===' '&&e.target.closest('button,a')))return;if(['ArrowRight','PageDown',' ','ArrowLeft','PageUp','Home','End'].includes(e.key)){e.preventDefault();go(e.key==='Home'?0:e.key==='End'?slides.length-1:current+(['ArrowLeft','PageUp'].includes(e.key)?-1:1));}});
-  go(fromHash(),false);
+  const viewer = $('#deckViewer');
+  const dialog = $('#tocDialog');
+  const pageDialog = $('#pageDialog');
+  const pageNumber = $('#pageNumber');
+  const articles = [...document.querySelectorAll('.slide')];
+  const searchText = articles.map(article => article.textContent.toLocaleLowerCase());
+  $('#tocContents').innerHTML = chapters.map((ch,j) => `<section><h3>${esc(ch)}</h3>${slides.map((s,i) => s.ch===j ? `<button type="button" data-slide="${i}"><span>${i+1}</span><b>${esc(s.title.replace('\n',' '))}</b></button>` : '').join('')}</section>`).join('');
+  const tocButtons = [...$('#tocContents').querySelectorAll('button')];
+  pageNumber.max = slides.length;
+  $('#totalSlides').textContent = slides.length;
+  let current = -1;
+  let revealTimer;
+  function revealControls() {
+    viewer.classList.add('controls-visible');
+    clearTimeout(revealTimer);
+    revealTimer = setTimeout(() => viewer.classList.remove('controls-visible'), 3500);
+  }
+  viewer.addEventListener('pointerdown', revealControls);
+  const fromHash = () => {
+    const match = location.hash.match(/^#slide-(\d+)$/);
+    return match ? Math.min(slides.length-1, Math.max(0, Number(match[1])-1)) : 0;
+  };
+  function go(index, hash=true) {
+    index = Math.max(0, Math.min(slides.length-1, index));
+    articles.forEach((article,j) => article.hidden = index !== j);
+    current = index;
+    viewer.classList.toggle('lab-mode', !!slides[index].lab);
+    pageNumber.value = index+1;
+    $('#previous').disabled = index === 0;
+    $('#next').disabled = index === slides.length-1;
+    $('#slideStatus').textContent = `${index+1} / ${slides.length}, ${slides[index].title.replace('\n',' ')}`;
+    tocButtons.forEach((button,j) => button.setAttribute('aria-current', String(index === j)));
+    if (hash && location.hash !== `#slide-${index+1}`) history.pushState(null, '', `#slide-${index+1}`);
+  }
+  $('#previous').addEventListener('click', () => go(current-1));
+  $('#next').addEventListener('click', () => go(current+1));
+  window.addEventListener('hashchange', () => go(fromHash(), false));
+  $('#tocButton').addEventListener('click', () => dialog.showModal());
+  $('#closeToc').addEventListener('click', () => dialog.close());
+  $('#tocSearch').addEventListener('input', event => {
+    const query = event.target.value.trim().toLocaleLowerCase();
+    tocButtons.forEach(button => button.hidden = !searchText[Number(button.dataset.slide)].includes(query));
+    $('#tocContents').querySelectorAll('section').forEach(section => section.hidden = !section.querySelector('button:not([hidden])'));
+    $('#tocEmpty').hidden = tocButtons.some(button => !button.hidden);
+  });
+  dialog.addEventListener('click', event => {
+    const button = event.target.closest('button[data-slide]');
+    if (button) { go(Number(button.dataset.slide)); dialog.close(); }
+  });
+  $('#pageButton').addEventListener('click', () => { pageNumber.value = current+1; pageDialog.showModal(); pageNumber.focus(); pageNumber.select(); });
+  $('#closePage').addEventListener('click', () => pageDialog.close());
+  $('#pageForm').addEventListener('submit', event => { event.preventDefault(); go(Number(pageNumber.value)-1); pageDialog.close(); });
+  [dialog, pageDialog].forEach(modal => {
+    modal.addEventListener('close', revealControls);
+    modal.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        modal.close();
+      }
+    });
+  });
+  function setFullscreenButton() {
+    const active = !!document.fullscreenElement;
+    const button = $('#fullscreenButton');
+    const label = active ? '전체 화면 종료' : '전체 화면';
+    button.setAttribute('aria-label', label);
+    button.dataset.tip = label;
+    button.querySelector('use').setAttribute('href', `#deck-icon-${active ? 'minimize' : 'maximize'}`);
+  }
+  $('#fullscreenButton').addEventListener('click', async () => {
+    try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('#presentation').requestFullscreen(); }
+    catch { $('#slideStatus').textContent = '이 브라우저에서는 전체 화면을 사용할 수 없습니다.'; }
+  });
+  document.addEventListener('fullscreenchange', setFullscreenButton);
+  $('#printButton').addEventListener('click', () => window.print());
+  document.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || dialog.open || pageDialog.open || event.target.closest('input,textarea,select,[contenteditable=true],summary,.lab,header') || (event.key===' ' && event.target.closest('button,a'))) return;
+    if (['ArrowRight','PageDown',' ','ArrowLeft','PageUp','Home','End'].includes(event.key)) {
+      event.preventDefault();
+      go(event.key==='Home' ? 0 : event.key==='End' ? slides.length-1 : current+(['ArrowLeft','PageUp'].includes(event.key) ? -1 : 1));
+    }
+  });
+  go(fromHash(), false);
+  revealControls();
 })();
