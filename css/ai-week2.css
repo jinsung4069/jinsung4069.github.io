@@ -121,3 +121,39 @@ dialog { background:var(--color-white,#fff); color:var(--color-text,#18243b); ma
 }
 @media(prefers-reduced-motion:reduce) { .lecture-page main .deck-glass { transition:none; } }
 @media print { .deck-navigation,.deck-symbols { display:none!important; }.deck-viewer,.deck-viewer.lab-mode { width:100%; padding:0; }.deck-viewer .stage { width:100%; } }
+
+/* Introductory data literacy slides, inserted before the original analysis task. */
+.foundation .slide-body { font-size:2.05cqw; gap:1.15cqw; padding:2cqw 4.5cqw 4.4cqw; }
+.foundation .slide-body .lead { font-size:2.35cqw; }
+.foundation .comparison h3 { font-size:2.25cqw; }
+.foundation .comparison p { font-size:1.9cqw; }
+.foundation .comparison { gap:2cqw; }
+.foundation .curriculum-quote { margin:0; border-left:.35cqw solid #3e5dae; padding:1.25cqw 1.5cqw; background:#eef3ff; color:#173763; font-size:2.1cqw; line-height:1.6; }
+.foundation .foundation-note { font-size:1.5cqw; color:#536174; line-height:1.55; }
+.foundation .slide-footer > span:first-child { max-width:37%; }
+.foundation .slide-footer a { color:#355180; text-underline-offset:3px; }
+.foundation table { font-size:1.8cqw; }
+.foundation-figure { margin:0; color:#173763; background:#f2f5fc; padding:1.1cqw 1.5cqw; }
+.foundation-figure figcaption { font-size:1.45cqw; margin-bottom:.7cqw; }
+.pixel-example { display:flex; justify-content:center; align-items:center; gap:4cqw; }
+.pixel-grid { display:grid; grid-template-columns:repeat(4,1fr); width:12cqw; height:12cqw; flex-shrink:0; border:1px solid #173763; }
+.pixel-grid span { background:white; border:1px solid #91a1bd; }.pixel-grid .filled { background:#3e5dae; }
+.pixel-example .pixel-code { font:600 2.1cqw/1.25 Consolas,monospace; letter-spacing:.6cqw; }
+.pixel-example p:not(.pixel-code) { font-size:1.45cqw; margin-top:.6cqw; }
+.library-bars { display:grid; gap:.55cqw; max-width:65cqw; }
+.library-bars > div { display:grid; grid-template-columns:2.5cqw minmax(0,1fr) 5cqw; align-items:center; gap:1cqw; font-size:1.6cqw; }
+.library-bar { height:1.7cqw; width:var(--bar-width); background:#3e5dae; border-radius:0 3px 3px 0; }
+@media(max-width:850px) {
+ .foundation .slide-body { font-size:18px; padding:22px 18px; gap:18px; }
+ .foundation .slide-body .lead { font-size:21px; }
+ .foundation .comparison { gap:14px; }.foundation .comparison h3 { font-size:21px; }.foundation .comparison p { font-size:17px; }
+ .foundation .curriculum-quote { border-left:4px solid #3e5dae; padding:14px; font-size:19px; }
+ .foundation .foundation-note { font-size:14px; }
+ .foundation .slide-footer > span:first-child { max-width:85%; }
+ .foundation table { font-size:14px; }.foundation td,.foundation th { padding:8px 5px; }
+ .foundation-figure { padding:14px 10px; }.foundation-figure figcaption { font-size:14px; margin-bottom:10px; }
+ .pixel-example { gap:18px; flex-wrap:wrap; }.pixel-grid { width:112px; height:112px; }
+ .pixel-example .pixel-code { font-size:21px; letter-spacing:5px; }.pixel-example p:not(.pixel-code) { font-size:14px; margin-top:8px; }
+ .library-bars { gap:8px; max-width:100%; }.library-bars > div { grid-template-columns:20px minmax(0,1fr) 40px; gap:8px; font-size:15px; }.library-bar { height:18px; }
+}
+@media print { .foundation .slide-body { padding-bottom:1.5cqw; }.foundation .slide-footer > span:first-child { max-width:90%; } }
