@@ -65,9 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('click', event => { if (!item.contains(event.target)) setOpen(false); });
         return item;
     }
-    document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(list => {
-        if (!list.querySelector('.course-nav')) list.appendChild(courseMenu(!!list.closest('#mobileNav')));
-    });
+    if (document.documentElement.dataset.courseNav !== 'hidden') {
+        document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(list => {
+            if (!list.querySelector('.course-nav')) list.appendChild(courseMenu(!!list.closest('#mobileNav')));
+        });
+    }
 
     function setMobileOpen(open, restoreFocus = false) {
         if (!mobileMenuToggle || !mobilePanel) return;
