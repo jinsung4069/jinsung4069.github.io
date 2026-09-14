@@ -190,7 +190,12 @@
   document.addEventListener('fullscreenchange', setFullscreenButton);
   $('#printButton').addEventListener('click', () => window.print());
   document.addEventListener('keydown', event => {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || dialog.open || pageDialog.open || event.target.closest('input,textarea,select,[contenteditable=true],summary,.lab,header') || (event.key===' ' && event.target.closest('button,a'))) return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.isComposing || dialog.open || pageDialog.open || event.target.closest('input,textarea,select,video,[contenteditable=true],[role=textbox]')) return;
+    if (event.code === 'KeyF' || event.key.toLowerCase() === 'f') {
+      if (!event.repeat) { event.preventDefault(); $('#fullscreenButton').click(); }
+      return;
+    }
+    if (event.target.closest('summary,.lab,header') || (event.key===' ' && event.target.closest('button,a'))) return;
     if (['ArrowRight','PageDown',' ','ArrowLeft','PageUp','Home','End'].includes(event.key)) {
       event.preventDefault();
       go(event.key==='Home' ? 0 : event.key==='End' ? slides.length-1 : current+(['ArrowLeft','PageUp'].includes(event.key) ? -1 : 1));

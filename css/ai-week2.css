@@ -82,8 +82,7 @@ dialog { background:var(--color-white,#fff); color:var(--color-text,#18243b); ma
 .lecture-page main .deck-glass:hover { border-color:#ffffffb3; background:rgba(245,248,255,.9); color:#173660; transform:translateY(-2px); }
 .deck-glass::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 9px); left:50%; transform:translateX(-50%); background:#18345b; color:white; padding:5px 9px; border-radius:6px; font-size:12px; line-height:1.4; white-space:nowrap; opacity:0; pointer-events:none; }
 .deck-glass:hover::after,.deck-glass:focus-visible::after { opacity:1; }
-.lecture-page main .deck-prev,.lecture-page main .deck-next { position:absolute; z-index:4; top:calc(50% - 26px); width:52px; height:52px; }
-.deck-prev { left:16px; }.deck-next { right:16px; }
+#tocButton { margin-left:16px; }
 .deck-tools { position:absolute; z-index:5; bottom:14px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:9px; max-width:calc(100% - 20px); }
 .lecture-page .deck-viewer:focus-within .deck-glass,.lecture-page .deck-viewer.controls-visible .deck-glass,.lecture-page main .deck-dialog .deck-glass { opacity:1; pointer-events:auto; }
 .lecture-page .deck-viewer .deck-glass:disabled { opacity:.3; pointer-events:none; }
@@ -91,7 +90,6 @@ dialog { background:var(--color-white,#fff); color:var(--color-text,#18243b); ma
 /* Keep controls outside editable exercises, without changing slide content. */
 .deck-viewer.lab-mode { padding-bottom:68px; }
 .deck-viewer.lab-mode .deck-tools { bottom:10px; }
-.deck-viewer.lab-mode .deck-prev,.deck-viewer.lab-mode .deck-next { top:auto; bottom:7px; }
 .lecture-page main .deck-dialog { width:min(740px,95vw); max-width:740px; padding:24px; border-radius:20px; background:var(--color-bg); }
 .deck-dialog::backdrop { background:#12203d66; backdrop-filter:blur(8px); }
 .deck-dialog .dialog-heading { gap:12px; }.deck-dialog .dialog-heading h2 { margin:0; }
@@ -112,10 +110,10 @@ dialog { background:var(--color-white,#fff); color:var(--color-text,#18243b); ma
 .lecture-page main:fullscreen .stage { width:100%; }
 @media(max-width:850px) {
  .deck-viewer,.lecture-page main:fullscreen .deck-viewer,.lecture-page main:fullscreen .deck-viewer.lab-mode { width:100%; padding-bottom:66px; }
- .deck-tools { bottom:11px; gap:6px; }
+ .deck-tools { bottom:11px; gap:5px; max-width:calc(100% - 10px); }
  .lecture-page main .deck-glass { width:40px; height:40px; opacity:1; pointer-events:auto; }
- .lecture-page main .deck-prev,.lecture-page main .deck-next { top:auto; bottom:9px; width:44px; height:44px; }
- .deck-prev { left:0; }.deck-next { right:0; }.deck-icon { width:20px; height:20px; }
+ #tocButton { margin-left:10px; }
+ .deck-icon { width:20px; height:20px; }
  .deck-prev::after { left:0; transform:none; }.deck-next::after { right:0; left:auto; transform:none; }
  .lecture-page main .deck-dialog { padding:18px; }.deck-dialog .dialog-heading h2 { font-size:22px; }
 }
