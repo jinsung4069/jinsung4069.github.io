@@ -14,63 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!['light', 'dark'].includes(manualTheme)) manualTheme = null;
 
     function label(ko, en) { return document.documentElement.lang === 'en' ? en : ko; }
-    function closeCourses() {
-        document.querySelectorAll('.course-nav').forEach(item => {
-            item.querySelector('.course-dropdown').hidden = true;
-            item.querySelector('.course-trigger').setAttribute('aria-expanded', 'false');
-        });
-    }
-    function courseMenu(mobile) {
-        const item = document.createElement('li');
-        item.className = 'nav-item course-nav' + (mobile ? ' course-nav-mobile' : '');
-        const id = mobile ? 'mobile-course-links' : 'desktop-course-links';
-        item.innerHTML = `<button type="button" class="nav-text-link course-trigger" aria-expanded="false" aria-controls="${id}"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span> <span aria-hidden="true">⌄</span></button><div class="course-dropdown" id="${id}" hidden><a class="course-heading" href="/lectures/"><span class="lang-content lang-ko active">강의자료 전체 보기</span><span class="lang-content lang-en">All courses</span></a><a href="/ai-algorithm-week2/"><span class="lang-content lang-ko active">AI알고리즘, 2주차</span><span class="lang-content lang-en">AI Algorithms, Week 2</span></a><a href="/computer-education2/"><span class="lang-content lang-ko active">컴퓨터과교육2</span><span class="lang-content lang-en">Computer Education 2</span></a></div>`;
-        const button = item.querySelector('button');
-        const panel = item.querySelector('.course-dropdown');
-        let openedByHover = false;
-        function setOpen(open) {
-            panel.hidden = !open;
-            button.setAttribute('aria-expanded', String(open));
-            if (!open) openedByHover = false;
-        }
-        button.addEventListener('click', () => {
-            setOpen(openedByHover || panel.hidden);
-            openedByHover = false;
-        });
-        if (!mobile) {
-            item.addEventListener('mouseenter', () => {
-                if (matchMedia('(hover: hover) and (min-width: 769px)').matches && panel.hidden) {
-                    setOpen(true);
-                    openedByHover = true;
-                }
-            });
-            item.addEventListener('mouseleave', () => {
-                if (!item.contains(document.activeElement)) setOpen(false);
-            });
-        }
-        item.addEventListener('focusout', () => setTimeout(() => {
-            if (!item.contains(document.activeElement)) setOpen(false);
-        }, 0));
-        item.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && !panel.hidden) {
-                setOpen(false); button.focus(); event.preventDefault(); event.stopPropagation();
-            }
-            if (event.target === button && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
-                setOpen(true); openedByHover = false;
-                const links = panel.querySelectorAll('a');
-                links[event.key === 'ArrowDown' ? 0 : links.length - 1].focus();
-                event.preventDefault();
-            }
-        });
-        document.addEventListener('click', event => { if (!item.contains(event.target)) setOpen(false); });
-        return item;
-    }
-    if (document.documentElement.dataset.courseNav !== 'hidden') {
-        document.querySelectorAll('#mainNav > ul, #mobileNav > ul').forEach(list => {
-            if (!list.querySelector('.course-nav')) list.appendChild(courseMenu(!!list.closest('#mobileNav')));
-        });
-    }
-
     function setMobileOpen(open, restoreFocus = false) {
         if (!mobileMenuToggle || !mobilePanel) return;
         mobilePanel.classList.toggle(mobileClass, open);
@@ -80,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const icon = mobileMenuToggle.querySelector('i');
         if (icon) icon.className = open ? 'fas fa-times' : 'fas fa-bars';
         else mobileMenuToggle.textContent = open ? '✕' : '☰';
-        if (!open) closeCourses();
         if (restoreFocus) mobileMenuToggle.focus();
     }
     if (mobileMenuToggle && mobilePanel) {
