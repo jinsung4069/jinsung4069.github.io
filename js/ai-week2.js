@@ -188,7 +188,9 @@
     catch { $('#slideStatus').textContent = '이 브라우저에서는 전체 화면을 사용할 수 없습니다.'; }
   });
   document.addEventListener('fullscreenchange', setFullscreenButton);
-  $('#printButton').addEventListener('click', () => window.print());
+  window.LecturePrint.register({button:$('#printButton'),title:'AI알고리즘, 데이터 과학의 이해와 분석',slides,
+    render(i){go(i,false);const node=document.querySelectorAll('#stage > .slide')[i];return {node,width:1280,height:Math.max(node.scrollHeight,node.offsetHeight)}}
+  });
   document.addEventListener('keydown', event => {
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.isComposing || dialog.open || pageDialog.open || event.target.closest('input,textarea,select,video,[contenteditable=true],[role=textbox]')) return;
     if (event.code === 'KeyF' || event.key.toLowerCase() === 'f') {

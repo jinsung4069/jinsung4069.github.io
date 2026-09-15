@@ -20,7 +20,7 @@
   page.value=index+1;$('#ce-total').textContent=data.slides.length;$('#ce-page-label').textContent=`${index+1} / ${data.slides.length}`;
   $('#ce-prev').disabled=index===0;$('#ce-next').disabled=index===data.slides.length-1;
   $('#ce-status').textContent=`${index+1} / ${data.slides.length}, ${s.title}`;
-  for(const [j,f] of (s.videoFrames||[]).entries()){
+  for(const [j,f] of (window.LecturePrint.mode?[]:(s.videoFrames||[])).entries()){
    const frame=document.createElement('div');frame.className='ce-video-frame';Object.assign(frame.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
    const v=document.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=f.src;v.setAttribute('aria-label',`${s.title}, 동영상 ${j+1}`);
    const play=document.createElement('button');play.className='ce-play';play.innerHTML=icon('play');play.setAttribute('aria-label','동영상 재생');
@@ -48,7 +48,15 @@
   $('#ce-zoom').addEventListener('click',()=>{zoom=!zoom;stage.classList.toggle('zoom',zoom);setIcon($('#ce-zoom'),zoom?'zoom-out':'zoom-in',zoom?'화면에 맞춤':'확대');$('#ce-zoom').setAttribute('aria-pressed',String(zoom))});
   $('#ce-fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{$('#ce-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.'}});
   document.addEventListener('fullscreenchange',()=>setIcon($('#ce-fullscreen'),document.fullscreenElement?'minimize':'maximize',document.fullscreenElement?'전체 화면 종료':'전체 화면'));
-  $('#ce-print').addEventListener('click',()=>window.print());
+  window.LecturePrint.register({button:$('#ce-print'),title:`컴퓨터과교육2, ${data.title}`,slides:data.slides,
+   assets:()=>data.slides.map(s=>s.image).filter(Boolean),
+   render(i){render(i,false);
+    const pre=lab.querySelector('#blocks-json');if(data.slides[i].labId==='blocks'&&pre){
+     const value=JSON.parse(pre.textContent);
+     pre.textContent='{\n'+Object.entries(value).map(([key,item])=>'  '+JSON.stringify(key)+': '+(key==='blocks'?'[\n'+item.map(block=>'    '+JSON.stringify(block)).join(',\n')+'\n  ]':JSON.stringify(item))).join(',\n')+'\n}';
+    }
+    const isLab=data.slides[i].kind==='lab'||data.slides[i].kind==='native';const node=isLab?lab:img;return {node,width:1280,height:isLab?Math.max(node.scrollHeight,node.offsetHeight):720}}
+  });
   img.addEventListener('load',()=>{$('#ce-loading').hidden=true});img.addEventListener('error',()=>{if(data.slides[index].kind!=='lab'){$('#ce-loading').hidden=false;$('#ce-loading').textContent='이미지를 불러오지 못했습니다. 새로고침해 주세요.'}});
   document.addEventListener('keydown',e=>{
    if(document.querySelector('.ce-dialog[open]')||e.ctrlKey||e.metaKey||e.altKey||e.isComposing||e.target.closest('input,select,textarea,video,[contenteditable=true],[role=textbox]'))return;

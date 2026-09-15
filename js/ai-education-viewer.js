@@ -40,7 +40,10 @@
   $('#ce-zoom').onclick=()=>{zoom=!zoom;stage.classList.toggle('zoom',zoom);setIcon($('#ce-zoom'),zoom?'zoom-out':'zoom-in',zoom?'화면에 맞춤':'확대');$('#ce-zoom').setAttribute('aria-pressed',String(zoom));resize()};
   $('#ce-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{$('#ce-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.'}};
   document.addEventListener('fullscreenchange',()=>{setIcon($('#ce-fullscreen'),document.fullscreenElement?'minimize':'maximize',document.fullscreenElement?'전체 화면 종료':'전체 화면');resize()});
-  $('#ce-print').onclick=()=>window.print();
+  window.LecturePrint.register({button:$('#ce-print'),title:`AI교육의 이해, ${data.title}`,slides:data.slides,
+   assets:()=>data.slides.flatMap(s=>[s.background,...s.pictures.map(p=>p.src)]).filter(Boolean),
+   render(i){render(i,false);const isLab=data.slides[i].kind==='lab',node=isLab?$('#ae-lab'):canvas;return {node,width:isLab?1280:data.width,height:isLab?Math.max(node.scrollHeight,node.offsetHeight):data.height}}
+  });
   document.addEventListener('keydown',e=>{if(document.querySelector('.ce-dialog[open]')||e.ctrlKey||e.metaKey||e.altKey||e.isComposing||e.target.closest('input,select,textarea,[contenteditable=true]'))return;const letter=e.code==='KeyF'?'f':e.code==='KeyA'?'a':e.code==='KeyD'?'d':e.key.toLowerCase();if(letter==='f'){if(!e.repeat){e.preventDefault();$('#ce-fullscreen').click()}return}const actions={ArrowRight:()=>render(index+1),PageDown:()=>render(index+1),ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:()=>render(index+1)};const action=actions[e.key]||actions[letter];if(action){e.preventDefault();action()}});
   stage.addEventListener('touchstart',e=>{touch=e.touches.length===1&&!e.target.closest('button,input,select,textarea,a')?[e.touches[0].clientX,e.touches[0].clientY]:null},{passive:true});
   stage.addEventListener('touchend',e=>{if(!touch||zoom)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});

@@ -1,0 +1,22 @@
+/* One slide per A4 landscape sheet, independently of the current viewport. */
+@page{size:A4 landscape;margin:8mm}
+.lecture-print-frame{position:fixed;left:-20000px;top:0;width:1440px;height:1000px;border:0;pointer-events:none}
+.lecture-print-progress{position:fixed;z-index:10000;left:50%;bottom:28px;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:16px 22px;border:1px solid #bdcce0;border-radius:12px;background:#fff;color:#18345b;font:600 17px/1.5 Freesentation,sans-serif;box-shadow:0 8px 36px #14264433}.lecture-print-progress button{margin-left:14px;padding:6px 12px}
+#lecture-print-deck{width:281mm!important;max-width:none!important;margin:0!important;padding:0!important;background:white!important;color:#18345b}
+.lecture-print-sheet{display:block!important;position:relative!important;width:281mm!important;height:193mm!important;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box;break-inside:avoid;break-after:page;page-break-after:always;overflow:hidden;background:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.lecture-print-sheet:last-child{break-after:auto;page-break-after:auto}
+.lecture-print-area{position:relative;width:100%;height:186mm;overflow:hidden}.lecture-print-content{position:absolute;transform-origin:top left;contain:strict;container-type:inline-size}.lecture-print-footer{padding:0!important;margin:0!important;border:0!important;min-height:0!important;box-sizing:border-box!important;display:block!important;position:absolute;left:0;right:0;bottom:1mm;height:5mm;text-align:center;color:#526379;background:white;font:600 10px/5mm Freesentation,sans-serif}
+.lecture-print-document> :not(#lecture-print-deck){display:none!important}.lecture-print-document{padding:0!important;margin:0!important;background:#fff!important}
+.lecture-print-building .ce-stage{width:1280px!important;height:720px!important;aspect-ratio:auto!important}.lecture-print-building .ce-viewport{overflow:visible!important}
+.lecture-print-building .ce-lab{position:relative!important;inset:auto!important;width:1280px!important;height:auto!important;min-height:720px;max-height:none!important;overflow:visible!important;padding:48px 80px 48px!important}
+.lecture-print-building .block-scroll,.lecture-print-building .json-panel pre,.lecture-print-building .data-table-wrap{height:auto!important;max-height:none!important;overflow:visible!important}
+.lecture-print-building .stage{width:1280px!important;height:auto!important;aspect-ratio:auto!important;container-type:inline-size!important}
+.lecture-print-building .slide{position:relative!important;inset:auto!important;width:1280px!important;height:auto!important;min-height:720px!important;overflow:visible!important}
+.lecture-print-building .slide-body{flex:1 0 auto!important;overflow:visible!important}.lecture-print-building .slide.cover,.lecture-print-building .slide.section{height:720px!important}
+.lecture-print-building .quiz-item[hidden]{display:block!important}.lecture-print-building .quiz-nav{display:none!important}
+@media print{html,body{width:281mm!important;max-width:281mm!important;margin:0!important;padding:0!important;background:white!important}.lecture-print-document> :not(#lecture-print-deck){display:none!important}#lecture-print-deck{display:block!important}.lecture-print-content *{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important;caret-color:transparent!important}.lecture-print-content .slide,.lecture-print-content .slide[hidden]{break-after:auto!important;page-break-after:auto!important}}
+
+.lecture-print-building .lab .quiz-item{min-height:0!important;margin:0 0 12px!important;padding:8px 0!important}
+.lecture-print-building .lab .quiz-item legend{font-size:23px!important;margin-bottom:8px!important}
+.lecture-print-building .lab .quiz-item label{display:inline-flex!important;font-size:19px!important;margin:0 18px 6px 0!important}
+.lecture-print-building .json-panel pre{white-space:pre-wrap!important;overflow-wrap:anywhere!important;font-size:15px!important;line-height:1.5!important}
