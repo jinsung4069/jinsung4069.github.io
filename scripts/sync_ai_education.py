@@ -9,6 +9,7 @@ import argparse, hashlib, json, posixpath, re, shutil
 from lxml import etree as ET
 from PIL import Image
 import win32com.client
+from lecture_sources import clean_source_text
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = {'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
@@ -49,7 +50,7 @@ def text_runs(shape, x_offset=0, y_offset=0):
 def extract_slide(slide, z, part, number, chapter, folder, work):
     xml = ET.fromstring(z.read(part))
     rels = relationships(z, part)
-    texts = [e.text or '' for e in xml.findall('.//a:t', NS)]
+    texts = [text for e in xml.findall('.//a:t', NS) if (text := clean_source_text(e.text or ''))]
     titles = [s for s in slide.Shapes if s.HasTextFrame and s.TextFrame.HasText
               and s.Top < 90 and s.Height < 130]
     title = titles[0].TextFrame.TextRange.Text.replace('\r', ' ') if titles else texts[0]
@@ -62,6 +63,10 @@ def extract_slide(slide, z, part, number, chapter, folder, work):
     slide.Export(str(work/f'ref-{chapter}-{number:03}.png'), 'PNG', 2000, 1125)
     pictures = {int(e.find('p:nvPicPr/p:cNvPr', NS).get('id')): e for e in xml.findall('p:cSld/p:spTree/p:pic', NS)}
     for shape in slide.Shapes:
+        if shape.HasTextFrame and shape.TextFrame.HasText:
+            original = shape.TextFrame.TextRange.Text
+            cleaned = clean_source_text(original)
+            if cleaned != original: shape.TextFrame.TextRange.Text = cleaned
         if shape.Id in pictures and abs(shape.Rotation) < .01:
             element = pictures[shape.Id]
             blip = element.find('.//a:blip', NS)
