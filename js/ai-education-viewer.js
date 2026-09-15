@@ -26,7 +26,7 @@
  }
  function hashIndex(){const m=location.hash.match(/^#slide-(\d+)$/);return m?Number(m[1])-1:0}
  try{
-  const res=await fetch(`/data/lectures/ai-education/${viewer.dataset.chapter}.json?v=20260915a`);if(!res.ok)throw Error('자료를 불러오지 못했습니다.');data=await res.json();
+  const res=await fetch(`/data/lectures/ai-education/${viewer.dataset.chapter}.json?v=20260915v3`);if(!res.ok)throw Error('자료를 불러오지 못했습니다.');data=await res.json();
   await Promise.all([200,400,500,600,700,800].map(w=>document.fonts.load(`${w} 32px Freesentation`)));await document.fonts.ready;
   page.max=data.slides.length;toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.title)}</b></button>`).join('');
   toc.onclick=e=>{const b=e.target.closest('[data-index]');if(b){render(Number(b.dataset.index));$('#ce-dialog').close()}};
