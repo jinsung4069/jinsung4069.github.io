@@ -55,15 +55,7 @@ def extract_slide(slide, z, part, number, chapter, folder, work):
     title = titles[0].TextFrame.TextRange.Text.replace('\r', ' ') if titles else texts[0]
     if number == 1: title = ' '.join(texts[:2])
     elif re.fullmatch(r'\d{2}', title): title = ' '.join(texts[:2])
-    notes = []
-    for path in rels.values():
-        if 'notesSlides/notesSlide' not in path or not path.endswith('.xml'): continue
-        for shape in ET.fromstring(z.read(path)).findall('.//p:sp', NS):
-            ph = shape.find('p:nvSpPr/p:nvPr/p:ph', NS)
-            if ph is not None and ph.get('type') in ('sldImg', 'sldNum', 'dt', 'hdr', 'ftr'): continue
-            notes.extend(''.join(p.itertext()) for p in shape.findall('.//a:p', NS) if p.findall('.//a:t', NS))
-    assert not any(re.search(r'[A-Z]:[\\/]', s) for s in notes), 'Local path in public notes'
-    record = dict(title=title, sourceSlide=number, sourcePart=part, text=texts, notes=notes,
+    record = dict(title=title, sourceSlide=number, sourcePart=part, text=texts,
                   runs=[], pictures=[], links=list(dict.fromkeys(
                     [s for s in rels.values() if s.startswith(('http://', 'https://'))] +
                     re.findall(r'https?://[A-Za-z0-9._~:/?#\[\]@!$&()*+,;=%-]+', ' '.join(texts)))))
@@ -143,13 +135,17 @@ def main():
                     presentation.Saved = True
                     presentation.Close()
             assert hashlib.sha256(source.read_bytes()).hexdigest() == sha
+            original_slides = list(data['slides'])
+            previous_originals = [s for s in previous['slides'] if s.get('kind') != 'lab']
+            added_labs = [s for s in previous['slides'] if s.get('kind') == 'lab']
+            assert all(any(s['sourceSlide'] == lab['sourceAfter'] for s in original_slides) for lab in added_labs), 'Activity anchor missing from new source'
+            data['slides'] = [item for slide in original_slides for item in [slide, *[lab for lab in added_labs if lab['sourceAfter'] == slide['sourceSlide']]]]
             data_path.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':'))+'\n', encoding='utf-8')
-            changed = [i+1 for i, (a, b) in enumerate(zip(previous['slides'], data['slides']))
+            changed = [i+1 for i, (a, b) in enumerate(zip(previous_originals, original_slides))
                        if a['text'] != b['text'] or a['pictures'] != b['pictures'] or a['runs'] != b['runs']]
             manifests.append(dict(chapter=chapter, source=source.name, sha256=sha, changed=changed,
                 count=len(data['slides']), pictures=sum(len(s['pictures']) for s in data['slides']),
-                runs=sum(len(s['runs']) for s in data['slides']),
-                notesIdentical=all(a['notes'] == b['notes'] for a,b in zip(previous['slides'],data['slides']))))
+                runs=sum(len(s['runs']) for s in data['slides'])))
     finally:
         try: app.Quit()
         except Exception: pass
