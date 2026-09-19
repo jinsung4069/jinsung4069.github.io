@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head><script src="/js/lecture-print.js?v=20260915print1"></script>
+  <meta charset="utf-8">
+    <script src="/js/preferences.js?v=20260913a"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI알고리즘 3주차, 인공지능의 이해와 원리. 인공지능의 개념과 역사, 규칙과 추론, 기계학습과 신경망, 학습과 평가를 이해하는 슬라이드와 체험.">
+  <title>3주차 인공지능의 이해와 원리 | AI알고리즘</title>
+  <link rel="canonical" href="https://jinsung4069.github.io/ai-algorithm-week3/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=20260913a">
+  <link rel="preload" href="/fonts/freesentation/Freesentation-6SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/freesentation/Freesentation-8ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/ai-week2.css?v=20260914-bottom">
+  <link rel="stylesheet" href="/css/ai-week3.css?v=20260920">
+  <script src="/js/main.js?v=20260914-menu" defer></script>
+  <script src="/js/ai-week3-content.js?v=20260920" defer></script>
+  <script src="/js/ai-week3-labs.js?v=20260920" defer></script>
+  <script src="/js/ai-week3.js?v=20260920" defer></script>
+<script defer src="/js/clean-url.js"></script>
+<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1"></head>
+<body class="lecture-page">
+    <a class="skip-link" href="#presentation"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a>
+  <header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li><li><a class="nav-text-link" href="/lectures/">강의자료</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
+                        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+                            <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button><button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button></div></div></header>
+  <main id="presentation" tabindex="-1">
+    <div class="lecture-toolbar">
+      <div class="course-label"><a href="/lectures/">강의자료</a><span aria-hidden="true"> / </span><span>AI알고리즘</span><span class="week-label">3주차</span></div>
+    </div>
+    <noscript><p>슬라이드 이동과 체험을 사용하려면 브라우저의 JavaScript를 허용해 주세요. <a href="/data/lectures/ai-week3.ipynb">실습 노트북 다운로드</a></p></noscript>
+    <svg width="0" height="0" class="deck-symbols" aria-hidden="true"><defs><symbol id="deck-icon-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol><symbol id="deck-icon-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol><symbol id="deck-icon-list" viewBox="0 0 24 24"><path d="M2 5h20M6 12h12M9 19h6"/></symbol><symbol id="deck-icon-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></symbol><symbol id="deck-icon-maximize" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol><symbol id="deck-icon-minimize" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="deck-icon-print" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 9V3h12v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol><symbol id="deck-icon-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></symbol></defs></svg>
+    <div class="deck-viewer" id="deckViewer">
+      <div id="stage" class="stage" aria-roledescription="슬라이드 쇼" aria-label="3주차 인공지능의 이해와 원리"></div>
+      <nav class="deck-navigation" aria-label="슬라이드 이동">
+        <div class="deck-tools" role="group" aria-label="슬라이드 도구">
+          <button id="previous" type="button" class="deck-glass deck-prev" aria-label="이전 슬라이드" data-tip="이전 슬라이드" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-left"></use></svg></button><button id="next" type="button" class="deck-glass deck-next" aria-label="다음 슬라이드" data-tip="다음 슬라이드" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-right"></use></svg></button>
+          <button id="tocButton" type="button" class="deck-glass " aria-label="목차 검색" data-tip="목차 검색" aria-haspopup="dialog" aria-controls="tocDialog"><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-list"></use></svg></button><button id="pageButton" type="button" class="deck-glass " aria-label="페이지 이동" data-tip="페이지 이동" aria-haspopup="dialog" aria-controls="pageDialog"><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-hash"></use></svg></button><button id="fullscreenButton" aria-keyshortcuts="f" type="button" class="deck-glass " aria-label="전체 화면" data-tip="전체 화면" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-maximize"></use></svg></button><button id="printButton" type="button" class="deck-glass " aria-label="인쇄" data-tip="인쇄" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-print"></use></svg></button>
+        </div>
+      </nav>
+    </div>
+    <p id="slideStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  <dialog class="deck-dialog" id="tocDialog" aria-labelledby="tocTitle">
+    <div class="dialog-heading"><h2 id="tocTitle">목차 검색</h2><button id="closeToc" type="button" class="deck-glass " aria-label="목차 닫기" data-tip="목차 닫기" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-close"></use></svg></button></div>
+    <label for="tocSearch">제목 또는 본문으로 찾기</label><input id="tocSearch" type="search" placeholder="검색어를 입력하세요" autocomplete="off">
+    <p id="tocEmpty" hidden>검색 결과가 없습니다.</p><div id="tocContents"></div>
+  </dialog>
+  <dialog class="deck-dialog deck-page-dialog" id="pageDialog" aria-labelledby="pageTitle">
+    <div class="dialog-heading"><h2 id="pageTitle">페이지 이동</h2><button id="closePage" type="button" class="deck-glass " aria-label="페이지 이동 닫기" data-tip="페이지 이동 닫기" ><svg class="deck-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#deck-icon-close"></use></svg></button></div>
+    <form id="pageForm"><label for="pageNumber">전체 <span id="totalSlides"></span>쪽</label><input id="pageNumber" type="number" min="1" value="1" required><button type="submit" class="deck-submit">이동</button></form>
+  </dialog>
+  </main>
+</body>
+</html>

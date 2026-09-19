@@ -1,0 +1,27 @@
+/* Week 3 follows the existing Freesentation lecture template. */
+.source-figure{margin:0;text-align:center}.source-figure img{width:100%;max-height:27cqw;object-fit:contain}.source-figure figcaption{font-size:1.05cqw;color:#536174;margin-top:.4cqw}
+.has-figure .slide-body{gap:.8cqw}.has-figure .slide-body>p{font-size:1.85cqw}
+.nest{background:#edf2fc;border:2px solid #3e5dae;padding:1cqw 1.7cqw;color:#173763;font-size:2cqw}.nest>div{background:#dce7fc;padding:1cqw 1.7cqw;margin:.7cqw 0 0 4cqw;border:2px solid #6a86c9}.nest>div>div{background:#c1d3f7;padding:1cqw;margin:.7cqw 0 0 4cqw;border:2px solid #3e5dae}
+.formula{background:#edf2fc;padding:1.4cqw 2cqw;text-align:center;font-size:2.4cqw;color:#173763}
+.resource-links{display:grid;grid-template-columns:1fr 1fr;gap:1cqw}.resource-links a{border:1px solid #9eb3db;padding:1cqw 1.5cqw;font-size:1.85cqw;color:#244f91;border-radius:8px}
+.lecture-page .slide[data-lab]:not([data-lab=""]) .slide-body{justify-content:flex-start;padding-top:1.8cqw;gap:1.1cqw;padding-bottom:2cqw}
+.lecture-page .slide[data-lab]:not([data-lab=""]) .lead{font-size:2.1cqw}
+.number-chart,.loss-chart svg{width:100%;height:12cqw;display:block}.number-chart text,.loss-chart text{font-family:Freesentation,sans-serif;font-size:18px;fill:#173763}
+.lab .question-title{font-size:2.15cqw;margin-bottom:1.6cqw}.lab .question .buttons{flex-direction:column;align-items:stretch}.lab .question button{text-align:left;padding:1cqw 1.4cqw;font-size:1.75cqw}.lab button[aria-pressed=true]{background:#3e5dae;color:white}
+.lab .result ol{padding-left:2cqw;margin:0}.lab .result li{margin-bottom:.6cqw}.lab .token-sentence{background:#e8f0ff;padding:1.8cqw;font-size:2.6cqw;margin-bottom:1.5cqw;color:#173763}
+.lab[data-kind=reflection] textarea{min-height:4cqw;resize:vertical}.lab[data-kind=reflection] label{margin-bottom:.2cqw}.lab[data-kind=reflection] textarea{margin-bottom:.6cqw}
+.lab .comparison h3{font-size:2.1cqw}.lab .comparison p{font-size:1.7cqw}.lab .comparison{margin-bottom:1cqw}
+.foundation .slide-footer>span:first-child{max-width:75%}.section .section-copy{top:28%}
+.slide[data-lab=neuron] .lab table{font-size:1.4cqw}.slide[data-lab=neuron] .lab .metric{font-size:2.1cqw}.slide[data-lab=neuron] .lab td{padding:.15cqw .6cqw}
+@media(max-width:850px){
+ .source-figure img{max-height:none;width:100%}.source-figure figcaption{font-size:11px}.has-figure .slide-body>p{font-size:18px}
+ .nest{font-size:17px;padding:12px}.nest>div{padding:10px;margin:10px 0 0 10px}.nest>div>div{padding:10px;margin:10px 0 0 8px}
+ .formula{font-size:19px;padding:15px;overflow-wrap:anywhere}.resource-links{grid-template-columns:1fr;gap:12px}.resource-links a{font-size:17px;padding:14px}
+ .lecture-page .slide[data-lab]:not([data-lab=""]) .slide-body{padding:20px 18px 25px;gap:16px}.lecture-page .slide[data-lab]:not([data-lab=""]) .lead{font-size:19px}
+ .number-chart,.loss-chart svg{height:auto;min-height:100px}.lab .question-title{font-size:20px;margin-bottom:16px}.lab .question button{padding:12px;font-size:17px}
+ .lab .result ol{padding-left:22px}.lab .result li{margin-bottom:10px}.lab .token-sentence{padding:18px;font-size:26px;margin-bottom:16px}
+ .lab[data-kind=reflection] textarea{min-height:75px;margin-bottom:10px}.lab .comparison h3{font-size:21px}.lab .comparison p{font-size:17px}
+ .slide[data-lab=neuron] .lab table{font-size:14px}.slide[data-lab=neuron] .lab .metric{font-size:21px}.slide[data-lab=neuron] .lab td{padding:5px}
+ .lab table{table-layout:fixed;overflow-wrap:anywhere}.lab table td,.lab table th{font-size:12px;padding:6px 2px}
+ .slide-chapter{padding-top:10px}.section .section-copy{top:25%}
+}
