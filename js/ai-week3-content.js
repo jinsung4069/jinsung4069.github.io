@@ -86,7 +86,22 @@ window.WEEK3 = {
           ]
         ]
       },
-      "note": "한 서비스가 여러 작업을 함께 수행할 수 있습니다."
+      "note": "검출은 위치를 찾는 일이고, 인식은 대상의 의미나 정체를 판단하는 일입니다. 한 서비스가 여러 작업을 함께 수행할 수 있습니다.",
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/ocr.png",
+          "alt": "사진의 글자를 찾아 텍스트로 바꾸는 과정",
+          "caption": "사진의 글자를 찾아 텍스트로 바꾸는 과정",
+          "credit": "박정호, AI융합교육의 이해와 실제, 홍릉, 2025, p.24"
+        },
+        {
+          "src": "/images/lectures/week3/face-recognition.png",
+          "alt": "얼굴 위치 검출, 정렬, 특징 비교와 인식",
+          "caption": "얼굴 위치 검출, 정렬, 특징 비교와 인식",
+          "credit": "박정호, AI융합교육의 이해와 실제, 홍릉, 2025, p.25"
+        }
+      ],
+      "visualLayout": "gallery"
     },
     {
       "ch": 1,
@@ -165,6 +180,11 @@ window.WEEK3 = {
             "1955, 1956",
             "AI 연구 제안서와 다트머스 여름 연구 모임",
             "인공지능이라는 연구 분야 형성"
+          ],
+          [
+            "1958",
+            "로젠블랫의 퍼셉트론 논문",
+            "예시로 가중치를 조정하는 모형"
           ]
         ]
       },
@@ -172,7 +192,28 @@ window.WEEK3 = {
       "source": {
         "label": "다트머스 연구 제안서",
         "url": "https://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html"
-      }
+      },
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/alan-turing.jpg",
+          "alt": "앨런 튜링, 기계의 지능을 묻다",
+          "caption": "앨런 튜링, 기계의 지능을 묻다",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "src": "/images/lectures/week3/frank-rosenblatt.jpg",
+          "alt": "프랭크 로젠블랫, 퍼셉트론 연구",
+          "caption": "프랭크 로젠블랫, 퍼셉트론 연구",
+          "credit": "Wikimedia Commons"
+        },
+        {
+          "src": "/images/lectures/week3/mark1-perceptron.png",
+          "alt": "초기 Mark I 퍼셉트론 장치",
+          "caption": "초기 Mark I 퍼셉트론 장치",
+          "credit": "Wikimedia Commons"
+        }
+      ],
+      "visualLayout": "history"
     },
     {
       "ch": 2,
@@ -181,7 +222,16 @@ window.WEEK3 = {
         "질문자가 문자 대화를 통해 사람과 기계를 구별하는 상황을 생각합니다. 핵심은 관찰할 수 있는 언어적 행동입니다.",
         "자연스러운 답변을 만들었다는 사실과 <strong>답변의 의미를 이해하거나 의식이 있다는 주장</strong>은 구별해야 합니다.",
         "“얼마나 사람 같은가?”에 더해 “내용이 정확한가, 새로운 상황에서도 작동하는가?”를 함께 질문합니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/turing-test.png",
+          "alt": "위쪽의 기계와 사람, 아래쪽의 질문자",
+          "caption": "위쪽의 기계와 사람, 아래쪽의 질문자",
+          "credit": "Wikipedia, Turing test"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 2,
@@ -190,7 +240,16 @@ window.WEEK3 = {
         "지식 기반 접근은 전문가의 지식과 추론 규칙을 모아 제한된 분야의 문제를 해결했습니다.",
         "규칙이 많아질수록 예외 처리와 지식 갱신이 어려워졌습니다. 당시 데이터와 연산 자원의 한계도 있었습니다.",
         "1970년대와 1980년대 말 이후의 침체는 <strong>높은 기대와 실제 성과 사이의 간격</strong>과 연결됩니다. 하나의 사건만으로 설명하기는 어렵습니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/expert-systems.jpeg",
+          "alt": "전문가의 지식을 규칙으로 표현한 MYCIN 연구",
+          "caption": "전문가의 지식을 규칙으로 표현한 MYCIN 연구",
+          "credit": "Buchanan & Shortliffe, Rule-Based Expert Systems, 1984"
+        }
+      ],
+      "visualLayout": "portrait"
     },
     {
       "ch": 2,
@@ -211,7 +270,16 @@ window.WEEK3 = {
       "source": {
         "label": "Krizhevsky 외, 2012",
         "url": "https://cave.cs.toronto.edu/kriz/imagenet_classification_with_deep_convolutional.pdf"
-      }
+      },
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/data-to-model.png",
+          "alt": "데이터와 학습 알고리즘으로 모델을 만드는 과정",
+          "caption": "데이터와 학습 알고리즘으로 모델을 만드는 과정",
+          "credit": "AI시대의 컴퓨터 개론, 그림 6.30"
+        }
+      ],
+      "visualLayout": "wide"
     },
     {
       "ch": 2,
@@ -224,7 +292,16 @@ window.WEEK3 = {
       "source": {
         "label": "Google DeepMind, AlphaGo",
         "url": "https://deepmind.google/research/alphago/"
-      }
+      },
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/game-tree.jpeg",
+          "alt": "가능한 다음 수가 여러 갈래로 나뉘는 탐색 구조",
+          "caption": "가능한 다음 수가 여러 갈래로 나뉘는 탐색 구조",
+          "credit": "중앙일보, 알파고 탐색 시각화"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 2,
@@ -301,7 +378,16 @@ window.WEEK3 = {
         "가능한 행동",
         "목표 조건",
         "탐색과 비용 비교"
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/search-maze.png",
+          "alt": "출발점에서 하트까지, 막힌 길을 만나면 어떤 선택을 할까요?",
+          "caption": "출발점에서 하트까지, 막힌 길을 만나면 어떤 선택을 할까요?",
+          "credit": ""
+        }
+      ],
+      "visualLayout": "wide"
     },
     {
       "ch": 4,
@@ -346,7 +432,16 @@ window.WEEK3 = {
         "<strong>레이블 y</strong>는 지도학습에서 예측하려는 목표값입니다. 사과와 배 같은 종류 또는 수요 같은 수치가 될 수 있습니다.",
         "<strong>모델 f</strong>는 입력을 출력으로 바꾸는 계산 구조입니다. 학습은 데이터에 맞게 모델의 매개변수나 구조를 정하는 과정입니다."
       ],
-      "html": "<div class=\"formula\">입력 x → 모델 f → 예측값 ŷ</div>"
+      "html": "<div class=\"formula\">입력 x → 모델 f → 예측값 ŷ</div>",
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/supervised-learning.png",
+          "alt": "개와 고양이 사진에 이름표를 붙여 학습하기",
+          "caption": "개와 고양이 사진에 이름표를 붙여 학습하기",
+          "credit": "박정호, AI융합교육의 이해와 실제, 홍릉, 2025, pp.36~37"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 4,
@@ -363,7 +458,16 @@ window.WEEK3 = {
       ],
       "paragraphs": [
         "서비스를 한 번 사용할 때마다 모델이 즉시 재학습되는 것은 아닙니다. 저장, 재학습, 배포는 서비스의 설계에 따라 별도로 이루어집니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/model-inference.png",
+          "alt": "새로운 입력에 학습된 모델을 적용하여 예측",
+          "caption": "새로운 입력에 학습된 모델을 적용하여 예측",
+          "credit": "AI시대의 컴퓨터 개론, 그림 6.31"
+        }
+      ],
+      "visualLayout": "wide"
     },
     {
       "ch": 4,
@@ -402,7 +506,16 @@ window.WEEK3 = {
         "k 최근접 이웃, k-NN은 새 입력과 가까운 학습 사례 k개를 찾아 분류하거나 수치를 예측합니다.",
         "분류에서는 가까운 이웃의 다수 레이블을 이용할 수 있습니다. k와 거리 계산 방식에 따라 결과가 달라집니다.",
         "길이와 질량처럼 단위가 다른 특징을 함께 쓰면 <strong>스케일</strong>이 거리에 영향을 줍니다. 특징의 의미와 전처리 기준을 확인해야 합니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/nearest-neighbors.png",
+          "alt": "이웃 3개와 7개의 다수 범주가 달라지는 예",
+          "caption": "이웃 3개와 7개의 다수 범주가 달라지는 예",
+          "credit": "AI시대의 컴퓨터 개론"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 4,
@@ -417,7 +530,16 @@ window.WEEK3 = {
         "군집화는 미리 붙인 정답 이름표 없이 비슷한 데이터끼리 묶는 방법입니다.",
         "k-means는 각 점을 가까운 중심에 배정한 뒤, 각 군집의 평균으로 중심을 옮기는 과정을 반복합니다.",
         "군집 수와 거리의 기준에 따라 결과가 달라집니다. 만들어진 군집이 <strong>현실의 정답 범주</strong>와 반드시 일치하지는 않습니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/unsupervised-learning.png",
+          "alt": "이름표 없이 비슷한 특징을 기준으로 묶기",
+          "caption": "이름표 없이 비슷한 특징을 기준으로 묶기",
+          "credit": "박정호, AI융합교육의 이해와 실제, 홍릉, 2025, p.38"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 4,
@@ -460,7 +582,16 @@ window.WEEK3 = {
         "가중치는 입력이 계산에 미치는 영향을, 편향은 기준의 이동을 나타냅니다.",
         "뇌의 모든 작동을 그대로 복제한 모형은 아닙니다. <strong>학습 가능한 수학적 계산 단위</strong>로 이해합니다."
       ],
-      "html": "<div class=\"formula\">z = w₁x₁ + w₂x₂ + b, 출력 = 활성화 함수(z)</div>"
+      "html": "<div class=\"formula\">z = w₁x₁ + w₂x₂ + b, 출력 = 활성화 함수(z)</div>",
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/neuron-inputs.png",
+          "alt": "여러 입력을 모아 하나의 출력을 계산",
+          "caption": "여러 입력을 모아 하나의 출력을 계산",
+          "credit": "이주완, 브레인 이미테이션"
+        }
+      ],
+      "visualLayout": "split"
     },
     {
       "ch": 5,
@@ -475,7 +606,16 @@ window.WEEK3 = {
         "입력층, 은닉층, 출력층을 연결하면 여러 단계의 계산으로 복잡한 관계를 표현할 수 있습니다.",
         "비선형 활성화 함수가 있어야 여러 층을 쌓는 것이 단순한 한 번의 선형 계산보다 풍부한 표현을 만들 수 있습니다.",
         "층이 많다고 언제나 좋은 모델은 아닙니다. 데이터의 양과 질, 계산 비용, 과적합을 함께 고려합니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/neural-layers.png",
+          "alt": "단층 퍼셉트론과 은닉층이 있는 다층 퍼셉트론 비교",
+          "caption": "단층 퍼셉트론과 은닉층이 있는 다층 퍼셉트론 비교",
+          "credit": "한국과학창의재단, 학교에서 만나는 인공지능 수업"
+        }
+      ],
+      "visualLayout": "wide"
     },
     {
       "ch": 5,
@@ -537,7 +677,16 @@ window.WEEK3 = {
       "paragraphs": [
         "사과 분류기의 성공 기준은 “학습 실행 성공”이 아닙니다. 실제 촬영 조건에서 종류를 얼마나 정확하게 구별하는지 확인해야 합니다.",
         "오류를 분석하면 데이터 수집이나 문제 정의 단계로 돌아갈 수 있습니다. 개발 과정은 <strong>반복적인 개선 과정</strong>입니다."
-      ]
+      ],
+      "visuals": [
+        {
+          "src": "/images/lectures/week3/orange-workflow.jpg",
+          "alt": "데이터, 학습기, 평가를 연결한 Orange3 작업 흐름",
+          "caption": "데이터, 학습기, 평가를 연결한 Orange3 작업 흐름",
+          "credit": ""
+        }
+      ],
+      "visualLayout": "wide"
     },
     {
       "ch": 6,

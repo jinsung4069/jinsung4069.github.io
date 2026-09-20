@@ -8,11 +8,34 @@
     let inner='';
     if(s.type==='cover') inner=`<div class="cover-copy"><p>${esc(s.sub)}</p><h1>${esc(s.title)}</h1></div><div class="presenter">전인성<br>광주교육대학교 컴퓨터교육과</div>`;
     else if(s.type==='section') inner=`<div class="section-copy"><h2>${esc(s.title)}</h2><p>${esc(s.sub)}</p></div>`;
-    else inner=`<h2 class="slide-title">${esc(s.title)}</h2><span class="slide-chapter">${esc(chapters[s.ch])}</span><div class="slide-body">${s.lead?`<p class="lead">${esc(s.lead)}</p>`:''}${s.figure?`<figure class="source-figure"><img src="${esc(s.figure.src)}" alt="${esc(s.figure.alt)}"><figcaption>${esc(s.credit)}</figcaption></figure>`:''}${s.compare?`<div class="comparison">${s.compare.map(c=>`<section><h3>${c[0]}</h3><p>${c[1]}</p></section>`).join('')}</div>`:''}${s.html||''}${(s.paragraphs||[]).map(p=>`<p>${p}</p>`).join('')}${s.steps?`<ol class="process">${s.steps.map((x,j)=>`<li><b>${j+1}</b>${esc(x)}</li>`).join('')}</ol>`:''}${s.table?table(s.table):''}${s.note?`<p class="foundation-note">${esc(s.note)}</p>`:''}${s.lab?`<div class="lab" data-kind="${s.lab}">${Week3Labs.render(s.lab)}</div>`:''}</div>`;
+    else {
+      inner=`<h2 class="slide-title">${esc(s.title)}</h2><span class="slide-chapter">${esc(chapters[s.ch])}</span><div class="slide-body">${s.lead?`<p class="lead">${esc(s.lead)}</p>`:''}${s.figure?`<figure class="source-figure"><img src="${esc(s.figure.src)}" alt="${esc(s.figure.alt)}"><figcaption>${esc(s.credit)}</figcaption></figure>`:''}${s.compare?`<div class="comparison">${s.compare.map(c=>`<section><h3>${c[0]}</h3><p>${c[1]}</p></section>`).join('')}</div>`:''}${s.html||''}${(s.paragraphs||[]).map(p=>`<p>${p}</p>`).join('')}${s.steps?`<ol class="process">${s.steps.map((x,j)=>`<li><b>${j+1}</b>${esc(x)}</li>`).join('')}</ol>`:''}${s.table?table(s.table):''}${s.note?`<p class="foundation-note">${esc(s.note)}</p>`:''}${s.lab?`<div class="lab" data-kind="${s.lab}">${Week3Labs.render(s.lab)}</div>`:''}</div>`;
+      if(s.visuals){
+        const gallery=`<div class="visual-gallery">${s.visuals.map(v=>`<figure><button class="visual-open" type="button" data-image="${esc(v.src)}" data-caption="${esc(v.caption)}" aria-label="${esc(v.caption)}, 이미지 크게 보기"><img src="${esc(v.src)}" alt="${esc(v.alt)}"><svg class="visual-zoom" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button><figcaption>${esc(v.caption)}${v.credit?`<small>${esc(v.credit)}</small>`:''}</figcaption></figure>`).join('')}</div>`;
+        const bodyStart=inner.indexOf('<div class="slide-body">')+'<div class="slide-body">'.length;
+        inner=inner.slice(0,bodyStart)+`<div class="visual-layout visual-${s.visualLayout==='gallery'?'gallery-layout':s.visualLayout}">${gallery}<div class="visual-copy">`+inner.slice(bodyStart,-6)+'</div></div></div>';
+      }
+    }
     const footer=`<div class="slide-footer"><span>${s.source?`<a href="${esc(s.source.url)}" target="_blank" rel="noopener">${esc(s.source.label)}</a>`:'AI알고리즘, 인공지능의 이해와 원리'}</span><span>${i+1}</span></div>`;
-    return `<article class="slide ${s.type||'foundation'}${s.figure?' has-figure':''}" id="slide-${i+1}" data-lab="${s.lab||''}" aria-roledescription="슬라이드" aria-label="${i+1} / ${slides.length}, ${esc(s.title.replace('\n',' '))}" ${i?'hidden':''}>${inner}${footer}</article>`;
+    return `<article class="slide ${s.type||'foundation'}${s.figure?' has-figure':''}${s.visuals?' has-visual visual-style-'+s.visualLayout:''}" id="slide-${i+1}" data-lab="${s.lab||''}" aria-roledescription="슬라이드" aria-label="${i+1} / ${slides.length}, ${esc(s.title.replace('\n',' '))}" ${i?'hidden':''}>${inner}${footer}</article>`;
   }).join('');
   document.querySelectorAll('.lab').forEach(Week3Labs.bind);
+  const imageDialog=document.createElement('dialog');
+  imageDialog.className='image-dialog';
+  imageDialog.setAttribute('aria-label','강의 이미지 크게 보기');
+  imageDialog.innerHTML='<button type="button" class="image-close" aria-label="이미지 닫기">×</button><img alt=""><p></p>';
+  document.body.append(imageDialog);
+  let imageOpener=null;
+  document.querySelectorAll('.visual-open').forEach(button=>button.addEventListener('click',()=>{
+    imageOpener=button;
+    imageDialog.querySelector('img').src=button.dataset.image;
+    imageDialog.querySelector('img').alt=button.dataset.caption;
+    imageDialog.querySelector('p').textContent=button.dataset.caption;
+    imageDialog.showModal();
+  }));
+  imageDialog.querySelector('button').addEventListener('click',()=>imageDialog.close());
+  imageDialog.addEventListener('click',e=>{if(e.target===imageDialog)imageDialog.close()});
+  imageDialog.addEventListener('close',()=>imageOpener?.focus());
   const viewer = $('#deckViewer');
   const dialog = $('#tocDialog');
   const pageDialog = $('#pageDialog');
@@ -88,11 +111,11 @@
     catch { $('#slideStatus').textContent = '이 브라우저에서는 전체 화면을 사용할 수 없습니다.'; }
   });
   document.addEventListener('fullscreenchange', setFullscreenButton);
-  window.LecturePrint.register({button:$('#printButton'),title:'AI알고리즘, 인공지능의 이해와 원리',slides,assets:()=>slides.filter(s=>s.figure).map(s=>s.figure.src),
+  window.LecturePrint.register({button:$('#printButton'),title:'AI알고리즘, 인공지능의 이해와 원리',slides,assets:()=>slides.flatMap(s=>[...(s.figure?[s.figure.src]:[]),...(s.visuals||[]).map(v=>v.src)]),
     render(i){go(i,false);const node=document.querySelectorAll('#stage > .slide')[i];return {node,width:1280,height:Math.max(node.scrollHeight,node.offsetHeight)}}
   });
   document.addEventListener('keydown', event => {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.isComposing || dialog.open || pageDialog.open || event.target.closest('input,textarea,select,video,[contenteditable=true],[role=textbox]')) return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.isComposing || dialog.open || pageDialog.open || imageDialog.open || event.target.closest('input,textarea,select,video,[contenteditable=true],[role=textbox]')) return;
     if (event.code === 'KeyF' || event.key.toLowerCase() === 'f') {
       if (!event.repeat) { event.preventDefault(); $('#fullscreenButton').click(); }
       return;

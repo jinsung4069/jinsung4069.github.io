@@ -50,3 +50,30 @@ AI알고리즘 오리엔테이션 3~15장에서 목표, 교재와 실습 환경�
 ## 검증
 
 `tests/ai-week3.browser.cjs`로 55장 데스크톱 및 모바일 폭, 13개 활동, A/D와 방향키, F 전체화면, 입력 중 단축키 충돌 방지, 검색, 다운로드, 터치 넘김, 인쇄 준비를 확인한다. 실제 생성 PDF는 55쪽, A4 가로 크기이며 표지, 본문, 도식, 주요 체험의 인쇄 화면을 확인했다. 코랩 노트북의 모든 코드 셀을 실행했으며 훈련으로 선택한 경계는 5.5, 고정된 가상 테스트 자료 정확도는 1.0이었다. 이 작은 가상 자료의 점수를 실제 모델 성능으로 해석하지 않는다.
+
+
+## 사진과 도식 보강, 2026-09-20
+
+기존 55장과 체험 13개를 유지하고, 14개 본문 슬라이드에 17개 사진 및 도식을 추가했다. 모든 이미지 파일은 원본 PPTX의 미디어를 바이트 그대로 추출했으며 원본 PPTX는 수정하지 않았다. 인물과 장치 사진, 튜링 테스트, 미로 탐색, 문자 및 얼굴 인식, 지도학습과 군집, 신경망, Orange3 작업 흐름을 본문에 맞추어 배치했다. 그림을 누르면 확대되고 Escape로 닫을 수 있다. 새 슬라이드를 끼워 넣지 않아 기존 페이지 링크는 그대로 유지된다.
+
+| 이미지 파일 | 원본 자료 | 원본 슬라이드 | 미디어 |
+| --- | --- | --- | --- |
+| ocr.png | 2026-09-08_Chapter2_인공지능이해.pptx | 8 | ppt/media/image5.png |
+| face-recognition.png | 2026-09-08_Chapter2_인공지능이해.pptx | 9 | ppt/media/image6.png |
+| alan-turing.jpg | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_B_기계학습 모델(전인성).pptx | 14 | ppt/media/image19.jpg |
+| frank-rosenblatt.jpg | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_B_기계학습 모델(전인성).pptx | 15 | ppt/media/image20.jpg |
+| mark1-perceptron.png | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_B_기계학습 모델(전인성).pptx | 15 | ppt/media/image21.png |
+| turing-test.png | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_1.pptx | 9 | ppt/media/image13.png |
+| expert-systems.jpeg | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_1.pptx | 22 | ppt/media/image25.jpeg |
+| data-to-model.png | 1-단원06 인공지능과 딥러닝(자세히).pptx | 33 | ppt/media/image31.png |
+| game-tree.jpeg | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_1.pptx | 17 | ppt/media/image21.jpeg |
+| search-maze.png | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_1.pptx | 16 | ppt/media/image20.png |
+| supervised-learning.png | 2026-09-08_Chapter2_인공지능이해.pptx | 23 | ppt/media/image7.png |
+| model-inference.png | 1-단원06 인공지능과 딥러닝(자세히).pptx | 33 | ppt/media/image32.png |
+| nearest-neighbors.png | 1-단원06 인공지능과 딥러닝(자세히).pptx | 48 | ppt/media/image46.png |
+| unsupervised-learning.png | 2026-09-08_Chapter2_인공지능이해.pptx | 25 | ppt/media/image8.png |
+| neuron-inputs.png | 6-7 기계학습의 원리-퍼셉트론과 신경망.pptx | 3 | ppt/media/image4.png |
+| neural-layers.png | 6-7 기계학습의 원리-퍼셉트론과 신경망.pptx | 4 | ppt/media/image5.png |
+| orange-workflow.jpg | 03. 26.05.08_KERIS_AI정보-초등_지식역량 기초(초등)_B_기계학습 모델(전인성).pptx | 22 | ppt/media/image26.jpg |
+
+KERIS 기초1, B 기계학습 모델, 대학원 Chapter2, AI교육개론 신경망, AI시대의 컴퓨터 개론 등 5개 PPTX에서 선택한 원본 15장을 렌더링해 본문과 그림의 맥락을 대조했다. 강의자료를 재사용했다는 표시는 수업 화면에 추가하지 않고 원 교재, 사진, 도식의 출처를 필요한 위치에 남겼다.

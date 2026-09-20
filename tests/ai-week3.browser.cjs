@@ -26,6 +26,9 @@ const fs=require('node:fs');
  lab=await go('reflection');await lab.locator('textarea').first().fill('새 데이터에도 적용할 수 있는가?');const before=page.url();await page.keyboard.press('d');assert.equal(page.url(),before);assert.match(await lab.locator('textarea').first().inputValue(),/d$/);
  const [download]=await Promise.all([page.waitForEvent('download'),lab.locator('[data-download]').click()]);assert.equal(download.suggestedFilename(),'AI알고리즘_3주차_활동기록.txt');
  await page.locator('#tocButton').focus();await page.locator('#tocButton').click();await page.locator('#tocSearch').fill('기계학습');assert(await page.locator('#tocContents button:visible').count()>0);await page.locator('#tocSearch').fill('검색어없음xyz');assert(await page.locator('#tocEmpty').isVisible());await page.keyboard.press('Escape');
+ // Each reused visual opens accessibly without changing the slide or keyboard state.
+ const visualSlides=slides.flatMap((s,i)=>s.visuals?[i+1]:[]);assert.equal(visualSlides.length,14);
+ for(const n of visualSlides){await page.evaluate(i=>location.hash='slide-'+i,n);const slide=page.locator('#slide-'+n);await slide.waitFor({state:'visible'});for(const button of await slide.locator('.visual-open').all()){assert(await button.locator('img').evaluate(im=>im.complete&&im.naturalWidth>0));await button.click();assert(await page.locator('.image-dialog').isVisible());const hash=new URL(page.url()).hash;await page.keyboard.press('d');assert.equal(new URL(page.url()).hash,hash);await page.keyboard.press('Escape');assert(!(await page.locator('.image-dialog').isVisible()));assert(await button.evaluate(el=>el===document.activeElement));}}
  const layout=[];const captures=process.argv[3];if(captures)fs.mkdirSync(captures,{recursive:true});
  for(let i=0;i<slides.length;i++){
   await page.evaluate(n=>location.hash='slide-'+n,i+1);await page.locator(`#slide-${i+1}`).waitFor({state:'visible'});
