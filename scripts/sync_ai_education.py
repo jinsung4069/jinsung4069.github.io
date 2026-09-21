@@ -47,10 +47,10 @@ def text_runs(shape, x_offset=0, y_offset=0):
                 color='#%02x%02x%02x' % (rgb & 255, (rgb >> 8) & 255, (rgb >> 16) & 255)))
     return result
 
-def extract_slide(slide, z, part, number, chapter, folder, work):
+def extract_slide(slide, z, part, number, chapter, folder, work, cleaner=clean_source_text):
     xml = ET.fromstring(z.read(part))
     rels = relationships(z, part)
-    texts = [text for e in xml.findall('.//a:t', NS) if (text := clean_source_text(e.text or ''))]
+    texts = [text for e in xml.findall('.//a:t', NS) if (text := cleaner(e.text or ''))]
     titles = [s for s in slide.Shapes if s.HasTextFrame and s.TextFrame.HasText
               and s.Top < 90 and s.Height < 130]
     title = titles[0].TextFrame.TextRange.Text.replace('\r', ' ') if titles else texts[0]
@@ -65,7 +65,7 @@ def extract_slide(slide, z, part, number, chapter, folder, work):
     for shape in slide.Shapes:
         if shape.HasTextFrame and shape.TextFrame.HasText:
             original = shape.TextFrame.TextRange.Text
-            cleaned = clean_source_text(original)
+            cleaned = cleaner(original)
             if cleaned != original: shape.TextFrame.TextRange.Text = cleaned
         if shape.Id in pictures and abs(shape.Rotation) < .01:
             element = pictures[shape.Id]
