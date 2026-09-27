@@ -1,0 +1,54 @@
+/* Keep the existing lecture template, with room for the week 4 activities. */
+.lecture-page .slide-body{font-size:2.08cqw;gap:1.3cqw}
+.lecture-page .slide-body .lead{font-size:2.35cqw}
+.lecture-page .slide table{font-size:1.75cqw}
+.lecture-page .slide td,.lecture-page .slide th{padding:.65cqw .8cqw}
+.lecture-page .slide-body>.foundation-note{font-size:1.5cqw;line-height:1.55}
+.slide .visual-copy .foundation-note{font-size:1.2cqw}
+.slide .visual-copy .resource-links a{font-size:1.5cqw;padding:.7cqw}
+.slide .visual-copy{font-size:1.75cqw;gap:1.15cqw}
+.slide .visual-wide .visual-open img{height:20cqw}
+.slide .visual-gallery-layout .visual-open img{height:20cqw}
+.slide .visual-gallery-layout>.visual-copy{font-size:1.85cqw}
+.lab .w4-chart{display:block;width:100%;height:20cqw;min-height:0;overflow:visible}
+.w4-chart text{font-family:Freesentation,sans-serif;font-weight:600;font-size:16px;fill:#30456a}
+.w4-chart .grid-line{stroke:#dce3ee;stroke-width:1}
+.w4-chart circle[role=button]{cursor:pointer}.w4-chart circle[role=button]:focus{stroke:#14284e;stroke-width:3;outline:none}
+.lab-split{display:grid;grid-template-columns:1.3fr 1fr;gap:2cqw;align-items:center}
+.lab-split .w4-chart{height:24cqw}
+.lab .small{font-size:1.25cqw;line-height:1.5;color:#51617a}
+.lab .result{font-size:1.55cqw;line-height:1.5;padding:.8cqw 1.1cqw;min-height:2.5cqw}
+.lab .quiz-progress{font-size:1.3cqw;margin-bottom:1cqw;color:#526992}
+.lab .checklist{display:grid;gap:1.4cqw;margin:1cqw 0}
+.lab .checklist label{display:flex;gap:1cqw;align-items:center}
+.lab .wire-rows{display:grid;gap:.7cqw;margin-bottom:1cqw}
+.lab .wire-rows label{display:grid;grid-template-columns:1.3fr 1fr;gap:1cqw;margin:0}
+.lab .wire-rows small{display:block;font-size:1.1cqw;color:#536174}
+.lab select[aria-invalid=true]{border:2px solid #ac421e}
+.iris-legend{display:flex;gap:2cqw;justify-content:center;font-size:1.4cqw}
+.iris-legend[hidden]{display:none}
+.iris-legend span::before{content:'';display:inline-block;width:.8em;height:.8em;border-radius:50%;background:var(--series);margin-right:.4em}
+.fold-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1cqw;margin:2cqw 0}
+.fold-grid>div{border:2px solid #7892bc;padding:1.4cqw .5cqw;text-align:center;background:#eef3fc}
+.fold-grid b,.fold-grid span{display:block}.fold-grid .held-out{border-color:#b65527;background:#fff0de}
+.matrix-layout{display:grid;grid-template-columns:1.7fr 1fr;align-items:center;gap:1.2cqw;margin-bottom:1cqw}
+.lab .matrix-layout table{font-size:1.3cqw}.lab .matrix-layout th{font-size:1.15cqw}
+.matrix-layout .result{margin:0}.lab .matrix-layout button{width:100%;min-height:2.2cqw;padding:.3cqw}
+.record-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8cqw 1.5cqw}
+.lab .record-grid label{display:block;font-size:1.35cqw;margin:0}
+.lab .record-grid textarea{font-size:1.45cqw;min-height:6cqw;margin-top:.35cqw}
+.lab [data-score-answer]{font-size:1.5cqw;min-height:2cqw}
+@media(max-width:850px){
+ .lecture-page .slide-body{font-size:19px;gap:20px}.lecture-page .slide-body .lead{font-size:22px}
+ .lecture-page .slide table{font-size:15px}.lecture-page .slide td,.lecture-page .slide th{padding:9px 6px}
+ .lecture-page .slide-body>.foundation-note{font-size:16px}.slide .visual-copy,.slide .visual-gallery-layout>.visual-copy{font-size:19px;gap:16px}
+ .slide .visual-copy .foundation-note{font-size:15px}.slide .visual-copy .resource-links a{font-size:17px;padding:12px}
+ .slide .visual-wide .visual-open img,.slide .visual-gallery-layout .visual-open img{height:auto;max-height:330px}
+ .lab .w4-chart,.lab-split .w4-chart{height:auto;min-height:150px}.lab-split,.matrix-layout{grid-template-columns:1fr;gap:16px}
+ .lab .small,.lab .wire-rows small{font-size:14px}.lab .result{font-size:16px;padding:12px;min-height:40px}.lab .quiz-progress{font-size:15px;margin-bottom:12px}
+ .lab .checklist{gap:16px}.lab .checklist label{gap:12px;align-items:flex-start}.lab .checklist input{flex-shrink:0}
+ .lab .wire-rows{gap:16px;margin-bottom:16px}.lab .wire-rows label{grid-template-columns:1fr;gap:4px}
+ .iris-legend{font-size:13px;gap:10px;flex-wrap:wrap}.fold-grid{gap:5px;margin:18px 0;grid-template-columns:repeat(5,1fr)}
+ .fold-grid>div{padding:10px 3px;font-size:12px}.lab .matrix-layout table{font-size:12px;table-layout:fixed}.lab .matrix-layout th{font-size:11px;overflow-wrap:anywhere}.lab .matrix-layout td,.lab .matrix-layout th{padding:5px 2px}.lab .matrix-layout button{padding:7px 2px;font-size:15px}
+ .record-grid{grid-template-columns:1fr;gap:16px}.lab .record-grid label{font-size:17px}.lab .record-grid textarea{font-size:17px;min-height:90px}.lab [data-score-answer]{font-size:16px;min-height:35px}
+}
