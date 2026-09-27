@@ -22,8 +22,7 @@ window.WEEK4 = {
         "대표 알고리즘의 원리 이해",
         "Orange3 설치와 위젯 연결",
         "붓꽃 분류와 결과 해석"
-      ],
-      "note": "수업이 끝나면 데이터, 알고리즘, 평가 결과가 연결된 워크플로를 직접 만들 수 있습니다."
+      ]
     },
     {
       "ch": 0,
@@ -51,14 +50,12 @@ window.WEEK4 = {
             "새 꽃의 특징을 받아 품종을 예측하는 결과물"
           ]
         ]
-      },
-      "note": "3주차에서 배운 학습과 추론을 실제 도구로 연결합니다."
+      }
     },
     {
       "ch": 1,
       "title": "머신러닝 알고리즘",
-      "type": "section",
-      "sub": "무엇을 예측하는지에 따라 방법이 달라집니다"
+      "type": "section"
     },
     {
       "ch": 1,
@@ -86,8 +83,7 @@ window.WEEK4 = {
             "구매 행동이 비슷한 고객 그룹"
           ]
         ]
-      },
-      "note": "강화학습은 행동의 보상을 통해 전략을 학습합니다. 이번 실습은 정답이 있는 분류를 다룹니다."
+      }
     },
     {
       "ch": 1,
@@ -136,19 +132,15 @@ window.WEEK4 = {
             "군집화"
           ]
         ]
-      },
-      "note": "신경망도 대표적인 학습 모델입니다. 이번에는 해석하기 쉬운 Tree와 kNN으로 시작합니다."
+      }
     },
     {
       "ch": 1,
       "title": "의사결정나무, 질문을 나누는 방법",
-      "lead": "특징에 대한 질문을 반복하여 비슷한 정답끼리 모읍니다.",
       "paragraphs": [
-        "붓꽃이라면 “꽃잎 길이가 2.5 cm 이하인가?”와 같은 질문으로 데이터를 나눕니다.",
-        "각 분기에서 정답이 더 잘 구분되도록 특징과 기준값을 학습합니다.",
-        "마지막 잎에 도착하면 그곳에 모인 정답을 바탕으로 예측합니다."
+        "특징과 기준값으로 질문을 만들고, 정답이 비슷한 사례끼리 나누는 과정을 반복합니다. 마지막 잎에 모인 정답으로 예측합니다."
       ],
-      "note": "2.5 cm는 다음 활동의 설명용 기준입니다. Orange가 학습한 나무의 기준은 다를 수 있습니다."
+      "html": "<figure class=\"example-tree\"><figcaption>붓꽃 분류 질문 예시</figcaption><div class=\"tree-root\">꽃잎 길이가 2.5 cm 이하인가?</div><div class=\"tree-branches\"><div><span>예</span><strong>Setosa</strong></div><div><span>아니요</span><strong>다음 특징으로 다시 질문</strong></div></div></figure>"
     },
     {
       "ch": 1,
@@ -162,8 +154,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/knn-question.png",
-          "alt": "별에 가까운 네모와 동그라미를 찾아보세요.",
-          "caption": "별에 가까운 네모와 동그라미를 찾아보세요.",
+          "alt": "kNN의 새 사례와 주변 이웃",
+          "caption": "kNN의 새 사례와 주변 이웃",
           "credit": ""
         }
       ],
@@ -180,8 +172,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/knn-neighbors.png",
-          "alt": "k는 판단에 사용할 이웃의 수입니다.",
-          "caption": "k는 판단에 사용할 이웃의 수입니다.",
+          "alt": "이웃 수 k에 따른 판단 범위",
+          "caption": "이웃 수 k에 따른 판단 범위",
           "credit": ""
         }
       ],
@@ -201,32 +193,39 @@ window.WEEK4 = {
     {
       "ch": 1,
       "title": "선형 회귀와 로지스틱 회귀",
-      "compare": [
-        [
-          "선형 회귀",
-          "입력과 수치 결과의 관계를 직선 또는 선형식으로 학습합니다. 예: 기온으로 전력 사용량 예측."
-        ],
-        [
-          "로지스틱 회귀",
-          "입력으로 범주에 속할 확률을 추정합니다. 예: 스팸일 확률로 메일 분류."
-        ]
+      "visualLayout": "wide",
+      "visuals": [
+        {
+          "src": "/images/lectures/week4/regression-comparison.jpg",
+          "alt": "수치의 선형 관계와 범주에 속할 확률",
+          "caption": "수치의 선형 관계와 범주에 속할 확률"
+        }
       ],
-      "note": "이름에 회귀가 들어가지만 로지스틱 회귀는 분류에 사용하는 알고리즘입니다."
+      "paragraphs": [
+        "선형 회귀는 수치 사이의 선형 관계를 학습해 연속적인 값을 예측합니다.",
+        "로지스틱 회귀는 범주에 속할 확률을 추정해 분류합니다. 이진 분류의 확률은 0과 1 사이입니다."
+      ]
     },
     {
       "ch": 1,
       "title": "SVM과 랜덤 포레스트",
-      "compare": [
-        [
-          "SVM",
-          "서로 다른 범주를 나누는 경계를 학습합니다. 경계와 가까운 사례 사이의 여유를 확보하며, 커널을 사용하면 비선형 관계도 다룹니다."
-        ],
-        [
-          "랜덤 포레스트",
-          "데이터를 복원 추출하고 분기마다 일부 특징을 후보로 삼아 여러 나무를 학습합니다. 분류에서는 나무들의 예측을 투표로 결합합니다."
-        ]
+      "visualLayout": "gallery",
+      "visuals": [
+        {
+          "src": "/images/lectures/week4/svm-margin.png",
+          "alt": "SVM, 범주 사이의 여유를 확보하는 경계",
+          "caption": "SVM, 범주 사이의 여유를 확보하는 경계"
+        },
+        {
+          "src": "/images/lectures/week4/ensemble-vote.png",
+          "alt": "여러 분류기의 예측을 결합하는 앙상블",
+          "caption": "여러 분류기의 예측을 결합하는 앙상블"
+        }
       ],
-      "note": "데이터의 성격과 평가 방법에 따라 결과가 달라집니다. 알고리즘 이름만으로 우열을 정하지 않습니다."
+      "paragraphs": [
+        "SVM은 범주를 나누는 경계를 학습하며, 커널을 사용하면 비선형 관계도 다룹니다.",
+        "랜덤 포레스트는 복원 추출한 자료와 분기마다 선택한 특징 후보로 여러 나무를 학습하고, 분류 결과를 투표로 결합합니다."
+      ]
     },
     {
       "ch": 1,
@@ -247,9 +246,9 @@ window.WEEK4 = {
       ],
       "visualLayout": "gallery",
       "paragraphs": [
-        "가까운 중심점에 점을 배정한 뒤, 각 집단의 좌표 평균으로 중심을 옮깁니다. 이 과정을 반복합니다."
-      ],
-      "note": "k는 군집의 수입니다. 정답 품종을 사용하지 않으므로 군집이 실제 품종과 일치한다는 보장은 없습니다."
+        "k는 만들 군집의 수입니다. 각 점을 가까운 중심점에 배정하고, 묶인 점들의 좌표 평균으로 중심을 옮기는 과정을 반복합니다.",
+        "품종 정답을 사용하지 않고 거리로 묶으므로, 군집과 실제 품종은 서로 다를 수 있습니다."
+      ]
     },
     {
       "ch": 1,
@@ -277,14 +276,12 @@ window.WEEK4 = {
             "같은 평가 조건에서 얼마나 잘 작동하는가?"
           ]
         ]
-      },
-      "note": "이번 실습은 Tree로 시작하고 kNN을 추가하여 같은 조건으로 비교합니다."
+      }
     },
     {
       "ch": 2,
       "title": "Orange3 시작하기",
-      "type": "section",
-      "sub": "위젯을 연결하여 분석 과정을 구성합니다"
+      "type": "section"
     },
     {
       "ch": 2,
@@ -292,8 +289,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-canvas.png",
-          "alt": "왼쪽은 위젯 목록, 오른쪽은 작업 공간",
-          "caption": "왼쪽은 위젯 목록, 오른쪽은 작업 공간",
+          "alt": "Orange3의 위젯 목록과 작업 공간",
+          "caption": "Orange3의 위젯 목록과 작업 공간",
           "credit": "김현철 외, 『오렌지3 with 파이썬』, 생능북스"
         }
       ],
@@ -336,11 +333,13 @@ window.WEEK4 = {
         ]
       },
       "html": "<div class=\"resource-links\"><a href=\"https://orangedatamining.com/download/\" target=\"_blank\" rel=\"noopener\">Orange3 공식 다운로드</a></div>",
-      "note": "Mac은 “이 Mac에 관하여”에서 칩을 확인합니다. 기본 설치 경로에서는 Anaconda를 따로 준비할 필요가 없습니다.",
       "source": {
         "url": "https://orangedatamining.com/download/",
         "label": "Orange 공식 설치 안내"
-      }
+      },
+      "paragraphs": [
+        "Mac은 “이 Mac에 관하여”에서 칩을 확인한 뒤 설치 파일을 선택합니다."
+      ]
     },
     {
       "ch": 2,
@@ -348,8 +347,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-welcome.png",
-          "alt": "시작 화면에서 New를 선택합니다.",
-          "caption": "시작 화면에서 New를 선택합니다.",
+          "alt": "Orange3 시작 화면",
+          "caption": "Orange3 시작 화면",
           "credit": ""
         }
       ],
@@ -357,9 +356,8 @@ window.WEEK4 = {
       "paragraphs": [
         "Windows는 내려받은 설치 프로그램을 실행하고 안내에 따라 설치합니다. Portable은 압축을 푼 폴더에서 실행합니다.",
         "Mac은 칩에 맞는 dmg를 열어 앱을 설치하고 실행합니다.",
-        "Orange를 연 뒤 New를 선택합니다. 이번 실습에는 추가 Add-on이 필요하지 않습니다."
+        "Orange를 연 뒤 New를 선택합니다."
       ],
-      "note": "기관 PC가 설치를 제한하면 담당자의 안내를 따르세요. 화면 구성은 버전에 따라 조금 다를 수 있습니다.",
       "source": {
         "url": "https://orangedatamining.com/download/",
         "label": "Orange 공식 설치 안내"
@@ -381,9 +379,8 @@ window.WEEK4 = {
         "File의 오른쪽 연결점을 Data Table의 왼쪽으로 잇기"
       ],
       "paragraphs": [
-        "위젯을 두 번 클릭하면 설정 창이 열립니다. 연결선은 데이터나 학습 방법이 이동하는 통로입니다."
-      ],
-      "note": "연결이 여러 가지면 보내는 출력과 받는 입력을 확인합니다. 단순히 가까이 놓는 것만으로는 연결되지 않습니다."
+        "위젯을 두 번 클릭하면 설정 창이 열립니다."
+      ]
     },
     {
       "ch": 2,
@@ -430,8 +427,7 @@ window.WEEK4 = {
     {
       "ch": 3,
       "title": "붓꽃 분류 실습",
-      "type": "section",
-      "sub": "데이터 관찰부터 평가까지 한 번 연결해 봅니다"
+      "type": "section"
     },
     {
       "ch": 3,
@@ -457,24 +453,46 @@ window.WEEK4 = {
     {
       "ch": 3,
       "title": "1. File에서 Iris 불러오기",
-      "visuals": [
-        {
-          "src": "/images/lectures/week4/orange-file.png",
-          "alt": "공식 File 화면, 예시 데이터와 수업 데이터는 다를 수 있습니다.",
-          "caption": "공식 File 화면, 예시 데이터와 수업 데이터는 다를 수 있습니다.",
-          "credit": "Orange Data Mining"
-        }
-      ],
-      "visualLayout": "split",
       "paragraphs": [
-        "File을 두 번 클릭하고 기본 예제 목록에서 iris를 선택합니다.",
-        "목록에 없으면 아래 iris.tab 파일을 내려받아 File에서 엽니다.",
-        "150개 행, 수치 특징 4개, 품종 Target 1개인지 확인합니다."
+        "File을 두 번 클릭하고 기본 예제 목록에서 iris를 선택합니다. 목록에 없으면 아래 파일을 내려받아 엽니다.",
+        "150개 행, 수치 특징 4개, Target iris 하나인지 확인합니다."
       ],
-      "html": "<div class=\"resource-links\"><a href=\"/data/lectures/week4-iris.tab\" download=\"iris.tab\">붓꽃 데이터 다운로드</a></div>",
+      "html": "<div class=\"resource-links\"><a href=\"/data/lectures/week4-iris.tab\" download=\"iris.tab\">iris.tab 다운로드</a></div><p class=\"data-preview-label\">불러올 데이터의 첫 3행</p>",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/data/file/",
         "label": "Orange File 안내"
+      },
+      "table": {
+        "heads": [
+          "sepal length",
+          "sepal width",
+          "petal length",
+          "petal width",
+          "iris"
+        ],
+        "rows": [
+          [
+            "5.1",
+            "3.5",
+            "1.4",
+            "0.2",
+            "Iris-setosa"
+          ],
+          [
+            "4.9",
+            "3.0",
+            "1.4",
+            "0.2",
+            "Iris-setosa"
+          ],
+          [
+            "4.7",
+            "3.2",
+            "1.3",
+            "0.2",
+            "Iris-setosa"
+          ]
+        ]
       }
     },
     {
@@ -505,9 +523,8 @@ window.WEEK4 = {
         ]
       },
       "paragraphs": [
-        "File의 Data를 Data Table의 Data에 연결합니다. 한 행은 꽃 한 개입니다."
-      ],
-      "note": "품종 열을 입력 특징에 포함하지 않습니다. 품종은 모델이 맞혀야 할 정답입니다."
+        "File의 Data를 Data Table의 Data에 연결합니다. 한 행은 꽃 한 개이며, iris 열은 맞혀야 할 정답인 Target으로 지정합니다."
+      ]
     },
     {
       "ch": 3,
@@ -515,8 +532,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-scatter.png",
-          "alt": "축을 바꾸며 품종별 점의 분포를 비교합니다.",
-          "caption": "축을 바꾸며 품종별 점의 분포를 비교합니다.",
+          "alt": "붓꽃의 꽃잎 길이와 너비",
+          "caption": "붓꽃의 꽃잎 길이와 너비",
           "credit": "Orange Data Mining"
         }
       ],
@@ -555,10 +572,9 @@ window.WEEK4 = {
       "visualLayout": "split",
       "paragraphs": [
         "File의 Data를 Tree의 Data에 연결합니다.",
-        "첫 실행은 기본 설정을 사용하고 Apply가 보이면 누릅니다.",
-        "데이터를 받은 Tree는 학습된 Model과 학습 방법인 Learner를 내보냅니다."
+        "기본 설정으로 실행하고 Apply가 보이면 누릅니다.",
+        "학습된 Model은 Tree Viewer에, 학습 방법인 Learner는 Test & Score에 연결합니다."
       ],
-      "note": "Tree Viewer에는 Model, Test & Score에는 Learner를 보냅니다.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/model/tree/",
         "label": "Orange Tree 안내"
@@ -570,18 +586,17 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-treeviewer.png",
-          "alt": "위에서 아래로 조건을 따라가며 예측을 읽습니다.",
-          "caption": "위에서 아래로 조건을 따라가며 예측을 읽습니다.",
+          "alt": "Tree Viewer의 질문과 분기",
+          "caption": "Tree Viewer의 질문과 분기",
           "credit": "Orange Data Mining"
         }
       ],
       "visualLayout": "split",
       "paragraphs": [
         "Tree의 Model을 Tree Viewer의 Tree 입력에 연결합니다.",
-        "맨 위에서 사용하는 특징과 기준값을 확인합니다.",
-        "나뭇잎 하나를 선택하고 어떤 품종이 많은지 설명해 보세요."
+        "맨 위 질문부터 분기를 따라가며, 잎에 모인 품종을 확인합니다.",
+        "전체 데이터로 만든 이 나무의 구조를 살펴본 뒤, 다음 단계에서 교차 검증으로 성능을 평가합니다."
       ],
-      "note": "여기에 보이는 나무는 전체 데이터를 학습한 모델입니다. 이 화면만으로 새 데이터의 성능을 판단하지 않습니다.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/visualize/treeviewer/",
         "label": "Orange Tree Viewer 안내"
@@ -619,11 +634,13 @@ window.WEEK4 = {
           ]
         ]
       },
-      "note": "평가 위젯이 각 훈련 구간에서 모델을 새로 학습합니다. 전체 자료로 학습한 Model의 점수를 그대로 가져오는 방식이 아닙니다.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/evaluate/testandscore/",
         "label": "Orange Test & Score 안내"
-      }
+      },
+      "paragraphs": [
+        "Test & Score는 연결된 Learner를 사용해 각 훈련 구간에서 모델을 새로 학습합니다."
+      ]
     },
     {
       "ch": 3,
@@ -631,8 +648,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-score.png",
-          "alt": "공식 화면의 점수는 예시입니다. 본인 실행 결과를 기록하세요.",
-          "caption": "공식 화면의 점수는 예시입니다. 본인 실행 결과를 기록하세요.",
+          "alt": "Test & Score 설정 화면",
+          "caption": "Test & Score 설정 화면",
           "credit": "Orange Data Mining"
         }
       ],
@@ -642,7 +659,6 @@ window.WEEK4 = {
         "Stratified를 선택하여 품종 비율을 비슷하게 나눕니다.",
         "CA는 맞힌 비율입니다. 예를 들어 0.90은 90%입니다."
       ],
-      "note": "학습 자료 자체로 평가하는 Test on train data는 이번 비교에 사용하지 않습니다.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/evaluate/testandscore/",
         "label": "Orange 평가 설정 안내"
@@ -657,8 +673,7 @@ window.WEEK4 = {
     {
       "ch": 4,
       "title": "평가 결과 읽기",
-      "type": "section",
-      "sub": "점수와 함께 어떤 사례를 틀렸는지 살펴봅니다"
+      "type": "section"
     },
     {
       "ch": 4,
@@ -666,8 +681,8 @@ window.WEEK4 = {
       "visuals": [
         {
           "src": "/images/lectures/week4/orange-confusion.png",
-          "alt": "행은 실제 품종, 열은 예측 품종입니다.",
-          "caption": "행은 실제 품종, 열은 예측 품종입니다.",
+          "alt": "혼동행렬, 행은 실제 품종, 열은 예측 품종",
+          "caption": "혼동행렬, 행은 실제 품종, 열은 예측 품종",
           "credit": "Orange Data Mining"
         }
       ],
@@ -677,7 +692,6 @@ window.WEEK4 = {
         "Learners에서 Tree를 선택하고 개수 표시로 확인합니다.",
         "대각선은 정답, 나머지 칸은 혼동입니다. 어느 품종끼리 혼동했는지 찾습니다."
       ],
-      "note": "공식 예시 화면의 점수를 그대로 적지 말고 본인 결과의 행과 열 이름을 확인하세요.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/evaluate/confusionmatrix/",
         "label": "Orange Confusion Matrix 안내"
@@ -699,9 +713,8 @@ window.WEEK4 = {
         "Tree와 kNN의 CA와 오류 비교"
       ],
       "paragraphs": [
-        "두 알고리즘을 같은 평가 위젯에 연결하면 같은 분할 조건으로 비교할 수 있습니다."
+        "두 알고리즘을 같은 Test & Score에 연결하여 동일한 분할 조건으로 비교합니다. kNN은 기본 설정에서 수치 특징을 정규화합니다."
       ],
-      "note": "kNN은 기본적으로 수치 특징을 정규화합니다. k=5는 시작값이며 최적값을 뜻하지 않습니다.",
       "source": {
         "url": "https://orangedatamining.com/widget-catalog/model/knn/",
         "label": "Orange kNN 안내"
@@ -720,7 +733,9 @@ window.WEEK4 = {
           "최대 깊이를 제한하고 나무 크기와 평가 점수가 어떻게 달라지는지 비교합니다."
         ]
       ],
-      "note": "같은 교차 검증 결과를 반복해서 보며 설정을 고르면 선택에 맞춘 점수가 될 수 있습니다. 최종 성능 확인에는 별도 테스트 자료가 필요합니다."
+      "paragraphs": [
+        "교차 검증으로 설정을 비교하고, 선택한 모델의 최종 성능은 별도로 남겨 둔 테스트 자료에서 확인합니다."
+      ]
     },
     {
       "ch": 4,
@@ -770,9 +785,9 @@ window.WEEK4 = {
         "워크플로와 관찰 기록 제출"
       ],
       "paragraphs": [
-        "직접 내려받은 데이터를 사용했다면 iris.tab도 함께 보관합니다. .ows 파일을 다시 열어 데이터가 연결되는지 확인합니다."
-      ],
-      "note": "기록에는 사용한 알고리즘, 설정값, 평가 방식, CA와 혼동한 품종을 포함합니다."
+        "관찰 기록에는 알고리즘과 설정, 평가 방법, CA와 혼동한 품종을 적습니다.",
+        "직접 내려받은 iris.tab은 워크플로와 함께 보관하고, .ows 파일을 다시 열어 연결을 확인합니다."
+      ]
     },
     {
       "ch": 4,
@@ -785,9 +800,8 @@ window.WEEK4 = {
       "title": "다음 실습을 위한 자료",
       "html": "<div class=\"resource-links\"><a href=\"https://orangedatamining.com/download/\" target=\"_blank\" rel=\"noopener\">Orange3 다운로드</a><a href=\"https://orangedatamining.com/widget-catalog/\" target=\"_blank\" rel=\"noopener\">공식 위젯 설명</a><a href=\"/data/lectures/week4-iris.tab\" target=\"_blank\" rel=\"noopener\">붓꽃 데이터</a><a href=\"/ai-algorithm-week3/\" target=\"_blank\" rel=\"noopener\">3주차 개념 다시 보기</a></div>",
       "paragraphs": [
-        "분류, 회귀, 군집화는 해결하려는 작업을 구분하는 말입니다.",
-        "Orange의 연결선은 데이터, 학습 방법, 평가 결과를 전달합니다.",
-        "예측 점수와 오류 사례를 함께 읽어야 모델의 특성을 이해할 수 있습니다."
+        "분류는 범주, 회귀는 수치, 군집화는 유사한 사례의 묶음을 다룹니다.",
+        "Tree와 kNN을 같은 데이터와 평가 조건에서 비교하고, 점수와 오류 사례를 함께 해석합니다."
       ]
     }
   ]

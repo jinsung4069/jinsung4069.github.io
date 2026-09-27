@@ -1,12 +1,12 @@
 /* Keep the existing lecture template, with room for the week 4 activities. */
-.lecture-page .slide-body{font-size:2.08cqw;gap:1.3cqw}
+.lecture-page .slide-body{font-size:2.3cqw;gap:1.5cqw}
 .lecture-page .slide-body .lead{font-size:2.35cqw}
-.lecture-page .slide table{font-size:1.75cqw}
+.lecture-page .slide table{font-size:1.9cqw}
 .lecture-page .slide td,.lecture-page .slide th{padding:.65cqw .8cqw}
 .lecture-page .slide-body>.foundation-note{font-size:1.5cqw;line-height:1.55}
 .slide .visual-copy .foundation-note{font-size:1.2cqw}
 .slide .visual-copy .resource-links a{font-size:1.5cqw;padding:.7cqw}
-.slide .visual-copy{font-size:1.75cqw;gap:1.15cqw}
+.slide .visual-copy{font-size:1.95cqw;gap:1.25cqw}
 .slide .visual-wide .visual-open img{height:20cqw}
 .slide .visual-gallery-layout .visual-open img{height:20cqw}
 .slide .visual-gallery-layout>.visual-copy{font-size:1.85cqw}
@@ -38,6 +38,19 @@
 .lab .record-grid label{display:block;font-size:1.35cqw;margin:0}
 .lab .record-grid textarea{font-size:1.45cqw;min-height:6cqw;margin-top:.35cqw}
 .lab [data-score-answer]{font-size:1.5cqw;min-height:2cqw}
+.example-tree{margin:0;text-align:center;font-size:2.05cqw}
+.example-tree figcaption{font-size:1.4cqw;color:#536174;margin-bottom:1cqw}
+.tree-root{border:2px solid #3e5dae;padding:1cqw 2cqw;max-width:55%;margin:auto;background:#eef3fc}
+.tree-branches{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;position:relative;margin:1.6cqw auto 0;width:80%;border-top:2px solid #6d86b7}
+.tree-branches::before{content:'';position:absolute;left:50%;bottom:100%;height:1.6cqw;border-left:2px solid #6d86b7}
+.tree-branches>div{position:relative;padding-top:.5cqw}.tree-branches span{display:block;font-size:1.6cqw;color:#536174}.tree-branches strong{display:block;background:#f0f4fa;padding:.8cqw;margin-top:.3cqw}
+.prediction-row{display:flex;align-items:center;flex-wrap:wrap;gap:.8cqw;margin-top:.7cqw}.prediction-row label{margin:0}
+.lab .result[hidden]{display:none}
+.lab[data-kind=threshold] .w4-chart{height:17cqw}
+.lab[data-kind=neighbors] .lab-split{grid-template-columns:1.1fr 1fr}
+.lab[data-kind=neighbors] .prediction-row{display:grid;gap:.8cqw}
+.lab[data-kind=neighbors] .prediction-row button{justify-self:start}
+.slide .data-preview-label{font-size:1.65cqw;color:#536174}
 @media(max-width:850px){
  .lecture-page .slide-body{font-size:19px;gap:20px}.lecture-page .slide-body .lead{font-size:22px}
  .lecture-page .slide table{font-size:15px}.lecture-page .slide td,.lecture-page .slide th{padding:9px 6px}
@@ -51,4 +64,6 @@
  .iris-legend{font-size:13px;gap:10px;flex-wrap:wrap}.fold-grid{gap:5px;margin:18px 0;grid-template-columns:repeat(5,1fr)}
  .fold-grid>div{padding:10px 3px;font-size:12px}.lab .matrix-layout table{font-size:12px;table-layout:fixed}.lab .matrix-layout th{font-size:11px;overflow-wrap:anywhere}.lab .matrix-layout td,.lab .matrix-layout th{padding:5px 2px}.lab .matrix-layout button{padding:7px 2px;font-size:15px}
  .record-grid{grid-template-columns:1fr;gap:16px}.lab .record-grid label{font-size:17px}.lab .record-grid textarea{font-size:17px;min-height:90px}.lab [data-score-answer]{font-size:16px;min-height:35px}
+ .example-tree{font-size:18px}.example-tree figcaption{font-size:14px;margin-bottom:12px}.tree-root{max-width:100%;padding:12px}.tree-branches{width:100%;gap:15px;margin-top:20px}.tree-branches::before{height:20px}.tree-branches span{font-size:15px}.tree-branches strong{padding:10px;margin-top:6px}
+ .prediction-row{gap:10px;margin-top:10px}.lab[data-kind=threshold] .w4-chart{height:auto}.lab[data-kind=neighbors] .lab-split{grid-template-columns:1fr}.lab[data-kind=neighbors] .prediction-row{gap:10px}.slide .data-preview-label{font-size:16px}
 }

@@ -13,8 +13,9 @@ const fs=require('node:fs');
  await page.keyboard.press('d');assert.equal(new URL(page.url()).hash,'#slide-2');await page.keyboard.press('a');assert.equal(new URL(page.url()).hash,'#slide-1');await page.keyboard.press('ArrowRight');assert.equal(new URL(page.url()).hash,'#slide-2');
  await page.keyboard.press('f');await page.waitForFunction(()=>!!document.fullscreenElement);await page.keyboard.press('f');await page.waitForFunction(()=>!document.fullscreenElement);
  let lab=await go('tasks');for(let i=0;i<3;i++){await lab.locator(`[data-answer="${i}"]`).click();assert.match(await lab.locator('.result').innerText(),/맞습니다/);await lab.locator('[data-next-question]').click();}
- lab=await go('threshold');assert.match(await lab.locator('.result').innerText(),/150 \/ 150/);await lab.locator('input').fill('7');assert.match(await lab.locator('.result').innerText(),/50 \/ 150/);
- lab=await go('neighbors');assert.match(await lab.locator('.result').innerText(),/예측 B/);await lab.locator('select').selectOption('1');assert.match(await lab.locator('.result').innerText(),/예측 A/);
+ const reveal=async(lab,choice)=>{assert(await lab.locator('.result').isHidden());assert(await lab.locator('[data-reveal]').isDisabled());await lab.locator('[data-prediction]').selectOption(choice);await lab.locator('[data-reveal]').click();assert(await lab.locator('.result').isVisible());};
+ lab=await go('threshold');await reveal(lab,'모두 구분할 수 있다');assert.match(await lab.locator('.result').innerText(),/150 \/ 150/);await lab.locator('input').fill('7');await reveal(lab,'일부를 잘못 구분할 것이다');assert.match(await lab.locator('.result').innerText(),/50 \/ 150/);
+ lab=await go('neighbors');await reveal(lab,'B');assert.match(await lab.locator('.result').innerText(),/예측 B/);await lab.locator('[data-k]').selectOption('1');await reveal(lab,'A');assert.match(await lab.locator('.result').innerText(),/예측 A/);
  lab=await go('setup');for(const el of await lab.locator('input').all())await el.check();assert.match(await lab.locator('.result').innerText(),/4 \/ 4/);
  lab=await go('wiring');const answers=['Data Table','Tree','Tree Viewer','Test & Score','Confusion Matrix'];for(let i=0;i<answers.length;i++)await lab.locator(`[data-wire="${i}"]`).selectOption(answers[i]);await lab.locator('button').click();assert.match(await lab.locator('.result').innerText(),/모두 맞습니다/);
  lab=await go('iris');assert.equal(await lab.locator('circle').count(),150);await lab.locator('[data-axis-x]').selectOption('0');await lab.locator('[data-axis-y]').selectOption('0');assert.match(await lab.locator('.result').innerText(),/대각선/);await lab.locator('[data-axis-y]').selectOption('1');await lab.locator('[data-point="0"]').focus();assert.match(await lab.locator('.result').innerText(),/Setosa/);await lab.locator('[data-labels]').uncheck();assert(await lab.locator('.iris-legend').isHidden());
@@ -26,6 +27,9 @@ const fs=require('node:fs');
  await page.locator('#tocButton').focus();await page.locator('#tocButton').click();await page.locator('#tocSearch').fill('붓꽃');assert(await page.locator('#tocContents button:visible').count()>0);await page.locator('#tocSearch').fill('아무것도없음xyz');assert(await page.locator('#tocEmpty').isVisible());await page.keyboard.press('Escape');
  await page.locator('#pageButton').click();await page.locator('#pageNumber').fill('26');await page.locator('#pageForm button').click();assert.equal(new URL(page.url()).hash,'#slide-26');
  const layout=[];
+ const pageText=await page.locator('#stage').textContent();
+ for(const sentence of ['수업이 끝나면 데이터, 알고리즘, 평가 결과가 연결된 워크플로를 직접 만들 수 있습니다.','3주차에서 배운 학습과 추론을 실제 도구로 연결합니다.','무엇을 예측하는지에 따라 방법이 달라집니다','강화학습은 행동의 보상을 통해 전략을 학습합니다. 이번 실습은 정답이 있는 분류를 다룹니다.','별도 테스트 성능이 아닙니다.','이번 실습에는 추가 Add-on이 필요하지 않습니다.','연결선은 데이터나 학습 방법이 이동하는 통로입니다.'])assert(!pageText.includes(sentence),`deleted sentence remains: ${sentence}`);
+ assert.equal(await page.locator('.foundation-note').count(),0);assert.equal(await page.locator('.section-copy p').count(),0);
  for(let i=0;i<slides.length;i++){
   await page.evaluate(n=>location.hash='slide-'+n,i+1);const slide=page.locator(`#slide-${i+1}`);await slide.waitFor({state:'visible'});
   for(const image of await slide.locator('img').all())assert(await image.evaluate(im=>im.complete&&im.naturalWidth>0),`image slide ${i+1}`);

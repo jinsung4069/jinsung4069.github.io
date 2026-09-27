@@ -7,7 +7,7 @@
   $('#stage').innerHTML=slides.map((s,i)=>{
     let inner='';
     if(s.type==='cover') inner=`<div class="cover-copy"><p>${esc(s.sub)}</p><h1>${esc(s.title)}</h1></div><div class="presenter">전인성<br>광주교육대학교 컴퓨터교육과</div>`;
-    else if(s.type==='section') inner=`<div class="section-copy"><h2>${esc(s.title)}</h2><p>${esc(s.sub)}</p></div>`;
+    else if(s.type==='section') inner=`<div class="section-copy"><h2>${esc(s.title)}</h2>${s.sub?`<p>${esc(s.sub)}</p>`:''}</div>`;
     else {
       inner=`<h2 class="slide-title">${esc(s.title)}</h2><span class="slide-chapter">${esc(chapters[s.ch])}</span><div class="slide-body">${s.lead?`<p class="lead">${esc(s.lead)}</p>`:''}${s.figure?`<figure class="source-figure"><img src="${esc(s.figure.src)}" alt="${esc(s.figure.alt)}"><figcaption>${esc(s.credit)}</figcaption></figure>`:''}${s.compare?`<div class="comparison">${s.compare.map(c=>`<section><h3>${c[0]}</h3><p>${c[1]}</p></section>`).join('')}</div>`:''}${s.html||''}${(s.paragraphs||[]).map(p=>`<p>${p}</p>`).join('')}${s.steps?`<ol class="process">${s.steps.map((x,j)=>`<li><b>${j+1}</b>${esc(x)}</li>`).join('')}</ol>`:''}${s.table?table(s.table):''}${s.note?`<p class="foundation-note">${esc(s.note)}</p>`:''}${s.lab?`<div class="lab" data-kind="${s.lab}">${Week4Labs.render(s.lab)}</div>`:''}</div>`;
       if(s.visuals){
