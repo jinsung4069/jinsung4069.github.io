@@ -65,7 +65,6 @@
   function draw(){
    ctx.fillStyle='#151b36';ctx.fillRect(0,0,WIDTH,HEIGHT);
    for(let y=0;y<HEIGHT;y+=16)for(let x=0;x<WIDTH;x+=16){pixel(x,y,15,15,(x/16+y/16)%2?'#1a2544':'#1d2949');pixel(x+3,y+3,2,2,'#26365b')}
-   ctx.beginPath();ctx.arc(Math.round(player.x),Math.round(player.y),ATTACK_RADIUS,0,Math.PI*2);ctx.strokeStyle='#75e5c766';ctx.lineWidth=1;ctx.stroke();
    for(const gem of gems){pixel(gem.x-2,gem.y-3,5,6,'#53dca8');pixel(gem.x-1,gem.y-2,3,3,'#c5ffdb')}
    for(const p of sparks)pixel(p.x,p.y,2,2,'#ffe49a');for(const shot of shots){pixel(shot.x-2,shot.y-2,5,5,'#f5d96d');pixel(shot.x-1,shot.y-1,3,3,'#fff6c4')}for(const e of enemies)drawEnemy(e);drawPlayer();
    ctx.strokeStyle='#7685b5';ctx.lineWidth=2;ctx.strokeRect(1,1,WIDTH-2,HEIGHT-2)
