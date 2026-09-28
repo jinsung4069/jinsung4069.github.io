@@ -12,10 +12,6 @@
   const bits=Array(8).fill(0);q('#bits').innerHTML=bits.map((_,i)=>`<button data-i="${i}" aria-pressed="false" aria-label="${2**(7-i)} 자리 비트"><small>${2**(7-i)}</small><b>0</b></button>`).join('');
   function draw(){q('#bits').querySelectorAll('button').forEach((b,i)=>{b.setAttribute('aria-pressed',String(!!bits[i]));b.querySelector('b').textContent=bits[i]});result(`이진수 ${bits.join('')} = 십진수 ${bits.reduce((s,b,i)=>s+b*2**(7-i),0)}`)}
   q('#bits').onclick=e=>{const b=e.target.closest('button');if(b){bits[Number(b.dataset.i)]^=1;draw()}};q('#reset').onclick=()=>{bits.fill(0);draw()};draw();
- }else if(chapter===4){
-  box('스택과 큐 비교하기','값을 차례로 넣고 꺼내며 후입선출과 선입선출을 비교하세요.','<label>구조 <select id="kind"><option value="stack">스택</option><option value="queue">큐</option></select></label><label>값 <input id="value" value="A" maxlength="12" size="10"></label><button id="push">넣기</button><button id="pop">꺼내기</button><button id="reset">초기화</button>');
-  let values=[];function draw(last=''){result(`${q('#kind').value==='stack'?'스택, 오른쪽이 TOP':'큐, 왼쪽이 FRONT'}\n[ ${values.join(' | ')} ]\n${last}`)}
-  q('#push').onclick=()=>{if(values.length>=12){draw('최대 12개까지 넣을 수 있습니다.');return}const v=q('#value').value.trim();if(v)values.push(v);draw()};q('#pop').onclick=()=>{draw(values.length?`꺼낸 값: ${q('#kind').value==='stack'?values.pop():values.shift()}`:'비어 있습니다.')};q('#reset').onclick=()=>{values=[];draw()};q('#kind').onchange=()=>{values=[];draw()};draw();
  }else if(chapter===5){
   box('최대공약수 찾기','두 양의 정수를 입력하고 유클리드 호제법의 반복 과정을 따라가세요.','<label>첫 번째 수 <input id="a" type="number" value="48" min="1" max="1000000"></label><label>두 번째 수 <input id="b" type="number" value="18" min="1" max="1000000"></label><button id="run">과정 보기</button>');
   q('#run').onclick=()=>{let a=Number(q('#a').value),b=Number(q('#b').value);if(!Number.isInteger(a)||!Number.isInteger(b)||a<1||b<1||a>1e6||b>1e6){result('1부터 1,000,000까지의 정수를 입력하세요.');return}const steps=[];while(b){steps.push(`${a} ÷ ${b}의 나머지 = ${a%b}`);[a,b]=[b,a%b]}result(steps.join('\n')+`\n최대공약수 = ${a}`)};q('#run').click();

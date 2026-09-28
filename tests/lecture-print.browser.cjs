@@ -2,7 +2,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert=require('assert');
 (async()=>{
  const browser=await chromium.launch({headless:true,channel:'msedge'});const base=process.argv[2]||'http://127.0.0.1:8765';
- for(const [route,expected,slide,kind] of [['ai-algorithm-week2',59,1,'algorithm'],...Array.from({length:10},(_,i)=>[`computer-education2-${i+2}`,[42,40,39,65,39,31,78,29,59,43][i],i===1?22:2,'computer']),['ai-education-chapter1',41,8,'education'],['ai-education-chapter3',49,15,'education']]){
+ for(const [route,expected,slide,kind] of [['ai-algorithm-week2',59,1,'algorithm'],...Array.from({length:10},(_,i)=>[`computer-education2-${i+2}`,[42,40,40,65,39,31,78,29,59,43][i],i===1?22:2,'computer']),['ai-education-chapter1',41,8,'education'],['ai-education-chapter3',49,15,'education']]){
   const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));await context.addInitScript(()=>{window.print=()=>{window.__printCall={count:document.querySelectorAll('.lecture-print-sheet').length,ready:document.documentElement.dataset.printReady,paper:[...document.styleSheets].flatMap(s=>{try{return [...s.cssRules].filter(r=>r.type===6).map(r=>r.cssText)}catch{return[]}}).join('\n')}}});
   await page.goto(`${base}/${route}/?v=20260915print1#slide-${slide}`);

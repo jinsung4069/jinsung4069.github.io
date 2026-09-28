@@ -14,6 +14,7 @@
   index=Math.max(0,Math.min(data.slides.length-1,i));const s=data.slides[index],isLab=s.kind==='lab'||s.kind==='native';
   media.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});media.replaceChildren();resetZoom();
   if(window.ceDataLabs)window.ceDataLabs.show(isLab?(s.labId||'legacy'):'hidden');
+  if(window.ceChapter4)window.ceChapter4.show(isLab?(s.labId||'stackQueue'):'hidden');
   stage.classList.toggle('lab-mode',isLab);img.hidden=isLab;lab.hidden=!isLab;$('#ce-zoom').disabled=isLab;
   $('#ce-loading').hidden=isLab;$('#ce-slide-text').textContent=isLab?'':s.text.join('\n');
   if(!isLab){img.alt=`${index+1}쪽, ${s.title}`;img.src=s.image;if(img.complete&&img.naturalWidth)$('#ce-loading').hidden=true}
@@ -35,7 +36,8 @@
   const next=data.slides.slice(index+1).find(slide=>slide.image);if(next){const pre=new Image();pre.src=next.image}
  }
  try{
-  const response=await fetch(`../data/lectures/computer-education2/${viewer.dataset.chapter}.json?v=float5`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
+  const dataVersion=viewer.dataset.chapter==='4'?'20260929chapter4':'float5';
+  const response=await fetch(`../data/lectures/computer-education2/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
   toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.kind==='lab'?'체험 | '+s.title:s.title)}</b></button>`).join('');
   toc.addEventListener('click',e=>{const b=e.target.closest('button');if(b){render(Number(b.dataset.index));dialog.close()}});
   $('#ce-search').addEventListener('input',e=>{const q=e.target.value.toLocaleLowerCase();toc.querySelectorAll('button').forEach((b,i)=>b.hidden=!`${data.slides[i].kind==='lab'?'체험 ':''}${data.slides[i].title} ${data.slides[i].text.join(' ')}`.toLocaleLowerCase().includes(q))});
