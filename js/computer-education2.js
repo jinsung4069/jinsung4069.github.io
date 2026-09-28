@@ -36,7 +36,7 @@
   const next=data.slides.slice(index+1).find(slide=>slide.image);if(next){const pre=new Image();pre.src=next.image}
  }
  try{
-  const dataVersion=viewer.dataset.chapter==='4'?'20260929chapter4':'float5';
+  const dataVersion=viewer.dataset.chapter==='4'?'20260929survivor':'float5';
   const response=await fetch(`../data/lectures/computer-education2/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
   toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.kind==='lab'?'체험 | '+s.title:s.title)}</b></button>`).join('');
   toc.addEventListener('click',e=>{const b=e.target.closest('button');if(b){render(Number(b.dataset.index));dialog.close()}});
