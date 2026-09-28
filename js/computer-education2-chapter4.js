@@ -80,8 +80,8 @@
  function candyAnswer(){
   panel.innerHTML=`<div class="c4-eyebrow">퀴즈 해설 · 40</div><h2>최종 상태의 사탕은?</h2><p>꺼내고 넣는 순서를 따라간 뒤, 정답을 하나씩 확인하세요.</p>
    <div class="c4-controls"><button id="c4-candy-next" type="button">다음 단계</button><button id="c4-candy-play" type="button">자동 재생</button><button id="c4-candy-reset" type="button">처음으로</button><span id="c4-candy-count">0 / 8단계</span></div>
-   <div class="c4-candy-grid"><section class="c4-card"><h3>스택</h3><p>왼쪽 바닥 → 오른쪽 TOP</p><div class="c4-candy-track" id="c4-candy-stack"></div></section>
-   <section class="c4-card"><h3>큐</h3><p>왼쪽 FRONT → 오른쪽 REAR</p><div class="c4-candy-track" id="c4-candy-queue"></div></section></div>
+   <div class="c4-candy-grid"><section class="c4-card"><h3>스택</h3><p>아래 바닥 → 위 TOP</p><div class="c4-candy-stack-wrap"><span class="c4-candy-end">↑ TOP, 꺼내는 곳</span><div class="c4-candy-track c4-candy-stack" id="c4-candy-stack" aria-label="스택, 아래에서 위 순서"></div><span class="c4-candy-end">바닥, 스택[0]</span></div></section>
+   <section class="c4-card"><h3>큐</h3><p>왼쪽 FRONT → 오른쪽 REAR</p><div class="c4-candy-track c4-candy-queue" id="c4-candy-queue" aria-label="큐, 왼쪽에서 오른쪽 순서"></div></section></div>
    <div class="c4-candy-results" aria-label="차례로 공개되는 정답"><div class="c4-candy-result" id="c4-candy-index" hidden>스택[0] <strong>G</strong></div>
    <div class="c4-candy-result" id="c4-candy-bottom" hidden>스택, 아래에서부터 <strong>G → A → K → Q → C → P</strong></div>
    <div class="c4-candy-result" id="c4-candy-front" hidden>큐, 왼쪽 출구부터 <strong>T → F → S → Q → C → P</strong></div></div>
