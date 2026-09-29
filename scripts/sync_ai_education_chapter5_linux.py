@@ -28,12 +28,12 @@ EMU = 12700
 LABS = [
     (10, 'ethics', '이해관계자별 판단 기록', '기대하는 이익과 부담, 필요한 대안을 비교합니다.'),
     (14, 'accuracy', '전체 정확도에 가려진 차이', '계산 예시의 조건별 표본 수와 정답 수를 바꾸어 봅니다.'),
-    (36, 'colab', 'Colab 실습 기록', '예상을 먼저 기록한 뒤 노트북을 실행하고 결과를 옮겨 적습니다.'),
-    (43, 'abstention', '보류 기준과 검토 부담', '설명용 예시 40장에서 처리 범위와 남은 오류를 함께 확인합니다.'),
-    (47, 'model-card', '데이터와 모델의 활용 검토', '확인한 근거와 미확인 사항을 구분해 활용안을 작성합니다.'),
-    (50, 'quiz', '윤리 판단 확인', '판단을 선택한 뒤 필요한 근거를 확인합니다.'),
+    (49, 'colab', 'Colab 실습 기록', '예상을 먼저 기록한 뒤 노트북을 실행하고 결과를 옮겨 적습니다.'),
+    (56, 'abstention', '보류 기준과 검토 부담', '설명용 예시 40장에서 처리 범위와 남은 오류를 함께 확인합니다.'),
+    (60, 'model-card', '데이터와 모델의 활용 검토', '확인한 근거와 미확인 사항을 구분해 활용안을 작성합니다.'),
+    (63, 'quiz', '윤리 판단 확인', '판단을 선택한 뒤 필요한 근거를 확인합니다.'),
 ]
-TITLE_OVERRIDE = {1: '인공지능 윤리', 34: '윤리 감사 실습'}
+TITLE_OVERRIDE = {1: '인공지능 윤리', 34: '생성형 AI와 연구윤리', 47: '윤리 감사 실습'}
 
 
 def rels(z, part):
@@ -184,7 +184,7 @@ def main():
     width, height = full_pdf[0].rect.width, full_pdf[0].rect.height
 
     data = dict(number=5, title='인공지능 윤리', course='AI교육의 이해 / 언플러그드AI교육',
-                width=round(width, 3), height=round(height, 3), sourceVersion='v3', sourceSha256=sha, slides=[])
+                width=round(width, 3), height=round(height, 3), sourceVersion='v4', sourceSha256=sha, slides=[])
     with ZipFile(source) as z:
         for number, part in enumerate(parts, 1):
             xml = ET.fromstring(z.read(part))
