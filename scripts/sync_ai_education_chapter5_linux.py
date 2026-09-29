@@ -123,6 +123,20 @@ def page_runs(page):
     return runs
 
 
+def restore_spacing(runs, texts):
+    """LibreOffice widens the gap between Hangul and Latin text; PDF extraction turns it into spaces.
+    Keep only the spaces that exist in the PPTX text."""
+    source = '\n'.join(texts)
+    for run in runs:
+        if run['text'] in source:
+            continue
+        pattern = ''.join(' ?' if ch == ' ' else re.escape(ch) for ch in run['text'])
+        m = re.search(pattern, source)
+        if m:
+            run['text'] = m.group(0)
+    return runs
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--source', required=True, type=Path)
@@ -144,7 +158,7 @@ def main():
     width, height = full_pdf[0].rect.width, full_pdf[0].rect.height
 
     data = dict(number=5, title='인공지능 윤리', course='AI교육의 이해 / 언플러그드AI교육',
-                width=round(width, 3), height=round(height, 3), sourceVersion='v2', sourceSha256=sha, slides=[])
+                width=round(width, 3), height=round(height, 3), sourceVersion='v3', sourceSha256=sha, slides=[])
     with ZipFile(source) as z:
         for number, part in enumerate(parts, 1):
             xml = ET.fromstring(z.read(part))
@@ -178,7 +192,7 @@ def main():
             bg = folder / f'{number:03}-background.webp'
             Image.open(io.BytesIO(pix.tobytes('png'))).save(bg, format='WEBP', lossless=True)
             data['slides'].append(dict(title=title, sourceSlide=number, sourcePart=part, text=texts,
-                                       runs=page_runs(full_pdf[number - 1]), pictures=pictures,
+                                       runs=restore_spacing(page_runs(full_pdf[number - 1]), texts), pictures=pictures,
                                        links=list(dict.fromkeys(links)), background='/' + bg.relative_to(ROOT).as_posix()))
             for after, lab, lab_title, intro in LABS:
                 if after == number:

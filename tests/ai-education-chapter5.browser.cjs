@@ -5,7 +5,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  const browser=await chromium.launch({headless:true,...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})}),page=await browser.newPage({viewport:{width:1440,height:1050}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'/ai-education-chapter5/');await page.waitForSelector('[data-ready=true]');
- const data=await page.evaluate(()=>fetch('/data/lectures/ai-education/5.json').then(r=>r.json()));assert.equal(data.slides.length,57);assert.equal(data.slides.filter(s=>s.sourceSlide).length,51);assert.equal(data.sourceVersion,'v2');
+ const data=await page.evaluate(()=>fetch('/data/lectures/ai-education/5.json').then(r=>r.json()));assert.equal(data.slides.length,57);assert.equal(data.slides.filter(s=>s.sourceSlide).length,51);assert.equal(data.sourceVersion,'v3');
  const go=async n=>{await page.evaluate(n=>location.hash='slide-'+n,n);await page.waitForFunction(n=>Number(document.querySelector('#ce-page').value)===n,n)};
  const lab=async name=>go(data.slides.findIndex(s=>s.lab===name)+1);
  for(let n=1;n<=57;n++){

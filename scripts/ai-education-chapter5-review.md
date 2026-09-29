@@ -1,10 +1,10 @@
-# 인공지능 윤리 HTML 교안, 2026-09-29 v2
+# 인공지능 윤리 HTML 교안, 2026-09-29 v3
 
 ## 원본과 구성
 
-원본은 `Chapter5_인공지능윤리_강의교안_v2.pptx` 51장이다. SHA256은 `a3a00ad9a81862937ef5637ffe9576fdde63557672473dda6ccc8851677ea76b`이며 변환 전후 동일하다. v1 원본(`899200554bf8...`)과 v1 HTML 초안은 게시하지 않았다.
+원본은 `Chapter5_인공지능윤리_강의교안_v3.pptx` 51장이다. SHA256은 `3888b0aee01db0529e748334ea95e5e19d5358cc9249751be26a3ef4f929c98c`이며 변환 전후 동일하다. v3은 v2의 제목 개체 서식을 강의자료_서식.pptx의 상속값(가운데 세로 정렬, 기본 여백)으로 되돌린 판이다. v1 원본(`899200554bf8...`)과 v1 HTML 초안은 게시하지 않았다.
 
-v2의 변경 사항은 다음과 같다.
+v1 대비 변경 사항은 다음과 같다.
 
 - 실습 도구를 Teachable Machine에서 Colab 노트북으로 바꾸었다. 노트북은 `data/lectures/ai-education-ch5-bias-lab.ipynb`이며 빈칸 다섯 곳을 채워 실행한다.
 - 인공지능 기본법(제2조, 제31조, 제33조부터 제35조), 사회적 편향 사례(채용 도구, Gender Shades), 생성형 AI와 허위정보, 딥페이크와 학교의 대응을 추가했다.
@@ -23,7 +23,7 @@ v2의 변경 사항은 다음과 같다.
 
 ## 변환 방식
 
-Linux 환경에서 `scripts/sync_ai_education_chapter5_linux.py`로 변환했다. LibreOffice와 Freesentation 글꼴로 PDF를 만든 뒤 PyMuPDF로 글자 위치를 읽는다. 배경은 글자를 완전히 투명하게 만들고 최상위 그림을 뺀 사본을 렌더링한 무손실 WebP이다. 세로 글자는 배경에 남긴다. 그림 5개(윤리기준, 미드저니 수상작, QR, 정확도 그래프, 혼동행렬)는 PPTX의 이미지 바이트를 그대로 사용한다. 기존 Windows 변환기(`sync_ai_education_chapter5.py`)는 v1 기준으로 보존한다.
+Linux 환경에서 `scripts/sync_ai_education_chapter5_linux.py`로 변환했다. LibreOffice와 Freesentation 글꼴로 PDF를 만든 뒤 PyMuPDF로 글자 위치를 읽는다. 배경은 글자를 완전히 투명하게 만들고 최상위 그림을 뺀 사본을 렌더링한 무손실 WebP이다. 세로 글자는 배경에 남긴다. LibreOffice가 한글과 영문 사이에 넓힌 간격이 PDF에서 공백으로 추출되므로, PPTX 원문에 없는 공백은 제거한다. 그림 5개(윤리기준, 미드저니 수상작, QR, 정확도 그래프, 혼동행렬)는 PPTX의 이미지 바이트를 그대로 사용한다. 기존 Windows 변환기(`sync_ai_education_chapter5.py`)는 v1 기준으로 보존한다.
 
 ## 실습 결과의 출처
 
