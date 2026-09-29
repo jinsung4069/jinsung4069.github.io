@@ -23,7 +23,7 @@ v1 대비 변경 사항은 다음과 같다.
 
 ## 변환 방식
 
-Linux 환경에서 `scripts/sync_ai_education_chapter5_linux.py`로 변환했다. LibreOffice와 Freesentation 글꼴로 PDF를 만든 뒤 PyMuPDF로 글자 위치를 읽는다. 배경은 글자를 완전히 투명하게 만들고 최상위 그림을 뺀 사본을 렌더링한 무손실 WebP이다. 세로 글자는 배경에 남긴다. LibreOffice가 한글과 영문 사이에 넓힌 간격이 PDF에서 공백으로 추출되므로, PPTX 원문에 없는 공백은 제거한다. 그림 5개(윤리기준, 미드저니 수상작, QR, 정확도 그래프, 혼동행렬)는 PPTX의 이미지 바이트를 그대로 사용한다. 기존 Windows 변환기(`sync_ai_education_chapter5.py`)는 v1 기준으로 보존한다.
+Linux 환경에서 `scripts/sync_ai_education_chapter5_linux.py`로 변환했다. LibreOffice와 Freesentation 글꼴로 PDF를 만든 뒤 PyMuPDF로 글자 위치를 읽는다. 배경은 글자를 완전히 투명하게 만들고 최상위 그림을 뺀 사본을 렌더링한 무손실 WebP이다. 세로 글자는 배경에 남긴다. LibreOffice가 한글과 영문 사이에 넓힌 간격이 PDF에서 공백으로 추출되므로, PPTX 원문에 없는 공백은 제거한다. 같은 이유로 PDF의 글자 폭은 실제보다 넓으므로, 글자 구간의 폭은 Freesentation 글꼴의 실제 글자 너비로 다시 계산한다. 뷰어의 가로 맞춤 배율(scaleX)은 전체 구간에서 약 0.97부터 1.05 사이이다. 그림 5개(윤리기준, 미드저니 수상작, QR, 정확도 그래프, 혼동행렬)는 PPTX의 이미지 바이트를 그대로 사용한다. 기존 Windows 변환기(`sync_ai_education_chapter5.py`)는 v1 기준으로 보존한다.
 
 ## 실습 결과의 출처
 

@@ -14,7 +14,7 @@ from pathlib import Path
 from zipfile import ZipFile
 import argparse, hashlib, io, json, posixpath, re, shutil, subprocess
 from lxml import etree as ET
-from PIL import Image
+from PIL import Image, ImageFont
 import pymupdf as fitz
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,10 +98,14 @@ def transparent_copy(source, target, parts):
             zout.writestr(item, data)
 
 
+WEIGHTS = {'1': 'Thin', '2': 'ExtraLight', '3': 'Light', '4': 'Regular', '5': 'Medium',
+           '6': 'SemiBold', '7': 'Bold', '8': 'ExtraBold', '9': 'Black'}
+
+
 def font_name(raw):
     name = raw.split('+')[-1]
-    m = re.match(r'Freesentation-?(\d)\s?([A-Za-z]+)', name)
-    return f'Freesentation {m.group(1)} {m.group(2)}' if m else name
+    m = re.match(r'Freesentation-?(\d)', name)
+    return f'Freesentation {m.group(1)} {WEIGHTS[m.group(1)]}' if m else name
 
 
 def page_runs(page):
@@ -123,6 +127,24 @@ def page_runs(page):
     return runs
 
 
+FONT_DIRS = [Path.home() / '.fonts', Path('/usr/share/fonts'), Path.home() / '.local/share/fonts']
+_fonts = {}
+
+
+def natural_width(text, font, size):
+    """Advance width of the text in the web font, so the viewer does not stretch it (scaleX near 1)."""
+    m = re.match(r'Freesentation (\d) (\w+)', font)
+    if not m:
+        return None
+    name = f'Freesentation-{m.group(1)}{m.group(2)}.ttf'
+    key = (name, round(size * 10))
+    if key not in _fonts:
+        path = next((p for d in FONT_DIRS for p in d.rglob(name)), None)
+        _fonts[key] = ImageFont.truetype(str(path), key[1]) if path else None
+    f = _fonts[key]
+    return f.getlength(text) / 10 if f else None
+
+
 def restore_spacing(runs, texts):
     """LibreOffice widens the gap between Hangul and Latin text; PDF extraction turns it into spaces.
     Keep only the spaces that exist in the PPTX text."""
@@ -134,6 +156,10 @@ def restore_spacing(runs, texts):
         m = re.search(pattern, source)
         if m:
             run['text'] = m.group(0)
+    for run in runs:
+        width = natural_width(run['text'], run['font'], run['size'])
+        if width:
+            run['w'] = round(width, 4)
     return runs
 
 
