@@ -1,4 +1,4 @@
-/* Lucide SVG icons, source-positioned videos and concept-linked interactive slides. */
+/* Lucide SVG icons, source-positioned videos, embeds and links, and concept-linked interactive slides. */
 (async()=>{
  'use strict';
  const $=s=>document.querySelector(s),viewer=$('.ce-viewer');if(!viewer)return;
@@ -9,6 +9,7 @@
  let index=0,data,zoom=false,touchTimer;
  function reveal(){stage.classList.add('controls-visible');clearTimeout(touchTimer);touchTimer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resetZoom(){zoom=false;stage.classList.remove('zoom');setIcon($('#ce-zoom'),'zoom-in','확대');$('#ce-zoom').setAttribute('aria-pressed','false')}
+ const place=(node,f)=>Object.assign(node.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
  function hashIndex(){const match=location.hash.match(/^#slide-(\d+)$/);return match?Math.max(0,Math.min(data.slides.length-1,Number(match[1])-1)):0}
  function render(i,write=true){
   index=Math.max(0,Math.min(data.slides.length-1,i));const s=data.slides[index],isLab=s.kind==='lab'||s.kind==='native';
@@ -22,7 +23,7 @@
   $('#ce-prev').disabled=index===0;$('#ce-next').disabled=index===data.slides.length-1;
   $('#ce-status').textContent=`${index+1} / ${data.slides.length}, ${s.title}`;
   for(const [j,f] of (window.LecturePrint.mode?[]:(s.videoFrames||[])).entries()){
-   const frame=document.createElement('div');frame.className='ce-video-frame';Object.assign(frame.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
+   const frame=document.createElement('div');frame.className='ce-video-frame';place(frame,f);
    const v=document.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=f.src;v.setAttribute('aria-label',`${s.title}, 동영상 ${j+1}`);
    const play=document.createElement('button');play.className='ce-play';play.innerHTML=icon('play');play.setAttribute('aria-label','동영상 재생');
    play.addEventListener('click',()=>v.play().catch(()=>{$('#ce-status').textContent='동영상을 재생할 수 없습니다. 다시 시도하세요.'}));
@@ -30,13 +31,24 @@
    v.addEventListener('error',()=>{play.hidden=true;const a=document.createElement('a');a.className='ce-video-error';a.href=f.src;a.textContent='동영상 다시 열기';frame.append(a)});
    frame.append(v,play);media.append(frame);
   }
+  for(const f of (window.LecturePrint.mode?[]:(s.embeds||[]))){
+   const frame=document.createElement('div');frame.className='ce-video-frame';place(frame,f);
+   const player=document.createElement('iframe');player.src=f.src;player.title=f.title||`${s.title}, 동영상`;player.loading='lazy';player.allowFullscreen=true;
+   player.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';player.referrerPolicy='strict-origin-when-cross-origin';
+   frame.append(player);media.append(frame);
+  }
+  // Slide links near the bottom edge would sit under the toolbar, so the toolbar moves to the top margin.
+  stage.classList.toggle('ce-toolbar-top',(s.linkAreas||[]).some(area=>area.y+area.height>.8));
+  for(const area of (window.LecturePrint.mode?[]:(s.linkAreas||[]))){
+   const a=document.createElement('a');a.className='ce-link-area';place(a,area);a.href=area.href;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',`${area.label||area.href} (새 창)`);media.append(a);
+  }
   $('#ce-links').innerHTML=s.links.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(new URL(u).hostname)} ↗</a>`).join('');$('#ce-open-links').hidden=!s.links.length;
   if(write)history.replaceState(null,'',`#slide-${index+1}`);
   toc.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-current',String(j===index)));
   const next=data.slides.slice(index+1).find(slide=>slide.image);if(next){const pre=new Image();pre.src=next.image}
  }
  try{
-  const dataVersion=viewer.dataset.chapter==='4'?'20260929survivor':'float5';
+  const dataVersion=viewer.dataset.chapter==='4'?'20260929survivor':'20261007embed';
   const response=await fetch(`/data/lectures/computer-education2/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
   toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.kind==='lab'?'체험 | '+s.title:s.title)}</b></button>`).join('');
   toc.addEventListener('click',e=>{const b=e.target.closest('button');if(b){render(Number(b.dataset.index));dialog.close()}});
@@ -68,7 +80,7 @@
    const actions={ArrowRight:()=>render(index+1),PageDown:()=>render(index+1),ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:()=>render(index+1)};
    const action=actions[e.key]||actions[letter];if(action){e.preventDefault();action()}
   });
-  let touch=null;stage.addEventListener('touchstart',e=>{if(e.touches.length===1&&!e.target.closest('button,input,select,textarea,video,.ce-lab'))touch=[e.touches[0].clientX,e.touches[0].clientY];else touch=null},{passive:true});
+  let touch=null;stage.addEventListener('touchstart',e=>{if(e.touches.length===1&&!e.target.closest('a,button,input,select,textarea,video,.ce-lab'))touch=[e.touches[0].clientX,e.touches[0].clientY];else touch=null},{passive:true});
   stage.addEventListener('touchend',e=>{if(!touch||zoom)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});
   window.addEventListener('hashchange',()=>render(hashIndex(),false));render(hashIndex(),false);viewer.dataset.ready='true';
