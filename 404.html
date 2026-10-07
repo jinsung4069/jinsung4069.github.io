@@ -14,8 +14,7 @@
                 [/^\/computer-education2()(\/.*)?$/, '/lectures/computer-education2'],
                 [/^\/ai-education-chapter(\d+)(\/.*)?$/, '/lectures/ai-education/chapter$1'],
                 [/^\/ai-education()(\/.*)?$/, '/lectures/ai-education'],
-                [/^\/stitch_ai_poc()(\/.*)?$/, '/lectures/stitch-ai-poc'],
-                [/^\/lectures\/ai-algorithm()(\/)?$/, '/lectures']
+                [/^\/stitch_ai_poc()(\/.*)?$/, '/lectures/stitch-ai-poc']
             ];
             for (var i = 0; i < moves.length; i++) {
                 var match = location.pathname.match(moves[i][0]);
