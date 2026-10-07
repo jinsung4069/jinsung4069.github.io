@@ -1,6 +1,6 @@
 # 인공지능 교육 사례 HTML 제작 기록
 
-2026-09-22, `/ai-education-chapter4/`를 대학원 과목 목록에 추가했다. 기존 AI알고리즘 3주차와 Chapter 1, 3의 내용은 보존했다.
+2026-09-22, `/lectures/ai-education/chapter4/`를 대학원 과목 목록에 추가했다. 기존 AI알고리즘 3주차와 Chapter 1, 3의 내용은 보존했다.
 
 ## 확인한 원본
 

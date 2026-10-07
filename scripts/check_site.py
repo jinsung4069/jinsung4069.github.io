@@ -117,7 +117,7 @@ def check_site(root):
             elif isinstance(value, list):
                 for item in value: inspect_data(item)
             elif isinstance(value, str) and value.startswith(('../images/', '../media/', '/images/', '/media/')):
-                local_reference(value, '/computer-education2/')
+                local_reference(value, '/lectures/computer-education2/')
         for path in course_data.glob('*.json'):
             try:
                 inspect_data(json.loads(path.read_text(encoding='utf-8-sig')))

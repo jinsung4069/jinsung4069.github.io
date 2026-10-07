@@ -47,5 +47,5 @@ data/*.db
 data/*.sqlite*
 
 # Development notes that are not part of the published site
-stitch_ai_poc/implementation_plan.md
-stitch_ai_poc/walkthrough.md
+lectures/stitch-ai-poc/implementation_plan.md
+lectures/stitch-ai-poc/walkthrough.md

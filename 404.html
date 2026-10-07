@@ -5,6 +5,27 @@
     <script src="/js/preferences.js?v=20260913a"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
+    <script>
+        // Lecture folders moved under /lectures/; forward old links with their query and anchor.
+        (function () {
+            var moves = [
+                [/^\/ai-algorithm-week(\d+)(\/.*)?$/, '/lectures/ai-algorithm/week$1'],
+                [/^\/computer-education2-(\d+)(\/.*)?$/, '/lectures/computer-education2/$1'],
+                [/^\/computer-education2()(\/.*)?$/, '/lectures/computer-education2'],
+                [/^\/ai-education-chapter(\d+)(\/.*)?$/, '/lectures/ai-education/chapter$1'],
+                [/^\/ai-education()(\/.*)?$/, '/lectures/ai-education'],
+                [/^\/stitch_ai_poc()(\/.*)?$/, '/lectures/stitch-ai-poc'],
+                [/^\/lectures\/ai-algorithm()(\/)?$/, '/lectures']
+            ];
+            for (var i = 0; i < moves.length; i++) {
+                var match = location.pathname.match(moves[i][0]);
+                if (match) {
+                    location.replace(moves[i][1].replace('$1', match[1]) + (match[2] || '/') + location.search + location.hash);
+                    return;
+                }
+            }
+        })();
+    </script>
     <title>페이지를 찾을 수 없습니다 | 전인성</title>
     <link rel="stylesheet" href="/css/style.css?v=20260913a">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">

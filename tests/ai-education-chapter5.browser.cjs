@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  const base=process.argv[2]||'http://127.0.0.1:8765',out=process.argv[3];if(out)fs.mkdirSync(out,{recursive:true});
  const browser=await chromium.launch({headless:true,...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})}),page=await browser.newPage({viewport:{width:1440,height:1050}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.goto(base+'/ai-education-chapter5/');await page.waitForSelector('[data-ready=true]');
+ await page.goto(base+'/lectures/ai-education/chapter5/');await page.waitForSelector('[data-ready=true]');
  const data=await page.evaluate(()=>fetch('/data/lectures/ai-education/5.json').then(r=>r.json()));assert.equal(data.slides.length,70);assert.equal(data.slides.filter(s=>s.sourceSlide).length,64);assert.equal(data.sourceVersion,'v4');
  const go=async n=>{await page.evaluate(n=>location.hash='slide-'+n,n);await page.waitForFunction(n=>Number(document.querySelector('#ce-page').value)===n,n)};
  const lab=async name=>go(data.slides.findIndex(s=>s.lab===name)+1);
@@ -29,8 +29,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  await go(1);await page.locator('#ce-next').focus();await page.keyboard.press('d');assert.equal(new URL(page.url()).hash,'#slide-2');await page.keyboard.press('a');assert.equal(new URL(page.url()).hash,'#slide-1');await page.keyboard.press('f');await page.waitForFunction(()=>!!document.fullscreenElement);await page.keyboard.press('f');await page.waitForFunction(()=>!document.fullscreenElement);
  await page.locator('#ce-open-toc').click();await page.locator('#ce-search').fill('개인정보');assert((await page.locator('#ce-toc button:visible').count())>0);await page.keyboard.press('Escape');
  for(const width of [390,320]){await page.setViewportSize({width,height:844});for(let n=1;n<=70;n++){await go(n);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`mobile overflow ${width}, ${n}`)}}
- await page.setViewportSize({width:1440,height:1050});const printPage=await browser.newPage({viewport:{width:1440,height:1000}});printPage.on('pageerror',e=>errors.push(e.message));await printPage.goto(base+'/ai-education-chapter5/?lecture-print=1');await printPage.evaluate(()=>LecturePrint.prepare());assert.equal(await printPage.locator('.lecture-print-sheet').count(),70);if(out)await printPage.pdf({path:path.join(out,'chapter5.pdf'),preferCSSPageSize:true,printBackground:true});
- await page.goto(base+'/ai-education/');assert.equal(await page.locator('a[href="/ai-education-chapter5/"]').count(),1);
- for(const chapter of [1,3,4]){await page.goto(base+`/ai-education-chapter${chapter}/`);await page.waitForSelector('[data-ready=true]');assert(await page.locator('#ce-loading').isHidden())}
+ await page.setViewportSize({width:1440,height:1050});const printPage=await browser.newPage({viewport:{width:1440,height:1000}});printPage.on('pageerror',e=>errors.push(e.message));await printPage.goto(base+'/lectures/ai-education/chapter5/?lecture-print=1');await printPage.evaluate(()=>LecturePrint.prepare());assert.equal(await printPage.locator('.lecture-print-sheet').count(),70);if(out)await printPage.pdf({path:path.join(out,'chapter5.pdf'),preferCSSPageSize:true,printBackground:true});
+ await page.goto(base+'/lectures/ai-education/');assert.equal(await page.locator('a[href="/lectures/ai-education/chapter5/"]').count(),1);
+ for(const chapter of [1,3,4]){await page.goto(base+`/lectures/ai-education/chapter${chapter}/`);await page.waitForSelector('[data-ready=true]');assert(await page.locator('#ce-loading').isHidden())}
  assert.deepEqual(errors,[]);await browser.close();console.log('PASS: 64 original slides, 6 activities, preserved images, prediction gates, Colab record, calculations, export, persistence, keyboard, fullscreen, mobile, 70 print sheets and prior decks.');
 })().catch(e=>{console.error(e);process.exit(1)});

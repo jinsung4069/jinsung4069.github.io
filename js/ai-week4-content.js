@@ -798,7 +798,7 @@ window.WEEK4 = {
     {
       "ch": 4,
       "title": "다음 실습을 위한 자료",
-      "html": "<div class=\"resource-links\"><a href=\"https://orangedatamining.com/download/\" target=\"_blank\" rel=\"noopener\">Orange3 다운로드</a><a href=\"https://orangedatamining.com/widget-catalog/\" target=\"_blank\" rel=\"noopener\">공식 위젯 설명</a><a href=\"/data/lectures/week4-iris.tab\" target=\"_blank\" rel=\"noopener\">붓꽃 데이터</a><a href=\"/ai-algorithm-week3/\" target=\"_blank\" rel=\"noopener\">3주차 개념 다시 보기</a></div>",
+      "html": "<div class=\"resource-links\"><a href=\"https://orangedatamining.com/download/\" target=\"_blank\" rel=\"noopener\">Orange3 다운로드</a><a href=\"https://orangedatamining.com/widget-catalog/\" target=\"_blank\" rel=\"noopener\">공식 위젯 설명</a><a href=\"/data/lectures/week4-iris.tab\" target=\"_blank\" rel=\"noopener\">붓꽃 데이터</a><a href=\"/lectures/ai-algorithm/week3/\" target=\"_blank\" rel=\"noopener\">3주차 개념 다시 보기</a></div>",
       "paragraphs": [
         "분류는 범주, 회귀는 수치, 군집화는 유사한 사례의 묶음을 다룹니다.",
         "Tree와 kNN을 같은 데이터와 평가 조건에서 비교하고, 점수와 오류 사례를 함께 해석합니다."

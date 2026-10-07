@@ -21,7 +21,6 @@ A personal portfolio & CV website showcasing research, interactive educational d
 
 | Project | Description |
 |---|---|
-| [우리반 AI (Stitch AI) PoC](https://jinsung4069.github.io/stitch_ai_poc/) | Competency-based AI platform proof-of-concept (10-screen scenario) |
 | [A* Pathfinding](https://jinsung4069.github.io/astar-pathfinding/) | Interactive A* pathfinding visualization (separate repo) |
 | [DQN Demo](https://jinsung4069.github.io/dqn-demo/) | Deep Q-Network reinforcement learning visualization |
 | [Database Lab](https://jinsung4069.github.io/database-lab/) | Physical design, SQL, and data conversion practice with KCI article data (sql.js) |
@@ -42,19 +41,17 @@ A personal portfolio & CV website showcasing research, interactive educational d
 jinsung4069.github.io/
 ├── index.html                  # Home at /
 ├── about/index.html            # About at /about/
-├── lectures/index.html         # Courses at /lectures/
-├── alligator-chess/            # Static Alligator Chess game
+├── 404.html                    # Not-found page that forwards moved URLs
+├── <project-name>/index.html   # Interactive projects at /<project-name>/
+├── alligator-chess/            # Prebuilt Alligator Chess export
 ├── apps/alligator-chess/       # Game source and build instructions
-├── database-lab/index.html     # Database lab at /database-lab/
-├── <page-name>/index.html      # Other lectures and interactive projects
-├── about.html                  # Legacy redirect to /about/
-├── pages/*.html                # Legacy redirects to the new folder URLs
-├── css/                        # Shared and page-specific styles
-├── js/                         # Shared and page-specific scripts
-├── data/                       # Course data and practice datasets
+├── about.html, pages/*.html    # Legacy redirects to the folder URLs
+├── css/, js/                   # Shared and page-specific styles and scripts
+├── data/                       # Practice datasets and page data
 ├── images/, fonts/, media/     # Static assets
-├── sitemap.xml / robots.txt    # SEO
-└── stitch_ai_poc/              # Portal and screen folders, with legacy redirects
+├── scripts/                    # Site checker, local server, data sync tools
+├── tests/                      # Validator and browser regression tests
+└── sitemap.xml, robots.txt     # SEO
 ```
 
 External project repos served under the same domain: `astar-pathfinding`, `simplequiz`.
@@ -81,9 +78,9 @@ python scripts/serve.py --port 8000
 
 ## Folder URLs
 
-Each page lives in `<page-name>/index.html` and is linked as `/<page-name>/`.
+Each page lives in a folder with an `index.html` and is linked by that folder URL, such as `/<page-name>/`.
 Keep links and canonical URLs pointed at the folder, including the trailing slash.
-Use site-root paths such as `/css/style.css` for shared assets and `/lectures/` for navigation.
+Use site-root paths such as `/css/style.css` for shared assets and `/about/` for navigation.
 Legacy `.html` pages redirect to the new URL and preserve query strings and anchors.
 Explicit `index.html` visits are normalized by `js/clean-url.js`.
 Preview through a local HTTP server so folder URLs and root-relative assets resolve correctly.
@@ -102,7 +99,7 @@ python -B -m unittest discover -s tests
 node --test apps/alligator-chess/tests/game.test.mjs
 ```
 
-The site check covers internal assets and links, course image/video paths, folder URLs,
+The site check covers internal assets and links, image/video paths in page data, folder URLs,
 redirects, sitemap entries, shared page landmarks, and matching game source/export hashes.
 The game tests cover regressions in turn-based victory detection and all 135 reachable states.
 The same checks run on pushes and pull requests through `.github/workflows/site-checks.yml`.
@@ -111,7 +108,7 @@ They validate the site without deploying it.
 Shared pages use `js/preferences.js` in the head before `js/main.js`.
 Set `data-bilingual="true"` on `<html>` only when the page supports both languages.
 Keep a single `<main>` landmark and the visible-on-focus skip link when adding a page.
-The root `404.html` provides recovery links for unknown GitHub Pages URLs.
+The root `404.html` forwards moved folder URLs and provides recovery links for unknown GitHub Pages URLs.
 
 ## 🔧 Conventions
 
@@ -127,4 +124,4 @@ The root `404.html` provides recovery links for unknown GitHub Pages URLs.
 
 ---
 
-*Last updated: September 2026*
+*Last updated: October 2026*

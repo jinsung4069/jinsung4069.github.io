@@ -1,6 +1,6 @@
 # AI알고리즘 4주차 제작 기록
 
-공개 경로: `/ai-algorithm-week4/`
+공개 경로: `/lectures/ai-algorithm/week4/`
 
 ## 범위와 구성
 
