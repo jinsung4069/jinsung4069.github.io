@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  const base=process.argv[2]||'http://127.0.0.1:8765',out=process.argv[3]||'tmp/chapter4-html/qa';fs.mkdirSync(out,{recursive:true});
  const browser=await chromium.launch({headless:true,channel:'msedge'}),page=await browser.newPage({viewport:{width:1440,height:1050}}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- await page.goto(base+'/ai-education-chapter4/');await page.waitForSelector('[data-ready=true]');
+ await page.goto(base+'/lectures/ai-education/chapter4/');await page.waitForSelector('[data-ready=true]');
  const data=await page.evaluate(()=>fetch('/data/lectures/ai-education/4.json').then(r=>r.json()));assert.equal(data.slides.length,61);assert.equal(data.slides.filter(s=>s.sourceSlide).length,55);
  const go=async n=>{await page.evaluate(n=>location.hash='slide-'+n,n);await page.waitForFunction(n=>Number(document.querySelector('#ce-page').value)===n,n)};
  for(let n=1;n<=61;n++){
@@ -29,8 +29,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
  for(const n of [5,14,19,28,36,42,45,51,57]){await go(n);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`mobile overflow ${n}`);await page.screenshot({path:path.join(out,`mobile-${n}.png`)});}
  await page.setViewportSize({width:1440,height:1050});
  const printPage=await browser.newPage({viewport:{width:1440,height:1000}});printPage.on('pageerror',e=>errors.push(e.message));
- await printPage.goto(base+'/ai-education-chapter4/?lecture-print=1');await printPage.evaluate(()=>LecturePrint.prepare());await printPage.waitForFunction(()=>document.documentElement.dataset.printReady==='true',{},{timeout:120000});assert.equal(await printPage.locator('.lecture-print-sheet').count(),61);await printPage.pdf({path:path.join(out,'chapter4.pdf'),preferCSSPageSize:true,printBackground:true});
+ await printPage.goto(base+'/lectures/ai-education/chapter4/?lecture-print=1');await printPage.evaluate(()=>LecturePrint.prepare());await printPage.waitForFunction(()=>document.documentElement.dataset.printReady==='true',{},{timeout:120000});assert.equal(await printPage.locator('.lecture-print-sheet').count(),61);await printPage.pdf({path:path.join(out,'chapter4.pdf'),preferCSSPageSize:true,printBackground:true});
  // Shared renderer still loads the existing graduate decks.
- for(const chapter of [1,3]){await page.goto(base+`/ai-education-chapter${chapter}/`);await page.waitForSelector('[data-ready=true]');assert(await page.locator('#ce-loading').isHidden())}
+ for(const chapter of [1,3]){await page.goto(base+`/lectures/ai-education/chapter${chapter}/`);await page.waitForSelector('[data-ready=true]');assert(await page.locator('#ce-loading').isHidden())}
  assert.deepEqual(errors,[]);console.log('PASS: 55 original slides, 6 activities, 18 image zooms, calculations, record persistence and export, keyboard, mobile, 61 print sheets and existing decks.');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

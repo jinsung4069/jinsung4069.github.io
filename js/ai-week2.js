@@ -10,7 +10,7 @@
   const table=(heads,body)=>`<table><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${body.map(r=>`<tr>${r.map(x=>`<td${x==null?' class="missing"':''}>${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   const code=x=>`<pre><code>${esc(x)}</code></pre>`;
   const nb='https://colab.research.google.com/github/jinsung4069/jinsung4069.github.io/blob/main/data/lectures/ai-week2.ipynb';
-  const colab=()=>`<a class="link primary" href="${nb}" target="_blank" rel="noopener">코랩 실습 열기 ↗</a><a class="link" href="../data/lectures/ai-week2.ipynb" download>노트북 다운로드</a><a class="link" href="../data/lectures/week2_flights.csv" download>가상 CSV 다운로드</a><span class="full-url">${nb}</span><p class="small">코랩 실행과 Drive 저장은 Google 로그인이 필요합니다. 브라우저 체험은 로그인 없이 이용할 수 있습니다.</p>`;
+  const colab=()=>`<a class="link primary" href="${nb}" target="_blank" rel="noopener">코랩 실습 열기 ↗</a><a class="link" href="/data/lectures/ai-week2.ipynb" download>노트북 다운로드</a><a class="link" href="/data/lectures/week2_flights.csv" download>가상 CSV 다운로드</a><span class="full-url">${nb}</span><p class="small">코랩 실행과 Drive 저장은 Google 로그인이 필요합니다. 브라우저 체험은 로그인 없이 이용할 수 있습니다.</p>`;
   const state={prediction:'',reflections:{},filterPrediction:'',quizScore:null};
   const quiz=[
     ['관측값 80개 중 유효값이 74개라면 결측값은 몇 개인가요?',['6개','74개','80개'],0,'전체 80개에서 유효값 74개를 빼면 결측값은 6개입니다.'],

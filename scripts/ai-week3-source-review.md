@@ -1,6 +1,6 @@
 # AI알고리즘 3주차, 제작 및 자료 검토 기록
 
-공개 강의: `/ai-algorithm-week3/`
+공개 강의: `/lectures/ai-algorithm/week3/`
 
 ## 제작 기준
 
