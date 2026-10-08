@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이크로 로봇 - 웹 버전</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.10/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <style>
         body {
             margin: 0;
@@ -26,6 +26,7 @@
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
+        const MAX_ROUND_TRIES = 200;
 
         // === 색상 및 유틸 ===
         const COLOR_NAMES = ["blue", "yellow", "green", "red", "pink", "white"];
@@ -160,6 +161,90 @@
           return null;
         }
 
+        // 각 칸에서 goal까지의 최단 이동 수 (이동 관계는 대칭이라 goal에서 출발해 계산)
+        function distancesTo(board, goal) {
+          const dist = Array.from({ length: 6 }, () => Array(6).fill(Infinity));
+          dist[goal.r][goal.c] = 0;
+          const q = [goal];
+          for (let qi = 0; qi < q.length; qi++) {
+            const cur = q[qi];
+            for (const nxt of neighbors(board, cur)) {
+              if (dist[nxt.r][nxt.c] === Infinity) {
+                dist[nxt.r][nxt.c] = dist[cur.r][cur.c] + 1;
+                q.push(nxt);
+              }
+            }
+          }
+          return dist;
+        }
+
+        // blocked(칸 키 집합)에 든 칸을 밟지 않는 BFS 최단 경로
+        function bfsAvoiding(board, start, goal, blocked) {
+          const key = (x) => `${x.r},${x.c}`;
+          const prev = new Map([[key(start), null]]);
+          const q = [start];
+          for (let qi = 0; qi < q.length; qi++) {
+            const cur = q[qi];
+            if (cur.r === goal.r && cur.c === goal.c) {
+              const path = [];
+              for (let k = key(cur); k; k = prev.get(k)) {
+                const [r, c] = k.split(",").map(Number);
+                path.push(board[r][c]);
+              }
+              return path.reverse();
+            }
+            for (const nxt of neighbors(board, cur)) {
+              const nk = key(nxt);
+              if (!prev.has(nk) && !blocked.has(nk)) {
+                prev.set(nk, key(cur));
+                q.push(nxt);
+              }
+            }
+          }
+          return null;
+        }
+
+        // 전문가 모드 최단 경로: 시작 → 중간 → 목표, 같은 칸 재방문 없이.
+        // 총 이동 수 한도를 1씩 늘리며 앞 구간(시작→중간)을 훑고, 뒤 구간은 앞 구간 칸을 피해 BFS로 구한다.
+        // 한도 안에서 처음 찾은 경로가 곧 최단이다.
+        const MAX_EXPERT_MOVES = 16;
+        function solveViaMid(board, start, mid, goal) {
+          const toMid = distancesTo(board, mid);
+          const toGoal = distancesTo(board, goal);
+          if (toMid[start.r][start.c] === Infinity || toGoal[mid.r][mid.c] === Infinity) return null;
+          const key = (x) => `${x.r},${x.c}`;
+          const goalKey = key(goal);
+          const minTail = toGoal[mid.r][mid.c];
+          let budget = 200000; // 탐색 노드 상한
+          for (let limit = toMid[start.r][start.c] + minTail; limit <= MAX_EXPERT_MOVES; limit++) {
+            let best = null;
+            const visited = new Set([key(start)]);
+            const leg = [start];
+            const dfs = (cur) => {
+              if (best || --budget < 0) return;
+              if (leg.length - 1 + toMid[cur.r][cur.c] + minTail > limit) return;
+              if (cur.r === mid.r && cur.c === mid.c) {
+                const blocked = new Set(visited);
+                blocked.delete(key(mid));
+                const tail = bfsAvoiding(board, mid, goal, blocked);
+                if (tail && leg.length + tail.length - 2 <= limit) best = [...leg, ...tail.slice(1)];
+                return;
+              }
+              for (const nxt of neighbors(board, cur)) {
+                const nk = key(nxt);
+                if (visited.has(nk) || nk === goalKey) continue;
+                visited.add(nk); leg.push(nxt);
+                dfs(nxt);
+                visited.delete(nk); leg.pop();
+              }
+            };
+            dfs(start);
+            if (best) return best;
+            if (budget < 0) return null;
+          }
+          return null;
+        }
+
         // 주사위 굴리기
         function rollNumber() { return Math.floor(Math.random() * 6) + 1; }
         function rollColor() { return COLOR_NAMES[Math.floor(Math.random() * 6)]; }
@@ -258,7 +343,6 @@
         // 컴포넌트 시작
         function App() {
           const [board, setBoard] = useState(() => buildBoard());
-          const flat = board.flat();
 
           // 시작/목표/중간목표(전문가 모드)
           const [start, setStart] = useState(null);
@@ -277,38 +361,44 @@
 
           const [par, setPar] = useState(null);
           const [parPath, setParPath] = useState(null);
-          const [reseed, setReseed] = useState(0);
 
-          // 새 보드
-          function reshuffleBoard() {
+          // 새 보드 (섞은 보드로 바로 새 라운드 시작)
+          function reshuffleBoard(isExpert = expert) {
             const b = buildBoard();
             setBoard(b);
-            setStart(null); setTarget(null); setMid(null);
-            setPath([]); setPar(null); setParPath(null);
-            setClaimed(false); setWin(false); setUsedAnswer(false);
-            setReseed((x) => x + 1);
-            // 테스트
             runSelfTests(b);
+            newRound(b, isExpert);
           }
 
           // 특정 (num,color) 조합의 좌표 찾기
-          function cellBy(num, color) {
-            const found = flat.find((c) => c.num === num && c.color === color);
+          function cellBy(b, num, color) {
+            const found = b.flat().find((c) => c.num === num && c.color === color);
             if (!found) throw new Error("해당 조합을 보드에서 찾을 수 없습니다.");
             return found;
           }
 
-          // 라운드 생성 (시작/목표/중간목표)
-          function newRound() {
-            let s, t, m = null;
-            s = cellBy(rollNumber(), rollColor());
-            do { t = cellBy(rollNumber(), rollColor()); } while (t.r === s.r && t.c === s.c);
-            if (expert) {
-              do { m = cellBy(rollNumber(), rollColor()); } while ((m.r === s.r && m.c === s.c) || (m.r === t.r && t.c === t.c));
+          // 라운드 생성 (시작/목표/중간목표) — 풀 수 있는 조합이 나올 때까지 다시 굴림
+          function newRound(b = board, isExpert = expert) {
+            const same = (a, z) => a.r === z.r && a.c === z.c;
+            for (let tries = 0; tries < MAX_ROUND_TRIES; tries++) {
+              const s = cellBy(b, rollNumber(), rollColor());
+              const t = cellBy(b, rollNumber(), rollColor());
+              if (same(s, t)) continue;
+              let m = null;
+              if (isExpert) {
+                m = cellBy(b, rollNumber(), rollColor());
+                if (same(m, s) || same(m, t)) continue;
+              }
+              const solution = isExpert ? solveViaMid(b, s, m, t) : bfs(b, s, t);
+              if (!solution) continue;
+              setStart(s); setTarget(t); setMid(m);
+              setPath([s]);
+              setPar(solution.length - 1); setParPath(solution);
+              setClaimed(false); setUsedAnswer(false);
+              return;
             }
-            setStart(s); setTarget(t); setMid(m);
-            setPath([s]);
-            setClaimed(false); setUsedAnswer(false);
+            // 풀 수 있는 조합을 끝내 못 찾으면(거의 없음) 보드를 새로 섞는다
+            reshuffleBoard(isExpert);
           }
 
           // 이동 시 검증
@@ -343,31 +433,12 @@
           }, [target, current, expert, mid, path]);
 
           function claimPoint(){
-            if (claimed || !reached) return;
+            if (claimed || !reached || win) return;
             const next = score + 1;
             setScore(next);
             setClaimed(true);
             if (next >= 5) setWin(true);
           }
-
-          // 파(최단 이동 수) 계산
-          useEffect(() => {
-            if (!start || !target) { setPar(null); setParPath(null); return; }
-            const solveSimple = () => bfs(board, start, target);
-            const solveExpert = () => {
-              if (!mid) return null;
-              const p1 = bfs(board, start, mid);
-              if (!p1) return null;
-              const p2 = bfs(board, mid, target);
-              if (!p2) return null;
-              return [...p1, ...p2.slice(1)];
-            };
-
-            let best = expert ? solveExpert() : solveSimple();
-            if (!best) { setPar(null); setParPath(null); return; }
-            setPar(best.length - 1);
-            setParPath(best);
-          }, [board, start, target, expert, mid, reseed]);
 
           // 스타일 함수 — 영상 느낌으로 테두리 색, 내부는 어두운 칩 + LED
           function cellStyle(c) {
@@ -426,10 +497,10 @@
             const mLab = mid ? `${mid.num} / ${KOREAN_LABELS[mid.color]}` : "—";
             return (
               <div className="flex flex-wrap items-center gap-3 mt-3">
-                <button className="px-3 py-2 rounded-2xl bg-black text-white" onClick={newRound}>새 라운드</button>
-                <button className="px-3 py-2 rounded-2xl bg-gray-800 text-white" onClick={reshuffleBoard}>보드 섞기</button>
+                <button className="px-3 py-2 rounded-2xl bg-black text-white" onClick={() => newRound()}>새 라운드</button>
+                <button className="px-3 py-2 rounded-2xl bg-gray-800 text-white" onClick={() => reshuffleBoard()}>보드 섞기</button>
                 <label className="flex items-center gap-2 text-sm">
-                  <input type="checkbox" checked={expert} onChange={(e)=>{setExpert(e.target.checked); setMid(null);}} /> 전문가 모드(중간 목표 포함)
+                  <input type="checkbox" checked={expert} onChange={(e)=>{setExpert(e.target.checked); newRound(board, e.target.checked);}} /> 전문가 모드(중간 목표 포함)
                 </label>
                 <label className="flex items-center gap-2 text-sm">
                   <input type="checkbox" checked={showLabels} onChange={(e)=>setShowLabels(e.target.checked)} /> 라벨 표시
@@ -454,12 +525,14 @@
                       <PipTile num={cell.num} color={cell.color} />
                       {isCurrent && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <PawnGlass size={34} />
+                          <div style={{ width: "78%", height: "78%" }}>
+                            <PawnGlass size="100%" />
+                          </div>
                         </div>
                       )}
                       {isTarget && (
-                        <div className="absolute top-1 left-1">
-                          <Coin filled size={18} />
+                        <div className="absolute top-1 left-1 pointer-events-none" style={{ width: "42%", height: "42%" }}>
+                          <Coin filled size="100%" />
                         </div>
                       )}
                       {showLabels && (
@@ -477,7 +550,7 @@
           function Footer() {
             return (
               <div className="text-xs text-gray-400 mt-3">
-                <p>표시 — 굵은 실선: 현재, 점선: 시작, 파선: 목표, 점선점: 중간 목표</p>
+                <p>표시 — 말·굵은 실선: 현재 위치, 얇은 실선: 시작, 코인·파선: 목표, 점선: 중간 목표</p>
                 <p>최단경로는 BFS. 라운드 승점칩을 획득하면 HUD 점수가 +1 되고 5점에 도달하면 승리합니다.</p>
               </div>
             );
@@ -488,7 +561,7 @@
               <div className="flex flex-col items-end gap-1">
                 <div className="text-sm">승점칩</div>
                 <div className="flex items-center gap-1">
-                  {Array.from({length:5}).map((_,i)=> <Coin key={i} filled={i<score} />)}
+                  {Array.from({length:5}).map((_,i)=> <Coin key={i} filled={i<score} size={28} />)}
                 </div>
                 <div className="text-xs text-gray-300">{score} / 5</div>
               </div>
@@ -505,14 +578,11 @@
             <div className="p-4 max-w-5xl mx-auto text-white" style={{background:"#07090d"}}>
               <Header />
               <Controls />
-              <div className="mt-4">
-                <Board />
-              </div>
               {reached && (
                 <div className="mt-3 p-3 bg-green-200/20 border border-green-400/50 rounded-xl text-green-200 flex items-center gap-3">
                   <span className="font-semibold">목표 도달! 이동 {path.length - 1}회</span>
-                  {!usedAnswer && <button className="px-2 py-1 rounded bg-green-500 text-white text-sm" onClick={claimPoint} disabled={claimed}>승점칩 획득</button>}
-                  <button className="px-2 py-1 rounded bg-gray-700 text-white text-sm" onClick={newRound}>다음 라운드</button>
+                  {!usedAnswer && !win && <button className="px-2 py-1 rounded bg-green-500 text-white text-sm" onClick={claimPoint} disabled={claimed}>승점칩 획득</button>}
+                  <button className="px-2 py-1 rounded bg-gray-700 text-white text-sm" onClick={() => newRound()}>다음 라운드</button>
                 </div>
               )}
               {win && (
@@ -520,16 +590,19 @@
                   <div className="font-bold text-lg mb-2">🎉 승리! 5점 달성</div>
                   <div className="flex gap-2">
                     <button className="px-3 py-2 rounded bg-yellow-500 text-black" onClick={()=>{setScore(0); setWin(false);}}>점수 초기화</button>
-                    <button className="px-3 py-2 rounded bg-black text-white" onClick={()=>{setScore(0); setWin(false); reshuffleBoard(); newRound();}}>새 게임</button>
+                    <button className="px-3 py-2 rounded bg-black text-white" onClick={()=>{setScore(0); setWin(false); reshuffleBoard();}}>새 게임</button>
                   </div>
                 </div>
               )}
+              <div className="mt-4">
+                <Board />
+              </div>
               <Footer />
             </div>
           );
         }
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
