@@ -249,6 +249,13 @@
         function rollNumber() { return Math.floor(Math.random() * 6) + 1; }
         function rollColor() { return COLOR_NAMES[Math.floor(Math.random() * 6)]; }
 
+        // 말·토큰 자리: 홀수(1,3,5) 칸은 왼쪽 아래, 짝수(2,4,6) 칸은 가운데
+        function pieceStyle(num, centerSize, cornerSize) {
+          return num % 2 === 1
+            ? { position: "absolute", left: "5%", bottom: "5%", width: cornerSize, height: cornerSize }
+            : { position: "absolute", left: "50%", top: "50%", width: centerSize, height: centerSize, transform: "translate(-50%, -50%)" };
+        }
+
         // 셀 키
         const cellKey = (r, c) => `${r}-${c}`;
 
@@ -528,16 +535,14 @@
                   return (
                     <div key={cellKey(r,c)} style={cellStyle(cell)} onClick={() => onCellClick(cell)} aria-label={`${cell.num} ${cell.color}`} title={`${cell.num} / ${KOREAN_LABELS[cell.color]}`} className="aspect-square p-0.5 sm:p-1">
                       <PipTile num={cell.num} color={cell.color} />
-                      {isCurrent && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div style={{ width: "78%", height: "78%" }}>
-                            <PawnGlass size="100%" />
-                          </div>
+                      {isTarget && (
+                        <div className="pointer-events-none" style={pieceStyle(cell.num, "56%", "46%")}>
+                          <Coin filled size="100%" />
                         </div>
                       )}
-                      {isTarget && (
-                        <div className="absolute top-1 left-1 pointer-events-none" style={{ width: "42%", height: "42%" }}>
-                          <Coin filled size="100%" />
+                      {isCurrent && (
+                        <div className="pointer-events-none" style={pieceStyle(cell.num, "78%", "58%")}>
+                          <PawnGlass size="100%" />
                         </div>
                       )}
                       {showLabels && (
