@@ -298,6 +298,12 @@
                 </filter>
               </defs>
               <g filter="url(#pawnShadow)">
+                {/* 어두운 외곽선: 흰 칸·흰 눈 위에서도 말이 구분되도록 유리 몸체 뒤에 깐다 */}
+                <g fill="none" stroke="#0b0f14" strokeWidth="4.5" strokeLinejoin="round">
+                  <circle cx="32" cy="18" r="10"/>
+                  <path d="M16 50c0-9 7-16 16-16s16 7 16 16v4H16v-4z"/>
+                  <rect x="14" y="50" width="36" height="6" rx="3"/>
+                </g>
                 <circle cx="32" cy="18" r="10" fill="url(#g)" stroke="rgba(255,255,255,0.9)"/>
                 <path d="M16 50c0-9 7-16 16-16s16 7 16 16v4H16v-4z" fill="url(#g)" stroke="rgba(255,255,255,0.85)"/>
                 <rect x="14" y="50" width="36" height="6" rx="3" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.7)"/>
