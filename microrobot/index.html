@@ -249,11 +249,13 @@
         function rollNumber() { return Math.floor(Math.random() * 6) + 1; }
         function rollColor() { return COLOR_NAMES[Math.floor(Math.random() * 6)]; }
 
-        // 말·토큰 자리: 홀수(1,3,5) 칸은 왼쪽 아래, 짝수(2,4,6) 칸은 가운데
+        // 말·토큰 자리: 1·3은 왼쪽 아래, 5는 왼쪽 가운데(왼쪽 아래에 눈이 있음), 2·4·6은 가운데
         function pieceStyle(num, centerSize, cornerSize) {
-          return num % 2 === 1
-            ? { position: "absolute", left: "5%", bottom: "5%", width: cornerSize, height: cornerSize }
-            : { position: "absolute", left: "50%", top: "50%", width: centerSize, height: centerSize, transform: "translate(-50%, -50%)" };
+          const box = { position: "absolute", width: cornerSize, height: cornerSize };
+          // 5는 왼쪽 열 폭(칸의 약 1/3)에 맞춰 줄여야 가운데 눈을 가리지 않는다
+          if (num === 5) return { ...box, width: "36%", height: "36%", left: "3%", top: "50%", transform: "translateY(-50%)" };
+          if (num % 2 === 1) return { ...box, left: "5%", bottom: "5%" };
+          return { position: "absolute", left: "50%", top: "50%", width: centerSize, height: centerSize, transform: "translate(-50%, -50%)" };
         }
 
         // 셀 키
