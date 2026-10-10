@@ -1,0 +1,9 @@
+[
+ {"after": 14, "labId": "passCalc", "title": "나는 이수할 수 있을까", "text": ["출석 시간과 영역별 점수로 이수 기준 확인하기", "출석률 80% 이상, 총점 60% 이상"]},
+ {"after": 20, "labId": "trendPick", "title": "내 교실을 먼저 바꿀 기술 고르기", "text": ["추론형 모델, 멀티모달, 자료 기반 생성, AI 에이전트, 작고 저렴한 모델, 피지컬 AI 가운데 하나 고르기"]},
+ {"after": 22, "labId": "genaiOrder", "title": "생성형 AI 4년, 순서 맞히기", "text": ["ChatGPT, Gemini, GPT-4o, o1, DeepSeek-R1, GPT-5, Claude Fable 5, GPT-6 공개 순서 놓기"]},
+ {"after": 33, "labId": "riskMatch", "title": "위험과 학교 장면 짝짓기", "text": ["환각, 편향, 딥페이크, 저작권, 개인정보, 과의존과 학교에서 생길 수 있는 장면 연결하기"]},
+ {"after": 49, "labId": "policyQuiz", "title": "AI 교육 정책 확인 퀴즈", "text": ["인공지능 기본법, AI 디지털교과서, AI 중점학교, UNESCO 지침 확인 문제"]},
+ {"after": 57, "labId": "schoolCheck", "title": "우리 학교 점검표", "text": ["교사 역할, 개인정보, 저작권, 접근성과 격차, 과의존, 계정과 데이터 점검하기"]},
+ {"after": 59, "labId": "trendReview", "title": "처음 고른 기술 다시 보기", "text": ["Part 2 처음에 고른 기술과 지금의 생각 비교하기"]}
+]

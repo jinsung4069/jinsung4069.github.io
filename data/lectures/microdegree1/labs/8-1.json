@@ -1,0 +1,11 @@
+[
+ {"after": 7, "labId": "presentTimer", "title": "발표 한 차례 시계", "text": ["발표 5분, 확인 질문 1분, 피드백 2분을 재는 시계"]},
+ {"after": 8, "labId": "sceneSort", "title": "다섯 장면에 놓아 보기", "text": ["발표 문장을 문제, 설계, 시연, 검증, 개선 장면으로 나누기"]},
+ {"after": 9, "labId": "demoCheck", "title": "내 시연 점검하기", "text": ["접속, 계정, 예시 자료, 대체 자료, 시간, 화면 점검표"]},
+ {"after": 12, "labId": "cqsSort", "title": "칭찬, 질문, 제안 나누기", "text": ["검토자의 말을 칭찬, 질문, 제안으로 분류하기"]},
+ {"after": 13, "labId": "tuningOrder", "title": "튜닝 프로토콜 순서 맞히기", "text": ["소개, 발표, 확인 질문, 생각 정리, 피드백, 발표자 성찰, 마무리 순서 놓기"]},
+ {"after": 16, "labId": "feedbackSort", "title": "수정으로 이어지는 말 고르기", "text": ["도움이 되는 피드백과 덜 되는 피드백 나누기"]},
+ {"after": 21, "labId": "triage", "title": "받은 피드백 세 묶음 나누기", "text": ["바로 반영, 검토 후 반영, 반영하지 않음으로 의견 나누기"]},
+ {"after": 24, "labId": "shareCheck", "title": "공유 전 고칠 곳 찾기", "text": ["학생 개인정보, 저작권, 이용 조건을 기준으로 공유 전에 고칠 자료 찾기"]},
+ {"after": 26, "labId": "reflectPick", "title": "가장 달라진 단계 고르기", "text": ["개념, 원리, 활용, 검증, 윤리, 적용 가운데 가장 달라진 단계 고르기"]}
+]

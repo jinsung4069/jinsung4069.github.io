@@ -16,6 +16,7 @@
   media.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});media.replaceChildren();resetZoom();
   if(window.ceDataLabs)window.ceDataLabs.show(isLab?(s.labId||'legacy'):'hidden');
   if(window.ceChapter4)window.ceChapter4.show(isLab?(s.labId||'stackQueue'):'hidden');
+  if(window.ceLabs)window.ceLabs.show(isLab?s.labId:null,s);
   stage.classList.toggle('lab-mode',isLab);img.hidden=isLab;lab.hidden=!isLab;$('#ce-zoom').disabled=isLab;
   $('#ce-loading').hidden=isLab;$('#ce-slide-text').textContent=isLab?'':s.text.join('\n');
   if(!isLab){img.alt=`${index+1}쪽, ${s.title}`;img.src=s.image;if(img.complete&&img.naturalWidth)$('#ce-loading').hidden=true}
@@ -48,8 +49,10 @@
   const next=data.slides.slice(index+1).find(slide=>slide.image);if(next){const pre=new Image();pre.src=next.image}
  }
  try{
-  const dataVersion=viewer.dataset.chapter==='4'?'20260929survivor':'20261007embed';
-  const response=await fetch(`/data/lectures/computer-education2/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
+  // Other courses reuse this viewer by naming their data folder and print title on the main element.
+  const course=viewer.dataset.course||'computer-education2',courseTitle=viewer.dataset.courseTitle||'컴퓨터과교육2';
+  const dataVersion=viewer.dataset.version||(viewer.dataset.chapter==='4'?'20260929survivor':'20261007embed');
+  const response=await fetch(`/data/lectures/${course}/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
   toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.kind==='lab'?'체험 | '+s.title:s.title)}</b></button>`).join('');
   toc.addEventListener('click',e=>{const b=e.target.closest('button');if(b){render(Number(b.dataset.index));dialog.close()}});
   $('#ce-search').addEventListener('input',e=>{const q=e.target.value.toLocaleLowerCase();toc.querySelectorAll('button').forEach((b,i)=>b.hidden=!`${data.slides[i].kind==='lab'?'체험 ':''}${data.slides[i].title} ${data.slides[i].text.join(' ')}`.toLocaleLowerCase().includes(q))});
@@ -62,14 +65,14 @@
   $('#ce-zoom').addEventListener('click',()=>{zoom=!zoom;stage.classList.toggle('zoom',zoom);setIcon($('#ce-zoom'),zoom?'zoom-out':'zoom-in',zoom?'화면에 맞춤':'확대');$('#ce-zoom').setAttribute('aria-pressed',String(zoom))});
   $('#ce-fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{$('#ce-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.'}});
   document.addEventListener('fullscreenchange',()=>setIcon($('#ce-fullscreen'),document.fullscreenElement?'minimize':'maximize',document.fullscreenElement?'전체 화면 종료':'전체 화면'));
-  window.LecturePrint.register({button:$('#ce-print'),title:`컴퓨터과교육2, ${data.title}`,slides:data.slides,
+  window.LecturePrint.register({button:$('#ce-print'),title:`${courseTitle}, ${data.title}`,slides:data.slides,
    assets:()=>data.slides.map(s=>s.image).filter(Boolean),
    render(i){render(i,false);
     const pre=lab.querySelector('#blocks-json');if(data.slides[i].labId==='blocks'&&pre){
      const value=JSON.parse(pre.textContent);
      pre.textContent='{\n'+Object.entries(value).map(([key,item])=>'  '+JSON.stringify(key)+': '+(key==='blocks'?'[\n'+item.map(block=>'    '+JSON.stringify(block)).join(',\n')+'\n  ]':JSON.stringify(item))).join(',\n')+'\n}';
     }
-    const isLab=data.slides[i].kind==='lab'||data.slides[i].kind==='native';const node=isLab?lab:img;return {node,width:1280,height:isLab?Math.max(node.scrollHeight,node.offsetHeight):720}}
+    const isLab=data.slides[i].kind==='lab'||data.slides[i].kind==='native';const node=isLab?lab:img;return {node,width:1280,height:isLab&&!lab.classList.contains('md-lab')?Math.max(node.scrollHeight,node.offsetHeight):720}}
   });
   img.addEventListener('load',()=>{$('#ce-loading').hidden=true});img.addEventListener('error',()=>{if(data.slides[index].kind!=='lab'){$('#ce-loading').hidden=false;$('#ce-loading').textContent='이미지를 불러오지 못했습니다. 새로고침해 주세요.'}});
   document.addEventListener('keydown',e=>{

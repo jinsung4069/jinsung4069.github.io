@@ -1,0 +1,113 @@
+/* 마이크로디그리 과정1: course index numbers and activity slides drawn in the look of the source deck. */
+.md-number{display:grid;justify-items:center;align-content:start;line-height:1;min-width:48px}.md-number small{font-size:13px;font-weight:600;margin-top:7px;color:var(--color-text-muted)}
+
+/* Activity slides stay 16:9 at every width. Sizes inside are em, and 1em is 20px on a 1280px slide. */
+.md-viewer .ce-canvas{container-type:inline-size}
+.md-viewer .ce-stage.lab-mode{height:auto;min-height:0;aspect-ratio:16/9}.md-viewer .ce-stage.lab-mode .ce-canvas{height:auto;aspect-ratio:16/9}
+.md-viewer:fullscreen .ce-stage.lab-mode{height:auto;min-height:0;width:min(100vw,calc(100dvh*1.77777778))}
+/* The toolbar moves beside the title band so it never covers a game. */
+.md-viewer .ce-stage.lab-mode .ce-toolbar{top:1.1%;bottom:auto;left:auto;right:1%;transform:none;gap:.45cqw;max-width:36%}
+.md-viewer .ce-stage.lab-mode .ce-toolbar .ce-glass{width:3.3cqw;height:3.3cqw;min-width:26px;min-height:26px}.md-viewer .ce-stage.lab-mode .ce-toolbar .ce-icon{width:52%;height:52%}
+.md-viewer .ce-stage.lab-mode #ce-open-toc{margin-left:.6cqw}.md-viewer .ce-stage.lab-mode .ce-glass::after{top:calc(100% + 9px);bottom:auto}
+.md-viewer .ce-stage.lab-mode .ce-next::after{left:auto;right:0;transform:none}
+
+.ce-lab.md-lab{display:flex;flex-direction:column;padding:0;border:0;overflow:hidden;background:#fff;color:#1c2c4c;font-size:1.5625cqw;line-height:1.5;word-break:keep-all}
+/* The slide is always light, so site rules that follow the theme keep their light values inside it. */
+.ce-lab.md-lab{--color-bg:#F5F7FA;--color-text:#434A54;--color-text-muted:#6c757d;--color-white:#fff;--color-border:#E6E9ED;color-scheme:light}
+/* The site's table sizes are fixed px. Inside a slide they follow the slide width, with the same look at 1280px. */
+.md-lab table{margin-top:1.875cqw}.md-lab th,.md-lab td{padding:.833em 1.111em;font-size:1.125cqw}
+.ce-lab.md-lab[hidden]{display:none}.ce-lab.md-lab::before{content:none}
+.ce-lab.md-lab p{font-size:inherit;max-width:none;margin:0}.ce-lab.md-lab h3{margin:0;font-size:1em}
+.md-lab .md-head{flex:none;display:flex;align-items:center;gap:.8em;width:62%;height:4.1em;padding:0 3.4em 0 1.15em;background:#3f5dae;color:#fff;clip-path:polygon(0 0,100% 0,calc(100% - 2.4em) 100%,0 100%)}
+.ce-lab.md-lab .md-head h2{margin:0;font-size:1.5em;line-height:1.2;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-lab .md-badge{flex:none;white-space:nowrap;padding:.1em .85em;border:1px solid #ffffffb5;border-radius:99em;font-size:.7em}
+.ce-lab.md-lab .md-hint{flex:none;margin:.75em 2.4em 0;line-height:1.45}.md-lab .md-hint b{color:#3f5dae}
+.md-lab .md-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:.65em;padding:.75em 2.4em .3em}
+.md-lab .md-foot{flex:none;display:flex;align-items:center;justify-content:space-between;gap:1.2em;height:3.5em;padding:0 2.4em .35em;border-bottom:.3em solid #3f5dae}
+.ce-lab.md-lab .md-msg{flex:1;min-width:0;font-size:.92em;line-height:1.35;color:#3a4a6b;text-align:left}.ce-lab.md-lab .md-msg[data-tone=good]{color:#16794c}.ce-lab.md-lab .md-msg[data-tone=bad]{color:#b5372f}
+.md-lab .md-actions{flex:none;display:flex;gap:.5em}
+.md-lab .md-btn{padding:.42em 1.05em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;color:#2c478f;font-size:.88em;line-height:1.3;cursor:pointer;white-space:nowrap}
+.md-lab .md-btn:hover{background:#ebf0fc}.md-lab .md-btn.primary{border-color:#3f5dae;background:#3f5dae;color:#fff}.md-lab .md-btn.primary:hover{background:#34509b}
+.md-lab .md-btn:disabled{opacity:.4;cursor:default}.md-lab .md-btn[hidden]{display:none}
+.md-lab button{font-size:1em}.md-lab [data-result=right]{border-color:#1f8a5b!important;background:#e3f5ec!important}.md-lab [data-result=wrong]{border-color:#c2413b!important;background:#fdeceb!important}
+.md-lab [aria-pressed=true]{outline:.16em solid #f0a202;outline-offset:.05em;background:#fff7df}
+
+/* Sorting cards into bins */
+.md-lab .md-pool{flex:none;display:flex;flex-wrap:wrap;align-content:flex-start;gap:.45em;min-height:3.5em;padding:.45em;border:1px dashed #9fb0dc;border-radius:.6em;background:#f6f8fd}
+.md-lab .md-pool:empty::after{content:'카드를 모두 놓았습니다.';margin:auto;color:#6b7896;font-size:.85em}
+.md-lab .md-card{display:grid;gap:.05em;max-width:100%;padding:.38em .75em;border:1px solid #9fb0dc;border-radius:.5em;background:#ebf0fc;color:#1c2c4c;font-size:.84em;line-height:1.3;text-align:left;cursor:pointer}
+.md-lab .md-card b{color:#2c478f;font-weight:800}.md-lab .md-card small{font-size:.86em}
+.md-lab .md-bins{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:.6em}
+.md-lab .md-bin{display:flex;flex-direction:column;min-height:0;border:1px solid #b9c6e6;border-radius:.6em;overflow:hidden;cursor:pointer}
+.ce-lab.md-lab .md-bin h3{padding:.28em .6em;background:#3f5dae;color:#fff;font-size:.92em;text-align:center}
+.ce-lab.md-lab .md-bin>p{padding:.3em .6em 0;color:#52607f;font-size:.74em;text-align:center}
+.md-lab .md-drop{flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;gap:.38em;padding:.45em}
+
+/* Putting cards in order */
+.md-lab .md-axis{flex:none;display:flex;align-items:center;gap:.8em;color:#52607f;font-size:.8em}.md-lab .md-axis i{flex:1;height:2px;background:linear-gradient(90deg,#b9c6e6,#3f5dae)}
+.md-lab .md-order{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:.6em;margin:0;padding:0;list-style:none}
+.md-lab .md-order li{display:flex;min-height:0}
+.md-lab .md-step{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2em;padding:.5em;border:1px solid #9fb0dc;border-radius:.6em;background:#ebf0fc;color:#1c2c4c;line-height:1.3;text-align:center;cursor:pointer}
+.md-lab .md-step span{min-width:2em;padding:0 .5em;border-radius:99em;background:#3f5dae;color:#fff;font-size:.78em}.md-lab .md-step b{color:#2c478f;font-size:1.02em;font-weight:800}.md-lab .md-step small{font-size:.78em}
+
+/* Quiz */
+.md-lab .md-quiz{flex:1;min-height:0;display:flex;flex-direction:column;gap:.7em}
+.ce-lab.md-lab .md-count{color:#6b7896;font-size:.8em}.md-lab .md-q{font-size:1.2em;font-weight:800;line-height:1.4;color:#1c2c4c}
+.md-lab .md-choices{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:.6em}
+.md-lab .md-choice{padding:.7em .8em;border:1px solid #9fb0dc;border-radius:.6em;background:#ebf0fc;color:#1c2c4c;line-height:1.35;cursor:pointer}.md-lab .md-choice:hover:enabled{background:#dfe7fa}.md-lab .md-choice:disabled{cursor:default;color:#1c2c4c}
+.ce-lab.md-lab .md-why{padding:.6em .9em;border-left:.25em solid #3f5dae;background:#f6f8fd;font-size:.92em}
+.ce-lab.md-lab .md-score{font-size:1.5em;color:#52607f;text-align:center}.md-lab .md-score b{font-size:2.2em;color:#3f5dae}
+.md-lab .md-review{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:.4em;margin:0;padding:0;list-style:none;font-size:.82em}
+.md-lab .md-review li{padding:.35em .7em;border:1px solid;border-radius:.5em;line-height:1.35}.md-lab .md-review li[data-result=right]::before{content:'○ '}.md-lab .md-review li[data-result=wrong]::before{content:'× '}
+.md-lab .md-answers{display:grid;grid-template-columns:1fr 1fr;gap:.7em;margin-top:.5em;font-size:.8em;font-weight:600}.md-lab .md-answers p{padding:.55em .8em;border:1px solid #b9c6e6;border-radius:.6em;background:#fff}.md-lab .md-answers b{display:block;color:#3f5dae}
+
+/* Matching pairs */
+.md-lab .md-match{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,5fr);gap:1.6em}.md-lab .md-col{display:flex;flex-direction:column;gap:.42em;min-height:0}
+.ce-lab.md-lab .md-col h3{color:#52607f;font-size:.8em}
+.md-lab .md-pair{flex:1;display:flex;align-items:center;gap:.6em;min-height:0;padding:.2em .8em;border:1px solid #9fb0dc;border-radius:.5em;background:#ebf0fc;color:#1c2c4c;font-size:.92em;line-height:1.3;text-align:left;cursor:pointer}
+.md-lab .md-pair span{flex:none;display:grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:#fff;border:1px solid #9fb0dc;font-size:.8em}.md-lab .md-pair[data-result=right] span{background:#1f8a5b;border-color:#1f8a5b;color:#fff}.md-lab .md-pair:disabled{cursor:default;color:#1c2c4c}
+.md-lab [data-side=left] .md-pair{font-weight:800;color:#2c478f}
+
+/* Picking one option with a reason */
+.ce-lab.md-lab .md-before{padding:.45em .9em;border-left:.25em solid #f0a202;background:#fff7df;font-size:.92em}
+.md-lab .md-options{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:.7em}
+.md-lab .md-option{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25em;padding:.5em;border:1px solid #9fb0dc;border-radius:.6em;background:#ebf0fc;color:#1c2c4c;line-height:1.35;cursor:pointer}.md-lab .md-option:hover{background:#dfe7fa}
+.md-lab .md-option b{color:#2c478f;font-size:1.15em;font-weight:800}.md-lab .md-option small{font-size:.82em}
+.md-lab .md-reason{flex:none;display:flex;align-items:center;gap:.8em;font-size:.9em;white-space:nowrap}
+.md-lab .md-reason input,.md-lab .md-text{flex:1;min-width:0;padding:.4em .7em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;color:#1c2c4c;font-size:1em}
+
+/* Checklist table */
+.md-lab .md-check{flex:1;width:100%;margin-top:0;border-collapse:collapse;font-size:.88em}.md-lab .md-check th,.md-lab .md-check td{font-size:inherit}.md-lab .md-check th,.md-lab .md-check td{padding:.3em .7em;border:1px solid #c9d3ec;line-height:1.3}
+.md-lab .md-check thead th{background:#3f5dae;color:#fff;font-weight:800;white-space:nowrap}.md-lab .md-check tbody th{background:#ebf0fc;color:#2c478f;font-weight:800;white-space:nowrap}.md-lab .md-check td:nth-child(n+3){width:6.2em;text-align:center}
+.md-lab input[type=radio],.md-lab input[type=checkbox]{width:1.15em;height:1.15em;min-height:0;accent-color:#3f5dae;cursor:pointer}
+
+/* Shared pieces for the simulations */
+.md-lab .md-split{flex:1;min-height:0;display:grid;grid-template-columns:var(--split,1fr 1fr);gap:1.4em}.md-lab .md-panel{display:flex;flex-direction:column;gap:.55em;min-width:0;min-height:0;padding:.8em 1em;border:1px solid #b9c6e6;border-radius:.6em;background:#f6f8fd}
+.ce-lab.md-lab .md-panel h3{color:#2c478f;font-size:.95em;font-weight:800}
+.md-lab .md-slider{display:grid;grid-template-columns:8.5em 1fr 4.2em;align-items:center;gap:.6em;font-size:.9em}.md-lab .md-slider output{font-weight:800;color:#2c478f;text-align:right}
+.md-lab input[type=range]{width:100%;min-width:0;accent-color:#3f5dae}.md-lab select{padding:.3em .6em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;color:#1c2c4c;font-size:.9em}
+.md-lab .md-meter{height:1.1em;border-radius:99em;background:#dfe7fa;overflow:hidden}.md-lab .md-meter i{display:block;height:100%;background:#3f5dae}
+.ce-lab.md-lab .md-verdict{margin-top:auto;padding:.5em;border-radius:.6em;font-size:1.4em;font-weight:800;text-align:center}.md-lab .md-verdict[data-tone=good]{background:#e3f5ec;color:#16794c}.md-lab .md-verdict[data-tone=bad]{background:#fdeceb;color:#b5372f}
+.md-lab .md-list{display:grid;gap:.35em;margin:0;padding:0;list-style:none;font-size:.9em}.md-lab .md-list li{display:flex;justify-content:space-between;gap:1em;padding:.3em .7em;border-radius:.4em;background:#fff;border:1px solid #d5ddf1}
+.md-lab .md-chips{display:flex;flex-wrap:wrap;gap:.4em}.md-lab .md-chip{padding:.25em .8em;border:1px solid #9fb0dc;border-radius:99em;background:#fff;color:#2c478f;font-size:.8em;cursor:pointer}.md-lab .md-chip:hover{background:#ebf0fc}.md-lab .md-chip[aria-pressed=true]{background:#fff7df}
+
+/* Hour-by-hour control table */
+.md-lab .md-hours{table-layout:fixed}.md-lab .md-hours th{width:11.5em;background:#ebf0fc;color:#2c478f;font-weight:800;text-align:left}.md-lab .md-hours td,.md-lab .md-hours td:nth-child(n+3){width:auto;text-align:center}
+.md-lab .md-hours .md-hour td{background:#3f5dae;color:#fff}.md-lab .md-hours .md-hour th{background:#3f5dae;color:#fff}
+.md-lab .md-hours td[data-on=true]{background:#3f5dae;color:#fff;font-weight:800}.md-lab .md-hours td[data-use=true]{background:#fff3cf;color:#7a5600}
+/* Vacuum agent floor */
+.md-lab .md-floor{align-self:center;display:grid;grid-template-columns:repeat(var(--w),1fr);gap:.25em;width:100%}
+.md-lab .md-floor span{aspect-ratio:1;display:grid;place-items:center;border-radius:.35em;background:#eef2fb;border:1px solid #d5ddf1}
+.md-lab .md-floor span[data-kind=wall]{background:#55627f;border-color:#55627f}
+.md-lab .md-floor span[data-kind=dust]::after{content:'';width:34%;height:34%;border-radius:50%;background:#b98a3a;box-shadow:.5em .25em 0 -.18em #b98a3a,-.45em .35em 0 -.2em #b98a3a}
+.md-lab .md-floor span[data-kind=robot]{background:#fff}.md-lab .md-floor span[data-kind=robot]::after{content:'';width:68%;height:68%;border-radius:50%;background:#3f5dae;border:.22em solid #1c2c4c;box-shadow:inset 0 .35em 0 #8fa5e0}
+/* Chinese room notes and chat log */
+.ce-lab.md-lab .md-note{padding:.4em;border:1px solid #b9c6e6;border-radius:.5em;background:#fff;font-size:1.6em;text-align:center}
+.md-lab .md-rules td,.md-lab .md-rules td:nth-child(n+3){width:50%;font-size:1.15em;text-align:center}.md-lab #cr-out .md-choice{font-size:1.05em;padding:.6em .3em}
+.md-lab .md-chat{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:.35em;overflow:hidden}
+.ce-lab.md-lab .md-chat p{max-width:82%;padding:.32em .8em;border-radius:.8em;font-size:.9em;line-height:1.35}
+.ce-lab.md-lab .md-chat p[data-who=bot]{align-self:flex-start;background:#fff;border:1px solid #b9c6e6}.ce-lab.md-lab .md-chat p[data-who=me]{align-self:flex-end;background:#3f5dae;color:#fff}
+
+/* Printing keeps the same 1280 x 720 slide. */
+.lecture-print-building .ce-lab.md-lab{position:absolute!important;inset:0!important;width:1280px!important;height:720px!important;min-height:0!important;padding:0!important;overflow:hidden!important;font-size:20px!important}
+@media(max-width:700px){.ce-lab.md-lab{padding:0}.md-viewer .ce-stage.lab-mode .ce-toolbar{top:1.1%;max-width:60%}.md-number{min-width:40px}}
