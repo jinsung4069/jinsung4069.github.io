@@ -1,0 +1,24 @@
+/* Chapters 6, 7-1 and 7-2 reuse the Chapter 5 activity sheet styles. */
+:is([data-chapter="6"],[data-chapter="7-1"],[data-chapter="7-2"]) .ce-lab{padding:0}
+:is([data-chapter="6"],[data-chapter="7-1"],[data-chapter="7-2"]) .ce-lab::before{display:none}
+.ch5-sheet :lang(ko),.ch5-sheet{word-break:keep-all;overflow-wrap:break-word}
+.ch5-sheet h2,.ch5-sheet h3{text-wrap:balance}
+.ch5-sheet p,.ch5-sheet li,.ch5-choices button{text-wrap:pretty}
+.ch5-sheet .ch5-panel h3{margin-bottom:12px}
+.ch5-panel .ch5-check{margin:10px 0}
+.ch5-inline .ch5-note{margin:0;align-self:center}
+.ch67-knn{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start;margin:12px 0}
+.ch67-knn svg{width:100%;height:auto;background:#fff;border:1px solid #becfe7;border-radius:12px;cursor:crosshair;touch-action:manipulation}
+.ch67-knn svg text{font:600 13px Freesentation,sans-serif;fill:#36557c}
+.ch67-knn svg .ch67-axis{font-size:15px;fill:#18345b}
+.ch67-grid{stroke:#e3eaf4;stroke-width:1}
+.ch67-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:18px}
+.ch67-legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ch67-legend i{display:inline-block;width:14px;height:14px;border-radius:50%}
+.ch67-knn .ch5-inline label{min-width:150px}
+.ch67-knn .ch5-sheet input[type=number],.ch67-knn input[type=number]{width:110px}
+.ch67-knn [data-preset]{white-space:nowrap}
+.ch67-knn .ch5-metrics strong{font-size:26px}
+.ch5-log input[type=text]{width:100%;box-sizing:border-box;min-width:120px}
+@media(max-width:900px){.ch67-knn{grid-template-columns:1fr}}
+@media print{.ch67-knn{grid-template-columns:1fr 1fr}}
