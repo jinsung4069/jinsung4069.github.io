@@ -139,3 +139,7 @@ v2 게시 기록은 커밋 4489a58에 보존되어 있다. v2 원본 SHA256은 C
 실습 노트북과 자료는 `data/lectures/`의 `ai-education-ch6-data-lab.ipynb`, `ai-education-ch7-1-model-lab.ipynb`, `ai-education-ch7-2-project.ipynb`, `ai-education-penguins.csv`, `ai-education-ch6-penguins-practice.csv`다. 펭귄 자료는 Horst, Hill, Gorman(2020)의 palmerpenguins(CC0)이며 원 연구는 Gorman, Williams, Fraser(2014)다. 정제 실습 파일의 표기 차이, 중복, 단위 오류는 실습을 위해 넣은 것이다. 정답본 노트북은 저장소에 올리지 않았다.
 
 검증: 세 강의의 전체 슬라이드를 데스크톱과 모바일 폭에서 브라우저로 열어 그림 로딩, 활동 화면의 가로 넘침, 스크립트 오류를 확인했다. Colab 기록 비교, 이웃 탐색 클릭과 k 변경, 체크 항목 저장과 기록 내려받기를 직접 실행했다. `scripts/check_site.py` 오류 없음.
+
+## 2026-10-13 Chapter 6 v2, AI 교육 동향 절 추가
+
+Chapter 6 교안 v2(65장, SHA256 763fd92aa6e7d7baae7a518a6ede727988b75000f7d60f13780f23e270148425)로 다시 변환했다. 표지와 학습 목표 뒤에 01 AI 교육 동향 절 21장을 넣고 기존 절 번호를 02~05로 바꾸었다. 동향 내용은 2026년 10월 10일 마이크로디그리 과정 1 개강식 교안의 AI 기술 동향, 교육 정책 동향과 2026년 10월 13일까지의 AI교육 동향 모니터링 기록을 바탕으로 했다. 웹은 69쪽이며 활동 위치는 원본 39, 40, 56, 62쪽 뒤로 옮겼다. 활동 내용은 바꾸지 않았다.
