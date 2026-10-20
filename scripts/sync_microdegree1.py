@@ -291,7 +291,7 @@ def merge_labs(only=None):
 HEAD = '''<!doctype html><html lang="ko"><head>{print_js}<meta charset="utf-8">
     <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/style.css?v=20261007wrap"><link rel="stylesheet" href="/css/computer-education2.css?v=20261013layers"><link rel="stylesheet" href="/css/lecture-image-zoom.css?v=20261013layers"><link rel="stylesheet" href="/css/microdegree1.css?v={version}"><script src="/js/main.js?v=20260914-menu" defer></script><link rel="canonical" href="https://jinsung4069.github.io{path}">
 <script defer src="/js/clean-url.js"></script>
-{print_css}</head><body>
+{print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head><body>
     <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a><header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
                         <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
@@ -342,7 +342,7 @@ def write_pages(only=None):
                        title=f'{COURSE_TITLE} | 강의자료 | 전인성')
     save(PAGES / 'index.html',
         head + f'<main class="ce-course" id="main-content" tabindex="-1"><p class="ce-eyebrow"><a href="/lectures/">강의자료</a> › 마이크로디그리 과정1</p>'
-        f'<h1>마이크로디그리 과정1<br>인공지능의 이해와 원리 기반 활용</h1><p class="ce-intro">인공지능의 개념과 원리에서 도구 활용과 책임 있는 활용까지.<br>슬라이드로 개념을 살펴보고 브라우저에서 직접 체험합니다.</p>'
+        f'<h1><span class="title-line">마이크로디그리 과정1</span> <span class="title-line">인공지능의 이해와 원리 기반 활용</span></h1><p class="ce-intro">인공지능의 개념과 원리에서 도구 활용과 책임 있는 활용까지.<br>슬라이드로 개념을 살펴보고 브라우저에서 직접 체험합니다.</p>'
         f'<div class="ce-grid">{cards}</div></main></body></html>\n')
     symbols = ''.join(f'<symbol id="ce-icon-{name}" viewBox="0 0 24 24">{body}</symbol>' for name, body in ICONS.items())
     for i, c in enumerate(catalog):
@@ -357,7 +357,7 @@ def write_pages(only=None):
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
         lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={VERSION}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
-        head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20260915print1"></script>',
+        head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20261021wrap"></script>',
                            print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">',
                            version=VERSION, path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(c['summary']),
                            title=f'{escape(label)} | 마이크로디그리 과정1 | 전인성')
