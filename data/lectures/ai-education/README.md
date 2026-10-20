@@ -147,3 +147,15 @@ Chapter 6 교안 v2(65장, SHA256 763fd92aa6e7d7baae7a518a6ede727988b75000f7d60f
 ## 2026-10-13 Chapter 1과 Chapter 3 그림 확대
 
 Chapter 1과 Chapter 3의 원본 그림도 누르거나 Enter로 열어 크게 볼 수 있다. 두 쪽에 `js/lecture-image-zoom.js`와 `css/lecture-image-zoom.css`를 넣었고 자료와 뷰어는 바꾸지 않았다. Chapter 4 이후의 확대 화면은 그대로다.
+
+## 2026-10-20 9강 언플러그드 활동의 이해 및 실제 추가
+
+9강 강의교안 v1(48장, SHA256 71c3ed1ca4d4680fa942ad632be1aedafde9828ad59ba36039e6882508be069a)을 `scripts/sync_ai_education_linux.py --chapter lecture9 --engine powerpoint`로 변환했다. 교안은 2주차 언플러그드교육의 이해, 전문가 시스템, 의사결정트리, 딥러닝의 언플러그드 활동 교안 네 개를 이어 구성했고 원본 PPTX는 수정하지 않았다. 웹은 원본 15, 27, 36, 44쪽 뒤에 웹 활동 4장을 넣은 52쪽이며 주소는 `/lectures/ai-education/lecture9/`, 자료는 `lecture9.json`이다. 강의계획서의 장 번호와 겹치지 않도록 `chapter9`가 아닌 `lecture9`를 썼다.
+
+- 변환 스크립트에 Windows PowerPoint로 PDF를 만드는 `--engine powerpoint`를 더했다. PowerPoint PDF는 공백 문자를 간격으로만 남기므로, 글자 사이와 PPTX run 경계에 원문의 공백이 있으면 되살리도록 `restore_spacing`을 고쳤다. 변환 뒤 모든 텍스트 구간이 원문 PPTX 텍스트와 일치함을 확인했다.
+- 온라인 수업용 1인 활동은 `/unplugged-lab/`에 있다. 모눈종이 프로그래밍(순차, 반복, 함수 5단계), 규칙표 악어 체스(완성된 규칙표, 빈칸이 있는 규칙표, 스스로 배우는 악어), 무는 원숭이를 찾아라(훈련 카드 12장, 테스트 카드 8장, 예상 후 테스트, ID3 트리 비교), 뉴런 퍼즐(AND, OR, NAND, XOR, 은닉층, 퍼셉트론 학습)이다. 뷰어의 활동 쪽은 `js/ai-education-lecture9-labs.js`가 각 활동을 `?embed=1`로 불러온다.
+- 악어 규칙표는 전체 게임 탐색으로 다시 계산했다. 악어가 규칙표대로 두면 만나는 판은 14가지이고 좌우 대칭을 합치면 10가지로 AI Unplugged의 Back to the Roots와 같다. 원숭이와 악어가 어떤 수를 두든 악어 차례에 나올 수 있는 판은 3 × 3에서 37가지, 4 × 4에서 5,565가지, 5 × 5에서 955,784가지다. 4 × 4부터는 먼저 두는 쪽이 이길 수 있다.
+- 원숭이 카드는 같은 특징(이빨, 미소, 혀, 눈 모양, 털 색)으로 새로 그린 예시 자료다. 규칙은 이빨이 보이고 미소 짓지 않거나 눈이 X 모양이면 문다이며, 훈련 카드에서는 털 색이 10/12장과 맞도록 만들어 털 색 트리가 테스트 카드에서 3/8장만 맞힌다. ID3도 털 색을 먼저 골라 테스트 4/8장을 맞힌다.
+- 활동 출처는 Lindner, Seegerer, Romeike(2019), Unplugged Activities in the Context of AI와 AI Unplugged 소책자(CC BY-NC 3.0)다.
+
+검증: PowerPoint 렌더링으로 48장 시각 검사, pptx validate 통과, 금지 기호 검사 통과. 뷰어 52쪽을 데스크톱 1400px와 모바일 390px에서 열어 가로 넘침과 스크립트 오류가 없음을 확인했다. 네 활동을 375px 어두운 화면에서 확인했고, 모눈종이 2단계(4장)와 5단계(18장) 풀이, 악어 체스 세 모드의 자동 대국(규칙표 악어 16전 16승), 원숭이 트리 테스트, 뉴런 은닉층 XOR 풀이를 직접 실행했다. `scripts/check_site.py` 오류 없음.

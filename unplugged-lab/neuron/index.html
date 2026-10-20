@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>뉴런 퍼즐 | 전인성</title>
+<meta name="description" content="가중치와 임계값을 맞추어 뉴런이 AND, OR, XOR을 계산하게 만드는 1인용 언플러그드 신경망 활동입니다.">
+<link rel="canonical" href="https://jinsung4069.github.io/unplugged-lab/neuron/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/unplugged-lab/lab.css?v=20261020a">
+<script src="/unplugged-lab/lab.js?v=20261020a"></script>
+<script defer src="/js/clean-url.js"></script>
+<style>
+.net svg{width:100%;height:auto;display:block}
+.net text{fill:var(--text);font-family:inherit}
+.knobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.knob{border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--panel2)}
+.knob .kl{font-size:.85rem;color:var(--muted)}
+.knob .kv{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:1.25rem;font-weight:700}
+.knob button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:1.1rem}
+.knob.layer-h{border-left:5px solid #8e6bd1}.knob.layer-o{border-left:5px solid #f39c12}
+.ok{color:var(--good);font-weight:700}.no{color:var(--bad);font-weight:700}
+.plot svg{width:min(100%,300px);display:block;margin:0 auto}
+.plot text{fill:var(--text);font-family:inherit}
+.levels{display:flex;flex-wrap:wrap;gap:6px}
+.levels button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;cursor:pointer}
+.levels button[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.levels .done{color:var(--good);font-weight:700}
+.levels button[aria-pressed="true"] .done{color:var(--primary-ink)}
+.log{max-height:200px;overflow:auto;font-size:.9rem;margin:0;padding-left:1.3em}
+</style>
+</head>
+<body>
+<div class="lab-top"><a href="/unplugged-lab/">← 언플러그드 AI 실습실</a><button class="lab-theme" type="button">어두운 화면</button></div>
+<main class="lab-wrap">
+ <header class="lab-head">
+  <h1>뉴런 퍼즐</h1>
+  <p>입력에 가중치를 곱해 더한 값이 임계값 이상이면 뉴런은 1을 내보냅니다. 가중치는 1씩, 임계값은 0.5씩 바꾸어 표의 목표 출력을 모두 맞혀 봅니다.</p>
+ </header>
+ <div class="levels" id="levels" role="group" aria-label="단계 선택" style="margin-top:12px"></div>
+ <div class="grid2">
+  <section class="stack">
+   <div class="panel">
+    <h2 id="ltitle"></h2>
+    <p class="small" id="ldesc"></p>
+    <div class="net" id="net" aria-hidden="true"></div>
+   </div>
+   <div class="panel" id="knobPanel">
+    <h2>가중치와 임계값</h2>
+    <div class="knobs" id="knobs"></div>
+    <div class="row" style="margin-top:10px" id="extra"></div>
+   </div>
+   <div class="panel" id="learnPanel" hidden>
+    <h2>스스로 고치는 뉴런</h2>
+    <p class="small">카드 한 장을 보여 줄 때마다 뉴런은 출력과 정답을 비교합니다. 틀렸으면 그 입력에 쓰인 가중치를 정답 쪽으로 1만큼 옮기고 임계값도 반대 방향으로 1만큼 옮깁니다.</p>
+    <div class="row"><label>목표 <select id="learnTarget" class="btn"><option value="or">OR</option><option value="and">AND</option><option value="xor">XOR</option></select></label><button class="btn primary" id="learn1" type="button">카드 한 장 학습</button><button class="btn" id="learn4" type="button">한 바퀴 학습</button><button class="btn" id="learnReset" type="button">처음부터</button></div>
+    <p class="small" id="learnStat" style="margin:8px 0"></p>
+    <ol class="log" id="learnLog"></ol>
+   </div>
+  </section>
+  <section class="stack">
+   <div class="panel">
+    <h2>목표 출력과 비교</h2>
+    <table class="tbl" id="truth"></table>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+   </div>
+   <div class="panel plot">
+    <h2>입력 평면</h2>
+    <p class="small muted" style="margin:0 0 6px">네 점은 입력 (x1, x2)입니다. 채운 점은 목표가 1, 빈 점은 목표가 0입니다. 파란 영역은 뉴런이 1을 내보내는 곳입니다.</p>
+    <div id="plot"></div>
+   </div>
+   <div class="panel">
+    <h2>생각해 보기</h2>
+    <ul class="steps small" id="think"></ul>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+(()=>{
+'use strict';
+const {esc,load,save}=window.labUtil;
+const KEY='unplugged-neuron-v1';
+const X=[[0,0],[0,1],[1,0],[1,1]];
+const T={and:[0,0,0,1],or:[0,1,1,1],nand:[1,1,1,0],xor:[0,1,1,0]};
+const W=[-2,-1,0,1,2],TH=[-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3];
+const LEVELS=[
+ {name:'1 AND',title:'1단계, 둘 다 켜졌을 때만',desc:'x1과 x2가 모두 1일 때만 1을 내보내는 AND 뉴런을 만듭니다.',kind:'one',target:'and',p:{w1:0,w2:0,t:0},
+  think:['가중치는 그대로 두고 임계값만 바꾸면 AND와 OR이 어떻게 바뀌나요?','맥컬럭과 피츠의 뉴런에서 임계값은 어떤 역할을 하나요?']},
+ {name:'2 OR',title:'2단계, 하나라도 켜지면',desc:'x1과 x2 가운데 하나라도 1이면 1을 내보내는 OR 뉴런을 만듭니다.',kind:'one',target:'or',p:{w1:0,w2:0,t:0},
+  think:['AND를 만들 때와 비교해 무엇을 바꾸었나요?','입력 평면에서 나누는 선은 어떻게 움직였나요?']},
+ {name:'3 NAND',title:'3단계, 둘 다 켜지면 끄기',desc:'둘 다 1일 때만 0이고 나머지는 1인 NAND 뉴런을 만듭니다. 음수 가중치가 필요합니다.',kind:'one',target:'nand',p:{w1:0,w2:0,t:0},
+  think:['음수 가중치는 입력이 출력에 어떤 영향을 주게 하나요?','설명 전달하기 활동에서 어떤 단어를 버리는 일과 어떻게 비슷한가요?']},
+ {name:'4 XOR',title:'4단계, 둘이 다를 때만',desc:'x1과 x2가 서로 다를 때만 1을 내보내는 XOR 뉴런을 만들어 봅니다. 뉴런 하나로 가능할까요?',kind:'one',target:'xor',p:{w1:0,w2:0,t:0},check:true,
+  think:['입력 평면에서 채운 점과 빈 점을 직선 하나로 나눌 수 있나요?','민스키와 페퍼트가 지적한 단층 퍼셉트론의 한계는 무엇이었나요?']},
+ {name:'5 은닉층',title:'5단계, 은닉층으로 XOR 풀기',desc:'은닉 뉴런 h1, h2를 하나씩 더 두고 출력 뉴런이 두 결과를 합칩니다. 앞에서 만든 뉴런을 다시 써 보세요.',kind:'two',target:'xor',p:{a1:0,a2:0,at:0,b1:0,b2:0,bt:0,o1:0,o2:0,ot:0},
+  think:['h1과 h2는 각각 어떤 뉴런이 되었나요?','입력 평면에 선이 두 개 생기면 무엇이 가능해지나요?','입력층, 은닉층, 출력층은 설명 전달하기 활동의 누구와 같나요?']},
+ {name:'6 학습',title:'6단계, 스스로 가중치 고치기',desc:'정답을 보고 틀릴 때마다 가중치와 임계값을 조금씩 고치는 퍼셉트론 학습 규칙을 따라가 봅니다.',kind:'learn',target:'or',p:{w1:0,w2:0,t:0},
+  think:['몇 바퀴 만에 오차가 0이 되었나요?','XOR을 목표로 고르면 학습이 끝나나요? 그 이유는 무엇인가요?','틀린 만큼 조금씩 고치는 방법은 경사 하강법과 어떤 점이 닮았나요?']}
+];
+const st=load(KEY,{level:0,done:{},params:{}});
+let L,P,learn;
+const $=id=>document.getElementById(id);
+const fire=(w1,w2,t,x)=>w1*x[0]+w2*x[1]>=t?1:0;
+function outputs(){
+ if(L.kind==='two')return X.map(x=>{const h1=fire(P.a1,P.a2,P.at,x),h2=fire(P.b1,P.b2,P.bt,x);return {x,h1,h2,s:P.o1*h1+P.o2*h2,y:fire(P.o1,P.o2,P.ot,[h1,h2])}});
+ return X.map(x=>({x,s:P.w1*x[0]+P.w2*x[1],y:fire(P.w1,P.w2,P.t,x)}));
+}
+function setLevel(i){msg('','');st.level=i;L=LEVELS[i];P={...L.p,...(st.params[i]||{})};learn={i:0,epoch:0,log:[],errs:[]};save(KEY,st);
+ $('ltitle').textContent=L.title;$('ldesc').textContent=L.desc;$('think').innerHTML=L.think.map(t=>`<li>${esc(t)}</li>`).join('');
+ $('learnPanel').hidden=L.kind!=='learn';$('knobPanel').hidden=L.kind==='learn';if(L.kind==='learn'){P={w1:0,w2:0,t:0};$('learnTarget').value='or'}
+ renderLevels();renderKnobs();update()}
+function renderLevels(){$('levels').innerHTML=LEVELS.map((l,i)=>`<button type="button" data-l="${i}" aria-pressed="${i===st.level}">${esc(l.name)}${st.done[i]?' <span class="done">✓</span>':''}</button>`).join('');$('levels').querySelectorAll('button').forEach(b=>b.onclick=()=>setLevel(+b.dataset.l))}
+function knob(k,label,cls,list){return `<div class="knob ${cls}"><div class="kl">${label}</div><div class="kv"><button type="button" data-k="${k}" data-d="-1" aria-label="${label} 줄이기">−</button><span id="v-${k}">${P[k]}</span><button type="button" data-k="${k}" data-d="1" aria-label="${label} 늘리기">+</button></div></div>`}
+function renderKnobs(){
+ let h='';
+ if(L.kind==='one')h=knob('w1','가중치 w1','',W)+knob('w2','가중치 w2','',W)+knob('t','임계값 θ','',TH);
+ if(L.kind==='two')h=knob('a1','h1의 가중치 (x1)','layer-h')+knob('a2','h1의 가중치 (x2)','layer-h')+knob('at','h1의 임계값','layer-h')+knob('b1','h2의 가중치 (x1)','layer-h')+knob('b2','h2의 가중치 (x2)','layer-h')+knob('bt','h2의 임계값','layer-h')+knob('o1','출력의 가중치 (h1)','layer-o')+knob('o2','출력의 가중치 (h2)','layer-o')+knob('ot','출력의 임계값','layer-o');
+ $('knobs').innerHTML=h;
+ $('knobs').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k,list=/t$/.test(k)?TH:W,i=list.indexOf(P[k])+(+b.dataset.d);if(i<0||i>=list.length)return;P[k]=list[i];st.params[st.level]={...P};save(KEY,st);$('v-'+k).textContent=P[k];update()});
+ $('extra').innerHTML=L.check?`<button class="btn" type="button" id="brute">가능한 조합 모두 확인하기</button>`:'';
+ if(L.check)$('brute').onclick=brute;
+}
+function brute(){let n=0,ok=0;for(const a of W)for(const b of W)for(const t of TH){n++;if(X.every((x,i)=>fire(a,b,t,x)===T.xor[i]))ok++}
+ msg(`가중치 두 개와 0.5 간격 임계값의 조합 ${n}가지를 모두 계산했습니다. XOR을 만드는 조합은 ${ok}가지입니다. 뉴런 하나는 입력 평면을 직선 하나로만 나누므로, 대각선에 놓인 채운 점 두 개만 따로 묶을 수 없습니다.`,'warn');st.done[st.level]=true;save(KEY,st);renderLevels()}
+function msg(t,k){$('msg').textContent=t;$('msg').className='msg'+(k?' '+k:'')}
+function update(){
+ const out=outputs(),tg=T[L.kind==='learn'?$('learnTarget').value:L.target],right=out.filter((o,i)=>o.y===tg[i]).length;
+ const two=L.kind==='two';
+ $('truth').innerHTML=`<thead><tr><th>x1</th><th>x2</th>${two?'<th>h1</th><th>h2</th>':''}<th>가중합</th><th>출력</th><th>목표</th><th>비교</th></tr></thead><tbody>${out.map((o,i)=>`<tr><td>${o.x[0]}</td><td>${o.x[1]}</td>${two?`<td>${o.h1}</td><td>${o.h2}</td>`:''}<td>${o.s}</td><td><b>${o.y}</b></td><td>${tg[i]}</td><td>${o.y===tg[i]?'<span class="ok">✓</span>':'<span class="no">✗</span>'}</td></tr>`).join('')}</tbody>`;
+ if(L.kind!=='learn'){
+  if(right===4){msg(`네 줄을 모두 맞혔습니다.${L.kind==='two'?' 은닉층의 두 뉴런이 입력 평면에 선을 두 개 그어 XOR을 풀었습니다.':''}`,'good');st.done[st.level]=true;save(KEY,st);renderLevels()}
+  else if(!$('msg').className.includes('warn')||!L.check)msg(`${right} / 4줄을 맞혔습니다.`,'');
+ }
+ drawNet(out);drawPlot(tg);
+}
+function drawNet(out){
+ const c='var(--primary)',h='#8e6bd1',o='#f39c12';
+ const edge=(x1,y1,x2,y2,w,col,f=.5)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${w===0?'var(--line)':w>0?col:'var(--bad)'}" stroke-width="${1.5+Math.abs(w)*1.6}" ${w<0?'stroke-dasharray="6 4"':''}/><rect x="${x1+(x2-x1)*f-14}" y="${y1+(y2-y1)*f-11}" width="28" height="20" rx="6" fill="var(--panel)" stroke="var(--line)"/><text x="${x1+(x2-x1)*f}" y="${y1+(y2-y1)*f+4}" text-anchor="middle" font-size="13" font-weight="700">${w}</text>`;
+ const node=(x,y,label,sub,col)=>`<circle cx="${x}" cy="${y}" r="24" fill="var(--panel2)" stroke="${col}" stroke-width="3"/><text x="${x}" y="${y+2}" text-anchor="middle" font-size="14" font-weight="700">${label}</text>${sub?`<text x="${x}" y="${y+40}" text-anchor="middle" font-size="12">${sub}</text>`:''}`;
+ if(L.kind==='two'){
+  $('net').innerHTML=`<svg viewBox="0 0 460 220">${edge(60,60,220,50,P.a1,h,.45)}${edge(60,160,220,50,P.a2,h,.3)}${edge(60,60,220,170,P.b1,h,.3)}${edge(60,160,220,170,P.b2,h,.45)}${edge(220,50,380,110,P.o1,o)}${edge(220,170,380,110,P.o2,o)}${node(60,60,'x1','',c)}${node(60,160,'x2','입력층',c)}${node(220,50,'h1','θ='+P.at,h)}${node(220,170,'h2','θ='+P.bt,h)}${node(380,110,'출력','θ='+P.ot,o)}</svg>`;
+ }else{
+  $('net').innerHTML=`<svg viewBox="0 0 460 200">${edge(70,55,260,100,P.w1,c)}${edge(70,150,260,100,P.w2,c)}<line x1="284" y1="100" x2="390" y2="100" stroke="var(--line)" stroke-width="3"/>${node(70,55,'x1','',c)}${node(70,150,'x2','',c)}${node(260,100,'Σ ≥ '+P.t,'가중합이 임계값 이상이면 1',o)}<circle cx="410" cy="100" r="18" fill="var(--panel2)" stroke="var(--line)" stroke-width="2"/><text x="410" y="105" text-anchor="middle" font-size="14" font-weight="700">y</text></svg>`;
+ }
+}
+function drawPlot(tg){
+ const S=240,pad=30,sx=v=>pad+v*(S-2*pad)*1,sy=v=>S-pad-v*(S-2*pad);
+ const res=40,cells=[];
+ for(let i=0;i<res;i++)for(let j=0;j<res;j++){const a=-0.25+1.5*(i+.5)/res,b=-0.25+1.5*(j+.5)/res;let y;
+  if(L.kind==='two'){const h1=fire(P.a1,P.a2,P.at,[a,b]),h2=fire(P.b1,P.b2,P.bt,[a,b]);y=fire(P.o1,P.o2,P.ot,[h1,h2])}else y=fire(P.w1,P.w2,P.t,[a,b]);
+  if(y)cells.push(`<rect x="${sx(a-0.75/res)}" y="${sy(b+0.75/res)}" width="${(S-2*pad)*1.5/res+0.5}" height="${(S-2*pad)*1.5/res+0.5}" fill="var(--primary)"/>`)}
+ const pts=X.map((x,i)=>`<circle cx="${sx(x[0])}" cy="${sy(x[1])}" r="11" fill="${tg[i]?'var(--text)':'var(--panel)'}" stroke="var(--text)" stroke-width="3"/><text x="${sx(x[0])+(x[0]?16:-16)}" y="${sy(x[1])+(x[1]?-14:24)}" text-anchor="middle" font-size="11">(${x[0]},${x[1]})</text>`).join('');
+ $('plot').innerHTML=`<svg viewBox="0 0 ${S} ${S}" role="img" aria-label="입력 평면에서 뉴런이 1을 내보내는 영역"><clipPath id="cp"><rect x="${sx(-0.25)}" y="${sy(1.25)}" width="${(S-2*pad)*1.5}" height="${(S-2*pad)*1.5}"/></clipPath><rect x="${sx(-0.25)}" y="${sy(1.25)}" width="${(S-2*pad)*1.5}" height="${(S-2*pad)*1.5}" fill="none" stroke="var(--line)"/><g clip-path="url(#cp)" opacity=".24">${cells.join('')}</g>${pts}</svg>`;
+}
+/* Perceptron learning rule on integer weights. */
+function learnStep(){const tg=T[$('learnTarget').value],k=learn.i%4,x=X[k],y=fire(P.w1,P.w2,P.t,x),e=tg[k]-y;
+ const before=`w1=${P.w1}, w2=${P.w2}, θ=${P.t}`;if(e){P.w1+=e*x[0];P.w2+=e*x[1];P.t-=e}
+ learn.log.push(`카드 (${x[0]},${x[1]}) 목표 ${tg[k]}, 출력 ${y} → ${e?`틀림, ${before} 에서 w1=${P.w1}, w2=${P.w2}, θ=${P.t}로 고침`:'맞음, 그대로'}`);
+ learn.i++;if(learn.i%4===0){learn.epoch++;learn.errs.push(X.filter((x,i)=>fire(P.w1,P.w2,P.t,x)!==tg[i]).length)}}
+function learnView(){$('learnLog').innerHTML=learn.log.map(t=>`<li>${esc(t)}</li>`).join('');$('learnLog').scrollTop=1e6;
+ const tg=T[$('learnTarget').value],err=X.filter((x,i)=>fire(P.w1,P.w2,P.t,x)!==tg[i]).length;
+ $('learnStat').textContent=`${learn.epoch}바퀴 학습, 지금 틀리는 카드 ${err}장${learn.errs.length?`, 바퀴마다 틀린 카드 수 ${learn.errs.join(', ')}`:''}`;
+ if(err===0&&learn.log.length){msg('모든 카드를 맞히는 가중치를 스스로 찾았습니다.','good');st.done[st.level]=true;save(KEY,st);renderLevels()}
+ else if($('learnTarget').value==='xor'&&learn.epoch>=6)msg('여러 바퀴를 돌아도 가중치가 같은 자리를 맴돕니다. 직선 하나로 나눌 수 없는 문제는 뉴런 하나가 학습할 수 없습니다.','warn');
+ else msg('','');update()}
+$('learn1').onclick=()=>{learnStep();learnView()};
+$('learn4').onclick=()=>{for(let i=0;i<4;i++)learnStep();learnView()};
+$('learnReset').onclick=$('learnTarget').onchange=()=>{P={w1:0,w2:0,t:0};learn={i:0,epoch:0,log:[],errs:[]};learnView()};
+setLevel(Math.min(st.level||0,LEVELS.length-1));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>규칙표 악어 체스 | 전인성</title>
+<meta name="description" content="규칙표만 보고 움직이는 악어와 대결하며 규칙 기반 전문가 시스템의 강점과 한계를 체험하는 1인용 언플러그드 활동입니다.">
+<link rel="canonical" href="https://jinsung4069.github.io/unplugged-lab/alligator/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/unplugged-lab/lab.css?v=20261020a">
+<script src="/unplugged-lab/lab.js?v=20261020a"></script>
+<script defer src="/js/clean-url.js"></script>
+<style>
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:min(100%,360px);aspect-ratio:1;margin:0 auto;padding:6px;border-radius:14px;background:var(--board2)}
+.sq{border:0;border-radius:8px;background:var(--board);font-size:clamp(2rem,9vw,3.4rem);display:flex;align-items:center;justify-content:center;cursor:default;padding:0}
+.sq.can{cursor:pointer;box-shadow:inset 0 0 0 3px #f39c12}
+.sq.from{background:#f6d58e}
+.sq.dest{background:#9ec5ff;cursor:pointer}
+.sq.last{box-shadow:inset 0 0 0 4px var(--bad)}
+.score{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-weight:700}
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.rule{border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--panel2);font-size:.86rem;transition:transform .2s}
+.rule.hit{border:3px solid #f39c12;background:color-mix(in srgb,#f39c12 18%,var(--panel));transform:scale(1.03)}
+.rule.missing{opacity:.55;border-style:dashed}
+.rule .no{font-weight:700}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:96px;margin:6px auto;background:var(--board2);padding:2px;border-radius:6px}
+.mini span{aspect-ratio:1;background:var(--board);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.mini span.mf{background:#f6d58e}.mini span.mt{background:#9ec5ff}
+.log{max-height:180px;overflow:auto;margin:0;padding-left:1.3em;font-size:.92rem}
+.big{font-size:1.25rem;font-weight:700}
+</style>
+</head>
+<body>
+<div class="lab-top"><a href="/unplugged-lab/">← 언플러그드 AI 실습실</a><button class="lab-theme" type="button">어두운 화면</button></div>
+<main class="lab-wrap">
+ <header class="lab-head">
+  <h1>규칙표 악어 체스</h1>
+  <p>나는 원숭이, 컴퓨터는 악어입니다. 규칙표 악어는 생각하지 않고 오른쪽 규칙표에서 지금 판과 같은 그림을 찾아 그대로 움직입니다. 스스로 배우는 악어는 규칙표 없이 지면서 배웁니다.</p>
+ </header>
+ <div class="tabs" role="group" aria-label="규칙표 선택">
+  <button type="button" data-mode="full" aria-pressed="true">완성된 규칙표</button>
+  <button type="button" data-mode="gap" aria-pressed="false">빈칸이 있는 규칙표</button>
+  <button type="button" data-mode="learn" aria-pressed="false">스스로 배우는 악어</button>
+ </div>
+ <div class="grid2">
+  <section class="panel">
+   <h2>게임판</h2>
+   <div class="board" id="board" role="grid" aria-label="3행 3열 악어 체스 게임판"></div>
+   <div class="score"><span>🐒 원숭이 <span id="sw">0</span>승</span><span>🐊 악어 <span id="sb">0</span>승</span></div>
+   <div class="msg" id="msg" role="status" aria-live="polite"></div>
+   <div class="row" style="justify-content:center;margin-top:10px"><button class="btn primary" id="again" type="button">새 게임</button><button class="btn" id="resetScore" type="button">점수 지우기</button></div>
+   <h3>게임 규칙</h3>
+   <ul class="steps small">
+    <li>원숭이가 먼저 두고 한 번에 말 하나를 움직입니다.</li>
+    <li>말은 앞으로 한 칸 빈칸에만 갈 수 있고, 상대 말은 대각선 앞 칸에 있을 때만 잡습니다.</li>
+    <li>말 하나가 상대편 끝 줄에 닿거나, 상대 말을 모두 잡거나, 상대가 움직일 수 없게 되면 이깁니다.</li>
+   </ul>
+   <h3>지난 수</h3>
+   <ol class="log" id="log"></ol>
+  </section>
+  <section class="stack">
+   <div class="panel" id="learnPanel" hidden>
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">스스로 배우는 악어</h2><span class="tag" id="learnTag"></span></div>
+    <p class="small muted" style="margin:6px 0 10px">이 악어는 규칙표가 없습니다. 처음 보는 판에서는 둘 수 있는 수마다 수 카드를 한 장씩 두고 그중 하나를 고릅니다. 지면 마지막에 둔 수의 카드를 버리므로, 같은 판에서 그 수를 다시 두지 않습니다.</p>
+    <div id="learnNow"></div>
+    <p class="small" id="learnStat" style="margin:10px 0 0"></p>
+    <div class="row" style="margin-top:8px"><button class="btn" id="learnReset" type="button">악어의 기억 지우기</button></div>
+   </div>
+   <div class="panel" id="rulePanel">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">악어의 규칙표</h2><span class="tag" id="ruleCount"></span></div>
+    <p class="small muted" style="margin:6px 0 10px">만약 판이 이 그림과 같다면, 노란 칸의 악어를 파란 칸으로 옮깁니다. 좌우를 뒤집은 판에도 같은 규칙을 뒤집어 씁니다.</p>
+    <div class="rules" id="rules"></div>
+   </div>
+   <div class="panel">
+    <h2>판을 키우면</h2>
+    <p class="small">원숭이와 악어가 어떤 수를 두든, 악어 차례에 나올 수 있는 판의 수를 모두 세었습니다.</p>
+    <table class="tbl"><thead><tr><th>게임판</th><th>악어 차례에 나올 수 있는 판</th></tr></thead>
+     <tbody><tr><th>3 × 3</th><td>37가지 (규칙표대로 두면 14가지)</td></tr><tr><th>4 × 4</th><td>5,565가지</td></tr><tr><th>5 × 5</th><td>955,784가지</td></tr></tbody></table>
+    <p class="small muted" style="margin:8px 0 0">4 × 4부터는 먼저 두는 원숭이가 끝까지 잘 두면 이길 수 있으므로 악어가 늘 이기는 규칙표도 만들 수 없습니다.</p>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+(()=>{
+'use strict';
+const {load,save}=window.labUtil;
+const KEY='unplugged-alligator-v1';
+/* Alligator rule table: every board the alligator meets when it follows the table, with a winning move (computed by full game search). */
+const RULES=[
+ [["BBB","W..",".WW"],[0,1],[1,0]],[["B.B","BW.","..W"],[1,0],[2,0]],[["B.B","W..","..W"],[0,2],[1,2]],[["B.B","B.W",".W."],[1,0],[2,0]],
+ [["BBB",".W.","W.W"],[0,0],[1,1]],[[".BB","WB.","..W"],[1,1],[2,1]],[[".BB",".W.","..W"],[0,2],[1,2]],[[".BB",".BW","W.."],[1,1],[2,1]],
+ [[".BB",".W.","W.."],[0,2],[1,2]],[[".B.","WWB","..."],[1,2],[2,2]],[["BBB","..W","WW."],[0,1],[1,2]],[["B.B","W.B",".W."],[1,2],[2,2]],
+ [["B.B",".WB","W.."],[1,2],[2,2]],[["B.B","..W","W.."],[0,0],[1,0]]
+];
+const mirror=b=>b.map(r=>[...r].reverse().join(''));
+const key=b=>b.join('/');
+/* Group mirror images into one card. */
+const CARDS=[];const byKey={};
+for(const [b,f,t] of RULES){const k=key(b),mk=key(mirror(b));
+ if(byKey[mk]){byKey[k]={card:byKey[mk].card,mirrored:true,f,t};continue}
+ const card={no:CARDS.length+1,board:b,f,t,hasMirror:false};CARDS.push(card);byKey[k]={card,mirrored:false,f,t}}
+for(const k in byKey)if(byKey[k].mirrored)byKey[k].card.hasMirror=true;
+const GAP=new Set(['B.B/W../..W','.BB/.W./W..','B.B/BW./..W'].map(k=>byKey[k].card.no));
+const st=load(KEY,{mode:'full',w:0,b:0});st.memory??={};st.history??=[];
+let board,turn,selected=null,over=false,last=null,hit=null,log=[];
+const $=id=>document.getElementById(id);
+const ICON={W:'🐒',B:'🐊','.':''};
+function moves(b,p){const d=p==='W'?-1:1,o=p==='W'?'B':'W',res=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++){if(b[r][c]!==p)continue;const r2=r+d;if(r2<0||r2>2)continue;if(b[r2][c]==='.')res.push([[r,c],[r2,c]]);for(const c2 of [c-1,c+1])if(c2>=0&&c2<3&&b[r2][c2]===o)res.push([[r,c],[r2,c2]])}return res}
+function apply(b,[[r,c],[r2,c2]]){const g=b.map(x=>[...x]);g[r2][c2]=g[r][c];g[r][c]='.';return g.map(x=>x.join(''))}
+function winner(b,p){const o=p==='W'?'B':'W',goal=p==='W'?0:2;if(b[goal].includes(p))return p;if(!b.some(r=>r.includes(o)))return p;if(!moves(b,o).length)return p;return null}
+function newGame(){chosen=[];board=['BBB','...','WWW'];turn='W';selected=null;over=false;last=null;hit=null;log=[];draw();say('원숭이를 골라 움직이세요. 주황 테두리 칸의 원숭이를 움직일 수 있습니다.','')}
+function say(t,k){$('msg').textContent=t;$('msg').className='msg'+(k?' '+k:'')}
+function draw(){
+ const my=turn==='W'&&!over?moves(board,'W'):[];const fromSet=new Set(my.map(m=>m[0].join(','))),dests=selected?my.filter(m=>m[0].join(',')===selected.join(',')).map(m=>m[1].join(',')):[];
+ $('board').innerHTML=board.flatMap((row,r)=>[...row].map((v,c)=>{const k=r+','+c,cls=['sq'];if(fromSet.has(k))cls.push('can');if(selected&&selected.join(',')===k)cls.push('from');if(dests.includes(k))cls.push('dest');if(last&&last.join(',')===k)cls.push('last');
+  const name=v==='W'?'원숭이':v==='B'?'악어':'빈칸';return `<button type="button" class="${cls.join(' ')}" data-r="${r}" data-c="${c}" role="gridcell" aria-label="${r+1}행 ${c+1}열 ${name}${dests.includes(k)?', 이동 가능':''}">${ICON[v]}</button>`})).join('');
+ $('board').querySelectorAll('.sq').forEach(b=>b.onclick=()=>click(+b.dataset.r,+b.dataset.c));
+ $('sw').textContent=st.w;$('sb').textContent=st.b;
+ $('log').innerHTML=log.map(x=>`<li>${x}</li>`).join('');$('log').scrollTop=1e6;
+ drawRules();
+}
+function drawRules(){
+ $('learnPanel').hidden=st.mode!=='learn';$('rulePanel').hidden=st.mode==='learn';if(st.mode==='learn'){drawLearn();return}
+ const active=CARDS.filter(c=>st.mode==='full'||!GAP.has(c.no));
+ $('ruleCount').textContent=`규칙 카드 ${active.length}장`;
+ $('rules').innerHTML=CARDS.map(c=>{const miss=st.mode==='gap'&&GAP.has(c.no),on=hit&&hit.card===c;
+  return `<div class="rule${miss?' missing':''}${on?' hit':''}" aria-label="규칙 ${c.no}${miss?', 빠진 규칙':''}"><span class="no">규칙 ${c.no}</span>${c.hasMirror?' <span class="tag">좌우 대칭 포함</span>':''}${miss?'<div class="mini" aria-hidden="true">'+'<span>?</span>'.repeat(9)+'</div><div class="small muted" style="text-align:center">빠진 규칙</div>':`<div class="mini" aria-hidden="true">${c.board.flatMap((row,r)=>[...row].map((v,cc)=>`<span class="${c.f[0]===r&&c.f[1]===cc?'mf':''}${c.t[0]===r&&c.t[1]===cc?'mt':''}">${ICON[v]}</span>`)).join('')}</div><div class="small" style="text-align:center">${c.f[0]+1}행 ${c.f[1]+1}열 악어를 ${c.t[0]+1}행 ${c.t[1]+1}열로</div>`}${on?`<div class="small" style="text-align:center;font-weight:700">${hit.mirrored?'좌우를 뒤집어 사용':'그대로 사용'}</div>`:''}</div>`}).join('');
+}
+function click(r,c){
+ if(over||turn!=='W')return;
+ const my=moves(board,'W');
+ if(selected){const m=my.find(m=>m[0].join(',')===selected.join(',')&&m[1][0]===r&&m[1][1]===c);if(m){play(m,'W');return}}
+ if(my.some(m=>m[0][0]===r&&m[0][1]===c)){selected=[r,c];draw();say('파란 칸을 눌러 옮기세요.','');return}
+ selected=null;draw();
+}
+function play(m,p){
+ const cap=board[m[1][0]][m[1][1]]!=='.';board=apply(board,m);last=m[1];selected=null;
+ log.push(`${p==='W'?'🐒':'🐊'} ${m[0][0]+1}행 ${m[0][1]+1}열 → ${m[1][0]+1}행 ${m[1][1]+1}열${cap?' (잡음)':''}`);
+ const w=winner(board,p);
+ if(w&&st.mode==='learn'){st.history.push(w);if(w==='W'&&chosen.length){const [k,pick]=chosen[chosen.length-1],o=st.memory[k];if(o&&!o.removed.includes(pick)&&o.removed.length<o.moves.length-1)o.removed.push(pick)}chosen=[]}
+ if(w){over=true;if(w==='W'){st.w++;say(st.mode==='full'?'원숭이가 이겼습니다. 완성된 규칙표를 이긴 경우가 있다면 규칙표에 오류가 있는 것입니다.':st.mode==='gap'?'원숭이가 이겼습니다. 규칙표에 빠진 경우가 있으면 악어는 아무 수나 두게 됩니다.':'원숭이가 이겼습니다. 악어는 마지막에 둔 수의 카드를 버리고 다음 판에서 다르게 둡니다.','good')}else{st.b++;say('악어가 이겼습니다. 악어는 규칙표의 그림을 찾아 따랐을 뿐입니다. 새 게임에서 다른 수를 시도해 보세요.','bad')}save(KEY,st);draw();return}
+ turn=p==='W'?'B':'W';draw();if(turn==='B')setTimeout(alligator,650);
+}
+const mkey=m=>m.flat().join('');
+let chosen=[];
+function drawLearn(){
+ const seen=Object.keys(st.memory).length,removed=Object.values(st.memory).reduce((n,o)=>n+o.removed.length,0),last=st.history.slice(-10),rate=last.length?Math.round(100*last.filter(x=>x==='B').length/last.length):0;
+ $('learnTag').textContent=`${st.history.length}판 학습`;
+ const k=key(board),o=st.memory[k];
+ $('learnNow').innerHTML=o&&turn==='W'&&!over&&hit?.learn?`<p class="small">방금 판의 수 카드 ${o.moves.length}장 가운데 하나를 골랐습니다.</p>`:'';
+ $('learnStat').textContent=`악어가 만난 판 ${seen}가지, 버린 수 카드 ${removed}장, 최근 ${last.length}판에서 악어 승률 ${rate}%`;
+}
+function alligator(){
+ const k=key(board),r=byKey[k];let m;
+ if(st.mode==='learn'){const all=moves(board,'B');const o=st.memory[k]??={moves:all.map(mkey),removed:[]};let pool=o.moves.filter(x=>!o.removed.includes(x));if(!pool.length)pool=o.moves;const pick=pool[Math.floor(Math.random()*pool.length)];m=all.find(x=>mkey(x)===pick);chosen.push([k,pick]);hit={learn:true};say(`악어가 수 카드 ${pool.length}장 가운데 하나를 골랐습니다.`,'');const msgText=$('msg').textContent;play(m,'B');if(!over){$('msg').textContent=msgText+' 이제 원숭이 차례입니다.'}return}
+ if(r&&!(st.mode==='gap'&&GAP.has(r.card.no))){hit=r;m=[r.f,r.t];say(`악어가 규칙 ${r.card.no}을 ${r.mirrored?'좌우를 뒤집어 ':''}찾아 그대로 움직였습니다.`,'')}
+ else{hit=null;const ms=moves(board,'B');m=ms[Math.floor(Math.random()*ms.length)];say('지금 판과 같은 규칙이 없습니다. 악어는 아무 수나 골라 두었습니다.','warn')}
+ const msgText=$('msg').textContent,msgClass=$('msg').className;
+ play(m,'B');
+ if(!over){$('msg').textContent=msgText+' 이제 원숭이 차례입니다.';$('msg').className=msgClass}
+}
+document.querySelectorAll('[data-mode]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.mode===st.mode));b.onclick=()=>{st.mode=b.dataset.mode;save(KEY,st);document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));newGame()}});
+$('again').onclick=newGame;$('learnReset').onclick=()=>{st.memory={};st.history=[];save(KEY,st);newGame()};$('resetScore').onclick=()=>{st.w=0;st.b=0;save(KEY,st);draw()};
+newGame();
+})();
+</script>
+</body>
+</html>

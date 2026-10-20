@@ -1,10 +1,11 @@
-"""Convert an AI교육의 이해 chapter PPTX to the web viewer data on Linux (LibreOffice + PyMuPDF).
+"""Convert an AI교육의 이해 chapter PPTX to the web viewer data (LibreOffice or PowerPoint + PyMuPDF).
 
 Same method as sync_ai_education_chapter5_linux.py, with the chapter settings in CHAPTERS.
 Text positions come from the full PDF and the background from a copy with transparent text and
 without top-level pictures. Pictures are copied byte for byte. The source PPTX is never modified.
 
 Usage: python scripts/sync_ai_education_linux.py --chapter 6 --source <pptx> --work-dir <tmp dir>
+       add --engine powerpoint on Windows to export the PDFs with PowerPoint instead of LibreOffice.
 """
 from pathlib import Path
 from zipfile import ZipFile
@@ -40,6 +41,12 @@ CHAPTERS = {
         (19, 'errors', '오류 종류 판별', '증상을 읽고 오류의 종류와 먼저 확인할 곳을 고릅니다.'),
         (29, 'checklist', '제출 전 점검', '제출물과 평가 기준을 하나씩 확인합니다.'),
     ]),
+    'lecture9': dict(number=9, title='언플러그드 활동의 이해 및 실제', version='v1', titles={1: '언플러그드 활동의 이해 및 실제'}, labs=[
+        (15, 'grid', '모눈종이 프로그래밍', '명령 카드로 점선 칸만 칠하며 순차, 반복, 함수를 찾습니다.'),
+        (27, 'alligator', '규칙표 악어 체스', '규칙표 악어, 빈칸이 있는 규칙표, 스스로 배우는 악어와 차례로 대결합니다.'),
+        (36, 'monkey', '무는 원숭이를 찾아라', '훈련 카드로 의사결정트리를 만들고 테스트 카드로 확인합니다.'),
+        (44, 'neuron', '뉴런 퍼즐', '가중치와 임계값을 맞추어 AND, OR, XOR을 계산합니다.'),
+    ]),
 }
 
 def rels(z, part):
@@ -54,6 +61,18 @@ def rels(z, part):
 def ordered_parts(z):
     rel = rels(z, 'ppt/presentation.xml')
     return [rel[e.get(R + 'id')] for e in ET.fromstring(z.read('ppt/presentation.xml')).find('p:sldIdLst', NS)]
+
+
+def powerpoint_pdf(src, outdir):
+    import win32com.client
+    app = win32com.client.DispatchEx('PowerPoint.Application')
+    pres = app.Presentations.Open(str(src), True, False, False)
+    try:
+        out = outdir / (src.stem + '.pdf')
+        pres.SaveAs(str(out), 32)  # ppSaveAsPDF
+    finally:
+        pres.Close()
+    return out
 
 
 def soffice_pdf(src, outdir):
@@ -133,7 +152,8 @@ def page_runs(page):
     return runs
 
 
-FONT_DIRS = [Path.home() / '.fonts', Path('/usr/share/fonts'), Path.home() / '.local/share/fonts']
+FONT_DIRS = [d for d in (Path.home() / '.fonts', Path('/usr/share/fonts'), Path.home() / '.local/share/fonts',
+                          Path.home() / 'AppData/Local/Microsoft/Windows/Fonts', Path('C:/Windows/Fonts')) if d.exists()]
 _fonts = {}
 
 
@@ -153,15 +173,17 @@ def natural_width(text, font, size):
 
 def restore_spacing(runs, texts):
     """LibreOffice widens the gap between Hangul and Latin text; PDF extraction turns it into spaces.
-    Keep only the spaces that exist in the PPTX text."""
+    PowerPoint PDFs drop the space characters and keep only the gap.
+    Keep exactly the spaces that exist in the PPTX text."""
     source = '\n'.join(texts)
     for run in runs:
         if run['text'] in source:
             continue
-        pattern = ''.join(' ?' if ch == ' ' else re.escape(ch) for ch in run['text'])
-        m = re.search(pattern, source)
+        chars = [ch for ch in run['text'] if ch != ' ']
+        pattern = r'[ \n]{0,2}'.join(re.escape(ch) for ch in chars)  # a line can span several PPTX runs
+        m = re.search(pattern, source) if chars else None
         if m:
-            run['text'] = m.group(0)
+            run['text'] = m.group(0).replace('\n', '')
     for run in runs:
         width = natural_width(run['text'], run['font'], run['size'])
         if width:
@@ -174,6 +196,7 @@ def main():
     ap.add_argument('--chapter', required=True, choices=sorted(CHAPTERS))
     ap.add_argument('--source', required=True, type=Path)
     ap.add_argument('--work-dir', required=True, type=Path)
+    ap.add_argument('--engine', choices=('soffice', 'powerpoint'), default='soffice')
     args = ap.parse_args()
     source, work = args.source.resolve(), args.work_dir.resolve()
     work.mkdir(parents=True, exist_ok=True)
@@ -189,7 +212,8 @@ def main():
         parts = ordered_parts(z)
     bg_src = work / 'background.pptx'
     transparent_copy(source, bg_src, set(parts))
-    full_pdf, bg_pdf = fitz.open(soffice_pdf(full_src, work)), fitz.open(soffice_pdf(bg_src, work))
+    to_pdf = powerpoint_pdf if args.engine == 'powerpoint' else soffice_pdf
+    full_pdf, bg_pdf = fitz.open(to_pdf(full_src, work)), fitz.open(to_pdf(bg_src, work))
     assert len(full_pdf) == len(bg_pdf) == len(parts)
     width, height = full_pdf[0].rect.width, full_pdf[0].rect.height
 

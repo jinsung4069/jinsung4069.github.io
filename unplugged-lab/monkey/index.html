@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>무는 원숭이를 찾아라 | 전인성</title>
+<meta name="description" content="훈련 카드로 의사결정트리를 만들고 테스트 카드로 확인하는 1인용 언플러그드 지도학습 활동입니다.">
+<link rel="canonical" href="https://jinsung4069.github.io/unplugged-lab/monkey/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/unplugged-lab/lab.css?v=20261020a">
+<script src="/unplugged-lab/lab.js?v=20261020a"></script>
+<script defer src="/js/clean-url.js"></script>
+<style>
+.mk{display:inline-flex;flex-direction:column;align-items:center;gap:2px;border-radius:10px;padding:4px;border:3px solid transparent;background:var(--panel)}
+.mk svg{width:64px;height:64px;display:block}
+.mk.bite{border-color:var(--bad)}.mk.safe{border-color:var(--good)}
+.mk .lbl{font-size:.75rem;font-weight:700}
+.mk.bite .lbl{color:var(--bad)}.mk.safe .lbl{color:var(--good)}
+.mk.wrongp{box-shadow:0 0 0 3px #f39c12}
+.cards{display:flex;flex-wrap:wrap;gap:6px}
+.treebox{overflow-x:auto;padding-bottom:6px}
+.node{border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--panel2);min-width:220px}
+.node .q{font-weight:700;margin-bottom:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kids{display:flex;gap:10px;margin-top:8px;align-items:flex-start}
+.branch{flex:1;min-width:220px}
+.branch>.bl{font-weight:700;font-size:.9rem;margin:0 0 4px 6px}
+.leafctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.leafctl select{border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--panel)}
+.verdict{display:inline-block;border-radius:999px;padding:2px 12px;font-weight:700}
+.verdict.bite{background:var(--bad-bg);color:var(--bad)}.verdict.safe{background:var(--good-bg);color:var(--good)}
+.cnt{font-size:.85rem;color:var(--muted)}
+.mini .mk svg{width:44px;height:44px}
+.mini .mk{padding:2px;border-width:2px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.9rem}
+.path{font-size:.75rem;color:var(--muted);max-width:110px;text-align:center;line-height:1.25}
+.phase{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0}
+.phase span{border-radius:999px;padding:3px 12px;background:var(--panel);border:1px solid var(--line);font-size:.9rem}
+.phase span.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary);font-weight:700}
+</style>
+</head>
+<body>
+<div class="lab-top"><a href="/unplugged-lab/">← 언플러그드 AI 실습실</a><button class="lab-theme" type="button">어두운 화면</button></div>
+<main class="lab-wrap">
+ <header class="lab-head">
+  <h1>무는 원숭이를 찾아라</h1>
+  <p>나는 동물원 사육사입니다. 정답이 적힌 훈련 카드 12장으로 질문 트리를 만들고, 처음 보는 테스트 카드 8장에서 트리가 얼마나 맞는지 확인합니다. 카드는 활동을 위해 만든 예시 자료입니다.</p>
+ </header>
+ <div class="phase" aria-label="활동 순서"><span id="p1" class="on">1 훈련 카드 살펴보기</span><span id="p2">2 트리 만들기</span><span id="p3">3 테스트하기</span><span id="p4">4 고치고 비교하기</span></div>
+ <div class="grid2">
+  <section class="stack">
+   <div class="panel">
+    <h2>훈련 카드 12장</h2>
+    <div class="legend"><span><span class="tag bad">문다</span> 빨간 테두리</span><span><span class="tag good">안 문다</span> 초록 테두리</span></div>
+    <div class="cards" id="train" style="margin-top:8px"></div>
+    <p class="small muted" style="margin:8px 0 0">이빨, 입꼬리, 혀, 눈, 털 색을 한 번에 하나씩 비교해 봅니다.</p>
+   </div>
+   <div class="panel">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">나의 의사결정트리</h2><span class="tag" id="trainAcc"></span></div>
+    <p class="small muted" style="margin:6px 0 8px">상자마다 질문을 고르면 카드가 예와 아니오로 나뉩니다. 더 나누지 않을 상자에는 결론을 정합니다.</p>
+    <div class="treebox"><div id="tree"></div></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="resetTree" type="button">트리 다시 만들기</button></div>
+   </div>
+  </section>
+  <section class="stack">
+   <div class="panel">
+    <h2>테스트하기</h2>
+    <p class="small">테스트 카드에는 정답이 숨겨져 있습니다. 결과를 보기 전에 내 트리가 몇 장을 맞힐지 예상합니다.</p>
+    <div class="cards mini" id="testPreview"></div>
+    <div class="row" style="margin-top:10px">
+     <label for="guess">예상, 8장 중</label>
+     <select id="guess" class="btn"></select><span>장</span>
+     <button class="btn primary" id="runTest" type="button" disabled>테스트 카드로 확인</button>
+    </div>
+    <div class="msg" id="testMsg" role="status" aria-live="polite"></div>
+    <div class="cards" id="testResult" style="margin-top:8px"></div>
+   </div>
+   <div class="panel" id="computerPanel" hidden>
+    <h2>컴퓨터가 만든 트리와 비교</h2>
+    <p class="small">컴퓨터는 훈련 카드를 가장 깨끗하게 나누는 질문을 계산해서 먼저 고릅니다. 나누기 전후의 섞인 정도를 엔트로피로 계산하고, 정보 획득량이 가장 큰 질문을 위에 둡니다.</p>
+    <div id="computer"></div>
+   </div>
+   <div class="panel">
+    <h2>생각해 보기</h2>
+    <ul class="steps small">
+     <li>훈련 카드를 모두 맞힌 트리가 테스트 카드도 모두 맞혔나요? 다르다면 이유는 무엇인가요?</li>
+     <li>털 색처럼 훈련 카드에서만 우연히 맞아떨어진 특징을 찾았나요?</li>
+     <li>첫 질문을 바꾸면 트리의 깊이와 질문 수가 어떻게 달라지나요?</li>
+    </ul>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+(()=>{
+'use strict';
+const {esc,load,save}=window.labUtil;
+const KEY='unplugged-monkey-v1';
+const Q={teeth:'이빨이 보이나요?',smile:'미소 짓고 있나요?',tongue:'혀를 내밀고 있나요?',xeyes:'눈이 X 모양인가요?',wink:'한쪽 눈만 뜨고 있나요?',dark:'털 색이 진한가요?'};
+const SHORT={teeth:'이빨',smile:'미소',tongue:'혀',xeyes:'X 눈',wink:'한쪽 눈',dark:'진한 털'};
+/* t teeth, s smile, g tongue, e eyes (o open, w wink, x), d dark fur, y bites */
+const mk=(id,t,s,g,e,d,y)=>({id,teeth:!!t,smile:!!s,tongue:!!g,xeyes:e==='x',wink:e==='w',eyes:e,dark:!!d,bite:!!y});
+const TRAIN=[mk('A',1,0,0,'o',1,1),mk('B',1,0,0,'w',1,1),mk('C',1,0,1,'o',0,1),mk('D',0,1,0,'x',1,1),mk('E',1,1,0,'x',1,1),mk('F',1,0,0,'o',1,1),
+ mk('G',1,1,0,'o',0,0),mk('H',0,1,0,'o',0,0),mk('I',0,0,0,'w',0,0),mk('J',0,1,1,'o',1,0),mk('K',1,1,0,'w',0,0),mk('L',0,0,1,'o',0,0)];
+const TEST=[mk('1',1,0,0,'w',0,1),mk('2',1,1,1,'o',1,0),mk('3',0,0,0,'x',0,1),mk('4',0,0,0,'o',1,0),mk('5',1,0,1,'o',1,1),mk('6',0,1,0,'w',0,0),mk('7',1,1,1,'x',0,1),mk('8',1,1,0,'o',0,0)];
+const $=id=>document.getElementById(id);
+function face(m){
+ const fur=m.dark?'#5b3a22':'#b9824d',mask='#f2d3a9';
+ const eye=(x)=>m.eyes==='x'?`<path d="M${x-5} -11 l10 10 M${x+5} -11 l-10 10" stroke="#222" stroke-width="3" stroke-linecap="round"/>`:`<circle cx="${x}" cy="-6" r="5.2" fill="#fff" stroke="#222" stroke-width="1.5"/><circle cx="${x+0.8}" cy="-5.5" r="2.6" fill="#222"/>`;
+ const eyes=m.eyes==='w'?eye(-11)+`<path d="M6 -6 q5 4 10 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>`:eye(-11)+eye(11);
+ let mouth;
+ if(m.teeth){const p=m.smile?'M-13 9 Q0 24 13 9 Q0 13 -13 9Z':'M-13 17 Q0 4 13 17 Q0 21 -13 17Z';mouth=`<path d="${p}" fill="#fff" stroke="#222" stroke-width="2"/><path d="M-6 ${m.smile?11:12} v6 M0 ${m.smile?12:10} v8 M6 ${m.smile?11:12} v6" stroke="#999" stroke-width="1.2"/>`}
+ else mouth=`<path d="${m.smile?'M-12 10 Q0 21 12 10':'M-12 17 Q0 7 12 17'}" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+ const tongue=m.tongue?`<path d="M-5 ${m.smile?16:15} q5 13 10 0z" fill="#e8607a" stroke="#222" stroke-width="1.5"/>`:'';
+ return `<svg viewBox="-40 -40 80 80" role="img" aria-label="원숭이 ${esc(m.id)}, ${describe(m)}"><circle cx="-29" cy="-4" r="10" fill="${fur}"/><circle cx="29" cy="-4" r="10" fill="${fur}"/><circle cx="-29" cy="-4" r="5" fill="${mask}"/><circle cx="29" cy="-4" r="5" fill="${mask}"/><circle cx="0" cy="0" r="30" fill="${fur}"/><ellipse cx="0" cy="5" rx="23" ry="22" fill="${mask}"/><ellipse cx="-11" cy="-7" rx="9" ry="8" fill="${mask}"/><ellipse cx="11" cy="-7" rx="9" ry="8" fill="${mask}"/>${eyes}<ellipse cx="-3" cy="3" rx="1.6" ry="1.2" fill="#6b4a2f"/><ellipse cx="3" cy="3" rx="1.6" ry="1.2" fill="#6b4a2f"/>${tongue}${mouth}</svg>`;
+}
+function describe(m){return [m.teeth?'이빨 보임':'이빨 안 보임',m.smile?'미소':'입꼬리 내려감',m.tongue?'혀 내밂':'',m.eyes==='x'?'X 눈':m.eyes==='w'?'한쪽 눈만 뜸':'두 눈 뜸',m.dark?'진한 털':'밝은 털'].filter(Boolean).join(', ')}
+const card=(m,cls='',lbl='',extra='')=>`<div class="mk ${cls}">${face(m)}<span class="lbl">${esc(lbl)}</span>${extra}</div>`;
+
+let st=load(KEY,null);
+if(!st||!st.tree)st={tree:{id:1},next:2,guess:'',tested:false};
+const save2=()=>save(KEY,st);
+function findNode(n,id){if(n.id===id)return n;for(const k of ['yes','no'])if(n[k]){const f=findNode(n[k],id);if(f)return f}return null}
+function route(n,m,path=[]){if(!n.q)return {label:n.label,path};const v=m[n.q];return route(v?n.yes:n.no,m,[...path,`${SHORT[n.q]} ${v?'예':'아니오'}`])}
+function leaves(n){return n.q?[...leaves(n.yes),...leaves(n.no)]:[n]}
+function complete(){return leaves(st.tree).every(l=>l.label)}
+function nodeHtml(n,data,depth){
+ const bites=data.filter(m=>m.bite).length,safe=data.length-bites;
+ const cards=`<div class="cards mini">${data.map(m=>card(m,m.bite?'bite':'safe','')).join('')||'<span class="small muted">카드 없음</span>'}</div><div class="cnt">문다 ${bites}장, 안 문다 ${safe}장</div>`;
+ if(n.q){
+  return `<div class="node"><div class="q">${esc(Q[n.q])}<button class="btn" type="button" data-undo="${n.id}" style="min-height:30px;padding:2px 10px">질문 지우기</button></div><div class="cnt">카드 ${data.length}장</div><div class="kids"><div class="branch"><p class="bl">예</p>${nodeHtml(n.yes,data.filter(m=>m[n.q]),depth+1)}</div><div class="branch"><p class="bl">아니오</p>${nodeHtml(n.no,data.filter(m=>!m[n.q]),depth+1)}</div></div></div>`;
+ }
+ const opts=Object.keys(Q).map(k=>`<option value="${k}">${esc(Q[k])}</option>`).join('');
+ return `<div class="node">${cards}<div class="leafctl">${depth<4?`<select data-ask="${n.id}" aria-label="이 상자에 쓸 질문"><option value="">질문으로 더 나누기</option>${opts}</select>`:''}<span class="small">또는 결론</span><button type="button" class="btn" data-label="${n.id}" data-v="bite" aria-pressed="${n.label==='bite'}" style="${n.label==='bite'?'background:var(--bad-bg);color:var(--bad);font-weight:700':''}">문다</button><button type="button" class="btn" data-label="${n.id}" data-v="safe" aria-pressed="${n.label==='safe'}" style="${n.label==='safe'?'background:var(--good-bg);color:var(--good);font-weight:700':''}">안 문다</button></div></div>`;
+}
+function draw(){
+ $('train').innerHTML=TRAIN.map(m=>card(m,m.bite?'bite':'safe',`${m.id} ${m.bite?'문다':'안 문다'}`)).join('');
+ $('testPreview').innerHTML=TEST.map(m=>card(m,'',`테스트 ${m.id}`)).join('');
+ $('tree').innerHTML=nodeHtml(st.tree,TRAIN,0);
+ $('tree').querySelectorAll('[data-ask]').forEach(s=>s.onchange=()=>{if(!s.value)return;const n=findNode(st.tree,+s.dataset.ask);n.q=s.value;delete n.label;n.yes={id:st.next++};n.no={id:st.next++};st.tested=false;save2();draw()});
+ $('tree').querySelectorAll('[data-label]').forEach(b=>b.onclick=()=>{const n=findNode(st.tree,+b.dataset.label);n.label=b.dataset.v;st.tested=false;save2();draw()});
+ $('tree').querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>{const n=findNode(st.tree,+b.dataset.undo);delete n.q;delete n.yes;delete n.no;st.tested=false;save2();draw()});
+ const ok=complete();
+ if(ok){const right=TRAIN.filter(m=>route(st.tree,m).label===(m.bite?'bite':'safe')).length;$('trainAcc').textContent=`훈련 카드 ${right} / 12 일치`}else $('trainAcc').textContent='결론이 없는 상자가 있습니다';
+ $('guess').innerHTML=`<option value="">선택</option>`+[...Array(9).keys()].map(i=>`<option value="${i}"${String(i)===String(st.guess)?' selected':''}>${i}</option>`).join('');
+ $('runTest').disabled=!(ok&&st.guess!=='');
+ const qs=leaves(st.tree).length>1||st.tree.q;
+ ['p1','p2','p3','p4'].forEach((p,i)=>$(p).classList.toggle('on',i===(st.tested?3:ok?2:qs?1:0)));
+ if(st.tested)showTest();else{$('testMsg').textContent=ok?(st.guess===''?'예상한 장수를 먼저 고르세요.':'준비되었습니다. 테스트 카드로 확인하세요.'):'모든 상자에 결론을 정하면 테스트할 수 있습니다.';$('testMsg').className='msg';$('testResult').innerHTML='';$('computerPanel').hidden=true}
+}
+function showTest(){
+ const rows=TEST.map(m=>({m,r:route(st.tree,m)}));const right=rows.filter(x=>x.r.label===(x.m.bite?'bite':'safe')).length;
+ $('testResult').innerHTML=rows.map(({m,r})=>{const ok=r.label===(m.bite?'bite':'safe');return card(m,(m.bite?'bite':'safe')+(ok?'':' wrongp'),`${m.id} 정답 ${m.bite?'문다':'안 문다'}`,`<span class="path">트리: ${esc(r.path.join(' → ')||'질문 없음')} → ${r.label==='bite'?'문다':'안 문다'} ${ok?'✓':'✗'}</span>`)}).join('');
+ const trainRight=TRAIN.filter(m=>route(st.tree,m).label===(m.bite?'bite':'safe')).length;
+ $('testMsg').textContent=`예상 ${st.guess}장, 실제 ${right}장을 맞혔습니다. 훈련 카드는 ${trainRight}장, 테스트 카드는 ${right}장 일치합니다. 주황 테두리 카드가 틀린 카드입니다.${right<8?' 틀린 카드가 어떤 경로로 내려갔는지 보고 질문을 바꾸어 보세요.':''}`;
+ $('testMsg').className='msg '+(right===8?'good':right>=6?'warn':'bad');
+ $('computerPanel').hidden=false;drawComputer();
+}
+$('guess').onchange=()=>{st.guess=$('guess').value;st.tested=false;save2();draw()};
+$('runTest').onclick=()=>{st.tested=true;save2();draw();$('testMsg').scrollIntoView({block:'nearest',behavior:'smooth'})};
+$('resetTree').onclick=()=>{st={tree:{id:1},next:2,guess:'',tested:false};save2();draw()};
+/* ID3 tree from the training cards */
+const H=xs=>{if(!xs.length)return 0;const p=xs.filter(m=>m.bite).length/xs.length;return p===0||p===1?0:-(p*Math.log2(p)+(1-p)*Math.log2(1-p))};
+function id3(data,used,depth){
+ const b=data.filter(m=>m.bite).length;
+ if(!b||b===data.length||depth===4)return {label:b*2>=data.length?'bite':'safe',n:data.length};
+ let best=null;for(const k of Object.keys(Q)){if(used.includes(k))continue;const y=data.filter(m=>m[k]),n=data.filter(m=>!m[k]);if(!y.length||!n.length)continue;const gain=H(data)-(y.length*H(y)+n.length*H(n))/data.length;if(!best||gain>best.gain+1e-9)best={k,gain,y,n}}
+ if(!best)return {label:b*2>=data.length?'bite':'safe',n:data.length};
+ return {q:best.k,gain:best.gain,n:data.length,yes:id3(best.y,[...used,best.k],depth+1),no:id3(best.n,[...used,best.k],depth+1)};
+}
+function treeText(n,pad=0){const sp='&nbsp;'.repeat(pad*4);if(!n.q)return `${sp}<span class="verdict ${n.label}">${n.label==='bite'?'문다':'안 문다'}</span> <span class="cnt">(${n.n}장)</span><br>`;return `${sp}<b>${esc(Q[n.q])}</b> <span class="cnt">정보 획득량 ${n.gain.toFixed(2)}</span><br>${sp}예 →<br>${treeText(n.yes,pad+1)}${sp}아니오 →<br>${treeText(n.no,pad+1)}`}
+function drawComputer(){
+ const t=id3(TRAIN,[],0);const conv=n=>n.q?{q:n.q,yes:conv(n.yes),no:conv(n.no)}:{label:n.label};const ct=conv(t);
+ const right=TEST.filter(m=>route(ct,m).label===(m.bite?'bite':'safe')).length;
+ const gains=Object.keys(Q).map(k=>{const y=TRAIN.filter(m=>m[k]),n=TRAIN.filter(m=>!m[k]);return [k,H(TRAIN)-(y.length*H(y)+n.length*H(n))/12]}).sort((a,b)=>b[1]-a[1]);
+ $('computer').innerHTML=`<table class="tbl"><thead><tr><th>첫 질문 후보</th><th>정보 획득량</th></tr></thead><tbody>${gains.map(([k,g])=>`<tr><th>${esc(Q[k])}</th><td>${g.toFixed(3)}</td></tr>`).join('')}</tbody></table><div class="small" style="margin-top:10px;line-height:1.9">${treeText(t)}</div><p class="msg ${right===8?'good':'warn'}">컴퓨터 트리는 훈련 카드 12장을 모두 맞히지만 테스트 카드는 ${right} / 8장을 맞혔습니다.${t.q==='dark'?' 훈련 카드에서는 털 색이 진한 원숭이가 대부분 물었기 때문에 털 색을 첫 질문으로 골랐습니다. 훈련 자료가 적거나 치우치면 계산으로 고른 질문도 처음 보는 자료에서 틀립니다.':''}</p>`;
+}
+draw();
+})();
+</script>
+</body>
+</html>

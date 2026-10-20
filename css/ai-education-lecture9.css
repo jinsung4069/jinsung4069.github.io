@@ -1,0 +1,16 @@
+/* Lecture 9: embedded solo unplugged activities. */
+[data-chapter="lecture9"] .ce-lab{padding:0;background:#f4f6fb}
+[data-chapter="lecture9"] .ce-lab::before{display:none}
+[data-chapter="lecture9"] .ce-stage.lab-mode{height:min(820px,calc(100dvh - 150px));min-height:520px}
+.l9-lab{display:flex;flex-direction:column;min-height:100%;padding:14px 18px 76px;box-sizing:border-box;font-family:Freesentation,sans-serif;word-break:keep-all}
+.l9-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.l9-head h2{font-size:clamp(20px,2.2vw,30px)!important;margin:0 0 4px!important}
+.l9-head p{font-size:clamp(14px,1.2vw,18px)!important;margin:0!important}
+.l9-open{flex:none;border:1px solid #a8bddf;background:#fff;color:#18345b;border-radius:10px;padding:8px 14px;text-decoration:none;font-weight:600;white-space:nowrap}
+.l9-open:hover{background:#e3ecff}
+.l9-guide{margin:8px 0 10px;padding-left:1.3em;font-size:clamp(13px,1.1vw,16px);color:#36557c}
+.l9-guide li{margin:2px 0}
+.l9-frame{flex:1;width:100%;min-height:520px;border:1px solid #bbcae3;border-radius:12px;background:#fff}
+.l9-print{display:none}
+@media(max-width:700px){.l9-lab{padding:10px 10px 74px}.l9-head{flex-direction:column}.l9-frame{min-height:620px}}
+@media print{.l9-frame,.l9-open{display:none}.l9-print{display:block;font-size:18px}}
