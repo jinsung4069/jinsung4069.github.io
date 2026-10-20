@@ -1,0 +1,49 @@
+/* 강의자료(lectures 아래 모든 페이지) 공통 줄바꿈 규칙. 각 페이지가 마지막 스타일시트로 불러온다. */
+
+/* 한국어는 어절 단위로 줄을 바꾸고, 긴 URL·이메일·붙여 쓴 긴 용어는 컨테이너를 넘기 전에 줄을 넘긴다 */
+body {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+/*
+ * 줄 모양은 text-wrap 단축 속성 대신 text-wrap-style로 정한다.
+ * 단축 속성은 같은 요소의 white-space: nowrap까지 풀어 버려서 한 줄로 두어야 할 버튼이나 라벨이 깨진다.
+ */
+
+/* 본문 문단과 목록: 마지막 줄에 단어 하나만 남지 않게 한다. p 없이 div에 바로 쓴 본문도 상속으로 받는다 */
+body {
+    text-wrap-style: pretty;
+}
+
+/* 제목과 짧은 안내 문구: 두세 줄 안쪽의 줄 길이를 고르게 맞춘다 */
+h1, h2, h3, h4, h5, h6,
+caption, legend, summary, dt, th, label, button {
+    text-wrap-style: balance;
+}
+
+/* 카드 제목으로 쓰는 b, strong, small. 문장 안의 강조(인라인)에는 효과가 없고, 블록으로 놓였을 때만 적용된다 */
+b, strong, small {
+    text-wrap-style: balance;
+}
+
+/* 이름으로 제목이나 짧은 안내임을 드러내는 요소 */
+[class*="title"],
+[class*="heading"],
+[class*="eyebrow"],
+[class*="kicker"],
+[class*="badge"],
+[class*="label"],
+[class*="hint"] {
+    text-wrap-style: balance;
+}
+
+/* 제목을 일부러 두 줄로 나눌 때는 <br> 대신 줄마다 블록으로 둔다. <br>이 있으면 브라우저가 balance를 건너뛴다 */
+.title-line {
+    display: block;
+}
+
+/* stitch-ai-poc(Tailwind)는 짧은 라벨과 배지를 굵은 글씨 유틸리티로 표시한다 */
+.font-bold {
+    text-wrap-style: balance;
+}
