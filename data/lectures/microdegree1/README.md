@@ -50,3 +50,15 @@ python scripts/sync_microdegree1.py --pages-only
 ```
 
 뷰어는 `js/computer-education2.js`를 함께 쓴다. `main` 요소의 `data-course`, `data-course-title`, `data-version`으로 과목을 구분한다.
+
+## 글자 선택과 그림 확대
+
+2026-10-13에 슬라이드 이미지 위에 투명한 글자 줄과 그림 영역을 겹쳤다. 본문을 끌어서 선택하고 복사할 수 있고, 그림을 누르면 크게 보인다. 방식과 제외 기준은 `data/lectures/computer-education2/README.md`의 같은 날짜 항목과 같다.
+
+```text
+python scripts/sync_slide_layers.py --course microdegree1 --source-dir <PPTX 폴더> --work-dir <임시 폴더>
+```
+
+- `sync_microdegree1.py`와 같은 순서로 작업용 사본에서 강사 이름, 날짜, 재생 시간을 지우고 `FIXES`를 적용한 뒤 위치를 읽는다. 게시된 `text`에 없는 줄은 넣지 않으므로 지운 문구는 글자 줄로도 돌아오지 않는다.
+- 639장 모두 게시된 이미지와 일치했고, 글자 줄 7,163개와 그림 92개가 들어갔다. 영상이 들어가는 그림과 링크가 걸린 그림은 확대 대상이 아니다.
+- `sync_microdegree1.py`로 교안을 다시 내보내면 `lines`와 `pictures`가 사라지므로 이 스크립트를 이어서 실행한다. `--pages-only`는 두 항목을 그대로 둔다.

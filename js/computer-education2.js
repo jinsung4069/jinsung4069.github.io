@@ -1,4 +1,4 @@
-/* Lucide SVG icons, source-positioned videos, embeds and links, and concept-linked interactive slides. */
+/* Lucide SVG icons, source-positioned videos, embeds and links, selectable text lines, enlargeable pictures, and concept-linked interactive slides. */
 (async()=>{
  'use strict';
  const $=s=>document.querySelector(s),viewer=$('.ce-viewer');if(!viewer)return;
@@ -10,6 +10,8 @@
  function reveal(){stage.classList.add('controls-visible');clearTimeout(touchTimer);touchTimer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resetZoom(){zoom=false;stage.classList.remove('zoom');setIcon($('#ce-zoom'),'zoom-in','확대');$('#ce-zoom').setAttribute('aria-pressed','false')}
  const place=(node,f)=>Object.assign(node.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
+ // Each line is stretched to the width it has in the slide image, whatever font the browser ends up using.
+ function fitLines(){media.querySelectorAll('.ce-text span').forEach(line=>{line.style.transform='';const width=line.getBoundingClientRect().width,target=Number(line.dataset.width)*line.parentNode.clientWidth;if(width&&target)line.style.transform=`scaleX(${target/width})`})}
  function hashIndex(){const match=location.hash.match(/^#slide-(\d+)$/);return match?Math.max(0,Math.min(data.slides.length-1,Number(match[1])-1)):0}
  function render(i,write=true){
   index=Math.max(0,Math.min(data.slides.length-1,i));const s=data.slides[index],isLab=s.kind==='lab'||s.kind==='native';
@@ -23,6 +25,16 @@
   page.value=index+1;$('#ce-total').textContent=data.slides.length;$('#ce-page-label').textContent=`${index+1} / ${data.slides.length}`;
   $('#ce-prev').disabled=index===0;$('#ce-next').disabled=index===data.slides.length-1;
   $('#ce-status').textContent=`${index+1} / ${data.slides.length}, ${s.title}`;
+  // Pictures open at full size, and transparent lines over the slide image make its text selectable.
+  for(const p of (window.LecturePrint.mode||isLab?[]:(s.pictures||[]))){
+   const b=document.createElement('button');b.type='button';b.className='ce-picture';place(b,p);b.dataset.zoom=p.src;b.dataset.zoomAlt=`${s.title}, 그림`;b.setAttribute('aria-label',`${s.title}, 그림 크게 보기`);b.setAttribute('aria-haspopup','dialog');media.append(b);
+  }
+  if(s.lines&&!isLab&&!window.LecturePrint.mode){
+   // The line break at the end of each line is for copied text; it takes no room on screen.
+   const layer=document.createElement('div');layer.className='ce-text';
+   for(const [x,y,width,height,text] of s.lines){const line=document.createElement('span');line.textContent=text+'\n';line.dataset.width=width;Object.assign(line.style,{left:`${x*100}%`,top:`${y*100}%`,height:`${height*100}%`,fontSize:`${height*80}cqh`});layer.append(line)}
+   media.append(layer);fitLines();
+  }
   for(const [j,f] of (window.LecturePrint.mode?[]:(s.videoFrames||[])).entries()){
    const frame=document.createElement('div');frame.className='ce-video-frame';place(frame,f);
    const v=document.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=f.src;v.setAttribute('aria-label',`${s.title}, 동영상 ${j+1}`);
@@ -51,7 +63,7 @@
  try{
   // Other courses reuse this viewer by naming their data folder and print title on the main element.
   const course=viewer.dataset.course||'computer-education2',courseTitle=viewer.dataset.courseTitle||'컴퓨터과교육2';
-  const dataVersion=viewer.dataset.version||(viewer.dataset.chapter==='4'?'20260929survivor':'20261007embed');
+  const dataVersion=viewer.dataset.version||'20261013layers';
   const response=await fetch(`/data/lectures/${course}/${viewer.dataset.chapter}.json?v=${dataVersion}`);if(!response.ok)throw Error('자료를 불러오지 못했습니다.');data=await response.json();page.max=data.slides.length;
   toc.innerHTML=data.slides.map((s,i)=>`<button type="button" data-index="${i}"><span>${i+1}</span><b>${esc(s.kind==='lab'?'체험 | '+s.title:s.title)}</b></button>`).join('');
   toc.addEventListener('click',e=>{const b=e.target.closest('button');if(b){render(Number(b.dataset.index));dialog.close()}});
@@ -83,9 +95,11 @@
    const actions={ArrowRight:()=>render(index+1),PageDown:()=>render(index+1),ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:()=>render(index+1)};
    const action=actions[e.key]||actions[letter];if(action){e.preventDefault();action()}
   });
-  let touch=null;stage.addEventListener('touchstart',e=>{if(e.touches.length===1&&!e.target.closest('a,button,input,select,textarea,video,.ce-lab'))touch=[e.touches[0].clientX,e.touches[0].clientY];else touch=null},{passive:true});
-  stage.addEventListener('touchend',e=>{if(!touch||zoom)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
+  let touch=null;stage.addEventListener('touchstart',e=>{if(e.touches.length===1&&!e.target.closest('a,button:not(.ce-picture),input,select,textarea,video,.ce-lab'))touch=[e.touches[0].clientX,e.touches[0].clientY];else touch=null},{passive:true});
+  stage.addEventListener('touchend',e=>{if(!touch||zoom||!getSelection().isCollapsed)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});
+  // A drag that starts on the picture would move a ghost of the slide instead of selecting text.
+  img.draggable=false;new ResizeObserver(fitLines).observe(stage);document.fonts.ready.then(fitLines);
   window.addEventListener('hashchange',()=>render(hashIndex(),false));render(hashIndex(),false);viewer.dataset.ready='true';
  }catch(error){$('#ce-status').textContent=error.message;$('#ce-loading').hidden=false;$('#ce-loading').textContent='자료를 불러오지 못했습니다. 잠시 후 새로고침하세요.'}
 })();

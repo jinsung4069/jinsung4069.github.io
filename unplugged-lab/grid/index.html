@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모눈종이 프로그래밍 | 전인성</title>
+<meta name="description" content="명령 카드로 모눈종이의 칸을 칠하며 순차, 반복, 함수를 익히는 1인용 언플러그드 활동입니다.">
+<link rel="canonical" href="https://jinsung4069.github.io/unplugged-lab/grid/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/unplugged-lab/lab.css?v=20261020a">
+<script src="/unplugged-lab/lab.js?v=20261020a"></script>
+<script defer src="/js/clean-url.js"></script>
+<style>
+.board{display:grid;gap:3px;background:var(--line);padding:3px;border-radius:10px;width:min(100%,420px);aspect-ratio:1;margin:0 auto}
+.cell{position:relative;background:var(--panel);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cell.target{background:repeating-linear-gradient(45deg,var(--panel),var(--panel) 6px,var(--panel2) 6px,var(--panel2) 12px);outline:2px dashed var(--primary);outline-offset:-4px}
+.cell.painted{background:var(--primary)}
+.cell.painted.wrong{background:var(--bad)}
+.cell.missing{outline:3px solid var(--warn);outline-offset:-4px}
+.cell .pen{width:58%;height:58%;border-radius:50%;background:#f39c12;border:3px solid #fff;box-shadow:0 0 0 2px #f39c12}
+.cell .start{position:absolute;left:3px;top:1px;font-size:.7rem;color:var(--muted)}
+.cell.painted .start{color:var(--primary-ink)}
+.palette{display:flex;flex-wrap:wrap;gap:6px}
+.palette button{min-width:62px}
+.prog{min-height:120px;border:2px dashed var(--line);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.prog.sel{border-color:var(--primary)}
+.card{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:4px 6px 4px 10px;font-weight:700}
+.card.now{background:#f39c12;color:#111}
+.card .x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:0 4px}
+.block{display:flex;flex-direction:column;gap:6px;border:2px solid #8e6bd1;border-radius:10px;padding:6px;background:color-mix(in srgb,#8e6bd1 10%,var(--panel));cursor:pointer;flex-basis:100%}
+.block.sel{box-shadow:0 0 0 3px var(--primary)}
+.block .bhead{display:flex;align-items:center;gap:6px;font-weight:700}
+.block .bbody{display:flex;flex-wrap:wrap;gap:6px;min-height:36px;border-radius:8px;padding:4px;background:var(--panel)}
+.block.now>.bhead{color:#f39c12}
+.fn{border-color:#1f8a4c;background:color-mix(in srgb,#1f8a4c 10%,var(--panel))}
+.count{font-size:1.05rem;font-weight:700}
+.levels{display:flex;flex-wrap:wrap;gap:6px}
+.levels button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;cursor:pointer}
+.levels button[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.levels button .ok{color:var(--good);font-weight:700}
+.levels button[aria-pressed="true"] .ok{color:var(--primary-ink)}
+</style>
+</head>
+<body>
+<div class="lab-top"><a href="/unplugged-lab/">← 언플러그드 AI 실습실</a><button class="lab-theme" type="button">어두운 화면</button></div>
+<main class="lab-wrap">
+ <header class="lab-head">
+  <h1>모눈종이 프로그래밍</h1>
+  <p>명령 카드를 순서대로 놓아 점선 칸만 칠합니다. 같은 명령이 되풀이되면 반복 카드와 함수 카드로 묶어 카드 수를 줄여 봅니다.</p>
+ </header>
+ <div class="levels" id="levels" role="group" aria-label="단계 선택"></div>
+ <div class="grid2">
+  <section class="panel">
+   <h2 id="ltitle"></h2>
+   <p class="muted small" id="ldesc"></p>
+   <div class="board" id="board" role="grid" aria-label="모눈종이"></div>
+   <div class="row" style="justify-content:center;margin-top:10px">
+    <button class="btn primary" id="run" type="button">실행</button>
+    <button class="btn" id="step" type="button">한 단계씩</button>
+    <button class="btn" id="reset" type="button">처음 위치로</button>
+   </div>
+   <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </section>
+  <section class="stack">
+   <div class="panel">
+    <h2>명령 카드</h2>
+    <div class="palette" id="palette"></div>
+    <p class="muted small" style="margin:8px 0 0">반복이나 함수 칸을 누르면 그 안에 카드가 들어갑니다. 바깥 프로그램 칸을 누르면 다시 바깥에 놓입니다.</p>
+   </div>
+   <div class="panel">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">프로그램</h2><span class="count" id="count"></span></div>
+    <div class="prog" id="prog" tabindex="0" aria-label="프로그램 칸"></div>
+    <div id="fnwrap" hidden>
+     <h3>함수 F 만들기</h3>
+     <div class="prog fn" id="fn" tabindex="0" aria-label="함수 F 칸"></div>
+    </div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="clear" type="button">모두 지우기</button><button class="btn" id="undo" type="button">마지막 카드 빼기</button></div>
+   </div>
+   <div class="panel">
+    <h2>생각해 보기</h2>
+    <ul class="steps small" id="think"></ul>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+(()=>{
+'use strict';
+const {esc,load,save}=window.labUtil;
+const N=6, KEY='unplugged-grid-v1';
+const MOVES={up:['↑',-1,0,'위로 한 칸'],down:['↓',1,0,'아래로 한 칸'],left:['←',0,-1,'왼쪽으로 한 칸'],right:['→',0,1,'오른쪽으로 한 칸']};
+const cells=s=>s.split(' ').map(p=>p.split(',').map(Number));
+const LEVELS=[
+ {name:'1 순차',title:'1단계, 순서대로 명령하기',desc:'펜은 S 칸에서 출발합니다. 칠하기 카드를 놓아야 칸이 칠해집니다.',start:[1,1],target:cells('1,1 1,2 1,3 2,3 3,3'),tools:['move','paint'],best:9,
+  think:['명령의 순서를 바꾸면 결과가 어떻게 달라지나요?','왕과 신하 게임에서 신하가 명령을 한 번에 하나씩 실행한 것과 무엇이 같나요?']},
+ {name:'2 반복',title:'2단계, 되풀이되는 명령 찾기',desc:'한 줄을 모두 칠합니다. 반복 카드 안에 넣은 명령은 정한 횟수만큼 되풀이됩니다.',start:[2,0],target:cells('2,0 2,1 2,2 2,3 2,4 2,5'),tools:['move','paint','rep'],best:4,
+  think:['반복 없이 만들면 카드가 몇 장 필요한가요?','반복 안에 넣을 명령의 묶음을 어떻게 찾았나요?']},
+ {name:'3 계단',title:'3단계, 계단 칠하기',desc:'대각선 계단을 칠합니다. 되풀이되는 묶음이 한 개의 명령보다 길어집니다.',start:[0,0],target:cells('0,0 1,1 2,2 3,3 4,4 5,5'),tools:['move','paint','rep'],best:5,
+  think:['반복 횟수와 칠한 칸 수가 하나 차이 나는 이유는 무엇인가요?','패턴 인식, 얌얌 과자 목걸이의 반복과 어떻게 연결되나요?']},
+ {name:'4 테두리',title:'4단계, 네모 테두리',desc:'가로세로 네 칸짜리 네모의 테두리만 칠합니다.',start:[1,1],target:cells('1,1 1,2 1,3 1,4 2,4 3,4 4,4 4,3 4,2 4,1 3,1 2,1'),tools:['move','paint','rep'],best:12,
+  think:['네 변은 같은 모양인데 하나의 반복으로 묶기 어려운 이유는 무엇인가요?','명령이 위, 아래, 왼쪽, 오른쪽이 아니라 앞으로, 오른쪽으로 돌기라면 어떻게 달라질까요?']},
+ {name:'5 함수',title:'5단계, 같은 모양 네 번',desc:'작은 네모 네 개를 칠합니다. 함수 F에 네모 하나를 그리는 명령을 넣고 F 실행 카드로 불러 씁니다.',start:[0,0],target:cells('0,0 0,1 1,0 1,1 0,3 0,4 1,3 1,4 3,0 3,1 4,0 4,1 3,3 3,4 4,3 4,4'),tools:['move','paint','rep','fn'],best:18,
+  think:['함수를 쓰지 않으면 카드가 몇 장 필요할까요?','함수가 끝났을 때 펜이 어디에 있는지가 왜 중요한가요?','모눈종이 프로그래밍에서 (    ) × N과 함수는 각각 어떤 컴퓨팅 사고와 연결되나요?']}
+];
+const st=load(KEY,{level:0,done:{},progs:{}});
+let L, prog, fn, sel, pen, painted, runState=null, timer=null;
+const $=id=>document.getElementById(id);
+
+function countCards(list){return list.reduce((n,c)=>n+1+(c.t==='rep'?countCards(c.body):0),0)}
+function total(){return countCards(prog)+(L.tools.includes('fn')?countCards(fn):0)}
+function persist(){st.progs[st.level]={prog,fn};save(KEY,st)}
+function setLevel(i){
+ stop();st.level=i;L=LEVELS[i];const p=st.progs[i]||{prog:[],fn:[]};prog=p.prog;fn=p.fn;sel=null;save(KEY,st);
+ $('ltitle').textContent=L.title;$('ldesc').textContent=L.desc;$('fnwrap').hidden=!L.tools.includes('fn');
+ $('think').innerHTML=L.think.map(t=>`<li>${esc(t)}</li>`).join('');
+ renderLevels();renderPalette();resetPen();renderProg();msg('', '');
+}
+function renderLevels(){$('levels').innerHTML=LEVELS.map((l,i)=>`<button type="button" data-l="${i}" aria-pressed="${i===st.level}">${esc(l.name)}${st.done[i]?` <span class="ok">✓ ${st.done[i]}장</span>`:''}</button>`).join('');
+ $('levels').querySelectorAll('button').forEach(b=>b.onclick=()=>setLevel(+b.dataset.l))}
+function renderPalette(){
+ const b=[];
+ if(L.tools.includes('move'))for(const k in MOVES)b.push(`<button class="btn" type="button" data-add="${k}" aria-label="${MOVES[k][3]} 이동">${MOVES[k][0]}</button>`);
+ b.push(`<button class="btn" type="button" data-add="paint">칠하기</button>`);
+ if(L.tools.includes('rep'))b.push(`<button class="btn" type="button" data-add="rep">반복 ( ) × N</button>`);
+ if(L.tools.includes('fn'))b.push(`<button class="btn" type="button" data-add="call">F 실행</button>`);
+ $('palette').innerHTML=b.join('');
+ $('palette').querySelectorAll('[data-add]').forEach(x=>x.onclick=()=>add(x.dataset.add));
+}
+function target(){return sel==null?prog:sel==='fn'?fn:findBlock(sel)?.body??prog}
+function findBlock(id,list=[...prog,...fn]){for(const c of list){if(c.id===id)return c;if(c.t==='rep'){const f=findBlock(id,c.body);if(f)return f}}return null}
+let uid=Date.now();
+function add(t){stop();const c={t,id:++uid};if(t==='rep'){c.n=3;c.body=[]}target().push(c);if(t==='rep')sel=c.id;persist();renderProg();resetPen()}
+function removeById(id,list){const i=list.findIndex(c=>c.id===id);if(i>=0){list.splice(i,1);return true}return list.some(c=>c.t==='rep'&&removeById(id,c.body))}
+function cardHtml(c){
+ if(c.t==='rep')return `<div class="block${sel===c.id?' sel':''}" data-block="${c.id}" tabindex="0" aria-label="반복 ${c.n}번 묶음"><div class="bhead">반복 <select data-n="${c.id}" aria-label="반복 횟수">${[2,3,4,5,6,7,8].map(n=>`<option${n===c.n?' selected':''}>${n}</option>`).join('')}</select> 번<button class="x" type="button" data-del="${c.id}" aria-label="반복 묶음 빼기">✕</button></div><div class="bbody">${c.body.map(cardHtml).join('')||'<span class="muted small">이곳을 눌러 선택한 뒤 카드를 넣습니다</span>'}</div></div>`;
+ const label=c.t==='paint'?'칠하기':c.t==='call'?'F 실행':MOVES[c.t][0];
+ return `<span class="card" data-card="${c.id}">${label}<button class="x" type="button" data-del="${c.id}" aria-label="${label} 카드 빼기">✕</button></span>`;
+}
+function renderProg(){
+ $('prog').innerHTML=prog.map(cardHtml).join('')||'<span class="muted small">명령 카드를 눌러 프로그램을 만듭니다</span>';
+ $('fn').innerHTML=fn.map(cardHtml).join('')||'<span class="muted small">이곳을 누른 뒤 카드를 넣으면 함수 F가 됩니다</span>';
+ $('prog').classList.toggle('sel',sel==null);$('fn').classList.toggle('sel',sel==='fn');
+ $('count').textContent=`카드 ${total()}장`;
+ document.querySelectorAll('[data-del]').forEach(b=>b.onclick=e=>{e.stopPropagation();stop();removeById(+b.dataset.del,prog)||removeById(+b.dataset.del,fn);if(sel===+b.dataset.del)sel=null;persist();renderProg();resetPen()});
+ document.querySelectorAll('[data-n]').forEach(s=>{s.onclick=e=>e.stopPropagation();s.onchange=()=>{findBlock(+s.dataset.n).n=+s.value;persist();renderProg();resetPen()}});
+ document.querySelectorAll('[data-block]').forEach(b=>b.onclick=e=>{e.stopPropagation();sel=+b.dataset.block;renderProg()});
+}
+$('prog').onclick=()=>{sel=null;renderProg()};$('fn').onclick=()=>{sel='fn';renderProg()};
+$('clear').onclick=()=>{stop();prog.length=0;fn.length=0;sel=null;persist();renderProg();resetPen()};
+$('undo').onclick=()=>{stop();const t=target();if(t.length)t.pop();else if(prog.length)prog.pop();persist();renderProg();resetPen()};
+
+function resetPen(){pen=[...L.start];painted=new Set();runState=null;drawBoard();highlight(null)}
+function drawBoard(final){
+ const tset=new Set(L.target.map(p=>p.join(','))),b=[];
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){const k=r+','+c,cls=['cell'];if(tset.has(k))cls.push('target');if(painted.has(k)){cls.push('painted');if(!tset.has(k))cls.push('wrong')}if(final&&tset.has(k)&&!painted.has(k))cls.push('missing');
+  const isPen=pen[0]===r&&pen[1]===c,isStart=L.start[0]===r&&L.start[1]===c;
+  b.push(`<div class="${cls.join(' ')}" role="gridcell" aria-label="${r+1}행 ${c+1}열${tset.has(k)?', 칠할 칸':''}${painted.has(k)?', 칠함':''}${isPen?', 펜 위치':''}">${isStart?'<span class="start">S</span>':''}${isPen?'<span class="pen"></span>':''}</div>`)}
+ $('board').style.gridTemplateColumns=`repeat(${N},1fr)`;$('board').innerHTML=b.join('');
+}
+/* Flatten the program into executable steps, each tagged with the card or block it comes from. */
+function flatten(list,out,depth=0){if(depth>20)throw Error('함수가 자기 자신을 너무 많이 부릅니다.');for(const c of list){
+ if(c.t==='rep'){for(let i=0;i<c.n;i++){out.push({mark:c.id});flatten(c.body,out,depth)}}
+ else if(c.t==='call'){out.push({mark:c.id});if(!fn.length)throw Error('함수 F가 비어 있습니다. 아래 함수 칸에 카드를 넣으세요.');flatten(fn,out,depth+1)}
+ else out.push({op:c.t,mark:c.id});
+ if(out.length>2000)throw Error('명령이 너무 많습니다. 반복 횟수를 확인하세요.')}return out}
+function highlight(id){document.querySelectorAll('.card.now,.block.now').forEach(e=>e.classList.remove('now'));if(id==null)return;const e=document.querySelector(`[data-card="${id}"],[data-block="${id}"]`);if(e)e.classList.add('now')}
+function msg(text,kind){$('msg').textContent=text;$('msg').className='msg'+(kind?' '+kind:'')}
+function prepare(){if(runState)return true;try{const steps=flatten(prog,[]);if(!steps.length){msg('프로그램이 비어 있습니다.','warn');return false}pen=[...L.start];painted=new Set();runState={steps,i:0};return true}catch(e){msg(e.message,'bad');return false}}
+function stepOnce(){
+ const s=runState.steps[runState.i++];highlight(s.mark);
+ if(s.op==='paint')painted.add(pen.join(','));
+ else if(s.op){const [,dr,dc]=MOVES[s.op],r=pen[0]+dr,c=pen[1]+dc;if(r<0||c<0||r>=N||c>=N){drawBoard();finish(`펜이 모눈종이 밖으로 나가려고 합니다. ${runState.i}번째 명령을 확인하세요.`,'bad');return false}pen=[r,c]}
+ drawBoard();if(runState.i>=runState.steps.length){check();return false}return true;
+}
+function check(){
+ const tset=new Set(L.target.map(p=>p.join(','))),wrong=[...painted].filter(k=>!tset.has(k)).length,missing=[...tset].filter(k=>!painted.has(k)).length;
+ drawBoard(true);
+ if(!wrong&&!missing){const n=total(),prev=st.done[st.level];if(!prev||n<prev)st.done[st.level]=n;save(KEY,st);renderLevels();
+  finish(n<=L.best?`성공했습니다. 카드 ${n}장으로 해결했습니다. 강사 풀이와 같거나 더 적습니다.`:`성공했습니다. 카드 ${n}장을 썼습니다. 강사 풀이는 ${L.best}장입니다. 되풀이되는 묶음을 더 찾아보세요.`,'good')}
+ else finish(`아직 다릅니다. 더 칠한 칸 ${wrong}개(빨간 칸), 덜 칠한 칸 ${missing}개(노란 테두리)입니다.`,'bad');
+}
+function finish(text,kind){msg(text,kind);runState=null;stop(false)}
+function stop(clear=true){clearInterval(timer);timer=null;$('run').textContent='실행';if(clear)highlight(null)}
+$('run').onclick=()=>{if(timer){stop();return}if(!prepare())return;msg('실행하는 중입니다.','');$('run').textContent='멈춤';timer=setInterval(()=>{if(!stepOnce())clearInterval(timer),timer=null,$('run').textContent='실행'},matchMedia('(prefers-reduced-motion: reduce)').matches?60:260)};
+$('step').onclick=()=>{if(timer)stop(false);if(!prepare())return;stepOnce();if(runState)msg(`${runState.i} / ${runState.steps.length}번째 명령을 실행했습니다.`,'')};
+$('reset').onclick=()=>{stop();resetPen();msg('','')};
+setLevel(Math.min(st.level||0,LEVELS.length-1));
+})();
+</script>
+</body>
+</html>
