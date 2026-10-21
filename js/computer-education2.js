@@ -31,7 +31,8 @@
   }
   if(s.lines&&!isLab&&!window.LecturePrint.mode){
    // The line break at the end of each line is for copied text; it takes no room on screen.
-   const layer=document.createElement('div');layer.className='ce-text';
+   // Screen readers already get this text from #ce-slide-text, so the copy-only layer is hidden from them.
+   const layer=document.createElement('div');layer.className='ce-text';layer.setAttribute('aria-hidden','true');
    for(const [x,y,width,height,text] of s.lines){const line=document.createElement('span');line.textContent=text+'\n';line.dataset.width=width;Object.assign(line.style,{left:`${x*100}%`,top:`${y*100}%`,height:`${height*100}%`,fontSize:`${height*80}cqh`});layer.append(line)}
    media.append(layer);fitLines();
   }

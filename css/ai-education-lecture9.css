@@ -14,3 +14,6 @@
 .l9-print{display:none}
 @media(max-width:700px){.l9-lab{padding:10px 10px 74px}.l9-head{flex-direction:column}.l9-frame{min-height:620px}}
 @media print{.l9-frame,.l9-open{display:none}.l9-print{display:block;font-size:18px}}
+/* The viewer's Print button copies on-screen styles while this class is set, so @media print never reaches that copy. */
+.lecture-print-building .l9-frame,.lecture-print-building .l9-open{display:none}
+.lecture-print-building .l9-print{display:block;font-size:18px}

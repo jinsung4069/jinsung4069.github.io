@@ -66,12 +66,15 @@ def ordered_parts(z):
 def powerpoint_pdf(src, outdir):
     import win32com.client
     app = win32com.client.DispatchEx('PowerPoint.Application')
-    pres = app.Presentations.Open(str(src), True, False, False)
     try:
-        out = outdir / (src.stem + '.pdf')
-        pres.SaveAs(str(out), 32)  # ppSaveAsPDF
+        pres = app.Presentations.Open(str(src), True, False, False)
+        try:
+            out = outdir / (src.stem + '.pdf')
+            pres.SaveAs(str(out), 32)  # ppSaveAsPDF
+        finally:
+            pres.Close()
     finally:
-        pres.Close()
+        app.Quit()
     return out
 
 

@@ -7,6 +7,7 @@
 .lz-frame img{display:block;flex:none;margin:auto;max-width:none;height:auto;background:#fff;border-radius:4px;cursor:default}
 .lz-large .lz-frame img{cursor:zoom-in}
 .lz-actual .lz-frame img{cursor:zoom-out}
+.lz-frame img:focus-visible{outline:3px solid #9db8f2;outline-offset:3px}
 .lz-close{position:fixed;top:10px;right:14px;z-index:1;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid #ffffff66;border-radius:50%;background:#ffffff26;color:#fff;cursor:pointer}
 .lz-close:hover{background:#ffffff40}
 .lz-close:focus-visible{outline:3px solid #9db8f2;outline-offset:3px}
