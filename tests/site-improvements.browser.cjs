@@ -6,14 +6,19 @@ const base=process.argv[2]||'http://127.0.0.1:8772';
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});
  let passed=0;
- async function scenario(name,fn){const context=await browser.newContext({viewport:{width:1440,height:1000}});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));try{await fn(page,context);assert.deepEqual(errors,[]);console.log('PASS',name);passed++}finally{await context.close()}}
- async function audit(page,selector){let builder=new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']);if(selector)builder=builder.include(selector);const result=await builder.analyze();assert.deepEqual(result.violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[])}
+ async function scenario(name,fn){const context=await browser.newContext({viewport:{width:1440,height:1000},colorScheme:'light'});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));try{await fn(page,context);assert.deepEqual(errors,[]);console.log('PASS',name);passed++}finally{await context.close()}}
+ async function audit(page,selector){
+  // Check the settled design, not the transient opacity of the existing entrance animation.
+  await page.evaluate(async()=>{await document.fonts.ready;await Promise.allSettled(document.getAnimations().filter(a=>a.playState==='running'&&Number.isFinite(a.effect?.getComputedTiming().endTime)).map(a=>a.finished))});
+  let builder=new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']);if(selector)builder=builder.include(selector);const result=await builder.analyze();assert.deepEqual(result.violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,reason:n.failureSummary}))})),[]);
+ }
  try{
   await scenario('home search, category, empty state, bilingual and mobile menu',async p=>{
    await p.goto(base+'/');await p.locator('#project-search').fill('데이터베이스');assert.equal(await p.locator('.project-card-link:visible').count(),1);
    await p.locator('#project-category').selectOption('game');assert.equal(await p.locator('.project-card-link:visible').count(),0);assert.match(await p.locator('#project-result').innerText(),/검색 결과가 없습니다/);
    await p.locator('#project-search').fill('');assert.equal(await p.locator('.project-card-link:visible').count(),3);
    await p.locator('#languageToggle').click();assert.equal(await p.locator('#project-result').innerText(),'3 projects');await audit(p,'.project-filter');
+   await p.locator('#darkModeToggle').click();await audit(p,'.project-filter');await p.locator('#darkModeToggle').click();
    await p.setViewportSize({width:390,height:844});await p.locator('#mobileMenuToggle').click();await p.locator('#mobileNav').getByRole('link',{name:'Lectures',exact:true}).click();assert.match(p.url(),/\/lectures\/$/);
   });
   await scenario('SQLite lazy download, real queries, independent attempts, failure recovery',async(p,context)=>{
