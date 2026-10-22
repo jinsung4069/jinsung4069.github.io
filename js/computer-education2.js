@@ -102,6 +102,8 @@
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});
   // A drag that starts on the picture would move a ghost of the slide instead of selecting text.
   img.draggable=false;new ResizeObserver(fitLines).observe(stage);document.fonts.ready.then(fitLines);
+  // A later slide can request an additional unicode-range font subset.
+  document.fonts.addEventListener('loadingdone',fitLines);
   updateTools=window.LectureTools?.init({viewer,data,render,current:()=>index});
   window.addEventListener('hashchange',()=>render(hashIndex(),false));render(hashIndex(),false);viewer.dataset.ready='true';
  }catch(error){$('#ce-status').textContent=error.message;$('#ce-loading').hidden=false;$('#ce-loading').textContent='자료를 불러오지 못했습니다. 잠시 후 새로고침하세요.'}
