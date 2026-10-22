@@ -22,7 +22,7 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | Project | Description |
 |---|---|
 | [A* Pathfinding](https://jinsung4069.github.io/astar-pathfinding/) | Interactive A* pathfinding visualization (separate repo) |
-| [DQN Demo](https://jinsung4069.github.io/dqn-demo/) | Deep Q-Network reinforcement learning visualization |
+| [Tabular Q-Learning Lab](https://jinsung4069.github.io/dqn-demo/) | Tabular Q-learning visualization (legacy `/dqn-demo/` URL) |
 | [Database Lab](https://jinsung4069.github.io/database-lab/) | Physical design, SQL, and data conversion practice with KCI article data (sql.js) |
 | [Programming Language Lab](https://jinsung4069.github.io/programming-language/) | C / Python / Java side-by-side practice |
 | [ML Simulations](https://jinsung4069.github.io/machinelearning/) | Interactive supervised and unsupervised learning simulations |
@@ -31,7 +31,7 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | [Alligator Chess](https://jinsung4069.github.io/alligator-chess/) | Strategic board game integrated in this repository |
 | [Micro Robot](https://jinsung4069.github.io/microrobot/) | Strategic puzzle game (React) |
 | [Contour Simulator](https://jinsung4069.github.io/contour-simulator/) | Draw contours for 3D terrain & volcano simulation |
-| [Interactive Quiz](https://jinsung4069.github.io/simplequiz/) | Multi-topic quiz platform (separate repo) |
+| [Interactive Quiz](https://jinsung4069.github.io/simplequiz/) | Quiz question and answer authoring tool (separate repo) |
 | [StackBurger](https://jinsung4069.github.io/stackburger/) | Interactive coding board game |
 | [Attendance System](https://jinsung4069.github.io/attendance/) | Digital attendance tracking tool |
 
@@ -104,6 +104,24 @@ redirects, sitemap entries, shared page landmarks, and matching game source/expo
 The game tests cover regressions in turn-based victory detection and all 135 reachable states.
 The same checks run on pushes and pull requests through `.github/workflows/site-checks.yml`.
 They validate the site without deploying it.
+
+With a local preview running and Playwright available, run the site-fix regressions:
+
+```sh
+node tests/site-audit-fixes.browser.cjs http://127.0.0.1:8000
+```
+
+The browser test defaults to Microsoft Edge. Set `PW_CHANNEL` for another installed
+Chromium channel, and `PLAYWRIGHT_MODULE` if Playwright is provided by an external
+runtime. It covers attendance migration, local dates, unavailable or malformed
+storage, code-pattern checks, Q-learning lifecycle, responsive layouts and PoC dialogs.
+
+Attendance uses `attendanceDataV2` and keeps the legacy `students` and
+`attendanceRecords` keys intact. Attendance and the programming/database labs keep
+working in memory when storage fails, display a warning and offer JSON export.
+The programming lab checks patterns only; it does not compile or execute code.
+PoC pages show fictional data and simulated interactions. Their Tailwind CDN is
+still required for styles; fonts and other CDN resources require network access.
 
 Shared pages use `js/preferences.js` in the head before `js/main.js`.
 Set `data-bilingual="true"` on `<html>` only when the page supports both languages.

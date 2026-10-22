@@ -8,8 +8,8 @@
         score: { ko: '점수', en: 'Score' },
         attempts: { ko: '시도', en: 'Attempts' },
         canvasHelp: { ko: '아래 캔버스에 직접 따라 작성해 보세요.', en: 'Type the code into the canvas below.' },
-        expectedOutput: { ko: '예상 출력', en: 'Expected Output' },
-        check: { ko: '실행 체험 / 채점', en: 'Experience Run / Check' },
+        expectedOutput: { ko: '예시 코드의 예상 결과', en: 'Expected Result of the Example' },
+        check: { ko: '코드 패턴 확인', en: 'Check Code Patterns' },
         fillSample: { ko: '예시 코드 넣기', en: 'Fill Sample Code' },
         next: { ko: '다음 모듈', en: 'Next Module' },
         first: { ko: '첫 모듈로', en: 'First Module' },
@@ -282,7 +282,8 @@
         }
     ];
 
-    let progress = loadProgress();
+    const progressStore = localProgress.create(STORAGE_KEY, defaultProgress, value => localProgress.validProgress(value, modules.map(m => m.id), true));
+    let progress = progressStore.value;
     let activeScenario = comparisonScenarios[0].id;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -423,7 +424,9 @@
                     <span class="language-badge">${escapeHtml(module.language)}</span>
                     <span class="canvas-help">${escapeHtml(text(ui.canvasHelp))}</span>
                 </div>
-                <textarea id="codeAnswer" class="code-input" spellcheck="false">${escapeHtml(savedCode)}</textarea>
+                <label for="codeAnswer">${getLang() === 'en' ? 'Practice code' : '실습 코드'}</label>
+                <p id="patternHelp">${getLang() === 'en' ? 'This checks text patterns, not compilation or execution. Matching patterns does not guarantee correct code. Language comparisons may be written in comments.' : '코드를 컴파일하거나 실행하지 않고 텍스트 패턴을 확인합니다. 패턴 일치가 코드의 정확성을 보장하지는 않습니다. 언어 비교 항목은 주석으로 작성할 수 있습니다.'}</p>
+                <textarea aria-describedby="patternHelp" id="codeAnswer" class="code-input" spellcheck="false">${escapeHtml(savedCode)}</textarea>
             </div>
 
             <div class="expected-output">
@@ -586,8 +589,7 @@
 
     function resetProgress() {
         if (!window.confirm(text(ui.resetConfirm))) return;
-        progress = defaultProgress();
-        localStorage.removeItem(STORAGE_KEY);
+        progress = progressStore.reset();
         render();
     }
 
@@ -609,25 +611,8 @@
         };
     }
 
-    function loadProgress() {
-        try {
-            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (!saved || typeof saved !== 'object') return defaultProgress();
-            return {
-                ...defaultProgress(),
-                ...saved,
-                completedModules: Array.isArray(saved.completedModules) ? saved.completedModules : [],
-                scores: saved.scores || {},
-                attempts: saved.attempts || {},
-                code: saved.code || {}
-            };
-        } catch (error) {
-            return defaultProgress();
-        }
-    }
-
     function saveProgress() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        progressStore.save(progress);
     }
 
     function check(id, label, pattern) {
@@ -635,9 +620,21 @@
             id,
             label,
             test(code) {
-                return pattern.test(normalizeCode(code));
+                const comparisons = ['java-boolean', 'python-list', 'java-output', 'python-output', 'python-range', 'if-elif', 'java-exception', 'library'];
+                const literals = ['format-d', 'string-null', 'dictionary'];
+                const normalized = normalizeCode(code);
+                return pattern.test(comparisons.includes(id) ? normalized : codeWithoutComments(normalized, !literals.includes(id)));
             }
         };
+    }
+
+    // Preserve quoted comment markers, but exclude comments from code requirements.
+    // This is a lexical teaching aid, not a parser or a compiler.
+    function codeWithoutComments(code, maskStrings) {
+        return code.replace(/"""[\s\S]*?"""|\x27\x27\x27[\s\S]*?\x27\x27\x27|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\*[\s\S]*?(?:\*\/|$)|\/\/[^\n]*|#[^\n]*/g, token => {
+            const comment = token.startsWith('//') || token.startsWith('/*') || token.startsWith('#');
+            return comment || maskStrings ? token.replace(/[^\n]/g, ' ') : token;
+        });
     }
 
     function normalizeCode(code) {

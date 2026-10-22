@@ -4,8 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>과정 증빙 &amp; 평가 설명 리포트 - 우리반AI</title>
-<script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15859" type="text/javascript"></script>
-<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=839" type="text/javascript"></script>
+<meta name="description" content="과정 증빙 &amp; 평가 설명 리포트 - 우리반AI 화면과 가상 데이터로 우리반AI의 학습 지원 흐름을 체험하는 시연 페이지">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -121,8 +120,9 @@
 <link rel="canonical" href="https://jinsung4069.github.io/lectures/stitch-ai-poc/ai_6/">
 <script defer src="/js/clean-url.js"></script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head>
-<body class="font-body-md text-body-md overflow-x-hidden">
+<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/lectures/stitch-ai-poc/demo-accessibility.css?v=20261022">
+</head>
+<body data-report-page="true" class="font-body-md text-body-md">
 <!-- TopAppBar -->
 <header class="docked full-width top-0 sticky z-50 backdrop-blur-xl bg-surface/80 shadow-sm flex items-center justify-between px-margin-mobile md:px-margin-desktop py-unit w-full">
 <div class="flex items-center gap-4">
@@ -148,6 +148,7 @@
 </div>
 </header>
 <main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-10">
+<aside class="poc-demo-notice" aria-label="시연 범위 안내">이 화면은 가상 데이터로 구성한 시연입니다. AI 응답, 분석 수치, 동의, 암호화와 서버 서명은 작동 예시이며 실제 서비스가 아닙니다. 저장과 공유 버튼은 별도 안내가 없으면 시연 창을 엽니다. 실제 학생 정보는 입력하지 마세요.</aside>
 <!-- Breadcrumb & Header Title -->
 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
 <div>
@@ -287,12 +288,12 @@
 <div class="flex-1 min-h-[300px] ena-grid rounded-xl border border-dashed border-outline-variant flex items-center justify-center relative overflow-hidden">
 <div class="text-secondary text-body-md z-10 bg-white/80 px-4 py-2 rounded-lg">시간축 × 개념 노드 네트워크 시각화</div>
 <!-- Decorative SVG Elements to mimic ENA Graph -->
-<svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none">
-<circle cx="20%" cy="30%" fill="#ff6b00" r="6"></circle>
-<circle cx="40%" cy="60%" fill="#ff6b00" r="8"></circle>
-<circle cx="70%" cy="40%" fill="#ff6b00" r="5"></circle>
-<circle cx="85%" cy="75%" fill="#ff6b00" r="10"></circle>
-<path d="M 20% 30% L 40% 60% L 70% 40% L 85% 75%" fill="none" stroke="#ff6b00" stroke-dasharray="4" stroke-width="2"></path>
+<svg class="absolute inset-0 w-full h-full opacity-30 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+<circle cx="20" cy="30" fill="#ff6b00" r="6"></circle>
+<circle cx="40" cy="60" fill="#ff6b00" r="8"></circle>
+<circle cx="70" cy="40" fill="#ff6b00" r="5"></circle>
+<circle cx="85" cy="75" fill="#ff6b00" r="10"></circle>
+<path d="M 20 30 L 40 60 L 70 40 L 85 75" fill="none" stroke="#ff6b00" stroke-dasharray="4" stroke-width="2"></path>
 </svg>
 </div>
 <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-secondary">
@@ -341,7 +342,7 @@
         교사 최종 의견
     </h2>
 <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30">
-<textarea class="w-full h-32 p-4 rounded-xl border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-body-md text-on-surface placeholder-secondary" placeholder="학생의 학습 과정과 AI 분석 결과를 종합하여 최종 평가 의견을 작성해주세요..."></textarea>
+<textarea aria-label="교사 최종 의견" class="w-full h-32 p-4 rounded-xl border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none text-body-md text-on-surface placeholder-secondary" placeholder="학생의 학습 과정과 AI 분석 결과를 종합하여 최종 평가 의견을 작성해주세요..."></textarea>
 <div class="flex justify-end mt-4">
 <button class="bg-primary text-white px-6 py-2.5 rounded-lg font-title-lg text-body-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm active:scale-95 flex items-center gap-2">
 <span class="material-symbols-outlined text-[20px]">save</span>
@@ -387,7 +388,7 @@
             </svg>
             <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
           </div>
-          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <button aria-label="PoC 네비게이터 닫기" onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -453,7 +454,7 @@
       </div>
 
       <!-- Floating Button -->
-      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+      <button aria-label="PoC 네비게이터 열기" onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
         </svg>
@@ -492,5 +493,5 @@
           }
       })();
     </script>
-        <script src="/lectures/stitch-ai-poc/demo_interactions.js"></script>
+        <script src="/lectures/stitch-ai-poc/demo_interactions.js?v=20261022"></script>
 </body><whale-grammar data-role="tooltip"></whale-grammar><whale-grammar data-role="mirror"></whale-grammar></html>

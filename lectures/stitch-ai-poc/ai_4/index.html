@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 
-<html lang="ko" style=""><head><script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15857" type="text/javascript"></script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<html lang="ko" style=""><head><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>교사 수업 대시보드 - 우리반AI</title>
+<meta name="description" content="교사 수업 대시보드 - 우리반AI 화면과 가상 데이터로 우리반AI의 학습 지원 흐름을 체험하는 시연 페이지">
 <!-- Tailwind CSS v3 CDN -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <style data-purpose="custom-fonts">
@@ -136,7 +137,8 @@
 <link data-snapdom="injected-import" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link rel="canonical" href="https://jinsung4069.github.io/lectures/stitch-ai-poc/ai_4/">
 <script defer src="/js/clean-url.js"></script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head>
+<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/lectures/stitch-ai-poc/demo-accessibility.css?v=20261022">
+</head>
 <body class="min-h-screen text-slate-800">
 <!-- BEGIN: MainHeader -->
 <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -177,6 +179,7 @@
 </header>
 <!-- END: MainHeader -->
 <main class="max-w-[1440px] mx-auto px-10 py-10">
+<aside class="poc-demo-notice" aria-label="시연 범위 안내">이 화면은 가상 데이터로 구성한 시연입니다. AI 응답, 분석 수치, 동의, 암호화와 서버 서명은 작동 예시이며 실제 서비스가 아닙니다. 저장과 공유 버튼은 별도 안내가 없으면 시연 창을 엽니다. 실제 학생 정보는 입력하지 마세요.</aside>
 <!-- BEGIN: TitleArea -->
 <div class="flex justify-between items-end mb-8">
 <div>
@@ -401,7 +404,7 @@
             </svg>
             <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
           </div>
-          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <button aria-label="PoC 네비게이터 닫기" onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -467,7 +470,7 @@
       </div>
 
       <!-- Floating Button -->
-      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+      <button aria-label="PoC 네비게이터 열기" onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
         </svg>
@@ -506,5 +509,5 @@
           }
       })();
     </script>
-        <script src="/lectures/stitch-ai-poc/demo_interactions.js"></script>
+        <script src="/lectures/stitch-ai-poc/demo_interactions.js?v=20261022"></script>
 </body></html>

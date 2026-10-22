@@ -1,0 +1,30 @@
+.poc-demo-notice {
+    box-sizing: border-box;
+    width: 100%;
+    flex: 0 0 auto;
+    grid-column: 1 / -1;
+    margin: 0 0 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid #b87500;
+    border-radius: 8px;
+    color: #593500;
+    background: #fff7df;
+    font: 500 14px/1.65 system-ui, sans-serif;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+body[data-report-page] main > div,
+body[data-report-page] .grid > div,
+body[data-report-page] .flex > div { min-width: 0; }
+@media (max-width: 767px) {
+    body[data-report-page] header { flex-wrap: wrap; gap: 0.5rem; padding: 1rem; }
+    body[data-report-page] header > div { max-width: 100%; }
+    body[data-report-page] header .font-headline-md { flex-wrap: wrap; }
+    body[data-report-page] main { padding-left: 1rem; padding-right: 1rem; }
+    body[data-report-page] main .flex { flex-wrap: wrap; }
+    body[data-report-page] main .w-36 { flex-shrink: 0; }
+    body[data-report-page] main button { max-width: 100%; white-space: normal; }
+}
+
+body[data-student-page] > .poc-demo-notice { margin-top: 4rem; }
+body[data-student-page] > main { padding-top: 0; }

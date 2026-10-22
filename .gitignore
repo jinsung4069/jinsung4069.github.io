@@ -49,3 +49,10 @@ data/*.sqlite*
 # Development notes that are not part of the published site
 lectures/stitch-ai-poc/implementation_plan.md
 lectures/stitch-ai-poc/walkthrough.md
+
+# Local audit instructions and work record
+웹사이트_전체_수정프롬프트_20261022.md
+웹사이트_전체_분석결과_20261022.md
+웹사이트_수정_작업기록_20261022.md
+tmp-site-fixes-20261022/
+웹사이트_내장브라우저_검증_20261022.png

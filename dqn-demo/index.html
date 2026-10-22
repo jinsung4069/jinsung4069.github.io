@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <script src="/js/preferences.js?v=20260913a"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DQN 알고리즘 데모</title>
+    <title>Q 테이블 기반 강화학습 실습</title>
+    <meta name="description" content="격자 환경에서 Q 테이블을 갱신하며 탐험과 보상, 강화학습 과정을 관찰하는 실습">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -16,7 +17,7 @@
 <link rel="canonical" href="https://jinsung4069.github.io/dqn-demo/">
 <script defer src="/js/clean-url.js"></script>
 </head>
-<body data-title-ko="DQN 알고리즘 데모 - 전인성" data-title-en="DQN Algorithm Demo - Inseong Jeon">
+<body data-title-ko="Q 테이블 기반 강화학습 실습 - 전인성" data-title-en="Tabular Q-Learning Lab - Inseong Jeon">
     <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a>
     <header>
         <div class="header-inner">
@@ -89,44 +90,34 @@
     <main id="main-content" tabindex="-1">
         <section class="hero">
             <div class="lang-content lang-ko active">
-                <h1>DQN (Deep Q-Network) 알고리즘 데모</h1>
+                <h1>Q 테이블 기반 강화학습 실습</h1>
             </div>
             <div class="lang-content lang-en">
-                <h1>DQN (Deep Q-Network) Algorithm Demo</h1>
+                <h1>Tabular Q-Learning Lab</h1>
             </div>
         </section>
 
         <div class="demo-container">
             <div class="explanation project-card">
                 <div class="lang-content lang-ko active">
-                    <h2>DQN이란?</h2>
-                    <p><strong>Deep Q-Network (DQN)</strong>은 강화학습의 한 방법으로, 딥러닝과 Q-Learning을 결합한 알고리즘입니다. 
-                    에이전트가 환경과 상호작용하면서 보상을 최대화하는 행동을 학습합니다.</p>
-                    <h3>주요 특징:</h3>
-                    <ul>
-                        <li><strong>Experience Replay</strong>: 과거 경험을 저장하고 무작위로 샘플링하여 학습</li>
-                        <li><strong>Target Network</strong>: 안정적인 학습을 위한 별도의 타겟 네트워크 사용</li>
-                        <li><strong>ε-greedy 정책</strong>: 탐험과 활용의 균형을 위한 행동 선택 전략</li>
-                    </ul>
+                    <h2>Q 테이블로 학습하기</h2>
+                    <p>각 격자 위치와 행동의 가치를 표에 저장하는 Q 학습입니다. 에이전트는 목표에 도달하면 10, 이동할 때는 -0.1의 보상을 받으며 Q 값을 갱신합니다.</p>
+                    <ul><li>ε-greedy 정책으로 탐험과 활용을 선택합니다.</li><li>탐험률은 에피소드마다 감소하며 최소 0.05를 유지합니다.</li><li>한 에피소드는 목표 도달 또는 300회 이동으로 끝납니다.</li></ul>
+                    <p><strong>DQN과의 비교:</strong> DQN은 신경망으로 Q 값을 근사하고 경험 재생과 타겟 네트워크를 사용합니다. 이 실습은 표를 직접 갱신하며 이 세 기능을 구현하지 않습니다.</p>
                 </div>
                 <div class="lang-content lang-en">
-                    <h2>What is DQN?</h2>
-                    <p><strong>Deep Q-Network (DQN)</strong> is a reinforcement learning method that combines deep learning with Q-Learning. 
-                    The agent learns to take actions that maximize rewards through interaction with the environment.</p>
-                    <h3>Key Features:</h3>
-                    <ul>
-                        <li><strong>Experience Replay</strong>: Stores past experiences and samples them randomly for learning.</li>
-                        <li><strong>Target Network</strong>: Uses a separate target network for stable learning.</li>
-                        <li><strong>ε-greedy Policy</strong>: An action selection strategy to balance exploration and exploitation.</li>
-                    </ul>
+                    <h2>Learning with a Q Table</h2>
+                    <p>Tabular Q-learning stores the value of each position and action. Reaching the goal earns 10; each move costs 0.1. These rewards update the Q table.</p>
+                    <ul><li>An epsilon-greedy policy balances exploration and exploitation.</li><li>Epsilon decays each episode to a minimum of 0.05.</li><li>An episode ends at the goal or after 300 moves.</li></ul>
+                    <p><strong>Comparison with DQN:</strong> DQN approximates Q values with a neural network and uses experience replay and a target network. This lab directly updates a table and implements none of those three features.</p>
                 </div>
             </div>
 
             <div class="game-area">
                 <div class="game-canvas-container">
                     <canvas id="gameCanvas" class="game-canvas" width="400" height="400"></canvas>
-                    <p class="lang-content lang-ko active">간단한 격자 게임에서 DQN 에이전트가 목표에 도달하는 과정을 관찰하세요.</p>
-                    <p class="lang-content lang-en">Watch the DQN agent reach the goal in a simple grid game.</p>
+                    <p class="lang-content lang-ko active">간단한 격자 게임에서 Q 학습 에이전트가 목표에 도달하는 과정을 관찰하세요.</p>
+                    <p class="lang-content lang-en">Watch the Q-learning agent reach the goal in a simple grid game.</p>
                 </div>
 
                 <div class="controls project-card">
@@ -142,26 +133,26 @@
                     </div>
 
                     <div class="control-group">
-                        <label for="learningRate">학습률 (α)</label>
+                        <label for="learningRate"><span class="lang-content lang-ko active">학습률 (α)</span><span class="lang-content lang-en">Learning rate (α)</span></label>
                         <input type="range" id="learningRate" min="0.01" max="0.5" step="0.01" value="0.1">
                         <span id="learningRateValue">0.1</span>
                     </div>
 
                     <div class="control-group">
-                        <label for="epsilon">초기 탐험률 (ε, 에피소드마다 감쇠)</label>
+                        <label for="epsilon"><span class="lang-content lang-ko active">초기 탐험률 (ε, 에피소드마다 감쇠)</span><span class="lang-content lang-en">Initial epsilon (decays each episode)</span></label>
                         <input type="range" id="epsilon" min="0" max="1" step="0.01" value="0.9">
                         <span id="epsilonValue">0.9</span>
                     </div>
 
                     <div class="control-group">
-                        <label for="discountFactor">할인인자 (γ)</label>
+                        <label for="discountFactor"><span class="lang-content lang-ko active">할인인자 (γ)</span><span class="lang-content lang-en">Discount factor (γ)</span></label>
                         <input type="range" id="discountFactor" min="0.1" max="1" step="0.01" value="0.95">
                         <span id="discountFactorValue">0.95</span>
                     </div>
 
                     <div class="control-group">
-                        <label class="lang-content lang-ko active">학습 속도</label>
-                        <label class="lang-content lang-en">Training Speed</label>
+                        <label for="speed" class="lang-content lang-ko active">학습 속도</label>
+                        <label for="speed" class="lang-content lang-en">Training Speed</label>
                         <select id="speed">
                             <option value="50" class="lang-content lang-ko active">매우 빠름</option>
                             <option value="50" class="lang-content lang-en">Very Fast</option>
@@ -203,25 +194,21 @@
 
             <div class="algorithm-steps project-card">
                 <div class="lang-content lang-ko active">
-                    <h2>DQN 알고리즘 단계</h2>
+                    <h2>이 실습의 Q 학습 단계</h2>
                     <ol>
                         <li><strong>환경 관찰</strong>: 현재 상태 s를 관찰합니다</li>
                         <li><strong>행동 선택</strong>: ε-greedy 정책으로 행동 a를 선택합니다</li>
                         <li><strong>행동 실행</strong>: 환경에서 행동을 실행하여 보상 r과 다음 상태 s'를 얻습니다</li>
-                        <li><strong>경험 저장</strong>: (s, a, r, s') 튜플을 경험 버퍼에 저장합니다</li>
-                        <li><strong>배치 학습</strong>: 경험 버퍼에서 배치를 샘플링하여 Q-네트워크를 업데이트합니다</li>
-                        <li><strong>타겟 업데이트</strong>: 주기적으로 타겟 네트워크를 업데이트합니다</li>
+                        <li><strong>표 갱신</strong>: Q(s,a) ← Q(s,a) + α[r + γ max Q(s′,a′) − Q(s,a)]. 종료 상태에서는 다음 상태의 가치를 0으로 둡니다.</li><li><strong>반복</strong>: 목표 도달 또는 300회 이동 후 다음 에피소드를 시작합니다.</li>
                     </ol>
                 </div>
                 <div class="lang-content lang-en">
-                    <h2>DQN Algorithm Steps</h2>
+                    <h2>Q-Learning Steps in This Lab</h2>
                     <ol>
                         <li><strong>Observe Environment</strong>: Observe the current state s.</li>
                         <li><strong>Choose Action</strong>: Choose action a using the ε-greedy policy.</li>
                         <li><strong>Execute Action</strong>: Execute the action in the environment to get reward r and next state s'.</li>
-                        <li><strong>Store Experience</strong>: Store the (s, a, r, s') tuple in the experience buffer.</li>
-                        <li><strong>Batch Learning</strong>: Sample a batch from the experience buffer to update the Q-network.</li>
-                        <li><strong>Update Target</strong>: Periodically update the target network.</li>
+                        <li><strong>Update the table</strong>: Q(s,a) ← Q(s,a) + α[r + γ max Q(s′,a′) − Q(s,a)]. The next-state value is zero at the goal.</li><li><strong>Repeat</strong>: Begin another episode after reaching the goal or taking 300 steps.</li>
                     </ol>
                 </div>
             </div>
@@ -250,6 +237,6 @@
     </footer>
 
     <script src="/js/main.js?v=20260914-menu"></script>
-    <script src="/js/dqn-demo.js"></script>
+    <script src="/js/dqn-demo.js?v=20261022"></script>
 </body>
 </html>

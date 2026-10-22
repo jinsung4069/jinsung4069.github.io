@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 
-<html lang="ko" style=""><head><script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15858" type="text/javascript"></script><link rel="canonical" href="https://jinsung4069.github.io/lectures/stitch-ai-poc/ai_5/">
+<html lang="ko" style=""><head><link rel="canonical" href="https://jinsung4069.github.io/lectures/stitch-ai-poc/ai_5/">
 <script defer src="/js/clean-url.js"></script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head><body class="bg-background text-on-background font-body-md min-h-screen flex flex-col break-keep">
+<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/lectures/stitch-ai-poc/demo-accessibility.css?v=20261022">
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>우리반AI - 학습 공간</title>
+<meta name="description" content="우리반AI - 학습 공간 화면과 가상 데이터로 우리반AI의 학습 지원 흐름을 체험하는 시연 페이지">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -282,6 +284,8 @@
             }
         }
     </style>
+</head>
+<body data-student-page="true" class="bg-background text-on-background font-body-md min-h-screen flex flex-col break-keep">
 <!-- TopAppBar -->
 <header class="fixed top-0 left-0 right-0 h-16 glass-nav border-b border-outline-variant z-50 flex justify-between items-center px-margin-desktop">
 <div class="flex items-center gap-8">
@@ -309,6 +313,7 @@
 </div>
 </div>
 </header>
+<aside class="poc-demo-notice" aria-label="시연 범위 안내">이 화면은 가상 데이터로 구성한 시연입니다. AI 응답, 분석 수치, 동의, 암호화와 서버 서명은 작동 예시이며 실제 서비스가 아닙니다. 저장과 공유 버튼은 별도 안내가 없으면 시연 창을 엽니다. 실제 학생 정보는 입력하지 마세요.</aside>
 <main class="flex-grow pt-16 flex overflow-hidden h-screen">
 <!-- Left SideNavBar -->
 <aside class="w-[panel-width] bg-surface-container-low border-r border-outline-variant flex flex-col p-6 overflow-y-auto custom-scrollbar">
@@ -366,7 +371,7 @@
 </div>
 </div>
 <!-- Chat Message History -->
-<div class="flex-grow overflow-y-auto p-8 space-y-8 custom-scrollbar chat-staggered" id="chat-history"><div class="flex flex-col items-center mb-4 animate-chat"><span class="px-3 py-1 bg-surface-container rounded-full text-[12px] text-secondary font-medium">오전 10:24</span></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant"><img alt="AI Tutor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugzzudRMNbEIYzbLB9LVmt_RIDGjoGLVtz5KDroChEUQzcHc2WeXlw6bhMRJbo34HnEL6Aax53v1_YbN63VWRFgABJGil4NuSYdDaB17Vama70eC4QGEddtWgb8EbUr7ki5HJkohmIsox4y9IXVc8ocnHtU8DBkrZgryw7ceXJPVQ9ajxL6kTudzP-9wStbZc2a1tHpPjiBy0We535o397gRevZUwtCrqDcqggYw61HEb2DKQCnN9JlIcA"/></div><div class="space-y-2"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface leading-relaxed">반가워요! 오늘은 우리 학교나 주변에서 해결하고 싶은 불편한 점이나 문제가 있는지 이야기해볼까요?</div></div></div><div class="flex flex-row-reverse gap-4 max-w-[80%] ml-auto animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-on-surface flex items-center justify-center text-white font-bold text-[12px]">나</div><div class="bg-on-surface text-white p-4 rounded-2xl rounded-tr-none shadow-md leading-relaxed">학교 앞 횡단보도가 너무 위험해요. 신호등이 없어서 건널 때마다 무서워요.</div></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant"><img alt="AI Tutor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugzzudRMNbEIYzbLB9LVmt_RIDGjoGLVtz5KDroChEUQzcHc2WeXlw6bhMRJbo34HnEL6Aax53v1_YbN63VWRFgABJGil4NuSYdDaB17Vama70eC4QGEddtWgb8EbUr7ki5HJkohmIsox4y9IXVc8ocnHtU8DBkrZgryw7ceXJPVQ9ajxL6kTudzP-9wStbZc2a1tHpPjiBy0We535o397gRevZUwtCrqDcqggYw61HEb2DKQCnN9JlIcA"/></div><div class="space-y-2"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface leading-relaxed">정말 위험하겠네요. 특히 어떤 점이 가장 무섭게 느껴졌나요?</div></div></div><div class="flex flex-row-reverse gap-4 max-w-[80%] ml-auto animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-on-surface flex items-center justify-center text-white font-bold text-[12px]">나</div><div class="bg-on-surface text-white p-4 rounded-2xl rounded-tr-none shadow-md leading-relaxed">차들이 사람이 있어도 안 멈추고 그냥 쌩쌩 지나가요. 어제도 제 옆 친구가 치일 뻔했어요.</div></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant ai-pulse-active"><img alt="AI Tutor" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugzzudRMNbEIYzbLB9LVmt_RIDGjoGLVtz5KDroChEUQzcHc2WeXlw6bhMRJbo34HnEL6Aax53v1_YbN63VWRFgABJGil4NuSYdDaB17Vama70eC4QGEddtWgb8EbUr7ki5HJkohmIsox4y9IXVc8ocnHtU8DBkrZgryw7ceXJPVQ9ajxL6kTudzP-9wStbZc2a1tHpPjiBy0We535o397gRevZUwtCrqDcqggYw61HEb2DKQCnN9JlIcA"/></div><div class="space-y-4"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface"><p class="leading-relaxed mb-4">중요한 문제를 발견했네요! 우리가 이 문제를 해결하기 위해 누군가에게 건의를 하려면 '증거'가 필요해요. 실제로 차들이 얼마나 빨리 지나가는지, 혹은 얼마나 안 멈추는지 알 수 있는 구체적인 자료를 찾아볼 수 있을까요?</p><div class="flex gap-2"><button class="px-3 py-1.5 border border-outline-variant bg-white text-secondary text-body-md rounded-full hover:bg-surface-container-high btn-glow-secondary transition-all">관련 사례 보기</button><button class="px-3 py-1.5 border border-outline-variant bg-white text-secondary text-body-md rounded-full hover:bg-surface-container-high btn-glow-secondary transition-all">근거 수집 팁</button></div></div><div class="flex items-center gap-2 text-secondary text-body-md italic ml-2 thinking-indicator"><span class="w-2 h-2 bg-primary-container rounded-full animate-bounce"></span>AI가 다음 단계를 준비하고 있어요...</div></div></div></div>
+<div class="flex-grow overflow-y-auto p-8 space-y-8 custom-scrollbar chat-staggered" id="chat-history"><div class="flex flex-col items-center mb-4 animate-chat"><span class="px-3 py-1 bg-surface-container rounded-full text-[12px] text-secondary font-medium">오전 10:24</span></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant"><img alt="AI Tutor" class="w-full h-full object-cover" src="/lectures/stitch-ai-poc/demo-avatar.svg"/></div><div class="space-y-2"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface leading-relaxed">반가워요! 오늘은 우리 학교나 주변에서 해결하고 싶은 불편한 점이나 문제가 있는지 이야기해볼까요?</div></div></div><div class="flex flex-row-reverse gap-4 max-w-[80%] ml-auto animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-on-surface flex items-center justify-center text-white font-bold text-[12px]">나</div><div class="bg-on-surface text-white p-4 rounded-2xl rounded-tr-none shadow-md leading-relaxed">학교 앞 횡단보도가 너무 위험해요. 신호등이 없어서 건널 때마다 무서워요.</div></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant"><img alt="AI Tutor" class="w-full h-full object-cover" src="/lectures/stitch-ai-poc/demo-avatar.svg"/></div><div class="space-y-2"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface leading-relaxed">정말 위험하겠네요. 특히 어떤 점이 가장 무섭게 느껴졌나요?</div></div></div><div class="flex flex-row-reverse gap-4 max-w-[80%] ml-auto animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-on-surface flex items-center justify-center text-white font-bold text-[12px]">나</div><div class="bg-on-surface text-white p-4 rounded-2xl rounded-tr-none shadow-md leading-relaxed">차들이 사람이 있어도 안 멈추고 그냥 쌩쌩 지나가요. 어제도 제 옆 친구가 치일 뻔했어요.</div></div><div class="flex gap-4 max-w-[80%] animate-chat"><div class="w-10 h-10 flex-shrink-0 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden border border-outline-variant ai-pulse-active"><img alt="AI Tutor" class="w-full h-full object-cover" src="/lectures/stitch-ai-poc/demo-avatar.svg"/></div><div class="space-y-4"><div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none border border-outline-variant/20 shadow-sm text-on-surface"><p class="leading-relaxed mb-4">중요한 문제를 발견했네요! 우리가 이 문제를 해결하기 위해 누군가에게 건의를 하려면 '증거'가 필요해요. 실제로 차들이 얼마나 빨리 지나가는지, 혹은 얼마나 안 멈추는지 알 수 있는 구체적인 자료를 찾아볼 수 있을까요?</p><div class="flex gap-2"><button class="px-3 py-1.5 border border-outline-variant bg-white text-secondary text-body-md rounded-full hover:bg-surface-container-high btn-glow-secondary transition-all">관련 사례 보기</button><button class="px-3 py-1.5 border border-outline-variant bg-white text-secondary text-body-md rounded-full hover:bg-surface-container-high btn-glow-secondary transition-all">근거 수집 팁</button></div></div><div class="flex items-center gap-2 text-secondary text-body-md italic ml-2 thinking-indicator"><span class="w-2 h-2 bg-primary-container rounded-full animate-bounce"></span>AI가 다음 단계를 준비하고 있어요...</div></div></div></div>
 <!-- Chat Input Area -->
 <div class="p-8 border-t border-outline-variant/30 bg-white shadow-[0_-4px_24px_rgba(0,0,0,0.02)]">
 <div class="relative bg-white rounded-2xl border border-outline-variant focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary-container/10 transition-all p-2 flex items-end gap-2">
@@ -550,7 +555,7 @@
             </svg>
             <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
           </div>
-          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <button aria-label="PoC 네비게이터 닫기" onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -616,7 +621,7 @@
       </div>
 
       <!-- Floating Button -->
-      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+      <button aria-label="PoC 네비게이터 열기" onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
         </svg>
@@ -655,5 +660,5 @@
           }
       })();
     </script>
-        <script src="/lectures/stitch-ai-poc/demo_interactions.js"></script>
+        <script src="/lectures/stitch-ai-poc/demo_interactions.js?v=20261022"></script>
 </body></html>

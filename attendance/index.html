@@ -5,6 +5,7 @@
     <script src="/js/preferences.js?v=20260913a"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>출석 시스템</title>
+    <meta name="description" content="학생을 등록하고 날짜별 출결을 기록하는 브라우저 저장형 출석 도구">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -101,6 +102,7 @@
                 <div class="lang-content lang-ko active">
                     <h2>신규 학생 추가</h2>
                     <form id="studentForm">
+                        <label for="studentName">학생 이름</label>
                         <input type="text" id="studentName" placeholder="학생 이름 입력" required>
                         <button type="submit">학생 추가</button>
                     </form>
@@ -108,12 +110,18 @@
                 <div class="lang-content lang-en">
                     <h2>Add New Student</h2>
                     <form id="studentFormEn">
+                        <label for="studentNameEn">Student name</label>
                         <input type="text" id="studentNameEn" placeholder="Enter student name" required>
                         <button type="submit">Add Student</button>
                     </form>
                 </div>
             </div>
 
+            <div class="section">
+                <p class="lang-content lang-ko active">출석 기록은 이 기기의 현재 브라우저에만 저장됩니다. 다른 기기나 브라우저와 공유되지 않으며, 브라우저 데이터를 삭제하면 사라집니다. 필요한 기록은 JSON으로 내보내 보관하세요.</p>
+                <p class="lang-content lang-en">Attendance is stored only in this browser on this device. It is not shared with other devices or browsers and is lost if browser data is cleared. Export important records as JSON.</p>
+                <button type="button" id="exportAttendance">출석 기록 내보내기 (JSON)</button>
+            </div>
             <!-- Attendance Taking Section -->
             <div class="section">
                 <div class="lang-content lang-ko active">
@@ -189,6 +197,7 @@
     </footer>
 
     <script src="/js/main.js?v=20260914-menu"></script>
-    <script src="/js/attendance.js"></script>
+    <script src="/js/local-progress.js?v=20261022"></script>
+    <script src="/js/attendance.js?v=20261022"></script>
 </body>
 </html>
