@@ -58,7 +58,7 @@ External project repos served under the same domain: `astar-pathfinding`, `simpl
 
 ## 🛠️ Technologies
 
-- **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+) — no build step
+- **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+), plus two prebuilt React games
 - **SQL Practice**: sql.js (browser SQLite) with KCI CSV data
 - **Machine Learning**: TensorFlow.js + COCO-SSD for on-device webcam object detection
 - **Games/Demos**: Canvas API; React (CDN) for Micro Robot
@@ -120,8 +120,44 @@ Attendance uses `attendanceDataV2` and keeps the legacy `students` and
 `attendanceRecords` keys intact. Attendance and the programming/database labs keep
 working in memory when storage fails, display a warning and offer JSON export.
 The programming lab checks patterns only; it does not compile or execute code.
-PoC pages show fictional data and simulated interactions. Their Tailwind CDN is
-still required for styles; fonts and other CDN resources require network access.
+PoC pages show fictional data and simulated interactions. Their styles and the
+Micro Robot and StackBurger production bundles are prebuilt in `assets/site/`.
+Google fonts and some simulation libraries still require network access.
+
+### Production assets and learning tools
+
+GitHub Pages serves committed files, with no build needed at runtime. To edit
+the two React games, change `apps/microrobot/main.jsx` or
+`apps/stackburger/main.jsx`, then run `npm ci` and `npm run build`.
+Tailwind configurations are in `apps/*-tailwind.cjs`; `apps/site-build.json`
+lists the eleven pages. Commit the rebuilt `assets/site/` files together with
+their source. Runtime dependencies are version pinned, with licenses in
+`assets/site/LICENSES.md`. The separate Alligator Chess build remains unchanged.
+
+The database lab loads its local SQLite engine and CSV only for search/SQL
+activities or an explicit load request. A Worker builds one baseline database
+and opens a fresh snapshot for every query. Queries time out after ten seconds;
+retrying reloads the dataset. Result previews are bounded to 50 rows per result.
+
+The 25 image-based Computer Education 2 and Microdegree 1 decks include reading
+text, mobile navigation, bookmarks, recent pages, shareable links and current,
+range or activity-only printing. Full-deck printing remains available. Recent
+pages and lab records stay in browser storage; JSON export/import validates the
+activity schema and asks before replacing records. Invalid existing records
+remain protected. No server receives these records.
+
+Freesentation originals and their OFL license are retained. The subset files
+preserve all 14,527 mapped characters in each weight and use `unicode-range`.
+To regenerate: install `fonttools==4.60.1 brotli==1.2.0`, then run
+`python scripts/subset-fonts.py`. Regenerate when lecture text changes substantially
+to refresh the grouping of common characters; existing subsets still cover them.
+
+CI rebuilds production assets and checks browser journeys, mobile overflow,
+serious accessibility findings in new controls, SQL recovery, record import,
+game regressions and a 210 KB JavaScript budget per React game.
+Run `npm run test:browser -- http://127.0.0.1:8772` against a preview server.
+Browser tests default to installed Edge; set `PW_CHANNEL=none` to use Playwright's
+Chromium installed with `npx playwright install chromium`.
 
 Shared pages use `js/preferences.js` in the head before `js/main.js`.
 Set `data-bilingual="true"` on `<html>` only when the page supports both languages.

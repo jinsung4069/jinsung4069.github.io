@@ -18,11 +18,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/site/icons.css">
     <link rel="stylesheet" href="/css/style.css?v=20261007wrap">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
 <script defer src="/js/clean-url.js"></script>
+<link rel="stylesheet" href="/css/site-tools.css">
 </head>
 
 <body data-title-ko="전인성 - 포트폴리오 & CV" data-title-en="Inseong Jeon - Portfolio & CV">
@@ -53,7 +54,7 @@
                             <span class="lang-content lang-ko active">연락처</span>
                             <span class="lang-content lang-en">Contact</span>
                         </a></li>
-                    </ul>
+                    <li class="nav-item"><a class="nav-text-link" href="/lectures/"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span></a></li></ul>
                 </nav>
                 <div class="header-controls">
                     <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Dark mode toggle">
@@ -93,7 +94,7 @@
                 <span class="lang-content lang-ko active">연락처</span>
                 <span class="lang-content lang-en">Contact</span>
             </a></li>
-        </ul>
+        <li class="nav-item"><a class="nav-text-link" href="/lectures/"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span></a></li></ul>
     </nav>
 
     <!-- Page Content -->
@@ -164,14 +165,18 @@
                 </div>
             </div>
 
-            <!-- Projects Section -->
+            <section class="cover"><div class="projects-section"><h2 class="section-title"><span class="lang-content lang-ko active">강의와 실습</span><span class="lang-content lang-en">Lectures and activities</span></h2><a class="course-entry" href="/lectures/"><span class="lang-content lang-ko active">과목별 강의자료, 최근 읽은 강의와 북마크 열기 →</span><span class="lang-content lang-en">Open courses, recent lectures and bookmarks →</span></a></div></section>
+<!-- Projects Section -->
             <div class="cover" id="projects">
                 <div class="projects-section">
                     <h2 class="section-title">
                         <span class="lang-content lang-ko active">인터랙티브 프로젝트</span>
                         <span class="lang-content lang-en">Interactive Projects</span>
                     </h2>
-                    <div class="project-grid">
+                    <div class="project-filter" role="search" aria-label="프로젝트 찾기">
+<label><span class="lang-content lang-ko active">프로젝트 검색</span><span class="lang-content lang-en">Search projects</span><input id="project-search" type="search" placeholder="AI, 데이터, 게임" autocomplete="off"></label>
+<label><span class="lang-content lang-ko active">분류</span><span class="lang-content lang-en">Category</span><select id="project-category"><option value="all">전체 / All</option><option value="ai">AI</option><option value="data">데이터, 코딩 / Data, coding</option><option value="game">게임 / Games</option><option value="simulation">시뮬레이션 / Simulation</option></select></label>
+<p id="project-result" role="status"></p></div><div class="project-grid">
                         <a href="/ai-understanding-lab/" class="project-card-link">
                             <div class="project-card">
                                 <div class="project-icon"><i class="fas fa-brain"></i></div>
@@ -389,7 +394,7 @@
         </div>
     </footer>
 
-    <script src="/js/main.js?v=20260914-menu"></script>
+    <script src="/js/main.js?v=20261022upgrade"></script>
 </body>
 
 </html>

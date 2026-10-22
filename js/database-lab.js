@@ -1,7 +1,5 @@
 (function() {
     const STORAGE_KEY = 'databaseLabProgressV1';
-    const KCI_CSV_PATH = '../data/kci_articles.csv';
-    const SQL_JS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.13.0/';
     const RESULT_LIMIT = 50;
 
     const ui = {
@@ -344,15 +342,19 @@
 
     const progressStore = localProgress.create(STORAGE_KEY, defaultProgress, value => localProgress.validProgress(value, modules.map(m => m.id), false));
     let progress = progressStore.value;
+    const sqlDrafts = Object.create(null);
+    let searchBusy = false;
+    window.addEventListener('local-progress-import', event => {if(event.detail.key === STORAGE_KEY){progress = progressStore.value; render();}});
     const dataset = {
-        status: 'loading',
+        status: 'idle',
         error: '',
-        rows: [],
+        rowCount: 0,
+        journals: [],
         columns: [],
         sampleRows: [],
         journalCount: 0,
         keywordCount: 0,
-        SQL: null
+        loading: null
     };
     const searchExperienceState = {
         runs: 0,
@@ -364,7 +366,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         render();
-        initializeDataset();
 
         const resetButton = document.getElementById('resetProgress');
         if (resetButton) {
@@ -379,33 +380,40 @@
         observer.observe(document.documentElement, { attributes: true });
     });
 
-    async function initializeDataset() {
-        try {
-            if (typeof initSqlJs !== 'function') {
-                throw new Error('sql.js is not loaded');
-            }
-            dataset.SQL = await initSqlJs({
-                locateFile: file => `${SQL_JS_CDN}${file}`
-            });
-            const response = await fetch(KCI_CSV_PATH);
-            if (!response.ok) {
-                throw new Error(`CSV request failed: ${response.status}`);
-            }
-            const csvText = await response.text();
-            const parsed = parseCsv(csvText);
-            dataset.columns = parsed.headers;
-            dataset.rows = parsed.rows;
-            dataset.sampleRows = parsed.rows.slice(0, 5);
-            const db = createKciDatabase();
-            dataset.journalCount = scalar(db, 'SELECT COUNT(*) FROM journals');
-            dataset.keywordCount = scalar(db, 'SELECT COUNT(*) FROM article_keywords');
-            db.close();
-            dataset.status = 'ready';
-        } catch (error) {
-            dataset.status = 'error';
-            dataset.error = error.message || String(error);
+    let worker, requestId = 0;
+    const requests = new Map();
+    function stopWorker(message) {
+        worker?.terminate(); worker = null;
+        for (const request of requests.values()) { clearTimeout(request.timer); request.reject(new Error(message)); }
+        requests.clear(); dataset.status = 'error'; dataset.error = message;
+    }
+    function requestDatabase(type, payload = {}) {
+        if (!worker) {
+            worker = new Worker('/js/database-worker.js');
+            worker.onmessage = ({ data }) => {
+                const request = requests.get(data.id); if (!request) return;
+                clearTimeout(request.timer); requests.delete(data.id);
+                data.error ? request.reject(new Error(data.error)) : request.resolve(data.result);
+            };
+            worker.onerror = () => stopWorker(text({ko:'데이터 처리를 다시 시작해 주세요.',en:'Please restart data processing.'}));
         }
-        render();
+        return new Promise((resolve, reject) => {
+            const id = ++requestId;
+            const timer = setTimeout(() => stopWorker(text({ko:'처리 시간이 초과되었습니다. 자료 다시 불러오기를 눌러 주세요.',en:'Processing timed out. Reload the dataset to retry.'})), type === 'initialize' ? 60000 : 10000);
+            requests.set(id, {resolve, reject, timer}); worker.postMessage({id, type, ...payload});
+        });
+    }
+    async function initializeDataset() {
+        if (dataset.status === 'ready') return true;
+        if (dataset.loading) return dataset.loading;
+        dataset.status = 'loading'; renderDatasetStatus();
+        dataset.loading = (async () => {
+            try { Object.assign(dataset, await requestDatabase('initialize')); dataset.status = 'ready'; dataset.error = ''; }
+            catch (error) { dataset.status = 'error'; dataset.error = error.message; }
+            finally { dataset.loading = null; render(); }
+            return dataset.status === 'ready';
+        })();
+        return dataset.loading;
     }
 
     function getLang() {
@@ -465,12 +473,12 @@
         const container = document.getElementById('datasetStatus');
         if (!container) return;
 
-        const statusText = dataset.status === 'ready'
+        const statusText = dataset.status === 'idle' ? text({ko:'실습할 때 자료 불러오기',en:'Load data when needed'}) : dataset.status === 'ready'
             ? text(ui.datasetReady)
             : dataset.status === 'error'
                 ? text(ui.datasetError)
                 : text(ui.datasetLoading);
-        const body = dataset.status === 'ready'
+        const body = dataset.status === 'idle' ? text({ko:'선택형 활동은 바로 시작할 수 있습니다. 검색과 SQL 실습을 선택하면 자료를 불러옵니다.',en:'Choice activities are ready. The dataset loads when you select search or SQL practice.'}) : dataset.status === 'ready'
             ? text(ui.datasetReadyBody)
             : dataset.status === 'error'
                 ? `${text(ui.datasetFallbackBody)} ${dataset.error ? `(${dataset.error})` : ''}`
@@ -481,15 +489,17 @@
                 <p class="overview-label">${escapeHtml(text(ui.datasetTitle))}</p>
                 <h2>${escapeHtml(statusText)}</h2>
                 <p>${escapeHtml(body)}</p>
-                <div class="dataset-metrics">
-                    <span class="dataset-metric">${escapeHtml(text(ui.rows))}: ${dataset.rows.length.toLocaleString()}</span>
+                <div class="dataset-metrics" ${dataset.status === 'ready' ? '' : 'hidden'}>
+                    <span class="dataset-metric">${escapeHtml(text(ui.rows))}: ${dataset.rowCount.toLocaleString()}</span>
                     <span class="dataset-metric">${escapeHtml(text(ui.columns))}: ${dataset.columns.length}</span>
                     <span class="dataset-metric">${escapeHtml(text(ui.journals))}: ${dataset.journalCount.toLocaleString()}</span>
                     <span class="dataset-metric">${escapeHtml(text(ui.keywords))}: ${dataset.keywordCount.toLocaleString()}</span>
                 </div>
             </div>
             <span class="dataset-status-pill ${dataset.status}">${escapeHtml(statusText)}</span>
+            ${dataset.status === 'idle' || dataset.status === 'error' ? `<button type="button" id="loadDataset">${text({ko:'자료 불러오기 / 다시 시도',en:'Load data / retry'})}</button>` : ''}
         `;
+        document.getElementById('loadDataset')?.addEventListener('click', initializeDataset);
     }
 
     function renderTabs() {
@@ -521,6 +531,7 @@
         if (!container) return;
 
         const module = getCurrentModule();
+        if (module.kind !== 'choice' && dataset.status === 'idle') initializeDataset();
         const score = progress.scores[module.id] || 0;
         const attemptCount = progress.attempts[module.id] || 0;
 
@@ -566,6 +577,7 @@
         `;
 
         document.getElementById('checkAnswer').addEventListener('click', () => checkAnswer(module));
+        document.getElementById('sqlAnswer')?.addEventListener('input', event => { sqlDrafts[module.id] = event.target.value; });
         document.getElementById('nextModule').addEventListener('click', () => goToNextModule(module));
         if (module.kind === 'search') {
             attachSearchExperience();
@@ -581,7 +593,7 @@
         return `
             <div class="sql-note">
                 <strong>kci_articles</strong>, <strong>journals</strong>, <strong>article_keywords</strong>
-                · ${escapeHtml(text(ui.rows))}: ${dataset.rows.length.toLocaleString()}
+                · ${escapeHtml(text(ui.rows))}: ${dataset.rowCount.toLocaleString()}
             </div>
             ${renderResultTable({
                 columns: previewColumns,
@@ -619,7 +631,7 @@
             keyword: 'AI',
             sort: 'year-desc'
         };
-        const disabled = dataset.status !== 'ready' ? ' disabled' : '';
+        const disabled = dataset.status !== 'ready' || searchBusy ? ' disabled' : '';
         const outputHtml = renderSearchOutput();
 
         return `
@@ -676,7 +688,7 @@
             <div class="sql-note">${escapeHtml(module.id === 'sql-application'
                 ? text({ ko: '실습용 article_review 테이블은 매 실행마다 새 SQLite DB에서 평가됩니다.', en: 'article_review is evaluated in a fresh SQLite database on each run.' })
                 : text({ ko: 'SELECT 결과는 최대 50행까지 표시됩니다.', en: 'SELECT results are displayed up to 50 rows.' }))}</div>
-            <textarea id="sqlAnswer" class="answer-area" spellcheck="false" placeholder="${escapeHtml(text(module.placeholder))}"></textarea>
+            <textarea id="sqlAnswer" class="answer-area" spellcheck="false" aria-label="${escapeHtml(text(module.title))} SQL" placeholder="${escapeHtml(text(module.placeholder))}">${escapeHtml(sqlDrafts[module.id] || '')}</textarea>
         `;
     }
 
@@ -684,12 +696,15 @@
         const form = document.getElementById('paperSearchForm');
         const resetButton = document.getElementById('resetSearchExperience');
         if (form) {
+            form.addEventListener('input', () => { searchExperienceState.filters = readSearchFilters(); });
+            form.addEventListener('change', () => { searchExperienceState.filters = readSearchFilters(); });
             form.addEventListener('submit', event => {
                 event.preventDefault();
                 runSearchExperience();
             });
         }
         if (resetButton) {
+            resetButton.disabled = searchBusy;
             resetButton.addEventListener('click', () => {
                 searchExperienceState.runs = 0;
                 searchExperienceState.filters = null;
@@ -701,7 +716,8 @@
         }
     }
 
-    function runSearchExperience() {
+    async function runSearchExperience() {
+        if (searchBusy) return;
         const output = document.querySelector('.sql-preview-panel');
         searchExperienceState.filters = readSearchFilters();
 
@@ -713,12 +729,14 @@
             return;
         }
 
-        let db;
+        const button = document.getElementById('runSearchExperience');
+        searchBusy = true;
+        if (button) button.disabled = true;
+        document.getElementById('resetSearchExperience').disabled = true;
         try {
             const sql = buildSearchSql(searchExperienceState.filters);
             searchExperienceState.lastSql = sql;
-            db = createKciDatabase();
-            const results = db.exec(sql);
+            const {results} = await requestDatabase('query', {sql});
             searchExperienceState.runs += 1;
             searchExperienceState.lastResult = results.length ? results[0] : null;
             searchExperienceState.lastError = '';
@@ -726,16 +744,18 @@
             searchExperienceState.lastError = error.message || String(error);
             searchExperienceState.lastResult = null;
         } finally {
-            if (db) db.close();
+            searchBusy = false;
+            if (document.getElementById('runSearchExperience')) document.getElementById('runSearchExperience').disabled = dataset.status !== 'ready';
+            if (document.getElementById('resetSearchExperience')) document.getElementById('resetSearchExperience').disabled = false;
+            renderDatasetStatus();
         }
 
         const runCount = document.querySelector('.search-form .result-meta');
         if (runCount) {
             runCount.textContent = `${text(ui.searchRunCount)}: ${searchExperienceState.runs}`;
         }
-        if (output) {
-            output.innerHTML = renderSearchOutput();
-        }
+        const currentOutput = document.querySelector('.sql-preview-panel');
+        if (currentOutput) currentOutput.innerHTML = renderSearchOutput();
     }
 
     function readSearchFilters() {
@@ -812,7 +832,7 @@ LIMIT 20;`;
 
     function getSearchJournalOptions(selectedJournal) {
         if (dataset.status !== 'ready') return '';
-        const journals = Array.from(new Set(dataset.rows.map(row => row.journal).filter(Boolean))).sort();
+        const journals = dataset.journals;
         return journals.map(journal => `
             <option value="${escapeHtml(journal)}"${journal === selectedJournal ? ' selected' : ''}>${escapeHtml(journal)}</option>
         `).join('');
@@ -826,7 +846,10 @@ LIMIT 20;`;
         return `'${String(value).replace(/'/g, "''")}'`;
     }
 
+    let checking = false;
     async function checkAnswer(module) {
+        if (checking) return; checking = true;
+        try {
         const result = module.kind === 'choice'
             ? evaluateChoice(module)
             : module.kind === 'search'
@@ -842,8 +865,8 @@ LIMIT 20;`;
         saveProgress();
         renderOverview();
         renderTabs();
-        showFeedback(module, result);
-        updateScorePill(module);
+        if (progress.currentModule === module.id) { showFeedback(module, result); updateScorePill(module); }
+        } finally { checking = false; }
     }
 
     function evaluateChoice(module) {
@@ -907,78 +930,18 @@ LIMIT 20;`;
             return sqlFailure(module, text(ui.blockedSql));
         }
 
-        let db;
         try {
-            db = createKciDatabase();
-            const results = db.exec(rawSql);
-            const details = module.id === 'sql-application'
-                ? evaluateSqlApplication(db, strippedSql, keywordSql, results, null)
-                : evaluateSqlUsage(strippedSql, results, null);
+            const {results, details} = await requestDatabase('query', {sql: rawSql, moduleId: module.id});
+            for (const item of details) item.label = text(module.checks.find(check => check.id === item.id).label);
             return buildSqlResult(module, details, results, null);
         } catch (error) {
-            if (db) db.close();
-            const details = module.checks.map(check => ({
-                id: check.id,
-                label: text(check.label),
-                met: false
-            }));
-            return buildSqlResult(module, details, [], error.message || String(error));
-        } finally {
-            if (db) db.close();
+            renderDatasetStatus();
+            return sqlFailure(module, error.message || String(error));
         }
     }
 
-    function evaluateSqlApplication(db, strippedSql, keywordSql) {
-        const details = [];
-        const tableExists = scalar(db, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='article_review'") > 0;
-        const columns = tableExists ? tableColumns(db, 'article_review') : [];
-        const rowCount = tableExists ? scalar(db, 'SELECT COUNT(*) FROM article_review') : 0;
-        const recentCount = tableExists && columns.includes('review_status')
-            ? scalar(db, "SELECT COUNT(*) FROM article_review WHERE review_status = 'RECENT'")
-            : 0;
-        const emptyTitleCount = tableExists && columns.includes('title')
-            ? scalar(db, "SELECT COUNT(*) FROM article_review WHERE title IS NULL OR TRIM(title) = ''")
-            : 0;
 
-        details.push(detail('runs', true));
-        details.push(detail('create-review', tableExists));
-        details.push(detail('insert-source', /\binsert\s+into\s+article_review\b[\s\S]*\bfrom\s+kci_articles\b/.test(strippedSql)));
-        details.push(detail('required-columns', ['article_id', 'title', 'publication_year', 'review_status'].every(column => columns.includes(column))));
-        details.push(detail('row-count', rowCount >= 20));
-        details.push(detail('update-status', /\bupdate\s+article_review\s+set\b[\s\S]*review_status[\s\S]*recent/.test(strippedSql) && recentCount > 0));
-        details.push(detail('delete-cleanup', /\bdelete\s+from\s+article_review\b[\s\S]*\bwhere\b/.test(strippedSql) && emptyTitleCount === 0));
-        details.push(detail('commit-rollback', /\bcommit\b/.test(strippedSql) && /\brollback\b/.test(keywordSql)));
-        return details;
-    }
 
-    function evaluateSqlUsage(strippedSql, results) {
-        const finalResult = results.length ? results[results.length - 1] : null;
-        const columns = finalResult ? finalResult.columns.map(column => column.toLowerCase()) : [];
-        const rowCount = finalResult ? finalResult.values.length : 0;
-        const usesAllTables = ['kci_articles', 'journals', 'article_keywords'].every(table => strippedSql.includes(table));
-        const hasResultColumns = ['publication_year', 'journal', 'article_count'].every(column => columns.includes(column));
-
-        return [
-            detail('runs', true),
-            detail('index', /\bcreate\s+index\b/.test(strippedSql)),
-            detail('tables', usesAllTables),
-            detail('join', /\bjoin\b/.test(strippedSql)),
-            detail('subquery', /\bin\s*\(\s*select\b|\bexists\s*\(\s*select\b/.test(strippedSql)),
-            detail('group-having', /\bgroup\s+by\b/.test(strippedSql) && /\bhaving\b/.test(strippedSql)),
-            detail('count-result', /\bcount\s*\(/.test(strippedSql) && rowCount > 0),
-            detail('result-columns', hasResultColumns)
-        ];
-    }
-
-    function detail(id, met) {
-        const module = getCurrentModule();
-        const check = module.checks.find(item => item.id === id);
-        return {
-            id,
-            label: check ? text(check.label) : id,
-            met
-        };
-    }
 
     function sqlFailure(module, errorMessage) {
         const details = module.checks.map(check => ({
@@ -987,6 +950,11 @@ LIMIT 20;`;
             met: false
         }));
         return buildSqlResult(module, details, [], errorMessage);
+    }
+
+    function detail(id, met) {
+        const check = getCurrentModule().checks.find(item => item.id === id);
+        return {id, label: check ? text(check.label) : id, met};
     }
 
     function buildSqlResult(module, details, results, errorMessage) {
@@ -1124,157 +1092,11 @@ LIMIT 20;`;
             .trim();
     }
 
-    function createKciDatabase() {
-        const db = new dataset.SQL.Database();
-        db.run(`
-            CREATE TABLE kci_articles (
-                article_id TEXT PRIMARY KEY,
-                title TEXT,
-                title_en TEXT,
-                authors TEXT,
-                journal TEXT,
-                publisher TEXT,
-                publication_year INTEGER,
-                published_date TEXT,
-                doi TEXT,
-                url TEXT,
-                keywords TEXT,
-                keywords_en TEXT,
-                abstract TEXT,
-                abstract_en TEXT,
-                citation_count INTEGER,
-                reference_count INTEGER,
-                source_files TEXT
-            );
 
-            CREATE TABLE journals (
-                journal_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                journal TEXT UNIQUE,
-                publisher TEXT,
-                article_count INTEGER,
-                first_year INTEGER,
-                last_year INTEGER
-            );
 
-            CREATE TABLE article_keywords (
-                article_id TEXT,
-                keyword TEXT,
-                keyword_language TEXT
-            );
-        `);
 
-        const articleStmt = db.prepare(`
-            INSERT INTO kci_articles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        dataset.rows.forEach(row => {
-            articleStmt.run([
-                row.article_id,
-                row.title,
-                row.title_en,
-                row.authors,
-                row.journal,
-                row.publisher,
-                toNumber(row.publication_year),
-                row.published_date,
-                row.doi,
-                row.url,
-                row.keywords,
-                row.keywords_en,
-                row.abstract,
-                row.abstract_en,
-                toNumber(row.citation_count),
-                toNumber(row.reference_count),
-                row.source_files
-            ]);
-        });
-        articleStmt.free();
 
-        db.run(`
-            INSERT INTO journals (journal, publisher, article_count, first_year, last_year)
-            SELECT journal, MIN(publisher), COUNT(*), MIN(publication_year), MAX(publication_year)
-            FROM kci_articles
-            WHERE TRIM(journal) <> ''
-            GROUP BY journal;
-        `);
 
-        const keywordStmt = db.prepare('INSERT INTO article_keywords VALUES (?, ?, ?)');
-        dataset.rows.forEach(row => {
-            splitKeywords(row.keywords).forEach(keyword => keywordStmt.run([row.article_id, keyword, 'ko']));
-            splitKeywords(row.keywords_en).forEach(keyword => keywordStmt.run([row.article_id, keyword, 'en']));
-        });
-        keywordStmt.free();
-
-        return db;
-    }
-
-    function parseCsv(csvText) {
-        const rows = [];
-        let current = [];
-        let field = '';
-        let inQuotes = false;
-        const textValue = csvText.replace(/^\uFEFF/, '');
-
-        for (let i = 0; i < textValue.length; i++) {
-            const char = textValue[i];
-            const next = textValue[i + 1];
-
-            if (char === '"') {
-                if (inQuotes && next === '"') {
-                    field += '"';
-                    i++;
-                } else {
-                    inQuotes = !inQuotes;
-                }
-            } else if (char === ',' && !inQuotes) {
-                current.push(field);
-                field = '';
-            } else if ((char === '\n' || char === '\r') && !inQuotes) {
-                if (char === '\r' && next === '\n') i++;
-                current.push(field);
-                if (current.some(value => value !== '')) rows.push(current);
-                current = [];
-                field = '';
-            } else {
-                field += char;
-            }
-        }
-
-        if (field || current.length) {
-            current.push(field);
-            rows.push(current);
-        }
-
-        const headers = rows.shift() || [];
-        return {
-            headers,
-            rows: rows.map(row => Object.fromEntries(headers.map((header, index) => [header, row[index] || ''])))
-        };
-    }
-
-    function splitKeywords(value) {
-        return String(value || '')
-            .split(/[,;；、]/)
-            .map(item => item.trim())
-            .filter(Boolean)
-            .slice(0, 30);
-    }
-
-    function tableColumns(db, tableName) {
-        const result = db.exec(`PRAGMA table_info(${tableName})`);
-        if (!result.length) return [];
-        return result[0].values.map(row => String(row[1]).toLowerCase());
-    }
-
-    function scalar(db, sql) {
-        const result = db.exec(sql);
-        if (!result.length || !result[0].values.length) return 0;
-        return Number(result[0].values[0][0]) || 0;
-    }
-
-    function toNumber(value) {
-        const number = Number(value);
-        return Number.isFinite(number) ? number : null;
-    }
 
     function format(template, values) {
         return Object.entries(values).reduce((output, [key, value]) => output.replace(`{${key}}`, value), template);

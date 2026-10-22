@@ -83,6 +83,24 @@ document.addEventListener('DOMContentLoaded', function () {
     setTheme(preferences.theme());
     systemTheme.addEventListener('change', event => { if (!manualTheme) setTheme(event.matches ? 'dark' : 'light'); });
 
+    const search = document.getElementById('project-search');
+    const category = document.getElementById('project-category');
+    if (search && category) {
+        const groups = {ai:['ai-understanding-lab','dqn-demo','machinelearning','orange3-widget-lab','webcam-classifier'],data:['database-lab','programming-language'],game:['alligator-chess','microrobot','simplequiz'],simulation:['astar-pathfinding','contour-simulator']};
+        const cards = [...document.querySelectorAll('.project-card-link')];
+        const filter = () => {
+            let count = 0;
+            for (const card of cards) {
+                const slug = new URL(card.href).pathname.split('/').filter(Boolean)[0];
+                card.hidden = !(card.textContent.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase()) && (category.value === 'all' || groups[category.value].includes(slug)));
+                if (!card.hidden) count++;
+            }
+            document.getElementById('project-result').textContent = count ? label(`${count}개 프로젝트`, `${count} projects`) : label('검색 결과가 없습니다. 검색어나 분류를 바꿔 보세요.', 'No results. Try another query or category.');
+        };
+        search.addEventListener('input', filter); category.addEventListener('change', filter); filter();
+        new MutationObserver(filter).observe(document.documentElement, {attributes:true, attributeFilter:['lang']});
+    }
+
     const skillsSection = document.querySelector('.skills-section');
     if (skillsSection && !reducedMotion.matches && 'IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {

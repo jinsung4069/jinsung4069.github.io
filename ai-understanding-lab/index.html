@@ -3,13 +3,14 @@
     <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI 이해 실습 | 데이터와 분류 기준</title><meta name="description" content="규칙 기반 분류와 기계학습을 비교하고 새로운 데이터로 평가하는 개인 실습">    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/assets/site/icons.css">
     <link rel="stylesheet" href="/css/style.css?v=20261007wrap">
     <link rel="stylesheet" href="/css/ai-understanding-lab.css">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
 <link rel="canonical" href="https://jinsung4069.github.io/ai-understanding-lab/">
 <script defer src="/js/clean-url.js"></script>
+<link rel="stylesheet" href="/css/site-tools.css">
 </head><body class="ai-lab-page" data-title-ko="AI 이해 실습 - 전인성" data-title-en="AI Understanding Lab - Inseong Jeon">
     <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a>    <header>
         <div class="header-inner">
@@ -36,7 +37,7 @@
                             <span class="lang-content lang-ko active">연락처</span>
                             <span class="lang-content lang-en">Contact</span>
                         </a></li>
-                    </ul>
+                    <li class="nav-item"><a class="nav-text-link" href="/lectures/"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span></a></li></ul>
                 </nav>
                 <div class="header-controls">
                     <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Dark mode toggle">
@@ -75,7 +76,7 @@
                 <span class="lang-content lang-ko active">연락처</span>
                 <span class="lang-content lang-en">Contact</span>
             </a></li>
-        </ul>
+        <li class="nav-item"><a class="nav-text-link" href="/lectures/"><span class="lang-content lang-ko active">강의자료</span><span class="lang-content lang-en">Lectures</span></a></li></ul>
     </nav>
 
 <main class="page-content container ai-lab" lang="ko" id="main-content" tabindex="-1"><div class="landing-hero-bg lab-hero"><p class="notice">학습 본문은 한국어로 제공됩니다. ENG는 공통 메뉴의 언어를 바꿉니다.<br><span lang="en">Learning activities are in Korean. ENG changes the shared navigation language.</span></p><p class="lab-page-name">AI 이해 실습</p><p class="eyebrow">Chapter 2 인공지능 이해</p><h1>데이터가 바뀌면<br>분류 기준도 바뀔까?</h1><p>직접 정한 규칙과 컴퓨터가 학습한 규칙을 비교하고, 처음 보는 사례에서 어떤 오류가 생기는지 확인합니다.</p><p class="muted">개인 실습, 가입과 설치 없음, 카메라 없음. 입력 내용은 서버로 전송하지 않으며 새로고침하면 초기화됩니다.</p></div><nav class="lab-steps" aria-label="실습 순서"><a href="#observe">1 데이터 관찰</a><a href="#train">2 기준과 학습</a><a href="#evaluate">3 예측과 평가</a><a href="#reflect">4 해석과 공유</a></nav>
@@ -91,4 +92,4 @@
 
 <section id="reflect"><p class="eyebrow">04 해석과 공유</p><h2>점수가 달라진 이유 설명하기</h2><ol><li>처음 자료에서 컴퓨터가 고른 특징은 무엇인가요?</li><li>학습 점수가 높아도 새 자료에서 틀린 이유는 무엇인가요?</li><li>보완 자료로 다시 학습했을 때 기준과 오류가 어떻게 달라지나요?</li><li>실제 교육용 AI라면 어떤 자료를 더 확인해야 할까요?</li></ol><label for="reflection">나의 설명<textarea id="reflection" placeholder="선택한 데이터, 학습한 기준, 평가 결과와 오류 원인을 연결해 적어 보세요."></textarea></label><div class="controls"><button id="copy" class="secondary">결과와 설명 복사</button><button id="download" class="secondary">실습 기록 저장</button><button id="reset" class="secondary">처음부터 다시</button></div><p id="copyStatus" role="status"></p><p>Zoom 채팅에는 복사한 기록 중 <b>학습 기준, 새 자료 점수, 오류 원인 한 문장</b>을 공유하세요. 이름과 연락처를 입력할 필요가 없습니다.</p><details><summary>선택 영상, Teachable Machine 2.0 (2분 8초)</summary><p>Google의 2분 8초 소개 영상. 예시 수집, 학습, 새 입력 확인이 어떻게 이어지는지 살펴보세요. 영어 영상이며 재생과 자막은 YouTube 환경에 따라 달라질 수 있습니다.</p><iframe class="video" loading="lazy" src="https://www.youtube-nocookie.com/embed/T2qQGqZxkD0" title="Google Teachable Machine 2.0 소개 영상, 2분 8초" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=T2qQGqZxkD0" target="_blank" rel="noopener">YouTube에서 영상 열기</a><p><a href="https://teachablemachine.withgoogle.com/" target="_blank" rel="noopener">Google 공식 소개</a></p></details></section>
 
-<p class="lab-back"><a class="btn btn-primary" href="/#projects">프로젝트 목록으로 돌아가기</a></p></main><footer class="lab-footer" lang="ko"><div class="footer-inner">학습용 가상 데이터와 단순화한 분류 모델입니다. 점수는 이 자료 안에서의 일치율이며 실제 서비스 정확도가 아닙니다. 개념 참고: <a href="https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets">Google Machine Learning Crash Course, 데이터 분리</a>.</div></footer><script src="/js/main.js?v=20260914-menu"></script><script src="/js/ai-understanding-lab.js"></script></body></html>
+<p class="lab-back"><a class="btn btn-primary" href="/#projects">프로젝트 목록으로 돌아가기</a></p></main><footer class="lab-footer" lang="ko"><div class="footer-inner">학습용 가상 데이터와 단순화한 분류 모델입니다. 점수는 이 자료 안에서의 일치율이며 실제 서비스 정확도가 아닙니다. 개념 참고: <a href="https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets">Google Machine Learning Crash Course, 데이터 분리</a>.</div></footer><script src="/js/main.js?v=20261022upgrade"></script><script src="/js/ai-understanding-lab.js"></script></body></html>

@@ -284,6 +284,9 @@
 
     const progressStore = localProgress.create(STORAGE_KEY, defaultProgress, value => localProgress.validProgress(value, modules.map(m => m.id), true));
     let progress = progressStore.value;
+    window.addEventListener('local-progress-import', event => {
+        if (event.detail.key === STORAGE_KEY) { progress = progressStore.value; render(); }
+    });
     let activeScenario = comparisonScenarios[0].id;
 
     document.addEventListener('DOMContentLoaded', () => {

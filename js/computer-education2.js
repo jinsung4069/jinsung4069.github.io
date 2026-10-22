@@ -6,7 +6,7 @@
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const icon=name=>`<svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-${name}"></use></svg>`;
  const setIcon=(button,name,label)=>{button.innerHTML=icon(name);button.setAttribute('aria-label',label);button.dataset.tip=label};
- let index=0,data,zoom=false,touchTimer;
+ let index=0,data,zoom=false,touchTimer,updateTools;
  function reveal(){stage.classList.add('controls-visible');clearTimeout(touchTimer);touchTimer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resetZoom(){zoom=false;stage.classList.remove('zoom');setIcon($('#ce-zoom'),'zoom-in','확대');$('#ce-zoom').setAttribute('aria-pressed','false')}
  const place=(node,f)=>Object.assign(node.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
@@ -59,7 +59,8 @@
   $('#ce-links').innerHTML=s.links.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(new URL(u).hostname)} ↗</a>`).join('');$('#ce-open-links').hidden=!s.links.length;
   if(write)history.replaceState(null,'',`#slide-${index+1}`);
   toc.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-current',String(j===index)));
-  const next=data.slides.slice(index+1).find(slide=>slide.image);if(next){const pre=new Image();pre.src=next.image}
+  const next=data.slides.slice(index+1).find(slide=>slide.image);if(next&&!window.LecturePrint.mode){const pre=new Image();pre.src=next.image}
+  updateTools?.();
  }
  try{
   // Other courses reuse this viewer by naming their data folder and print title on the main element.
@@ -79,7 +80,7 @@
   $('#ce-fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{$('#ce-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.'}});
   document.addEventListener('fullscreenchange',()=>setIcon($('#ce-fullscreen'),document.fullscreenElement?'minimize':'maximize',document.fullscreenElement?'전체 화면 종료':'전체 화면'));
   window.LecturePrint.register({button:$('#ce-print'),title:`${courseTitle}, ${data.title}`,slides:data.slides,
-   assets:()=>data.slides.map(s=>s.image).filter(Boolean),
+   assets:indices=>(indices||data.slides.map((_,i)=>i)).map(i=>data.slides[i].image).filter(Boolean),
    render(i){render(i,false);
     const pre=lab.querySelector('#blocks-json');if(data.slides[i].labId==='blocks'&&pre){
      const value=JSON.parse(pre.textContent);
@@ -101,6 +102,7 @@
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});
   // A drag that starts on the picture would move a ghost of the slide instead of selecting text.
   img.draggable=false;new ResizeObserver(fitLines).observe(stage);document.fonts.ready.then(fitLines);
+  updateTools=window.LectureTools?.init({viewer,data,render,current:()=>index});
   window.addEventListener('hashchange',()=>render(hashIndex(),false));render(hashIndex(),false);viewer.dataset.ready='true';
  }catch(error){$('#ce-status').textContent=error.message;$('#ce-loading').hidden=false;$('#ce-loading').textContent='자료를 불러오지 못했습니다. 잠시 후 새로고침하세요.'}
 })();

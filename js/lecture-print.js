@@ -42,10 +42,13 @@
    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('강의 데이터를 불러오지 못했습니다.')),60000);registered.then(()=>{clearTimeout(timer);resolve()})});document.documentElement.dataset.theme='light';document.body.classList.add('lecture-print-building');
    await document.fonts.ready;
    await Promise.all([400,600,800].map(w=>document.fonts.load(`${w} 24px Freesentation`)));
-   const slides=adapter.slides,assets=[...new Set(adapter.assets?.()||[])];let next=0,loaded=0;
+   const slides=adapter.slides,selection=new URLSearchParams(location.search).get('print-slides');
+   const indices=selection?selection.split(',').map(Number):slides.map((_,i)=>i);
+   if(!indices.length||indices.length>slides.length||new Set(indices).size!==indices.length||indices.some(i=>!Number.isInteger(i)||i<0||i>=slides.length))throw Error('인쇄할 쪽 범위가 올바르지 않습니다.');
+   const assets=[...new Set(adapter.assets?.(indices)||[])];let next=0,loaded=0;
    await Promise.all(Array.from({length:Math.min(6,assets.length)},async()=>{while(next<assets.length){await loadImage(assets[next++]);progress(`그림 준비 ${++loaded} / ${assets.length}`)}}));
    const deck=document.createElement('main');deck.id='lecture-print-deck';deck.setAttribute('aria-label','전체 슬라이드 인쇄');document.body.append(deck);
-   for(let i=0;i<slides.length;i++){
+   for(const i of indices){
     const {node,width,height}=await adapter.render(i);await imagesIn(node);
     const sheet=document.createElement('section');sheet.className='lecture-print-sheet';sheet.dataset.slide=String(i+1);
     const area=document.createElement('div');area.className='lecture-print-area';
@@ -59,16 +62,16 @@
     if(i%5===0)await new Promise(resolve=>setTimeout(resolve,0));
    }
    document.body.classList.remove('lecture-print-building');document.body.classList.add('lecture-print-document');
-   document.documentElement.dataset.printReady='true';return slides.length;
+   document.documentElement.dataset.printReady='true';return indices.length;
   })();return prepared;
  }
- async function printAll(){
+ async function printAll(options={}){
   if(busy||mode)return;busy=true;adapter.button.disabled=true;
   const status=document.createElement('div');status.className='lecture-print-progress';status.setAttribute('role','status');status.textContent='전체 슬라이드 인쇄를 준비하고 있습니다.';document.body.append(status);
   try{
    if(document.fullscreenElement)await document.exitFullscreen();
    frame?.remove();frame=document.createElement('iframe');frame.className='lecture-print-frame';frame.title='전체 강의 인쇄 문서';frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;
-   const url=new URL(location.href);url.searchParams.set('lecture-print','1');url.hash='';
+   const url=new URL(location.href);url.searchParams.set('lecture-print','1');url.searchParams.delete('print-slides');if(Array.isArray(options.indices))url.searchParams.set('print-slides',options.indices.join(','));url.hash='';
    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('인쇄 문서를 불러오지 못했습니다.')),60000);frame.onload=()=>{clearTimeout(timer);resolve()};frame.onerror=()=>{clearTimeout(timer);reject(Error('인쇄 문서를 불러오지 못했습니다.'))};frame.src=url.href;document.body.append(frame)});
    const printWindow=frame.contentWindow;if(!printWindow.LecturePrint)throw Error('인쇄 기능을 불러오지 못했습니다.');
    const count=await printWindow.LecturePrint.prepare(message=>{status.textContent=message});

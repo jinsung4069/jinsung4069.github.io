@@ -1,7 +1,7 @@
+@import url("/fonts/freesentation/subsets/Freesentation-6SemiBold.css");
+@import url("/fonts/freesentation/subsets/Freesentation-8ExtraBold.css");
 /* Freesentation, Copyright 2024 The Freesentation Authors, SIL OFL 1.1.
    Official webfonts, license in ../fonts/freesentation/OFL.txt. */
-@font-face { font-family:'Freesentation'; src:url('../fonts/freesentation/Freesentation-6SemiBold.woff2') format('woff2'); font-style:normal; font-weight:600; font-display:swap; }
-@font-face { font-family:'Freesentation'; src:url('../fonts/freesentation/Freesentation-8ExtraBold.woff2') format('woff2'); font-style:normal; font-weight:800; font-display:swap; }
 .lecture-page { --deck-blue:#3e5dae; --deck-text:#18243b; --deck-muted:#536174; background:var(--color-bg,#f4f6fa); }
 .lecture-page .header-inner { max-width:1440px; }
 .lecture-page main { max-width:1600px; margin:auto; padding:0 24px 18px; }
