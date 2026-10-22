@@ -342,7 +342,8 @@
         }
     ];
 
-    let progress = loadProgress();
+    const progressStore = localProgress.create(STORAGE_KEY, defaultProgress, value => localProgress.validProgress(value, modules.map(m => m.id), false));
+    let progress = progressStore.value;
     const dataset = {
         status: 'loading',
         error: '',
@@ -425,24 +426,8 @@
         };
     }
 
-    function loadProgress() {
-        try {
-            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (!saved || !saved.currentModule) return defaultProgress();
-            return {
-                ...defaultProgress(),
-                ...saved,
-                completedModules: Array.isArray(saved.completedModules) ? saved.completedModules : [],
-                scores: saved.scores || {},
-                attempts: saved.attempts || {}
-            };
-        } catch (error) {
-            return defaultProgress();
-        }
-    }
-
     function saveProgress() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        progressStore.save(progress);
     }
 
     function render() {
@@ -570,7 +555,7 @@
                     <button id="checkAnswer" type="button">${escapeHtml(text(ui.check))}</button>
                     <button id="nextModule" class="secondary-action" type="button">${escapeHtml(isLastModule(module) ? text(ui.restart) : text(ui.next))}</button>
                 </div>
-                <div id="feedbackBox" class="feedback-box"></div>
+                <div id="feedbackBox" class="feedback-box" role="status" aria-live="polite"></div>
             </section>
 
             <section class="lab-section">
@@ -1115,8 +1100,7 @@ LIMIT 20;`;
 
     function resetProgress() {
         if (!window.confirm(text(ui.resetConfirm))) return;
-        progress = defaultProgress();
-        localStorage.removeItem(STORAGE_KEY);
+        progress = progressStore.reset();
         render();
     }
 

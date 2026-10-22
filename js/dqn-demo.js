@@ -1,4 +1,4 @@
-class DQNDemo {
+class QLearningDemo {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
@@ -17,6 +17,7 @@ class DQNDemo {
         
         this.isRunning = false;
         this.animationId = null;
+        this.currentEpisode = null;
         
         this.initializeControls();
         this.render();
@@ -100,6 +101,7 @@ class DQNDemo {
     }
     
     start() {
+        if (this.isRunning) return;
         this.isRunning = true;
         document.getElementById('startBtn').disabled = true;
         document.getElementById('startBtnEn').disabled = true;
@@ -116,11 +118,13 @@ class DQNDemo {
         document.getElementById('pauseBtnEn').disabled = true;
         if (this.animationId) {
             clearTimeout(this.animationId);
+            this.animationId = null;
         }
     }
     
     reset() {
         this.pause();
+        this.currentEpisode = null;
         this.agent = { x: 0, y: 0 };
         this.episode = 0;
         this.totalReward = 0;
@@ -247,53 +251,40 @@ class DQNDemo {
         this.qTable[state][action] = newQ;
     }
     
-    async runEpisode() {
+    runEpisode() {
         if (!this.isRunning) return;
-        
-        this.agent = { x: 0, y: 0 };
-        let episodeReward = 0;
-        let steps = 0;
-        const maxSteps = 300;
-        
-        while (this.isRunning && steps < maxSteps) {
-            const state = this.getState(this.agent);
-            const action = this.chooseAction(state);
-            const { newPos, reward, done } = this.takeAction(action);
-            
-            const nextState = this.getState(newPos);
-            this.updateQValue(state, action, reward, nextState, done);
-            
-            this.agent = newPos;
-            episodeReward += reward;
-            steps++;
-            
-            this.render();
-            
-            if (done) {
-                this.successCount++;
-                break;
-            }
-            
-            const speed = parseInt(document.getElementById('speed').value);
-            await new Promise(resolve => {
-                this.animationId = setTimeout(resolve, speed);
-            });
+        this.animationId = null;
+        if (!this.currentEpisode) {
+            this.agent = { x: 0, y: 0 };
+            this.currentEpisode = { reward: 0, steps: 0 };
         }
-        
-        this.episode++;
-        this.totalReward += episodeReward;
-        this.rewardHistory.push(episodeReward);
-        this.updateStats();
-        
-        if (this.isRunning) {
-            setTimeout(() => this.runEpisode(), 500);
+        const state = this.getState(this.agent);
+        const action = this.chooseAction(state);
+        const { newPos, reward, done } = this.takeAction(action);
+        this.updateQValue(state, action, reward, this.getState(newPos), done);
+        this.agent = newPos;
+        this.currentEpisode.reward += reward;
+        this.currentEpisode.steps++;
+        this.render();
+        let delay = Number(document.getElementById('speed').value);
+        if (done || this.currentEpisode.steps >= 300) {
+            if (done) this.successCount++;
+            this.episode++;
+            this.totalReward += this.currentEpisode.reward;
+            this.rewardHistory.push(this.currentEpisode.reward);
+            this.currentEpisode = null;
+            this.updateStats();
+            delay = 500;
         }
+        // One timer owns both the next step and the next episode. Pause cancels it.
+        this.animationId = setTimeout(() => this.runEpisode(), delay);
     }
-    
+
     updateStats() {
         document.getElementById('episode').textContent = this.episode;
         document.getElementById('totalReward').textContent = this.totalReward.toFixed(1);
         
+        document.getElementById('avgReward').textContent = '0';
         if (this.rewardHistory.length > 0) {
             const avgReward = this.rewardHistory.reduce((a, b) => a + b, 0) / this.rewardHistory.length;
             document.getElementById('avgReward').textContent = avgReward.toFixed(1);
@@ -354,5 +345,5 @@ class DQNDemo {
 }
 
 window.addEventListener('load', () => {
-    new DQNDemo();
+    new QLearningDemo();
 });

@@ -38,9 +38,9 @@
     privacy: {
       title: "개인정보·무결성 데모",
       principle:
-        "학습 로그는 최소 수집, 비식별, 암호화, 보존 기간 관리, 해시·타임스탬프 검증을 거칩니다.",
+        "실제 서비스 설계에서는 최소 수집, 비식별, 암호화, 보존 기간과 무결성 검증이 필요합니다. 이 화면에는 해당 보안 기능이 구현되어 있지 않습니다.",
       evidence: ["학생·보호자 동의", "열람·삭제 요청", "서버 서명", "접근 감사 로그"],
-      result: "데이터 활용 상태와 동의 이력을 확인하고, 민감 정보는 마스킹된 상태로 처리합니다."
+      result: "가상의 데이터 활용 상태와 동의 예시를 보여줍니다. 실제 동의 수집이나 민감 정보 처리는 수행하지 않습니다."
     },
     teacherAgency: {
       title: "교사 주도 설정 데모",
@@ -226,6 +226,7 @@
     if (explicit) return normalizeLabel(explicit);
 
     const text = getTextWithoutIcons(control);
+    if (/^\d+$/.test(text) && getIconLabel(control)) return `${getIconLabel(control)} ${text}개`;
     if (text && !/^(search|notifications|settings|cloud_upload|attach_file|send)$/.test(text)) {
       return text;
     }
@@ -522,6 +523,7 @@
     modal.id = "demo-modal";
     modal.setAttribute("role", "dialog");
     modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "demo-modal-title");
     modal.innerHTML = `
       <div class="demo-modal-card" role="document">
         <div class="demo-modal-head">
@@ -572,13 +574,18 @@
     modal.querySelector("#demo-modal-principle").textContent = action.principle;
     renderList(modal.querySelector("#demo-modal-evidence"), action.evidence);
     renderList(modal.querySelector("#demo-modal-status"), action.status);
-    modal.querySelector("#demo-modal-result").textContent = action.result;
+    modal.querySelector("#demo-modal-result").textContent = `시연 예시: ${action.result} 실제 분석, 서버 저장, 공유, 동의 수집은 수행되지 않습니다.`;
+    modal._returnFocus = document.activeElement;
     modal.classList.add("is-open");
+    modal.querySelector("[data-demo-close]").focus();
   }
 
   function closeModal() {
     const modal = document.getElementById("demo-modal");
-    if (modal) modal.classList.remove("is-open");
+    if (modal && modal.classList.contains("is-open")) {
+      modal.classList.remove("is-open");
+      modal._returnFocus?.focus();
+    }
   }
 
   function renderStateStrip(action) {
@@ -645,11 +652,28 @@
   function installKeyboardHandler() {
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeModal();
+      if (event.key === "Tab" && document.querySelector('#demo-modal.is-open')) {
+        event.preventDefault();
+        document.querySelector('#demo-modal [data-demo-close]').focus();
+      }
     });
   }
 
   function init() {
     ensureStyles();
+    document.querySelectorAll('button, a[href="#"]').forEach(control => {
+      if (!control.getAttribute('aria-label')) {
+        const label = getControlLabel(control);
+        if (label !== '버튼') control.setAttribute('aria-label', label);
+      }
+    });
+    document.querySelectorAll('img').forEach(img => {
+      const fallback = () => {
+        if (!img.src.endsWith('/demo-avatar.svg')) img.src = '/lectures/stitch-ai-poc/demo-avatar.svg';
+      };
+      img.addEventListener('error', fallback, { once: true });
+      if (img.complete && img.naturalWidth === 0) fallback();
+    });
     installClickHandler();
     installKeyboardHandler();
     window.stitchDemo = {

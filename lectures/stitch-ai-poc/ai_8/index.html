@@ -4,8 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>우리반AI - 학생 모드 미리보기</title>
-<script nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=15862" type="text/javascript"></script>
-<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=828" type="text/javascript"></script>
+<meta name="description" content="우리반AI - 학생 모드 미리보기 화면과 가상 데이터로 우리반AI의 학습 지원 흐름을 체험하는 시연 페이지">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -193,7 +192,8 @@
 <link rel="canonical" href="https://jinsung4069.github.io/lectures/stitch-ai-poc/ai_8/">
 <script defer src="/js/clean-url.js"></script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head>
+<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/lectures/stitch-ai-poc/demo-accessibility.css?v=20261022">
+</head>
 <body class="bg-surface font-body-md text-on-surface overflow-hidden">
 <div class="fixed inset-0 z-[100] bg-surface flex flex-col" id="preview-overlay">
 <!-- Top Bar: Service Info & Preview Status -->
@@ -228,6 +228,7 @@
         사전기획용 프로토타입 · 분석 수치/리포트는 시연용 샘플 데이터입니다.
     </div>
 <!-- Main Content Area -->
+<aside class="poc-demo-notice" aria-label="시연 범위 안내">이 화면은 가상 데이터로 구성한 시연입니다. AI 응답, 분석 수치, 동의, 암호화와 서버 서명은 작동 예시이며 실제 서비스가 아닙니다. 저장과 공유 버튼은 별도 안내가 없으면 시연 창을 엽니다. 실제 학생 정보는 입력하지 마세요.</aside>
 <main class="flex-grow flex p-gutter gap-gutter overflow-hidden relative">
 <!-- Left: AI Tutor Chat (Main Canvas) -->
 <div class="flex-grow flex flex-col min-w-0">
@@ -401,7 +402,7 @@
             </svg>
             <span class="font-bold text-gray-800 text-sm">우리반 AI PoC 네비게이터</span>
           </div>
-          <button onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
+          <button aria-label="PoC 네비게이터 닫기" onclick="togglePocDrawer()" class="text-gray-400 hover:text-gray-600 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -467,7 +468,7 @@
       </div>
 
       <!-- Floating Button -->
-      <button onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
+      <button aria-label="PoC 네비게이터 열기" onclick="togglePocDrawer()" class="w-12 h-12 bg-[#ff6b00] hover:bg-[#e66000] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all focus:outline-none border-none cursor-pointer">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
         </svg>
@@ -506,5 +507,5 @@
           }
       })();
     </script>
-        <script src="/lectures/stitch-ai-poc/demo_interactions.js"></script>
+        <script src="/lectures/stitch-ai-poc/demo_interactions.js?v=20261022"></script>
 </body><whale-grammar data-role="tooltip"></whale-grammar><whale-grammar data-role="mirror"></whale-grammar></html>

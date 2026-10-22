@@ -608,8 +608,8 @@
                         <button class="btn" style="background-color: #22c55e;" onclick="knn.setLabel(2)">Green</button>
                     </div>
                     <div class="control-group">
-                        <label>K 값: <span id="kValue">3</span></label>
-                        <input type="range" min="1" max="20" value="3" oninput="knn.setK(this.value)">
+                        <label for="ml-parameter-1">K 값: <span id="kValue">3</span></label>
+                        <input type="range" min="1" max="20" value="3" oninput="knn.setK(this.value)" id="ml-parameter-1">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="knn.reset()">초기화 (Reset)</button>
@@ -640,8 +640,8 @@
                         <button class="btn" style="background-color: #3b82f6;" onclick="dt.setLabel(1)">Blue</button>
                     </div>
                     <div class="control-group">
-                         <label>최대 깊이 (Max Depth): <span id="dtDepthValue">5</span></label>
-                        <input type="range" min="1" max="10" value="5" oninput="dt.setMaxDepth(this.value)">
+                         <label for="ml-parameter-2">최대 깊이 (Max Depth): <span id="dtDepthValue">5</span></label>
+                        <input type="range" min="1" max="10" value="5" oninput="dt.setMaxDepth(this.value)" id="ml-parameter-2">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="dt.reset()">초기화 (Reset)</button>
@@ -716,8 +716,8 @@
                         <button class="btn" onclick="kmeans.run()">자동 실행 (Run)</button>
                     </div>
                     <div class="control-group">
-                        <label>클러스터 개수 (K): <span id="kmeansKValue">3</span></label>
-                        <input type="range" min="2" max="5" value="3" oninput="kmeans.setK(this.value)">
+                        <label for="ml-parameter-3">클러스터 개수 (K): <span id="kmeansKValue">3</span></label>
+                        <input type="range" min="2" max="5" value="3" oninput="kmeans.setK(this.value)" id="ml-parameter-3">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="kmeans.reset()">초기화 (Reset)</button>
@@ -742,8 +742,8 @@
                         Compares within-cluster sum of squares across K values. The bend suggests where extra clusters bring smaller gains.
                     </p>
                     <div class="control-group">
-                        <label>살펴볼 K: <span id="elbowKValue">3</span></label>
-                        <input type="range" min="1" max="8" value="3" oninput="elbow.setSelectedK(this.value)">
+                        <label for="ml-parameter-4">살펴볼 K: <span id="elbowKValue">3</span></label>
+                        <input type="range" min="1" max="8" value="3" oninput="elbow.setSelectedK(this.value)" id="ml-parameter-4">
                     </div>
                     <div class="control-group">
                         <button class="btn" onclick="elbow.calculate()">오차 곡선 계산</button>
@@ -770,12 +770,12 @@
                         Expands clusters from dense neighborhoods and leaves isolated points as noise.
                     </p>
                     <div class="control-group">
-                        <label>이웃 반경 (eps): <span id="dbscanEpsValue">54</span></label>
-                        <input type="range" min="25" max="110" value="54" oninput="dbscan.setEps(this.value)">
+                        <label for="ml-parameter-5">이웃 반경 (eps): <span id="dbscanEpsValue">54</span></label>
+                        <input type="range" min="25" max="110" value="54" oninput="dbscan.setEps(this.value)" id="ml-parameter-5">
                     </div>
                     <div class="control-group">
-                        <label>최소 점 수 (minPts): <span id="dbscanMinPtsValue">5</span></label>
-                        <input type="range" min="3" max="10" value="5" oninput="dbscan.setMinPts(this.value)">
+                        <label for="ml-parameter-6">최소 점 수 (minPts): <span id="dbscanMinPtsValue">5</span></label>
+                        <input type="range" min="3" max="10" value="5" oninput="dbscan.setMinPts(this.value)" id="ml-parameter-6">
                     </div>
                     <div class="control-group">
                         <button class="btn" onclick="dbscan.animate()">애니메이션 실행</button>
@@ -804,16 +804,16 @@
                         Repeatedly merges the closest groups and shows how the distance threshold changes the cluster count.
                     </p>
                     <div class="control-group">
-                        <label>연결 기준</label>
-                        <select class="select-control" onchange="hier.setLinkage(this.value)">
+                        <label for="ml-parameter-7">연결 기준</label>
+                        <select class="select-control" onchange="hier.setLinkage(this.value)" id="ml-parameter-7">
                             <option value="single">Single linkage</option>
                             <option value="average" selected>Average linkage</option>
                             <option value="complete">Complete linkage</option>
                         </select>
                     </div>
                     <div class="control-group">
-                        <label>병합 거리: <span id="hierThresholdValue">95</span></label>
-                        <input type="range" min="35" max="180" value="95" oninput="hier.setThreshold(this.value)">
+                        <label for="ml-parameter-8">병합 거리: <span id="hierThresholdValue">95</span></label>
+                        <input type="range" min="35" max="180" value="95" oninput="hier.setThreshold(this.value)" id="ml-parameter-8">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="hier.sample()">샘플 데이터</button>
@@ -845,7 +845,7 @@
                         Recommends items that similar users liked. Blank cells are preferences to estimate.
                     </p>
                     <div class="control-group">
-                        <label>추천 대상 사용자</label>
+                        <label for="cfUserSelect">추천 대상 사용자</label>
                         <select id="cfUserSelect" class="select-control" onchange="collab.setUser(this.value)"></select>
                     </div>
                     <div class="control-group">
@@ -875,16 +875,16 @@
                         Compares content feature vectors with a user preference vector to rank items.
                     </p>
                     <div class="control-group">
-                        <label>시각 자료 선호: <span id="contentVisualValue">4</span></label>
-                        <input type="range" min="1" max="5" value="4" oninput="contentFilter.setPreference('visual', this.value)">
+                        <label for="ml-parameter-10">시각 자료 선호: <span id="contentVisualValue">4</span></label>
+                        <input type="range" min="1" max="5" value="4" oninput="contentFilter.setPreference('visual', this.value)" id="ml-parameter-10">
                     </div>
                     <div class="control-group">
-                        <label>수학 난이도 선호: <span id="contentMathValue">3</span></label>
-                        <input type="range" min="1" max="5" value="3" oninput="contentFilter.setPreference('math', this.value)">
+                        <label for="ml-parameter-11">수학 난이도 선호: <span id="contentMathValue">3</span></label>
+                        <input type="range" min="1" max="5" value="3" oninput="contentFilter.setPreference('math', this.value)" id="ml-parameter-11">
                     </div>
                     <div class="control-group">
-                        <label>코딩 활동 선호: <span id="contentCodeValue">5</span></label>
-                        <input type="range" min="1" max="5" value="5" oninput="contentFilter.setPreference('code', this.value)">
+                        <label for="ml-parameter-12">코딩 활동 선호: <span id="contentCodeValue">5</span></label>
+                        <input type="range" min="1" max="5" value="5" oninput="contentFilter.setPreference('code', this.value)" id="ml-parameter-12">
                     </div>
                 </div>
             </div>
@@ -905,7 +905,7 @@
                         Factorizes the rating matrix into user and item factors to learn hidden taste dimensions.
                     </p>
                     <div class="control-group">
-                        <label>사용자 선택</label>
+                        <label for="mfUserSelect">사용자 선택</label>
                         <select id="mfUserSelect" class="select-control" onchange="modelFilter.setUser(this.value)"></select>
                     </div>
                     <div class="control-group">
@@ -938,8 +938,8 @@
                         Compresses clicked item history into embeddings and uses a nonlinear hidden layer to score recommendations.
                     </p>
                     <div class="control-group">
-                        <label>탐색 다양성: <span id="deepDiversityValue">2</span></label>
-                        <input type="range" min="0" max="5" value="2" oninput="deepFilter.setDiversity(this.value)">
+                        <label for="ml-parameter-14">탐색 다양성: <span id="deepDiversityValue">2</span></label>
+                        <input type="range" min="0" max="5" value="2" oninput="deepFilter.setDiversity(this.value)" id="ml-parameter-14">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="deepFilter.reset()">이력 초기화</button>
@@ -964,15 +964,15 @@
                         Projects 3D feature data into 2D. PCA finds high-variance axes, while kernel projection exposes nonlinear structure.
                     </p>
                     <div class="control-group">
-                        <label>투영 방식</label>
-                        <select class="select-control" onchange="dimReduction.setMode(this.value)">
+                        <label for="ml-parameter-15">투영 방식</label>
+                        <select class="select-control" onchange="dimReduction.setMode(this.value)" id="ml-parameter-15">
                             <option value="pca" selected>PCA</option>
                             <option value="kernel">Kernel projection</option>
                         </select>
                     </div>
                     <div class="control-group">
-                        <label>데이터 복잡도: <span id="dimNoiseValue">2</span></label>
-                        <input type="range" min="0" max="5" value="2" oninput="dimReduction.setNoise(this.value)">
+                        <label for="ml-parameter-16">데이터 복잡도: <span id="dimNoiseValue">2</span></label>
+                        <input type="range" min="0" max="5" value="2" oninput="dimReduction.setNoise(this.value)" id="ml-parameter-16">
                     </div>
                     <div class="control-group">
                         <button class="btn btn-outline" onclick="dimReduction.sample()">새 데이터</button>
