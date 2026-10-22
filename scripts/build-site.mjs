@@ -21,7 +21,9 @@ for(const [name,file] of Object.entries(manifest)){
  await fs.writeFile(`assets/site/${name}.css`,css.code);
 }
 for(const name of ['microrobot','stackburger'])await build({entryPoints:[`apps/${name}/main.jsx`],outfile:`assets/site/${name}.js`,bundle:true,minify:true,legalComments:'linked',define:{'process.env.NODE_ENV':'"production"'},target:['es2020']});
-for(const file of ['sql-wasm.js','sql-wasm.wasm'])await fs.copyFile(`node_modules/sql.js/dist/${file}`,`assets/site/${file}`);
+// npm's WASM file has an executable bit on Unix. Publish ordinary static files
+// without inheriting platform-specific source permissions.
+for(const file of ['sql-wasm.js','sql-wasm.wasm'])await fs.writeFile(`assets/site/${file}`,await fs.readFile(`node_modules/sql.js/dist/${file}`));
 // Scan source only. Retain aliases (for example fa-times) used by existing controls.
 async function sources(dir){const out=[];for(const f of await fs.readdir(dir,{withFileTypes:true})){if(['.git','node_modules','alligator-chess'].includes(f.name)||/^(tmp|temp|scratch)-/.test(f.name))continue;const p=path.join(dir,f.name);if(f.isDirectory())out.push(...await sources(p));else if(/\.(html|js|jsx)$/.test(f.name)&&!p.startsWith('assets'))out.push(await fs.readFile(p,'utf8'));}return out;}
 const names=new Set((await sources('.')).join('\n').match(/(?<=\bfa-)[a-z0-9-]+/g));
