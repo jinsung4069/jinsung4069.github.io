@@ -19,7 +19,8 @@ const base=process.argv[2]||'http://127.0.0.1:8772';
    await p.locator('#project-search').fill('');assert.equal(await p.locator('.project-card-link:visible').count(),3);
    await p.locator('#languageToggle').click();assert.equal(await p.locator('#project-result').innerText(),'3 projects');await audit(p,'.project-filter');
    await p.locator('#darkModeToggle').click();await audit(p,'.project-filter');await p.locator('#darkModeToggle').click();
-   await p.setViewportSize({width:390,height:844});await p.locator('#mobileMenuToggle').click();await p.locator('#mobileNav').getByRole('link',{name:'Lectures',exact:true}).click();assert.match(p.url(),/\/lectures\/$/);
+   assert.equal(await p.locator('a[href="/lectures/"]').count(),0,'lecture materials are shared by direct link');
+   await p.setViewportSize({width:390,height:844});await p.locator('#mobileMenuToggle').click();await p.locator('#mobileNav').getByRole('link',{name:'About',exact:true}).click();assert.match(p.url(),/\/about\/$/);
   });
   await scenario('SQLite lazy download, real queries, independent attempts, failure recovery',async(p,context)=>{
    let csv=0;context.on('request',r=>{if(r.url().includes('kci_articles.csv'))csv++});
