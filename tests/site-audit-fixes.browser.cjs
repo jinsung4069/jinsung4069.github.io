@@ -2,7 +2,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert=require('node:assert/strict');
 const base=process.argv[2]||'http://127.0.0.1:8770';
 (async()=>{
- const browser=await chromium.launch({headless:true,channel:process.env.PW_CHANNEL||'msedge'});
+ const browser=await chromium.launch({headless:true,...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});
  const results=[];
  async function scenario(name,fn,init){
   const context=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Seoul'});

@@ -21,6 +21,7 @@ const assert=require('node:assert/strict');
     if(!s.lines&&!s.pictures)continue;
     assert(s.image&&!s.kind,`${course}/${deck} slide ${i+1}: layers belong to image slides`);
     await go(i+1);
+    await page.evaluate(async()=>{document.querySelector('.ce-text')?.getBoundingClientRect();await document.fonts.ready});
     const shown=await page.evaluate(()=>{const layer=document.querySelector('.ce-text'),stage=document.querySelector('.ce-canvas').getBoundingClientRect();
      return {lines:[...document.querySelectorAll('.ce-text span')].map(l=>{const r=l.getBoundingClientRect();return {text:l.textContent.replace(/\n$/,''),error:Math.abs(r.width-Number(l.dataset.width)*layer.clientWidth),inside:r.left>=stage.left-2&&r.right<=stage.right+2&&r.top>=stage.top-2&&r.bottom<=stage.bottom+2}}),
       pictures:[...document.querySelectorAll('.ce-picture')].map(p=>p.dataset.zoom)}});

@@ -1,5 +1,5 @@
-@font-face{font-family:Freesentation;src:url('../fonts/freesentation/Freesentation-6SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
-@font-face{font-family:Freesentation;src:url('../fonts/freesentation/Freesentation-8ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
+@import url("/fonts/freesentation/subsets/Freesentation-6SemiBold.css");
+@import url("/fonts/freesentation/subsets/Freesentation-8ExtraBold.css");
 .ce-course,.ce-viewer,.ce-dialog{font-family:Freesentation,sans-serif;font-weight:600;font-synthesis:none;color:var(--color-text)}
 .ce-course :is(h1,h2,h3),.ce-viewer :is(h1,h2,h3),.ce-dialog :is(h2,h3){font-family:Freesentation,sans-serif;font-weight:800}
 .ce-course{max-width:1100px;margin:42px auto 80px;padding:0 24px}.ce-eyebrow{font-size:14px;color:var(--color-text-muted);margin-bottom:14px}.ce-course h1{font-size:clamp(32px,5vw,48px);line-height:1.2;margin:16px 0}.ce-intro{max-width:720px;font-size:18px;line-height:1.8;color:var(--color-text-muted)}

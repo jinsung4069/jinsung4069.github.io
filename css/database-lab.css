@@ -602,3 +602,4 @@
 @media (max-width: 660px) {
     .database-shell .lab-layout, .database-shell .module-tabs { grid-template-columns: minmax(0, 1fr); }
 }
+.dataset-metrics[hidden] { display: none; }

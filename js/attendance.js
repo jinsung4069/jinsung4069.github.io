@@ -10,6 +10,9 @@ class AttendanceSystem {
             data.records.every(r => r && validDate(r.date) && validStatus(r.status) && data.students.some(s => s.id === r.studentId));
         this.store = localProgress.create('attendanceDataV2', empty, validData);
         this.data = this.store.value;
+        window.addEventListener('local-progress-import', event => {
+            if (event.detail.key === 'attendanceDataV2') { this.data = this.store.value; this.render(); }
+        });
         if (!this.store.existed) {
             const names = this.store.readLegacy('students', () => [], value => Array.isArray(value) && value.every(s => typeof s === 'string' && s.trim()));
             const records = this.store.readLegacy('attendanceRecords', () => ({}), value => value && typeof value === 'object' && !Array.isArray(value) &&

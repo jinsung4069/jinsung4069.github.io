@@ -1,0 +1,13 @@
+{
+  "microrobot": "microrobot/index.html",
+  "stackburger": "stackburger/index.html",
+  "ai_1": "lectures/stitch-ai-poc/ai_1/index.html",
+  "ai_2": "lectures/stitch-ai-poc/ai_2/index.html",
+  "ai_3": "lectures/stitch-ai-poc/ai_3/index.html",
+  "ai_4": "lectures/stitch-ai-poc/ai_4/index.html",
+  "ai_5": "lectures/stitch-ai-poc/ai_5/index.html",
+  "ai_6": "lectures/stitch-ai-poc/ai_6/index.html",
+  "ai_7": "lectures/stitch-ai-poc/ai_7/index.html",
+  "ai_8": "lectures/stitch-ai-poc/ai_8/index.html",
+  "ai_live": "lectures/stitch-ai-poc/ai_live/index.html"
+}

@@ -30,3 +30,40 @@ jobs:
           node --check js/preferences.js
           node --check js/main.js
           node --check js/clean-url.js
+          node --check js/database-worker.js
+          node --check js/lecture-tools.js
+          node --check js/site-learning.js
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PW_CHANNEL: none
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify committed production assets
+        run: |
+          npm run build
+          git diff --exit-code -- assets/site
+      - run: npx playwright install --with-deps chromium
+      - name: Browser journeys, accessibility and bundle budgets
+        run: |
+          python -B scripts/serve.py --port 8772 > /tmp/site-preview.log 2>&1 &
+          server=$!
+          trap 'kill "$server"' EXIT
+          for attempt in $(seq 1 30); do
+            curl --silent --fail http://127.0.0.1:8772/ > /dev/null && break
+            sleep 1
+          done
+          node tests/site-improvements.browser.cjs http://127.0.0.1:8772
+          node tests/site-audit-fixes.browser.cjs http://127.0.0.1:8772
+          node tests/computer-education2-games.browser.cjs http://127.0.0.1:8772
+          node tests/lecture-layers.browser.cjs http://127.0.0.1:8772 computer-education2/8,computer-education2/9,computer-education2/10,computer-education2/11

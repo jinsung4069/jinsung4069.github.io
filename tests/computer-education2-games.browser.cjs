@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const base = process.argv[2] || 'http://127.0.0.1:8771';
 const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
 (async () => {
-  const browser = await chromium.launch({headless:true, channel:'msedge'});
+  const browser = await chromium.launch({headless:true, ...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});
   try {
     const page = await browser.newPage({viewport:{width:1440,height:1080}}), errors = [];
     page.on('pageerror', e => errors.push(e.message));
