@@ -9,7 +9,8 @@
 .md-lab .s31-mail th:first-child{width:3.2em;text-align:center}.md-lab .s31-mail td:nth-child(n+3){width:7em}.md-lab .s31-mail .s31-new td:nth-child(2)::before{content:'새 메일 ';color:#b36b00;font-weight:800}
 .md-lab .s31-wide{grid-template-columns:auto 1fr 4.4em}
 .md-lab .md-body .s31-note{font-size:.82em;color:#52607f}
-.md-lab .s31-fit{flex:none;display:grid;grid-template-columns:auto 13em 9em 1fr;align-items:center;gap:.8em;font-size:.9em}.md-lab .s31-fit output{font-weight:800;color:#2c478f}
+ .md-lab .s31-fit{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:.7em;font-size:.9em}.md-lab .s31-fit-choices{display:flex;gap:.5em;flex-wrap:wrap;margin:0;padding:0;border:0}.md-lab .s31-fit-choices legend{font-weight:800;margin-bottom:.3em}.md-lab .s31-fit-choices button{padding:.3em .65em;border:1px solid #9fb0dc;border-radius:.4em;background:#fff;color:#2c478f}.md-lab .s31-fit-choices button[aria-pressed=true]{background:#3158a3;color:#fff;outline:none}
+ .md-lab .s31-legend{display:flex;flex-wrap:wrap;gap:.5em 1.3em;font-size:.8em;color:#52607f}.md-lab .s31-miss{border:2px solid #c2413b;border-radius:1em;padding:0 .3em}.md-lab .s31-fit-score{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5em;font-size:.8em;color:#52607f}.md-lab .s31-fit-score strong{font-size:1.5em;color:#2c478f}
 .md-lab .s31-cm{flex:none;font-size:.86em}.md-lab .s31-cm td:nth-child(n+2){width:auto;text-align:center}.md-lab .s31-cm td b{font-size:1.25em}
 .md-lab .s31-pc{table-layout:fixed}.md-lab .s31-pc th:first-child{width:8.6em}.md-lab .s31-pc td:nth-child(2){width:13em}.md-lab .s31-pc td:nth-child(n+3){width:auto}.md-lab .s31-pc td:last-child{width:6em;font-weight:800;color:#2c478f}
 .md-lab .s31-ctl{display:grid;grid-template-columns:1fr 4.8em;align-items:center;gap:.5em}.md-lab .s31-ctl output{font-weight:800;color:#2c478f;text-align:right;white-space:nowrap}
@@ -90,26 +91,28 @@
  function fitPlot(points,f){
   const X=x=>20+x*27,Y=y=>235-y*22.5;let d='';
   for(let i=0;i<=100;i++){const x=i/10;d+=`${i?'L':'M'}${X(x).toFixed(1)} ${Y(Math.min(10,Math.max(0,f(x)))).toFixed(1)}`}
-  return `<svg viewBox="0 0 310 245" role="img" aria-label="두 범주의 점과 분류 경계"><path d="${d}L290 10L20 10Z" fill="#eef2fb"/><rect x="20" y="10" width="270" height="225" fill="none" stroke="#9fb0dc"/><path d="${d}" fill="none" stroke="#3f5dae" stroke-width="2.5"/>
+   return `<svg viewBox="0 0 310 265" role="img" aria-label="범주 A는 원, 범주 B는 삼각형, 빨간 테두리는 오분류. 파란 선은 분류 경계입니다."><path d="${d}L290 10L20 10Z" fill="#eef2fb"/><rect x="20" y="10" width="270" height="225" fill="none" stroke="#9fb0dc"/><path d="${d}" fill="none" stroke="#3f5dae" stroke-width="2.5"/>
    ${points.filter(p=>!hit(f,p)).map(([x,y])=>`<circle cx="${X(x)}" cy="${Y(y)}" r="10.5" fill="#fdeceb" stroke="#c2413b" stroke-width="1.5"/>`).join('')}
-   ${points.map(([x,y,c])=>c?`<circle cx="${X(x)}" cy="${Y(y)}" r="5.5" fill="#fff" stroke="#b36b00" stroke-width="2.2"/>`:`<path d="M${X(x)-5} ${Y(y)-5}l10 10m0 -10l-10 10" stroke="#16794c" stroke-width="2.4" fill="none"/>`).join('')}</svg>`;
+    ${points.map(([x,y,c])=>c?`<circle cx="${X(x)}" cy="${Y(y)}" r="5.5" fill="#fff" stroke="#b36b00" stroke-width="2.2"/>`:`<path d="M${X(x)} ${Y(y)-6}l6 11h-12Z" stroke="#16794c" stroke-width="2" fill="#fff"/>`).join('')}
+    <text x="25" y="23" font-size="9">범주 A로 예측</text><text x="25" y="231" font-size="9">범주 B로 예측</text><text x="155" y="258" text-anchor="middle" font-size="9">특성 1 (예시)</text><text transform="translate(10 125) rotate(-90)" text-anchor="middle" font-size="9">특성 2 (예시)</text></svg>`;
  }
  L.add('s31Fit','custom',{
-  hint:'같은 점들을 나누는 <b>경계의 복잡도</b>를 바꾸며 훈련 데이터와 새 데이터에서 맞힌 비율을 비교합니다. 점과 경계는 이 활동을 위해 만든 예시입니다.',
-  body:`<label class="s31-fit">경계의 복잡도<input type="range" id="s31-fit-level" min="0" max="2" step="1"><output></output><span class="s31-note">○와 ×는 두 범주입니다. 빨간 동그라미는 경계가 틀리게 나눈 점입니다.</span></label>
-   <div class="md-split">${['훈련 데이터 20개','새 데이터 20개'].map((t,i)=>`<div class="md-panel"><h3>${t}</h3><div class="s31-plot" data-set="${i}"></div><div class="s31-bar"><div class="md-meter"><i></i></div><span></span></div></div>`).join('')}</div>`,
+  hint:'<b>경계 모양을 선택하고 두 정확도를 비교해 보세요.</b> 같은 점들을 사용하며, 점과 경계는 원리를 설명하기 위해 만든 예시입니다.',
+  body:`<div class="s31-fit"><fieldset class="s31-fit-choices"><legend>경계의 복잡도</legend>${BOUNDS.map(([name],i)=>`<button type="button" data-level="${i}" aria-pressed="false">${name}</button>`).join('')}</fieldset></div>
+    <div class="s31-legend"><span>○ 범주 A</span><span>△ 범주 B</span><span><span class="s31-miss">빨간 테두리</span> 잘못 분류한 점</span><span>파란 선, 분류 경계</span></div>
+    <div class="md-split">${['훈련 데이터 20개','새 데이터 20개'].map((t,i)=>`<div class="md-panel"><h3>${t}</h3><div class="s31-fit-score"><strong></strong><span></span></div><div class="s31-plot" data-set="${i}"></div><div class="s31-bar"><div class="md-meter" role="meter" aria-label="${i?'새 데이터':'훈련 데이터'} 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div></div>`).join('')}</div>`,
   state:()=>({level:0}),
   render(ui,st,reset){
-   ui.action('처음부터',reset);
+   ui.action('활동 초기화',reset);
    function draw(){
     const [name,kind,f]=BOUNDS[st.level],score=[TRAIN,FRESH].map(set=>set.filter(p=>hit(f,p)).length);
-    ui.q('#s31-fit-level').value=st.level;ui.q('.s31-fit output').textContent=name;
-    ui.all('.s31-plot').forEach((n,i)=>{n.innerHTML=fitPlot(i?FRESH:TRAIN,f);const bar=n.nextElementSibling;bar.querySelector('i').style.width=score[i]*5+'%';bar.querySelector('span').textContent=score[i]*5+'%'});
+    ui.all('.s31-fit-choices button').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===st.level)));
+    ui.all('.s31-plot').forEach((n,i)=>{n.innerHTML=fitPlot(i?FRESH:TRAIN,f);const panel=n.parentElement,meter=panel.querySelector('.md-meter');meter.querySelector('i').style.width=score[i]*5+'%';meter.setAttribute('aria-valuenow',String(score[i]*5));panel.querySelector('.s31-fit-score strong').textContent=`정확도 ${score[i]*5}%`;panel.querySelector('.s31-fit-score span').textContent=`20개 중 ${score[i]}개 정답, ${20-score[i]}개 오분류`});
     const [a,b]=score.map(n=>n*5);
-    ui.say(st.level===0?`${kind}: 경계가 너무 단순해 훈련 데이터도 ${a}%만 맞히고 새 데이터도 ${b}%에 그칩니다.`:st.level===1?`${kind}: 훈련 데이터 ${a}%, 새 데이터 ${b}%입니다. 처음 보는 데이터에서도 성능이 유지됩니다.`
-     :`${kind}: 훈련 데이터의 예외 점까지 맞춰 ${a}%가 되었지만 새 데이터에서는 ${b}%로 떨어집니다.`,st.level===1?'good':'');
+     ui.say(st.level===0?`${kind}: 경계가 너무 단순해 훈련 데이터와 새 데이터 모두 ${a}%입니다. 완만한 곡선을 선택해 비교해 보세요.`:st.level===1?`${kind}: 훈련 데이터 ${a}%, 새 데이터 ${b}%입니다. 구불구불한 곡선을 선택하면 새 데이터의 정확도가 어떻게 달라질까요?`
+      :`${kind}: 훈련 데이터는 ${a}%지만 새 데이터는 ${b}%입니다. 완만한 곡선과 비교해 처음 보는 데이터에서 더 잘 맞히는 경계를 찾아보세요.`,st.level===1?'good':'');
    }
-   ui.q('#s31-fit-level').addEventListener('input',e=>{st.level=Number(e.target.value);draw()});draw();
+   ui.q('.s31-fit-choices').addEventListener('click',e=>{const b=e.target.closest('[data-level]');if(b){st.level=Number(b.dataset.level);draw()}});draw();
   }});
 
  // 100 mails with a spam score. At the starting cut-off of 50 the four cells are the slide's 15, 5, 3 and 77.

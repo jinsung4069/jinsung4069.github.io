@@ -5,7 +5,7 @@
  const stage=$('#ce-stage'),img=$('#ce-image'),lab=$('#ce-lab'),media=$('#ce-media'),toc=$('#ce-toc'),dialog=$('#ce-dialog'),page=$('#ce-page');
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const icon=name=>`<svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-${name}"></use></svg>`;
- const setIcon=(button,name,label)=>{button.innerHTML=icon(name);button.setAttribute('aria-label',label);button.dataset.tip=label};
+ const setIcon=(button,name,label)=>{button.innerHTML=icon(name)+`<span class="lecture-button-label">${esc(label)}</span>`;button.setAttribute('aria-label',label);button.dataset.tip=label};
  let index=0,data,zoom=false,touchTimer,updateTools;
  function reveal(){stage.classList.add('controls-visible');clearTimeout(touchTimer);touchTimer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resetZoom(){zoom=false;stage.classList.remove('zoom');setIcon($('#ce-zoom'),'zoom-in','확대');$('#ce-zoom').setAttribute('aria-pressed','false')}

@@ -1,6 +1,4 @@
 /* Shared, compact tools use the site's existing color tokens. */
-@media(min-width:761px){body:not(.lecture-print-building):not(.lecture-print-document) .ce-viewer:has(.lecture-tools):not(:fullscreen) .ce-stage:not(.lab-mode){width:min(100%,max(320px,calc((100dvh - 260px)*1.77777778)))}body:not(.lecture-print-building):not(.lecture-print-document) .ce-viewer.reading-mode:not(:fullscreen) .ce-stage:not(.lab-mode){width:min(100%,max(320px,calc((100dvh - 320px)*1.77777778)))}}
-.ce-toolbar.lecture-docked{position:relative;inset:auto;transform:none;display:flex;flex-wrap:wrap;justify-content:center;max-width:100%;margin:12px auto;gap:6px}.lecture-docked .ce-glass{opacity:1;pointer-events:auto;min-width:44px;min-height:44px}.lecture-docked .ce-glass:disabled{opacity:.3;pointer-events:none}.lecture-docked .ce-glass::after{display:none}
 .project-filter,.lecture-tools,.record-tools,.activity-links,.learning-library{color:var(--color-text,#17243b);background:var(--color-bg,#fff);border:1px solid var(--color-border,#d4dbea);border-radius:12px;padding:16px;margin:16px 0}
 .project-filter,.lecture-tools,.activity-links{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .project-filter label{flex:1 1 180px}.project-filter input,.project-filter select{display:block;width:100%;margin-top:6px}

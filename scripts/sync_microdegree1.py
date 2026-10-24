@@ -21,6 +21,7 @@ DATA = ROOT / 'data/lectures' / COURSE
 IMAGES = ROOT / 'images/lectures' / COURSE
 PAGES = ROOT / 'lectures' / COURSE
 VERSION = '20261013a'
+UI_VERSION = '20261024ui'
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
@@ -292,7 +293,7 @@ def merge_labs(only=None):
 HEAD = '''<!doctype html><html lang="ko"><head>{print_js}<meta charset="utf-8">
     <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/style.css?v=20261007wrap"><link rel="stylesheet" href="/css/computer-education2.css?v=20261013layers"><link rel="stylesheet" href="/css/lecture-image-zoom.css?v=20261022a"><link rel="stylesheet" href="/css/microdegree1.css?v={version}"><script src="/js/main.js?v=20260914-menu" defer></script><link rel="canonical" href="https://jinsung4069.github.io{path}">
 <script defer src="/js/clean-url.js"></script>
-{print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"></head><body>
+{print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/css/site-tools.css"><link rel="stylesheet" href="/css/lecture-ui.css?v=20261024ui"><script src="/js/lecture-catalog.js?v=20261024ui" defer></script></head><body class="lecture-page">
     <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a><header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
                         <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
@@ -357,8 +358,8 @@ def write_pages(only=None):
                    + button('ce-open-links', 'link', '관련 링크', 'hidden') + button('ce-zoom', 'zoom-in', '확대', 'aria-pressed="false"')
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
-        lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={VERSION}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
-        head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20261021wrap"></script>',
+        lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={UI_VERSION}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
+        head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20261024ui"></script>',
                            print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">',
                            version=VERSION, path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(c['summary']),
                            title=f'{escape(label)} | 마이크로디그리 과정1 | 전인성')
@@ -373,7 +374,7 @@ def write_pages(only=None):
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-page-dialog"><header><h2>페이지 이동</h2>{close("ce-close-page")}</header><form id="ce-go-page"><label for="ce-page">전체 <span id="ce-total">{c["count"]}</span>쪽</label><input id="ce-page" type="number" min="1" max="{c["count"]}" value="1" required><button class="ce-submit" type="submit">이동</button></form></dialog>\n'
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-links-dialog"><header><h2>관련 링크</h2>{close("ce-close-links")}</header><div class="ce-links" id="ce-links"></div></dialog></main>'
                 f'<noscript><p>슬라이드 이동과 체험에는 자바스크립트가 필요합니다.</p></noscript>'
-                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script><script src="/js/computer-education2.js?v={VIEWER_VERSION}"></script></body></html>\n')
+                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script><script src="/js/local-progress.js" defer></script><script src="/js/site-learning.js" defer></script><script src="/js/lecture-tools.js?v=20261024ui" defer></script><script src="/js/computer-education2.js?v=20261024ui" defer></script></body></html>\n')
         folder = PAGES / c['id']
         folder.mkdir(exist_ok=True)
         save(folder / 'index.html', head + body)
