@@ -5,8 +5,8 @@
  const stage=$('#ce-stage'),canvas=$('#ae-slide'),viewport=$('.ce-viewport'),toc=$('#ce-toc'),page=$('#ce-page');
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const icon=name=>`<svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ce-icon-${name}"></use></svg>`;
- const setIcon=(b,name,label)=>{b.innerHTML=icon(name);b.setAttribute('aria-label',label);b.dataset.tip=label};
- let data,index=0,zoom=false,touch=null,timer;
+ const setIcon=(b,name,label)=>{b.innerHTML=icon(name)+`<span class="lecture-button-label">${esc(label)}</span>`;b.setAttribute('aria-label',label);b.dataset.tip=label};
+ let data,index=0,zoom=false,touch=null,timer,updateTools;
  function reveal(){stage.classList.add('controls-visible');clearTimeout(timer);timer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resize(){if(!data||data.slides[index].kind==='lab')return;const scale=stage.clientWidth/data.width*(zoom?2:1);canvas.style.transform=`scale(${scale})`;$('#ae-size').style.width=`${data.width*scale}px`;$('#ae-size').style.height=`${data.height*scale}px`}
  function fitText(){canvas.querySelectorAll('.ae-run').forEach(el=>{el.style.transform='';const width=el.offsetWidth;if(width)el.style.transform=`scaleX(${Number(el.dataset.width)/width})`})}
@@ -25,6 +25,7 @@
   if(write)history.replaceState(null,'',`#slide-${index+1}`);
   $('#ce-loading').hidden=true;canvas.querySelectorAll('img').forEach(im=>im.onerror=()=>{$('#ce-loading').textContent='그림을 불러오지 못했습니다. 새로고침해 주세요.';$('#ce-loading').hidden=false});
   if(data.slides[index+1]?.background){const im=new Image();im.src=data.slides[index+1].background}
+  updateTools?.();
  }
  function hashIndex(){const m=location.hash.match(/^#slide-(\d+)$/);return m?Number(m[1])-1:0}
  try{
@@ -48,6 +49,7 @@
   document.addEventListener('keydown',e=>{if(document.querySelector('.ce-dialog[open]')||e.ctrlKey||e.metaKey||e.altKey||e.isComposing||e.target.closest('input,select,textarea,[contenteditable=true]'))return;const letter=e.code==='KeyF'?'f':e.code==='KeyA'?'a':e.code==='KeyD'?'d':e.key.toLowerCase();if(letter==='f'){if(!e.repeat){e.preventDefault();$('#ce-fullscreen').click()}return}const actions={ArrowRight:()=>render(index+1),PageDown:()=>render(index+1),ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:()=>render(index+1)};const action=actions[e.key]||actions[letter];if(action){e.preventDefault();action()}});
   stage.addEventListener('touchstart',e=>{touch=e.touches.length===1&&!e.target.closest('button,input,select,textarea,a')?[e.touches[0].clientX,e.touches[0].clientY]:null},{passive:true});
   stage.addEventListener('touchend',e=>{if(!touch||zoom)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
+  updateTools=window.LectureTools?.init({viewer,data,render,current:()=>index});
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});new ResizeObserver(resize).observe(stage);window.addEventListener('hashchange',()=>render(hashIndex(),false));window.addEventListener('beforeprint',resize);window.addEventListener('afterprint',resize);render(hashIndex(),false);viewer.dataset.ready='true';
  }catch(e){$('#ce-loading').hidden=false;$('#ce-loading').textContent='자료를 불러오지 못했습니다. 새로고침해 주세요.';$('#ce-status').textContent=e.message}
 })();

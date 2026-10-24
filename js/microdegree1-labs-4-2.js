@@ -24,8 +24,8 @@
 .md-lab .s42-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:.5em}
 .md-lab .s42-tile{padding:.3em;border:1px solid #d5ddf1;border-radius:.5em;background:#fff;font-size:.86em;line-height:1.3;text-align:center}.md-lab .s42-tile b{display:block;font-size:1.6em;color:#3f5dae}
 .md-lab .s42-svg{flex:1;min-height:0;width:100%;display:block}
-.md-lab .s42-norm{display:grid;grid-template-columns:4.5em minmax(0,1fr) 4.2em 10em 5.4em;align-items:center;gap:.25em .8em;font-size:.9em}
-.md-lab .s42-norm>b{color:#2c478f}.md-lab .s42-norm>i{font-style:normal;font-size:.86em;color:#52607f}.md-lab .s42-norm output{font-weight:800;color:#2c478f;text-align:right}
+.md-lab .s42-norm{display:flex;flex-direction:column;gap:.5em;font-size:.9em}.md-lab .s42-norm-row,.md-lab .s42-norm-head{display:grid;grid-template-columns:4.5em minmax(0,1fr) 4.2em 10em 5.4em;align-items:center;gap:.25em .8em}
+.md-lab .s42-norm b{color:#2c478f}.md-lab .s42-norm i{font-style:normal;font-size:.86em;color:#52607f}.md-lab .s42-norm output{font-weight:800;color:#2c478f;text-align:right}
 .md-lab .s42-chart{margin-top:.4em;font-weight:400}.md-lab .s42-chart svg{display:block;width:24.5em;margin:auto}
 .md-lab .s42-conds{flex:none;display:grid;grid-template-columns:.6fr repeat(4,1fr);gap:.4em}
 .md-lab .s42-conds button{padding:.34em .2em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;color:#2c478f;font-size:.86em;line-height:1.25;cursor:pointer}
@@ -125,8 +125,8 @@
  }
  L.add('normalize','custom',{
   hint:'슬라이드의 통학 시간 네 값입니다. 값을 옮기며 <b>(값 − 최솟값) ÷ (최댓값 − 최솟값)</b>이 어떻게 바뀌는지 봅니다.',
-  body:`<div class="md-panel" style="flex:1;min-height:0"><div class="s42-norm"><i>학생</i><i>통학 시간 바꾸기</i><i style="text-align:right">값</i><i>계산</i><i style="text-align:right">정규화 값</i>
-   ${[0,1,2,3].map(i=>`<b>학생 ${i+1}</b><input type="range" data-i="${i}" min="0" max="180" step="5" aria-label="학생 ${i+1}의 통학 시간"><output data-o="v"></output><span data-o="c"></span><output data-o="n"></output>`).join('')}</div>
+  body:`<div class="md-panel" style="flex:1;min-height:0"><div class="s42-norm"><div class="s42-norm-head" aria-hidden="true"><i>학생</i><i>통학 시간 바꾸기</i><i style="text-align:right">값</i><i>계산</i><i style="text-align:right">정규화 값</i></div>
+   ${[0,1,2,3].map(i=>`<div class="s42-norm-row"><b>학생 ${i+1}</b><input type="range" data-i="${i}" min="0" max="180" step="5" aria-label="학생 ${i+1}의 통학 시간"><output data-o="v" aria-label="학생 ${i+1}의 원래 값"></output><span data-o="c"></span><output data-o="n" aria-label="학생 ${i+1}의 정규화 값"></output></div>`).join('')}</div>
    <svg class="s42-svg" id="s42-lines" viewBox="0 0 600 208" role="img" aria-label="원래 값과 정규화 값의 수직선"></svg></div>`,
   state:()=>({v:[5,15,25,45]}),
   render(ui,st,reset){

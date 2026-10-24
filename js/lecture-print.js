@@ -81,5 +81,6 @@
   }catch(error){frame?.remove();status.textContent=`${error.message} 인쇄 버튼을 다시 눌러 주세요.`;const close=document.createElement('button');close.type='button';close.textContent='닫기';close.onclick=()=>status.remove();status.append(close)}
   finally{busy=false;adapter.button.disabled=false;adapter.button.focus({preventScroll:true})}
  }
- window.LecturePrint={mode,prepare,snapshot,register(config){adapter=config;resolveRegistration();if(!mode){adapter.button.addEventListener('click',printAll);document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='p'){e.preventDefault();printAll()}})}},printAll};
+ function requestPrint(){if(window.LectureTools?.openPrintOptions)window.LectureTools.openPrintOptions();else printAll()}
+ window.LecturePrint={mode,prepare,snapshot,register(config){adapter=config;resolveRegistration();if(!mode){adapter.button.addEventListener('click',requestPrint);document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='p'){e.preventDefault();requestPrint()}})}},printAll};
 })();

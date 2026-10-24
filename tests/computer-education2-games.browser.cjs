@@ -91,7 +91,7 @@ const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
     for(const n of [8,9,10,11]) {
       await printPage.goto(`${base}/lectures/computer-education2/${n}/#slide-${last[n]}`); await printPage.waitForSelector('.ce-game h2');
       const before = await printPage.locator('#ce-lab').innerText();
-      await printPage.locator('#ce-print').click();
+      await printPage.locator('.lecture-more summary').click();await printPage.locator('#ce-print').click();await printPage.locator('#lecture-print-kind').selectOption('all');await printPage.getByRole('button',{name:'인쇄 준비'}).click();
       await printPage.waitForFunction(()=>document.querySelector('.lecture-print-frame')?.contentWindow.__printReady,null,{timeout:180000});
       const result = await printPage.evaluate(()=>{const doc=document.querySelector('.lecture-print-frame').contentDocument;return {sheets:doc.querySelectorAll('.lecture-print-sheet').length,worksheets:doc.querySelectorAll('#lecture-print-deck .cg-worksheet').length,body:doc.querySelector('#lecture-print-deck .cg-worksheet')?.textContent};});
       assert.equal(result.sheets,last[n]); assert.equal(result.worksheets,1); assert.match(result.body,/실습 활동지/);

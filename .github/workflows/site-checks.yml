@@ -32,6 +32,8 @@ jobs:
           node --check js/clean-url.js
           node --check js/database-worker.js
           node --check js/lecture-tools.js
+          node --check js/lecture-catalog.js
+          node --check js/lecture-algorithm-tools.js
           node --check js/site-learning.js
 
   browser:
@@ -64,6 +66,7 @@ jobs:
             sleep 1
           done
           node tests/site-improvements.browser.cjs http://127.0.0.1:8772
+          node tests/lecture-ui.browser.cjs http://127.0.0.1:8772
           node tests/site-audit-fixes.browser.cjs http://127.0.0.1:8772
           node tests/computer-education2-games.browser.cjs http://127.0.0.1:8772
           node tests/lecture-layers.browser.cjs http://127.0.0.1:8772 computer-education2/8,computer-education2/9,computer-education2/10,computer-education2/11
