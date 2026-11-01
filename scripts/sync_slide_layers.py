@@ -6,6 +6,7 @@ temporary directory.
 
     python scripts/sync_slide_layers.py --course computer-education2 --source-dir <PPTX folder> --work-dir <temp> [--only 2,3]
     python scripts/sync_slide_layers.py --course microdegree1 --source-dir <PPTX folder> --work-dir <temp> [--only 1-1]
+    python scripts/sync_slide_layers.py --course special --source-dir <PPTX folder> --work-dir <temp> [--only ai-to-agents]
 
 The published slide images and every other field of <deck>.json stay as they are. Each slide whose
 source still renders like its published image gains `lines` ([x, y, width, height, text] as
@@ -20,6 +21,7 @@ from lxml import etree as ET
 from PIL import Image, ImageChops, ImageFilter, ImageStat
 from sync_ai_education import NS, ordered_parts, relationships
 import sync_microdegree1 as md
+import sync_special as special
 
 ROOT = Path(__file__).resolve().parents[1]
 MSO_GROUP, MSO_PICTURE, MSO_LINKED_PICTURE, MSO_PLACEHOLDER = 6, 13, 11, 14
@@ -123,6 +125,7 @@ def source_microdegree1(source_dir, key):
 COURSES = {
     'computer-education2': dict(keys=list(CE2_SOURCES), source=source_computer_education2, prepare=prepare_computer_education2),
     'microdegree1': dict(keys=[s[0] for s in md.SESSIONS], source=source_microdegree1, prepare=prepare_microdegree1),
+    'special': dict(keys=[d[0] for d in special.DECKS], source=special.source_path, prepare=special.prepare),
 }
 
 

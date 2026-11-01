@@ -9,7 +9,7 @@ const assert=require('node:assert/strict');
  const go=async n=>{await page.evaluate(n=>location.hash='slide-'+n,n);await page.waitForFunction(n=>Number(document.querySelector('#ce-page').value)===n,n)};
  const dialogImage=async()=>{await page.waitForSelector('.lz-dialog[open]');await page.waitForFunction(()=>{const im=document.querySelector('.lz-dialog img');return im.complete&&im.naturalWidth>0})};
  const totals={};
- for(const course of ['computer-education2','microdegree1']){
+ for(const course of ['computer-education2','microdegree1','special']){
   const catalog=await (await page.request.get(`${base}/data/lectures/${course}/catalog.json`)).json();
   for(const deck of catalog.map(c=>String(c.id??c.number))){
    if(only&&!only.includes(`${course}/${deck}`))continue;
