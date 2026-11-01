@@ -109,7 +109,7 @@ def check_site(root):
                     local_reference(value.strip(), url)
 
     # Lecture viewers load these image and video paths from JSON at runtime.
-    for course in ('computer-education2', 'microdegree1'):
+    for course in ('computer-education2', 'microdegree1', 'special'):
         course_data = root / 'data/lectures' / course
         if not course_data.is_dir():
             continue

@@ -49,7 +49,7 @@ function htmlFiles(folder){return fs.readdirSync(folder,{withFileTypes:true}).fl
    counts.decks++;counts.slides+=n;counts.activities+=activities;console.log('PASS',deck,n,'slides',activities,'activities');
   }
   if(!only){
-   for(const course of ['', 'ai-algorithm/','ai-education/','computer-education2/','microdegree1/']){
+   for(const course of ['', 'ai-algorithm/','ai-education/','computer-education2/','microdegree1/','special/']){
     await page.goto(base+'/lectures/'+course,{waitUntil:'domcontentloaded'});await page.getByRole('searchbox',{name:'강의 찾기'}).fill('없는검색어_UI_TEST');assert.match(await page.locator('.lecture-catalog-search [role=status]').innerText(),/검색 결과가 없습니다/);
     await page.getByRole('searchbox',{name:'강의 찾기'}).fill('');assert(await page.locator('a.course-entry:visible,a.ce-card:visible').count()>0);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));counts.catalogs++;
    }
