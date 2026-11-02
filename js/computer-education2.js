@@ -39,11 +39,25 @@
   for(const [j,f] of (window.LecturePrint.mode?[]:(s.videoFrames||[])).entries()){
    const frame=document.createElement('div');frame.className='ce-video-frame';place(frame,f);
    const v=document.createElement('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=f.src;v.setAttribute('aria-label',`${s.title}, 동영상 ${j+1}`);
+   // A frame can set its starting speed; the viewer can still change it from the player menu.
+   if(f.playbackRate){v.defaultPlaybackRate=v.playbackRate=f.playbackRate;v.addEventListener('loadedmetadata',()=>{v.playbackRate=f.playbackRate},{once:true})}
    const play=document.createElement('button');play.className='ce-play';play.innerHTML=icon('play');play.setAttribute('aria-label','동영상 재생');
    play.addEventListener('click',()=>v.play().catch(()=>{$('#ce-status').textContent='동영상을 재생할 수 없습니다. 다시 시도하세요.'}));
    v.addEventListener('play',()=>{play.hidden=true});v.addEventListener('pause',()=>{play.hidden=false});v.addEventListener('ended',()=>{play.hidden=false});
    v.addEventListener('error',()=>{play.hidden=true;const a=document.createElement('a');a.className='ce-video-error';a.href=f.src;a.textContent='동영상 다시 열기';frame.append(a)});
    frame.append(v,play);media.append(frame);
+  }
+  // Animated GIFs from the source deck are published as short muted videos that loop like the GIF.
+  // Clicking pauses them, and they wait for a click when the viewer prefers reduced motion.
+  for(const f of (window.LecturePrint.mode?[]:(s.animations||[]))){
+   const frame=document.createElement('div');frame.className='ce-video-frame ce-animation';place(frame,f);
+   const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.preload='auto';v.src=f.src;v.setAttribute('aria-hidden','true');
+   const play=document.createElement('button');play.type='button';play.className='ce-play';play.innerHTML=icon('play');
+   const sync=()=>{play.classList.toggle('ce-paused',v.paused);play.setAttribute('aria-label',v.paused?`${f.label||s.title} 움직이는 그림 재생`:`${f.label||s.title} 움직이는 그림 일시 정지`)};
+   play.addEventListener('click',()=>{if(v.paused)v.play().catch(()=>{});else v.pause()});
+   v.addEventListener('play',sync);v.addEventListener('pause',sync);sync();
+   frame.append(v,play);media.append(frame);
+   if(!matchMedia('(prefers-reduced-motion: reduce)').matches)v.play().catch(sync);
   }
   for(const f of (window.LecturePrint.mode?[]:(s.embeds||[]))){
    const frame=document.createElement('div');frame.className='ce-video-frame';place(frame,f);

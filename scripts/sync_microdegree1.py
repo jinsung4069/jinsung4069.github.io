@@ -22,6 +22,7 @@ IMAGES = ROOT / 'images/lectures' / COURSE
 PAGES = ROOT / 'lectures' / COURSE
 VERSION = '20261013a'
 UI_VERSION = '20261024ui'
+PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide player
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
@@ -374,7 +375,7 @@ def write_pages(only=None):
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-page-dialog"><header><h2>페이지 이동</h2>{close("ce-close-page")}</header><form id="ce-go-page"><label for="ce-page">전체 <span id="ce-total">{c["count"]}</span>쪽</label><input id="ce-page" type="number" min="1" max="{c["count"]}" value="1" required><button class="ce-submit" type="submit">이동</button></form></dialog>\n'
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-links-dialog"><header><h2>관련 링크</h2>{close("ce-close-links")}</header><div class="ce-links" id="ce-links"></div></dialog></main>'
                 f'<noscript><p>슬라이드 이동과 체험에는 자바스크립트가 필요합니다.</p></noscript>'
-                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script><script src="/js/local-progress.js" defer></script><script src="/js/site-learning.js" defer></script><script src="/js/lecture-tools.js?v=20261024ui" defer></script><script src="/js/computer-education2.js?v=20261024ui" defer></script></body></html>\n')
+                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script><script src="/js/local-progress.js" defer></script><script src="/js/site-learning.js" defer></script><script src="/js/lecture-tools.js?v=20261024ui" defer></script><script src="/js/computer-education2.js?v={PLAYER_VERSION}" defer></script></body></html>\n')
         folder = PAGES / c['id']
         folder.mkdir(exist_ok=True)
         save(folder / 'index.html', head + body)
