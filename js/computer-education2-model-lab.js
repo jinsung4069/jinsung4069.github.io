@@ -170,12 +170,17 @@
       computeCnn(); cnnMessage();
     }
     $$('[data-kernel]').forEach(b => b.onclick = () => setKernel(b.dataset.kernel));
-    $$('[data-k]').forEach(el => el.addEventListener('input', () => {
-      const v = Math.max(-9, Math.min(9, Math.round(Number(el.value) || 0)));
-      kernel[Number(el.dataset.k)] = v;
-      kernelName = Object.keys(KERNELS).find(id => KERNELS[id][1].every((k, i) => k === kernel[i])) || 'custom';
-      setKernel();
-    }));
+    // The calculation uses whole numbers from -9 to 9. The cell shows that value once the edit is
+    // finished, so "-" can still be typed on the way to a negative number.
+    $$('[data-k]').forEach(el => {
+      const value = () => Math.max(-9, Math.min(9, Math.round(Number(el.value) || 0)));
+      el.addEventListener('input', () => {
+        kernel[Number(el.dataset.k)] = value();
+        kernelName = Object.keys(KERNELS).find(id => KERNELS[id][1].every((k, i) => k === kernel[i])) || 'custom';
+        setKernel();
+      });
+      el.addEventListener('change', () => { el.value = value(); });
+    });
     $('#ml-pos').addEventListener('input', () => { stop(); cnnMessage(); });
     $('#ml-scan').onclick = () => run('scan', () => { const el = $('#ml-pos'); el.value = (Number(el.value) + 1) % 900; cnnMessage(); return true; }, 45);
 
@@ -215,8 +220,11 @@
       drawRnn();
       const keep = Number($('#ml-keep').value);
       if (!step) return feedback('한 줄 읽기를 눌러 첫 줄을 넣어 보세요. 아래 줄은 아직 가려져 있습니다.');
-      if (step < N) return feedback(`${step}번째 줄을 읽었습니다. 입력이 없는 줄에서는 기억이 유지율만큼 줄어듭니다.`);
-      feedback(`32줄을 모두 읽었습니다. 기억 유지율 ${keep.toFixed(2)}이면 20줄 전 입력의 영향은 대략 ${keep.toFixed(2)}^20 = ${(keep ** 20).toFixed(3)}배로 줄어듭니다. 유지율을 바꿔 마지막 기억에 윗부분 정보가 얼마나 남는지 비교하세요.`);
+      if (step < N) return feedback(`${step}번째 줄을 읽었습니다. 입력이 없는 줄에서는 이전 기억에 유지율을 곱하고 tanh를 거치므로 기억이 줄어듭니다.`);
+      // Measure the fade with the same recurrence: a full input row, then 20 blank rows.
+      const start = Math.tanh(INPUT_WEIGHT); let h = start;
+      for (let i = 0; i < 20; i++) h = Math.tanh(keep * h);
+      feedback(`32줄을 모두 읽었습니다. 기억 유지율 ${keep.toFixed(2)}에서 꽉 찬 줄을 읽은 기억 ${start.toFixed(2)}은 입력이 없는 줄 20개를 지나면 ${h.toFixed(3)}까지 줄어듭니다. 유지율을 바꿔 마지막 기억에 윗부분 정보가 얼마나 남는지 비교하세요.`);
     }
     const advance = () => { if (step >= N) return false; step++; rnnMessage(); return step < N; };
     $('#ml-step').addEventListener('input', () => { stop(); step = Number($('#ml-step').value); rnnMessage(); });
