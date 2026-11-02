@@ -32,3 +32,4 @@
     .ce-prev::after { left: 0; transform: none; }
     .ce-next::after { left: auto; right: 0; transform: none; }
 }
+.ce-animation .ce-play{inset:0;left:0;top:0;width:100%;height:100%;transform:none;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;color:transparent}.ce-animation .ce-play:hover{background:transparent}.ce-animation .ce-play:focus-visible{outline:3px solid #3e5dae;outline-offset:-3px}.ce-animation .ce-play.ce-paused{left:50%;top:50%;width:clamp(32px,4vw,60px);height:clamp(32px,4vw,60px);transform:translate(-50%,-50%);border:1px solid #fff9;border-radius:50%;background:#edf4ff9c;color:#18345b;backdrop-filter:blur(14px);box-shadow:0 4px 20px #0005}.ce-animation .ce-play.ce-paused:hover{background:#edf4ffcc}

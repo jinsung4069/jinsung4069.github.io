@@ -15,23 +15,23 @@
   const all = selector => [...game.querySelectorAll(selector)];
   const button = (id, label, extra = '') => `<button type="button" id="${id}" ${extra}>${label}</button>`;
   const titles = {
-    8: '신경망 게이트 수리대', 9: '우주 광물 분류소',
+    8: 'CNN, RNN, 확산 모델 체험실', 9: '우주 광물 분류소',
     10: '디지털 시민 편집국', 11: '센서 로봇 구조 미션'
   };
   const goals = {
-    8: '가중치와 편향을 조절해 AND, OR, XOR 게이트 세 개를 복구하세요.',
+    8: '같은 이미지를 세 모델에 넣고 이미지가 어떻게 바뀌는지 비교하세요. 샘플을 고르거나, 직접 그리거나, 내 이미지를 올릴 수 있습니다.',
     9: '학습 카드 네 장으로 1-최근접 이웃 분류기를 만들고 새 광물 8개 중 7개 이상을 분류하세요.',
     10: '게시물의 위험 요소를 직접 고쳐 세 번의 공유 준비 심사를 통과하세요.',
     11: '센서 조건에 맞는 행동을 연결해 로봇을 출발점에서 구조 지점까지 보내세요.'
   };
   const reflections = {
-    8: 'AND와 OR를 푼 가중치는 무엇인가요? XOR에서 은닉층을 연결하자 입력의 표현이 어떻게 달라졌나요? 이 활동은 직접 가중치를 정하는 모형이며 자동 학습을 실행하지 않습니다.',
+    8: 'CNN의 필터를 바꿨을 때 어떤 무늬가 밝게 남았나요? RNN의 기억 유지율을 낮추면 마지막 기억에서 윗부분 정보는 어떻게 되나요? 확산 모델은 왜 학습 이미지와 비슷한 그림을 만들었을까요? 이 실습은 학습을 실행하지 않고 원리만 보여 주는 작은 모형입니다.',
     9: '같은 수의 학습 카드라도 어떤 위치의 사례를 골랐을 때 성능이 좋아졌나요? 여기서는 두 특성을 같은 척도로 비교합니다. 반복해서 본 검증 자료와 별도로, 최종 성능을 평가할 새로운 시험 자료가 필요합니다.',
     10: '정보를 가리는 것, 사용 조건을 확인하는 것, 상대를 존중하는 행동은 각각 어떤 위험을 줄이나요? 모든 인물과 자료는 게임용 가상 사례입니다. 실제 게시나 신고는 실행되지 않습니다.',
     11: '입력인 센서 값, 처리인 조건문, 출력인 모터 행동을 연결해 설명해 보세요. 실제 로봇에서는 센서 오차와 회전 시간도 보정해야 합니다. 이 활동은 하드웨어에 연결되지 않는 격자 모형입니다.'
   };
   function shell(body) {
-    game.innerHTML = `<div class="cg-heading"><span class="cg-eyebrow">${chapter}강 게임 실습, 2인 1조, 8~12분</span><h2>${titles[chapter]}</h2><p>${goals[chapter]}</p></div>${body}<details class="cg-reflection"><summary>활동 후 함께 생각하기</summary><p>${reflections[chapter]}</p><p>한 사람은 조작, 한 사람은 결과 예측을 맡고 역할을 바꿔 한 번 더 도전하세요.</p></details>`;
+    game.innerHTML = `<div class="cg-heading"><span class="cg-eyebrow">${chapter}강 ${chapter === 8 ? '체험 실습, 2인 1조, 10~15분' : '게임 실습, 2인 1조, 8~12분'}</span><h2>${titles[chapter]}</h2><p>${goals[chapter]}</p></div>${body}<details class="cg-reflection"><summary>활동 후 함께 생각하기</summary><p>${reflections[chapter]}</p><p>한 사람은 조작, 한 사람은 결과 예측을 맡고 역할을 바꿔 한 번 더 도전하세요.</p></details>`;
   }
   function feedback(message, success = false) {
     q('#cg-feedback').textContent = message;
@@ -40,50 +40,10 @@
   const status = '<p id="cg-feedback" class="cg-feedback" role="status" aria-live="polite"></p>';
   let pause = () => {};
 
-  function gateGame() {
-    let level = 0, tries = 0, cleared = false;
-    const names = ['AND', 'OR', 'XOR'];
-    const inputs = [[0, 0], [0, 1], [1, 0], [1, 1]];
-    shell(`<div class="cg-score" id="cg-score"></div><div class="cg-columns"><section class="cg-card"><h3>제어실</h3><p>출력 = 가중합이 0 이상이면 1, 아니면 0</p><div class="cg-fields">${['w1', 'w2', 'bias'].map((id, i) => `<label>${['가중치 w1', '가중치 w2', '편향 b'][i]}<input id="cg-${id}" type="range" min="-3" max="3" step="0.5" value="0"><output id="cg-${id}-value">0</output></label>`).join('')}</div><label class="cg-check"><input id="cg-hidden" type="checkbox"> 은닉층 연결, OR와 NAND 뉴런 사용</label><p id="cg-formula" class="cg-formula"></p><div class="cg-actions">${button('cg-run', '네 개의 입력 시험')}${button('cg-next', '다음 게이트', 'disabled')}${button('cg-reset', '처음부터')}</div><details><summary>수리 힌트</summary><p>AND는 두 입력이 모두 1일 때만, OR는 하나라도 1일 때 문을 엽니다. w1과 w2를 1로 놓고 편향을 바꿔 보세요. XOR는 원래 입력을 받는 단층 퍼셉트론으로 네 경우를 모두 맞힐 수 없습니다. 은닉층을 연결하면 OR와 NAND의 결과가 새 입력이 됩니다.</p></details></section><section class="cg-card"><h3>화물 게이트</h3><p>각 입력의 목표 신호를 모두 맞히면 다음 구역이 열립니다.</p><div id="cg-gates" class="cg-gates"></div></section></div>${status}`);
-    const target = (a, b) => level === 0 ? a & b : level === 1 ? a | b : a ^ b;
-    const board = results => {
-      q('#cg-gates').innerHTML = inputs.map(([a, b], i) => `<div class="cg-gate ${results ? results[i] === target(a, b) ? 'cg-correct' : 'cg-wrong' : ''}"><b>입력 ${a}, ${b}</b><span>목표 ${target(a, b)}</span><strong>${results ? `출력 ${results[i]} ${results[i] === target(a, b) ? '✓ 통과' : '× 수리 필요'}` : '시험 대기'}</strong></div>`).join('');
-    };
-    function change() {
-      cleared = false;
-      q('#cg-next').disabled = true;
-      ['w1', 'w2', 'bias'].forEach(id => q(`#cg-${id}-value`).textContent = q(`#cg-${id}`).value);
-      const hidden = q('#cg-hidden').checked;
-      q('#cg-formula').textContent = hidden ? 'h1 = OR(A, B), h2 = NAND(A, B), 가중합 = w1 × h1 + w2 × h2 + b' : '가중합 = w1 × A + w2 × B + b';
-      board();
-      feedback('설정한 값으로 네 입력의 출력을 예측한 뒤 시험하세요.');
-    }
-    function start() {
-      q('#cg-score').textContent = `${level + 1} / 3 구역, ${names[level]} 게이트`;
-      ['w1', 'w2', 'bias'].forEach(id => q(`#cg-${id}`).value = 0);
-      q('#cg-hidden').checked = false;
-      q('#cg-hidden').disabled = level !== 2;
-      q('#cg-next').textContent = level === 2 ? '모든 게이트 복구 완료' : '다음 게이트';
-      tries = 0;
-      change();
-    }
-    all('input').forEach(input => input.addEventListener('input', change));
-    q('#cg-run').onclick = () => {
-      const [w1, w2, bias] = ['w1', 'w2', 'bias'].map(id => Number(q(`#cg-${id}`).value));
-      const results = inputs.map(([a, b]) => {
-        const [x, y] = q('#cg-hidden').checked ? [a | b, 1 - (a & b)] : [a, b];
-        return Number(w1 * x + w2 * y + bias >= 0);
-      });
-      const hits = results.filter((v, i) => v === target(...inputs[i])).length;
-      tries++;
-      cleared = hits === 4;
-      board(results);
-      q('#cg-next').disabled = !cleared || level === 2;
-      feedback(`${names[level]} ${hits} / 4 통과, ${tries}회 시험. ${cleared ? level === 2 ? '임무 성공! 세 게이트를 모두 복구했습니다. 은닉층의 역할을 설명해 보세요.' : '구역 복구 성공! 다음 게이트로 이동하세요.' : level === 2 && !q('#cg-hidden').checked ? 'XOR는 단층으로 완성할 수 없습니다. 은닉층을 연결해 다시 도전하세요.' : '틀린 입력을 확인하고 가중치나 편향을 수정하세요.'}`, cleared);
-    };
-    q('#cg-next').onclick = () => { if (cleared && level < 2) { level++; start(); } };
-    q('#cg-reset').onclick = () => { level = 0; start(); };
-    start();
+  // Chapter 8 runs the CNN, RNN and diffusion lab from computer-education2-model-lab.js.
+  function modelLab() {
+    shell(`<div id="ml-root"></div>${status}`);
+    pause = window.ceModelLab.mount(q('#ml-root'), feedback);
   }
 
   function mineralGame() {
@@ -228,7 +188,7 @@
   }
 
   const worksheets = {
-    8: ['AND, OR, XOR의 입력 네 쌍과 목표 출력을 적으세요.', '가중치 w1, w2와 편향 b를 정하고 가중합이 0 이상인지 계산하세요.', 'OR, NAND를 은닉층으로 연결한 뒤 XOR의 네 출력을 비교하세요.'],
+    8: ['세로 경계 필터와 가로 경계 필터를 적용하고, 특징 지도에서 밝게 남은 곳을 표시하세요.', 'RNN 기억 유지율을 0.3과 0.9로 바꿔 32줄을 읽은 뒤, 마지막 기억에 남은 정보를 비교하세요.', '확산 모델에서 잡음 단계 t가 커질 때 그림의 변화를 적고, 생성 결과가 어느 학습 이미지에 가까웠는지 기록하세요.'],
     9: ['밝기와 질량의 분포를 보며 충전용, 냉각용 학습 사례 네 장을 고르세요.', '새 광물과 가장 가까운 학습 카드의 이름으로 분류하고 정답과 비교하세요.', '오배송을 줄이도록 사례를 바꾼 뒤, 별도 시험 자료가 필요한 이유를 쓰세요.'],
     10: ['작품 사진의 이름과 연락처를 가리고 남길 정보를 정하세요.', '작가가 허락한 파일과 요청한 표시 조건을 확인하세요.', '얼굴 공개 동의를 확인하고 작품에 대한 존중하는 댓글을 작성하세요.'],
     11: ['오른쪽이 열렸을 때, 앞쪽만 열렸을 때, 둘 다 막혔을 때의 행동을 정하세요.', '오른쪽 회전 후 전진, 전진, 왼쪽 회전 규칙을 미로에서 실행하세요.', '센서 입력, 선택한 조건, 모터 행동, 위치를 한 단계씩 기록하세요.']
@@ -247,7 +207,7 @@
       if (window.LecturePrint?.mode) {
         shell(`<section class="cg-worksheet"><h3>실습 활동지</h3><ol>${worksheets[chapter].map(text => `<li>${text}</li>`).join('')}</ol><p>예측:</p><div class="cg-write-space"></div><p>실행 결과와 수정한 점:</p><div class="cg-write-space"></div><p>온라인 교안의 마지막 슬라이드에서 직접 실행할 수 있습니다.</p></section>`);
         q('.cg-reflection').open = true;
-      } else ({8: gateGame, 9: mineralGame, 10: editorGame, 11: robotGame}[chapter])();
+      } else ({8: modelLab, 9: mineralGame, 10: editorGame, 11: robotGame}[chapter])();
     }
   };
 })();

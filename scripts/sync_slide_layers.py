@@ -286,7 +286,7 @@ def sync(course, source_dir, work, only, debug):
                                 continue
                             lines.append([round(left / size[0], 4), round(top / size[1], 4), round(width / size[0], 4),
                                           round(height / size[1], 4), text])
-                        taken = [(a['x'], a['y'], a['width'], a['height']) for name in ('embeds', 'videoFrames', 'linkAreas')
+                        taken = [(a['x'], a['y'], a['width'], a['height']) for name in ('embeds', 'videoFrames', 'animations', 'linkAreas')
                                  for a in record.get(name, [])]
                         pictures = slide_pictures(slide, z, parts[page - 1], size, taken, folder)
                         if lines: record['lines'] = lines

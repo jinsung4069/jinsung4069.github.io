@@ -14,18 +14,23 @@ const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
     const range = async (id, value) => { const el = page.locator(`#cg-${id}`); await el.press('Home'); for(let i=0;i<(value+3)*2;i++) await el.press('ArrowRight'); };
     const hash = async n => { await page.evaluate(n => location.hash=`slide-${n}`, n); await page.waitForFunction(n => document.querySelector('#ce-page').value===String(n), n); };
     await go(8);
-    await click('run'); assert.match(await message(), /1 \/ 4/); assert.equal(await page.locator('#cg-next').isDisabled(), true);
-    for(const [i,bias] of [[0,-1.5],[1,-0.5],[2,-1.5]]) {
-      await range('w1',1); await range('w2',1); await range('bias',bias);
-      assert.match(page.url(), /#slide-79$/,'slider arrow keys must not change slides');
-      if(i===2) { await click('run'); assert.doesNotMatch(await message(), /임무 성공/); await page.locator('#cg-hidden').check(); }
-      await click('run'); assert.match(await message(), /4 \/ 4/);
-      if(i<2) await click('next');
-    }
-    assert.match(await message(), /임무 성공/);
-    await range('bias',3); assert.equal(await page.locator('#cg-next').isDisabled(),true); assert.doesNotMatch(await message(),/임무 성공/);
-    await click('reset'); assert.match(await page.locator('#cg-score').innerText(), /1 \/ 3/);
-    console.log('8: failed gate, AND/OR/XOR wins, slider keyboard isolation, stale success invalidation, reset');
+    assert.match(await page.locator('.ce-game h2').innerText(), /CNN, RNN, 확산 모델/);
+    assert.notEqual(await page.locator('#ml-sum').innerText(), '0.00', 'the filter starts where it responds');
+    await page.locator('[data-kernel="horizontal"]').click(); assert.match(await message(), /가로 경계/);
+    const cell = page.locator('[data-k="0"]'); await cell.fill('20'); await cell.blur();
+    assert.equal(await cell.inputValue(), '9', 'a filter cell shows the value the calculation uses');
+    assert.match(await message(), /×\(9\)/);
+    await page.locator('#ml-pos').press('ArrowRight'); assert.match(page.url(), /#slide-79$/, 'slider arrow keys must not change slides');
+    await page.locator('#ml-tab-rnn').click(); assert.equal(await page.locator('#ml-rnn').isVisible(), true);
+    for(let i=0;i<32;i++) await page.locator('#ml-next-row').click();
+    assert.match(await message(), /32줄을 모두 읽었습니다.*입력이 없는 줄 20개를 지나면 0\.007까지/); assert.equal(await page.locator('#ml-next-row').isEnabled(), true);
+    await page.locator('#ml-tab-diffusion').focus(); await page.keyboard.press('ArrowLeft');
+    assert.equal(await page.locator('#ml-tab-rnn').getAttribute('aria-selected'), 'true'); assert.match(page.url(), /#slide-79$/, 'tab arrow keys must not change slides');
+    await page.locator('#ml-tab-diffusion').click();
+    for(let i=0;i<50;i++) await page.locator('#ml-denoise-step').click();
+    assert.match(await message(), /생성 완료/); assert.equal(await page.locator('#ml-weights li').count(), 4);
+    await page.locator('#ml-clear').click(); assert.equal(await page.locator('#ml-weights li').count(), 5, 'a new input joins the known images');
+    console.log('8: CNN filter calculation, RNN row reading, tab keyboard isolation, diffusion generation and known images');
 
     await go(9);
     assert.equal(await page.locator('#cg-run').isDisabled(),true);
@@ -75,8 +80,8 @@ const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
         assert.equal(await page.locator('.ce-game').isVisible(),true);
         const widths = await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth,lab:document.querySelector('#ce-lab').clientWidth,content:document.querySelector('#ce-lab').scrollWidth}));
         assert(widths.page<=widths.viewport+1 && widths.content<=widths.lab+1,`${n}: overflow at ${viewport.width}: ${JSON.stringify(widths)}`);
-        await page.locator('#cg-run').scrollIntoViewIfNeeded(); assert.equal(await page.locator('#cg-run').isVisible(),true);
-        await page.locator('#ce-open-toc').click(); await page.locator('#ce-search').fill('게임 실습');
+        const control = n===8?'#ml-scan':'#cg-run'; await page.locator(control).scrollIntoViewIfNeeded(); assert.equal(await page.locator(control).isVisible(),true);
+        await page.locator('#ce-open-toc').click(); await page.locator('#ce-search').fill(n===8?'체험 실습':'게임 실습');
         assert.equal(await page.locator('#ce-toc button:not([hidden])').count(),1);
         await page.locator('#ce-toc button:not([hidden])').click();
         await hash(legacy[n]); assert.equal(await page.locator('.ce-game').isVisible(),false); assert.equal(await page.locator('#ce-lab').isVisible(),true);
