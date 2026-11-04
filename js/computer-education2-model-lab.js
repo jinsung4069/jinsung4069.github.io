@@ -251,10 +251,10 @@
       const strip = $('#ml-strip-forward').getContext('2d');
       [0, 10, 20, 30, 40, 50].forEach((s, i) => { const tmp = Object.assign(document.createElement('canvas'), {width: 64, height: 64}); paint(tmp, noisy(x0, s, eps).map(toPixel), N, N, gray); strip.drawImage(tmp, i * 64, 0); });
       const a = Math.sqrt(alphaBar[t]), b = Math.sqrt(1 - alphaBar[t]);
-      // The two coefficients are not shares: their squares add up to 1, and the squares are the shares.
-      const share = Math.round(a * a * 100);
-      $('#ml-forward-calc').textContent = `잡음 낀 그림 = ${a.toFixed(2)} × 원래 그림 + ${b.toFixed(2)} × 잡음. 두 계수의 제곱을 더하면 1(${(share / 100).toFixed(2)} + ${((100 - share) / 100).toFixed(2)})이므로 원래 그림이 ${share}%, 잡음이 ${100 - share}%를 차지합니다.`;
-      $('#ml-noisy').setAttribute('aria-label', `잡음 단계 ${t}의 그림, 원래 그림 ${share}%, 잡음 ${100 - share}%`);
+      // The squared coefficients add up to 1. They are mixing weights, not how much of the picture is visible, since pixel variance is not normalized.
+      const sq = Math.round(a * a * 100) / 100;
+      $('#ml-forward-calc').textContent = `잡음 낀 그림 = ${a.toFixed(2)} × 원래 그림 + ${b.toFixed(2)} × 잡음. 두 계수를 제곱해 더하면 항상 1입니다(${sq.toFixed(2)} + ${(1 - sq).toFixed(2)}). t가 커질수록 원래 그림의 계수는 0으로, 잡음의 계수는 1로 갑니다.`;
+      $('#ml-noisy').setAttribute('aria-label', `잡음 단계 ${t}의 그림, 원래 그림 계수 ${a.toFixed(2)}, 잡음 계수 ${b.toFixed(2)}`);
       $('#ml-strip-forward').setAttribute('aria-label', '잡음 단계 0, 10, 20, 30, 40, 50의 그림을 차례로 나열');
     }
     // The ideal noise predictor for a handful of known images: their average, weighted by how likely each one is to have become x_t.
