@@ -22,9 +22,6 @@
  }else if(chapter===7){
   box('조건과 반복의 실행 추적','1부터 입력한 수까지 반복하며 짝수만 더하는 프로그램을 실행하세요.','<label>마지막 수 <input id="limit" type="number" min="1" max="20" value="6"></label><button id="run">실행 추적</button>');
   q('#run').onclick=()=>{const limit=Number(q('#limit').value);if(!Number.isInteger(limit)||limit<1||limit>20){result('1부터 20까지의 정수를 입력하세요.');return}let sum=0;const lines=['합계 = 0'];for(let i=1;i<=limit;i++){if(i%2===0)sum+=i;lines.push(`i = ${i}, 짝수 조건 ${i%2===0?'참 → 더하기':'거짓 → 건너뛰기'}, 합계 = ${sum}`)}result(lines.join('\n'))};q('#run').click();
- }else if(chapter===8){
-  box('논리 연산과 XOR','두 입력을 바꿔 AND, OR, XOR의 출력을 비교하세요. XOR은 두 입력이 다를 때 1입니다.','<label>입력 A <select id="a"><option>0</option><option>1</option></select></label><label>입력 B <select id="b"><option>0</option><option>1</option></select></label>');
-  const draw=()=>{const a=Number(q('#a').value),b=Number(q('#b').value);result(`AND: ${a&b}\nOR: ${a|b}\nXOR: ${a^b}\nXOR 진리표: 00 → 0, 01 → 1, 10 → 1, 11 → 0`)};q('#a').onchange=draw;q('#b').onchange=draw;draw();
  }else if(chapter===9){
   box('분류 임계값 바꾸기','가상의 모델이 양성 점수 0.72를 출력했습니다. 임계값을 바꾸고 최종 분류가 어떻게 달라지는지 확인하세요.','<label>임계값 <input id="threshold" type="range" min="0" max="100" value="50"></label>');
   const draw=()=>{const threshold=Number(q('#threshold').value)/100;result(`모델의 양성 점수: 0.72\n임계값: ${threshold.toFixed(2)}\n분류 결과: ${0.72>=threshold?'양성':'음성'}\n점수가 임계값 이상이면 양성으로 분류합니다.`)};q('#threshold').oninput=draw;draw();
