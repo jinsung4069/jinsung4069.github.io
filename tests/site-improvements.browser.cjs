@@ -16,8 +16,8 @@ const base=process.argv[2]||'http://127.0.0.1:8772';
   await scenario('home search, category, empty state, bilingual and mobile menu',async p=>{
    await p.goto(base+'/');await p.locator('#project-search').fill('데이터베이스');assert.equal(await p.locator('.project-card-link:visible').count(),1);
    await p.locator('#project-category').selectOption('game');assert.equal(await p.locator('.project-card-link:visible').count(),0);assert.match(await p.locator('#project-result').innerText(),/검색 결과가 없습니다/);
-   await p.locator('#project-search').fill('');assert.equal(await p.locator('.project-card-link:visible').count(),3);
-   await p.locator('#languageToggle').click();assert.equal(await p.locator('#project-result').innerText(),'3 projects');await audit(p,'.project-filter');
+   await p.locator('#project-search').fill('');assert.equal(await p.locator('.project-card-link:visible').count(),4);
+   await p.locator('#languageToggle').click();assert.equal(await p.locator('#project-result').innerText(),'4 projects');await audit(p,'.project-filter');
    await p.locator('#darkModeToggle').click();await audit(p,'.project-filter');await p.locator('#darkModeToggle').click();
    assert.equal(await p.locator('a[href="/lectures/"]').count(),0,'lecture materials are shared by direct link');
    await p.setViewportSize({width:390,height:844});await p.locator('#mobileMenuToggle').click();await p.locator('#mobileNav').getByRole('link',{name:'About',exact:true}).click();assert.match(p.url(),/\/about\/$/);

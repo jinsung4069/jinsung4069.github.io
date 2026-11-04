@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const search = document.getElementById('project-search');
     const category = document.getElementById('project-category');
     if (search && category) {
-        const groups = {ai:['ai-understanding-lab','dqn-demo','machinelearning','orange3-widget-lab','webcam-classifier'],data:['database-lab','programming-language'],game:['alligator-chess','microrobot','simplequiz'],simulation:['astar-pathfinding','contour-simulator']};
+        const groups = {ai:['ai-understanding-lab','dqn-demo','machinelearning','orange3-widget-lab','webcam-classifier','ai-survival'],data:['database-lab','programming-language'],game:['alligator-chess','microrobot','simplequiz','ai-survival'],simulation:['astar-pathfinding','contour-simulator']};
         const cards = [...document.querySelectorAll('.project-card-link')];
         const filter = () => {
             let count = 0;

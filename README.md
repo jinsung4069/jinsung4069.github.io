@@ -34,6 +34,7 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | [Interactive Quiz](https://jinsung4069.github.io/simplequiz/) | Quiz question and answer authoring tool (separate repo) |
 | [StackBurger](https://jinsung4069.github.io/stackburger/) | Interactive coding board game |
 | [Attendance System](https://jinsung4069.github.io/attendance/) | Digital attendance tracking tool |
+| [AI Literacy Survival](https://jinsung4069.github.io/ai-survival/) | Survival game with an AI literacy question at every level up (Canvas, mobile touch) |
 
 ## 📂 Project Structure
 
