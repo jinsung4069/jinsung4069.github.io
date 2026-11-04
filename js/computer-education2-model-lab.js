@@ -101,13 +101,14 @@
 
 <div id="ml-diffusion" role="tabpanel" aria-labelledby="ml-tab-diffusion" hidden>
 <p>확산 모델은 학습할 때 그림에 잡음을 조금씩 더해 완전히 망가뜨리고, 잡음을 걷어내는 법을 배웁니다. 그림을 만들 때는 순수한 잡음에서 시작해 ${STEPS}번에 걸쳐 잡음을 조금씩 걷어냅니다.</p>
-<h4>1단계, 학습: 잡음 더하기</h4>
+<h4>1단계, 정방향: 잡음 더하기</h4>
+<p>학습할 때는 이렇게 잡음을 더한 그림을 보여 주고, 신경망이 더해진 잡음을 맞히도록 훈련합니다.</p>
 <label>잡음 단계 t <output id="ml-t-text"></output><input type="range" id="ml-t" min="0" max="${STEPS}" value="15"></label>
 <div class="ml-forward">${figure('ml-noisy', '잡음을 더한 그림', [256, 256])}<div>${figure('ml-strip-forward', 't = 0, 10, 20, 30, 40, 50', [384, 64], 'ml-strip')}<p id="ml-forward-calc" class="cg-formula"></p></div></div>
-<h4>2단계, 생성: 잡음 걷어내기</h4>
+<h4>2단계, 역방향(생성): 잡음 걷어내기</h4>
 <div class="cg-actions"><button type="button" id="ml-generate" class="ml-primary">잡음에서 생성</button><button type="button" id="ml-denoise-step">한 단계</button><button type="button" id="ml-new-noise">새 잡음으로 다시</button></div>
-<div class="ml-reverse">${figure('ml-xt', '지금 그림', [256, 256])}${figure('ml-x0', '예측한 원래 그림', [256, 256])}<div class="ml-weights"><span class="ml-label">학습 이미지와 닮은 정도</span><ol id="ml-weights"></ol></div></div>
-<p class="cg-note">실제 확산 모델은 수많은 이미지로 학습한 신경망이 잡음을 예측합니다. 이 실습의 잡음 예측기는 샘플 4장과 지금 입력만 학습 이미지로 아는 이상적인 계산식이라, 학습 이미지와 거의 같은 그림을 다시 만듭니다. 학습 자료를 그대로 외워 내는 현상도 함께 관찰하세요.</p>
+<div class="ml-reverse">${figure('ml-xt', '지금 그림', [256, 256])}${figure('ml-x0', '예측한 원래 그림', [256, 256])}<div class="ml-weights"><span class="ml-label">어느 학습 이미지에서 왔을지 추측한 확률</span><ol id="ml-weights"></ol></div></div>
+<p class="cg-note">실제 확산 모델은 수많은 이미지로 학습한 신경망이 잡음을 예측합니다. 이 실습은 신경망 대신 샘플 4장과 지금 입력만 학습 이미지로 아는 이상적인 계산식으로 원래 그림을 예측합니다. 원래 그림을 알면 더해진 잡음도 알 수 있으므로 잡음을 예측하는 것과 같은 계산입니다. 학습 이미지가 몇 장뿐이라 학습 이미지와 거의 같은 그림을 다시 만듭니다. 학습 자료를 그대로 외워 내는 현상도 함께 관찰하세요.</p>
 </div>
 </section></div>`;
 
@@ -250,8 +251,10 @@
       const strip = $('#ml-strip-forward').getContext('2d');
       [0, 10, 20, 30, 40, 50].forEach((s, i) => { const tmp = Object.assign(document.createElement('canvas'), {width: 64, height: 64}); paint(tmp, noisy(x0, s, eps).map(toPixel), N, N, gray); strip.drawImage(tmp, i * 64, 0); });
       const a = Math.sqrt(alphaBar[t]), b = Math.sqrt(1 - alphaBar[t]);
-      $('#ml-forward-calc').textContent = `잡음 낀 그림 = ${a.toFixed(2)} × 원래 그림 + ${b.toFixed(2)} × 잡음. 원래 그림의 몫은 ${Math.round(a * a * 100)}%입니다.`;
-      $('#ml-noisy').setAttribute('aria-label', `잡음 단계 ${t}의 그림, 원래 그림 몫 ${Math.round(a * a * 100)}%`);
+      // The two coefficients are not shares: their squares add up to 1, and the squares are the shares.
+      const share = Math.round(a * a * 100);
+      $('#ml-forward-calc').textContent = `잡음 낀 그림 = ${a.toFixed(2)} × 원래 그림 + ${b.toFixed(2)} × 잡음. 두 계수의 제곱을 더하면 1(${(share / 100).toFixed(2)} + ${((100 - share) / 100).toFixed(2)})이므로 원래 그림이 ${share}%, 잡음이 ${100 - share}%를 차지합니다.`;
+      $('#ml-noisy').setAttribute('aria-label', `잡음 단계 ${t}의 그림, 원래 그림 ${share}%, 잡음 ${100 - share}%`);
       $('#ml-strip-forward').setAttribute('aria-label', '잡음 단계 0, 10, 20, 30, 40, 50의 그림을 차례로 나열');
     }
     // The ideal noise predictor for a handful of known images: their average, weighted by how likely each one is to have become x_t.
@@ -283,8 +286,8 @@
       x0c.setAttribute('aria-label', gen.x0 ? '잡음 예측기가 추측한 원래 그림' : '아직 예측하지 않음');
       const best = gen.weights.indexOf(Math.max(...gen.weights));
       if (gen.t === STEPS) feedback(`순수한 잡음에서 시작합니다. 남은 단계 ${STEPS}. 처음에는 모든 학습 이미지가 비슷하게 그럴듯합니다.`);
-      else if (gen.t > 0) feedback(`남은 단계 ${gen.t}. 지금은 ${training[best].label}에 ${Math.round(gen.weights[best] * 100)}% 가깝다고 추측합니다. 잡음이 줄수록 추측이 한쪽으로 모입니다.`);
-      else feedback(`생성 완료. 결과와 가장 닮은 학습 이미지는 ${training[best].label}입니다. 학습 이미지가 적으면 모델이 새 그림 대신 외운 그림을 내놓습니다. 새 잡음으로 다시 만들어 결과가 바뀌는지 보세요.`, true);
+      else if (gen.t > 0) feedback(`남은 단계 ${gen.t}. 지금 그림이 ${training[best].label}에서 왔을 확률을 ${Math.round(gen.weights[best] * 100)}%로 추측합니다. 그림이 아직 잡음처럼 보여도 추측은 빨리 한쪽으로 모이고, 남은 단계는 그 그림 쪽으로 잡음을 걷어냅니다.`);
+      else feedback(`생성 완료. 만들어진 그림은 학습 이미지 중 ${training[best].label}에 해당합니다. 학습 이미지가 적으면 모델이 새 그림 대신 외운 그림을 내놓습니다. 새 잡음으로 다시 만들어 결과가 바뀌는지 보세요.`, true);
     }
     $('#ml-t').addEventListener('input', drawForward);
     $('#ml-generate').onclick = () => { if (gen.t === 0 && timerKind !== 'generate') resetGen(); run('generate', denoise, 110); };

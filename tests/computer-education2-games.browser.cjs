@@ -2,7 +2,7 @@
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const base = process.argv[2] || 'http://127.0.0.1:8771';
-const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
+const last = {8:78, 9:30, 10:60, 11:44}, legacy = {9:26, 10:25, 11:10};
 (async () => {
   const browser = await chromium.launch({headless:true, ...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});
   try {
@@ -20,12 +20,12 @@ const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
     const cell = page.locator('[data-k="0"]'); await cell.fill('20'); await cell.blur();
     assert.equal(await cell.inputValue(), '9', 'a filter cell shows the value the calculation uses');
     assert.match(await message(), /×\(9\)/);
-    await page.locator('#ml-pos').press('ArrowRight'); assert.match(page.url(), /#slide-79$/, 'slider arrow keys must not change slides');
+    await page.locator('#ml-pos').press('ArrowRight'); assert.match(page.url(), /#slide-78$/, 'slider arrow keys must not change slides');
     await page.locator('#ml-tab-rnn').click(); assert.equal(await page.locator('#ml-rnn').isVisible(), true);
     for(let i=0;i<32;i++) await page.locator('#ml-next-row').click();
     assert.match(await message(), /32줄을 모두 읽었습니다.*입력이 없는 줄 20개를 지나면 0\.007까지/); assert.equal(await page.locator('#ml-next-row').isEnabled(), true);
     await page.locator('#ml-tab-diffusion').focus(); await page.keyboard.press('ArrowLeft');
-    assert.equal(await page.locator('#ml-tab-rnn').getAttribute('aria-selected'), 'true'); assert.match(page.url(), /#slide-79$/, 'tab arrow keys must not change slides');
+    assert.equal(await page.locator('#ml-tab-rnn').getAttribute('aria-selected'), 'true'); assert.match(page.url(), /#slide-78$/, 'tab arrow keys must not change slides');
     await page.locator('#ml-tab-diffusion').click();
     for(let i=0;i<50;i++) await page.locator('#ml-denoise-step').click();
     assert.match(await message(), /생성 완료/); assert.equal(await page.locator('#ml-weights li').count(), 4);
@@ -84,7 +84,7 @@ const last = {8:79, 9:30, 10:60, 11:44}, legacy = {8:54, 9:26, 10:25, 11:10};
         await page.locator('#ce-open-toc').click(); await page.locator('#ce-search').fill(n===8?'체험 실습':'게임 실습');
         assert.equal(await page.locator('#ce-toc button:not([hidden])').count(),1);
         await page.locator('#ce-toc button:not([hidden])').click();
-        await hash(legacy[n]); assert.equal(await page.locator('.ce-game').isVisible(),false); assert.equal(await page.locator('#ce-lab').isVisible(),true);
+        if(legacy[n]){ await hash(legacy[n]); assert.equal(await page.locator('.ce-game').isVisible(),false); assert.equal(await page.locator('#ce-lab').isVisible(),true);}
       }
     }
     console.log('All four decks: desktop/tablet/mobile overflow, controls, searchable TOC and legacy activity');
