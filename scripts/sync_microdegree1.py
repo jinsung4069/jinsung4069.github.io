@@ -24,6 +24,8 @@ VERSION = '20261013a'
 UI_VERSION = '20261024ui'
 PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide player
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
+# Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
+SESSION_VERSIONS = {'5-1': '20261107a', '5-2': '20261107a'}
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
 SESSIONS = [
@@ -35,8 +37,8 @@ SESSIONS = [
     ('3-2', 3, '오후', '생활 속 인공지능 서비스 분석', '생활 서비스 시범 분석, 교육용 인공지능 서비스, 이용 조건과 적합성 판단', []),
     ('4-1', 4, '오전', '데이터와 인공지능 학습 Part 1', '데이터의 종류와 표현, 수집, 특성과 레이블과 데이터셋', []),
     ('4-2', 4, '오후', '데이터와 인공지능 학습 Part 2', '데이터 분류와 품질, 데이터 조건 비교 실습', []),
-    ('5-1', 5, '오전', '지식 기반 인공지능 도구 활용 Part 1', '목적에 맞는 도구 선택, 원리 지식으로 한계 판단, 질문 설계와 반복 개선', []),
-    ('5-2', 5, '오후', '지식 기반 인공지능 도구 활용 Part 2', '자료 기반 도구 활용, 협업, 기록', []),
+    ('5-1', 5, '오전', '지식 기반 인공지능 도구 활용 Part 1', '규칙 기반 전문가 시스템, 기호주의 AI의 역사, 정방향과 역방향 추론, 규칙 지식 베이스 설계', []),
+    ('5-2', 5, '오후', '지식 기반 인공지능 도구 활용 Part 2', '생성형 AI 활용, 도구 선택, 요청문 설계, RAG로 근거 있는 답, 협업과 기록', []),
     ('6-1', 6, '오전', '공정성과 편향성 및 책임 있는 활용 Part 1', '편향이 생기는 곳, 공정성 기준, 윤리 관점과 원칙, 편향 사례 분석', []),
     ('6-2', 6, '오후', '생성형 인공지능 결과 해석과 검증', '생성 원리 다시 보기, 오류의 유형, 근거 확인과 검증 절차', []),
     ('7-1', 7, '오전', '공정성과 편향성 및 책임 있는 활용 Part 2', '개인정보, 저작권, 투명성, 책임 있는 활용 기준, 학급 규칙 만들기', []),
@@ -45,8 +47,9 @@ SESSIONS = [
 ]
 # Line breaks added in the working copy where a source title runs off its coloured band: (slide, find, replace).
 FIXES = {'4-2': [(4, '품질, 학습', '품질,\v학습')], '8-1': [(4, '검토, 개선과', '검토,\v개선과')],
-         # "오후" named the afternoon session, which the decks call Part 2.
-         '5-1': [(39, '오후 준비', 'Part 2 준비')]}
+         # "오전" and "오후" named the two sessions, which the decks also call Part 1 and Part 2.
+         '5-1': [(2, '오전 Part 1', 'Part 1'), (2, '오후 Part 2', 'Part 2'), (39, '오후 실습 자료로', 'Part 2 실습 자료로'),
+                 (44, '오후 준비', 'Part 2 준비'), (44, '오후 실습', 'Part 2 실습')]}
 # The pages are not tied to one run of the course: session dates, 오전/오후 and video running times are removed.
 RUNNING_TIME = re.compile(r'재생 시간\s*\d+분(\s*\d+초)?')
 SCHEDULE = [
@@ -62,6 +65,8 @@ NAME = '(?:' + '|'.join(NAMES) + ')'
 # A paragraph that is only a name, or only an affiliation ending in a department, is removed.
 ONLY_PERSON = re.compile(rf'\(?\s*{NAME}\s*\)?(\s*(교수|강사|박사))?|\S*대학교\s+\S+(학과|교육과|전공)')
 LEFTOVER = re.compile(rf'{NAME}|컴퓨터교육과')
+# Text that keeps a name on purpose: the download address of the 5-2 practice files.
+ALLOWED = {'5-2': ['숏.한국/전인성/5주차실습']}
 YOUTUBE = re.compile(r'(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})')
 MSO_GROUP, MSO_PICTURE, MSO_LINKED_PICTURE = 6, 13, 11
 
@@ -177,7 +182,9 @@ def extract(slide, number, size, videos):
     embeds = []
     if len(video_ids) == 1 and len(pictures) == 1 and videos.get(video_ids[0], {}).get('embeddable'):
         picture = pictures[0]
-        embeds.append(dict(src=f'https://www.youtube-nocookie.com/embed/{video_ids[0]}',
+        # A link that starts partway through (t=435) starts the embedded player at the same point.
+        start = next((m[1] for link in links if video_ids[0] in link for m in [re.search(r'[?&]t=(\d+)', link)] if m), None)
+        embeds.append(dict(src=f'https://www.youtube-nocookie.com/embed/{video_ids[0]}' + (f'?start={start}' if start else ''),
                            title=videos[video_ids[0]]['title'],
                            **fraction(picture.Left, picture.Top, picture.Width, picture.Height, size)))
     elif video_ids and pictures:
@@ -242,7 +249,8 @@ def sync(source_dir, work, only):
                     assert any(f is not None for f in found), f'{key}: slide {number} no longer contains {find!r}'
                 edits = sum(redact(presentation.Slides(n), SCHEDULE_LINES.get(key, {}).get(n)) for n in kept)
                 raw = {n: ' '.join(clean(tr.Text) for tr, _, _ in text_ranges(presentation.Slides(n).Shapes)) for n in kept}
-                leftover = {n: LEFTOVER.findall(text) for n, text in raw.items() if LEFTOVER.search(text)}
+                allowed = lambda text: re.sub('|'.join(map(re.escape, ALLOWED.get(key, []))) or '(?!)', '', text)
+                leftover = {n: LEFTOVER.findall(allowed(text)) for n, text in raw.items() if LEFTOVER.search(allowed(text))}
                 assert not leftover, f'{key}: instructor text remains on slides {leftover}'
                 dated = {n: SCHEDULE_LEFT.findall(text) for n, text in raw.items() if SCHEDULE_LEFT.search(text)}
                 assert not dated, f'{key}: session dates or running times remain on slides {dated}'
@@ -292,10 +300,11 @@ def merge_labs(only=None):
 
 
 HEAD = '''<!doctype html><html lang="ko"><head>{print_js}<meta charset="utf-8">
-    <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/style.css?v=20261007wrap"><link rel="stylesheet" href="/css/computer-education2.css?v=20261013layers"><link rel="stylesheet" href="/css/lecture-image-zoom.css?v=20261022a"><link rel="stylesheet" href="/css/microdegree1.css?v={version}"><script src="/js/main.js?v=20260914-menu" defer></script><link rel="canonical" href="https://jinsung4069.github.io{path}">
+    <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/style.css?v=20261007wrap"><link rel="stylesheet" href="/css/computer-education2.css?v=20261102anim"><link rel="stylesheet" href="/css/lecture-image-zoom.css?v=20261022a"><link rel="stylesheet" href="/css/microdegree1.css?v={version}"><script src="/js/main.js?v=20261022upgrade" defer></script><link rel="canonical" href="https://jinsung4069.github.io{path}">
 <script defer src="/js/clean-url.js"></script>
-{print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/css/site-tools.css"><link rel="stylesheet" href="/css/lecture-ui.css?v=20261024ui"><script src="/js/lecture-catalog.js?v=20261024ui" defer></script></head><body class="lecture-page">
-    <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a><header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
+{print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/css/site-tools.css">
+<link rel="stylesheet" href="/css/lecture-ui.css?v=20261024ui">{catalog_js}</head><body class="lecture-page">
+    <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a><header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li><li class="nav-item"><a class="nav-text-link" href="/lectures/">강의자료</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
                         <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
                             <path d="m12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -340,13 +349,14 @@ def write_pages(only=None):
     save(DATA / 'catalog.json', json.dumps(catalog, ensure_ascii=False, indent=2) + '\n')
     cards = ''.join(f'<a class="ce-card" href="/lectures/{COURSE}/{c["id"]}/"><div class="ce-number md-number">{c["week"]}<small>{c["half"]}</small></div>'
                     f'<div><h2>{escape(c["title"])}</h2><p>{escape(c["summary"])}</p></div></a>' for c in catalog)
-    head = HEAD.format(print_js='', print_css='', version=VERSION, path=f'/lectures/{COURSE}/',
+    head = HEAD.format(print_js='', print_css='', catalog_js='<script src="/js/lecture-catalog.js?v=20261024ui" defer></script>', version=VERSION, path=f'/lectures/{COURSE}/',
                        description='인공지능의 개념과 원리부터 도구 활용, 결과 검증, 책임 있는 활용까지 8주 과정의 HTML 강의자료',
                        title=f'{COURSE_TITLE} | 강의자료 | 전인성')
     save(PAGES / 'index.html',
         head + f'<main class="ce-course" id="main-content" tabindex="-1"><p class="ce-eyebrow"><a href="/lectures/">강의자료</a> › 마이크로디그리 과정1</p>'
         f'<h1><span class="title-line">마이크로디그리 과정1</span> <span class="title-line">인공지능의 이해와 원리 기반 활용</span></h1><p class="ce-intro">인공지능의 개념과 원리에서 도구 활용과 책임 있는 활용까지.<br>슬라이드로 개념을 살펴보고 브라우저에서 직접 체험합니다.</p>'
-        f'<div class="ce-grid">{cards}</div></main></body></html>\n')
+        f'<div class="ce-grid">{cards}</div><section class="activity-links"><h2>관련 실습 바로가기</h2><a href="/ai-understanding-lab/">AI 이해 실습</a>'
+        f'<a href="/database-lab/">데이터베이스 실습</a><a href="/programming-language/">프로그래밍 실습</a></section></main></body></html>\n')
     symbols = ''.join(f'<symbol id="ce-icon-{name}" viewBox="0 0 24 24">{body}</symbol>' for name, body in ICONS.items())
     for i, c in enumerate(catalog):
         if only and c['id'] not in only: continue
@@ -359,12 +369,12 @@ def write_pages(only=None):
                    + button('ce-open-links', 'link', '관련 링크', 'hidden') + button('ce-zoom', 'zoom-in', '확대', 'aria-pressed="false"')
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
-        lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={UI_VERSION}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
+        lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={SESSION_VERSIONS.get(c["id"], UI_VERSION)}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
         head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20261024ui"></script>',
-                           print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">',
+                           print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">', catalog_js='',
                            version=VERSION, path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(c['summary']),
                            title=f'{escape(label)} | 마이크로디그리 과정1 | 전인성')
-        body = (f'\n<main class="ce-viewer md-viewer" data-chapter="{c["id"]}" data-course="{COURSE}" data-course-title="마이크로디그리 과정1" data-version="{VERSION}" id="main-content" tabindex="-1">'
+        body = (f'\n<main class="ce-viewer md-viewer" data-chapter="{c["id"]}" data-course="{COURSE}" data-course-title="마이크로디그리 과정1" data-version="{SESSION_VERSIONS.get(c["id"], VERSION)}" id="main-content" tabindex="-1">'
                 f'<div class="ce-heading"><div><a href="/lectures/">강의자료</a> <span aria-hidden="true">›</span> <a href="/lectures/{COURSE}/">마이크로디그리 과정1</a><h1>{escape(label)}</h1></div><a href="/lectures/{COURSE}/">전체 강의 보기</a></div>\n'
                 f'<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>{symbols}</defs></svg>'
                 f'<div class="ce-stage" id="ce-stage"><div class="ce-viewport"><div class="ce-canvas"><img class="ce-slide-image" id="ce-image" width="2000" height="1125" alt="강의 슬라이드" aria-describedby="ce-slide-text" src="/images/lectures/{COURSE}/{c["id"]}/001.webp"><div id="ce-media"></div><section class="ce-lab md-lab" id="ce-lab" hidden aria-label="체험 슬라이드"></section></div></div>'
@@ -375,7 +385,8 @@ def write_pages(only=None):
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-page-dialog"><header><h2>페이지 이동</h2>{close("ce-close-page")}</header><form id="ce-go-page"><label for="ce-page">전체 <span id="ce-total">{c["count"]}</span>쪽</label><input id="ce-page" type="number" min="1" max="{c["count"]}" value="1" required><button class="ce-submit" type="submit">이동</button></form></dialog>\n'
                 f'<dialog class="ce-dialog ce-small-dialog" id="ce-links-dialog"><header><h2>관련 링크</h2>{close("ce-close-links")}</header><div class="ce-links" id="ce-links"></div></dialog></main>'
                 f'<noscript><p>슬라이드 이동과 체험에는 자바스크립트가 필요합니다.</p></noscript>'
-                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script><script src="/js/local-progress.js" defer></script><script src="/js/site-learning.js" defer></script><script src="/js/lecture-tools.js?v=20261024ui" defer></script><script src="/js/computer-education2.js?v={PLAYER_VERSION}" defer></script></body></html>\n')
+                f'<script src="/js/microdegree1-labs.js?v={VERSION}"></script>{lab_script}<script src="/js/lecture-image-zoom.js?v={VIEWER_VERSION}"></script>\n<script src="/js/local-progress.js" defer></script>\n<script src="/js/site-learning.js" defer></script>\n'
+                f'<script src="/js/lecture-tools.js?v=20261024ui" defer></script>\n<script defer src="/js/computer-education2.js?v={PLAYER_VERSION}"></script></body></html>\n')
         folder = PAGES / c['id']
         folder.mkdir(exist_ok=True)
         save(folder / 'index.html', head + body)
