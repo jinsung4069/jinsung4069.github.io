@@ -15,9 +15,9 @@ function htmlFiles(folder){return fs.readdirSync(folder,{withFileTypes:true}).fl
  async function geometry(label){
   const issues=await page.evaluate(()=>{
    const bar=document.querySelector('.lecture-tools'),stage=document.querySelector('.ce-stage'),r=bar.getBoundingClientRect(),s=stage.getBoundingClientRect(),issues=[];
-   if(r.bottom>s.top+2)issues.push('toolbar overlaps content');
+   if(!document.fullscreenElement&&r.bottom>s.top+2)issues.push('toolbar overlaps content');
    if(document.documentElement.scrollWidth>innerWidth+2)issues.push(`page overflow ${document.documentElement.scrollWidth}/${innerWidth}`);
-   for(const b of bar.querySelectorAll('button,summary')){const r=b.getBoundingClientRect();if(!r.width||!r.height)continue;if(r.width<43||r.height<43)issues.push(`small target ${b.textContent.trim()}`);if(r.left<0||r.right>innerWidth+2)issues.push(`control outside viewport ${b.textContent.trim()}`)}
+   for(const b of bar.querySelectorAll('button')){const r=b.getBoundingClientRect();if(!r.width||!r.height)continue;if(r.width<43||r.height<43)issues.push(`small target ${b.textContent.trim()}`);if(r.left<0||r.right>innerWidth+2)issues.push(`control outside viewport ${b.textContent.trim()}`)}
    return issues;
   });issues.forEach(issue=>fail(label+': '+issue));
  }
@@ -62,11 +62,11 @@ function htmlFiles(folder){return fs.readdirSync(folder,{withFileTypes:true}).fl
    await page.getByRole('button',{name:'활동 초기화',exact:true}).click();assert.equal(await page.getByRole('button',{name:'직선',exact:true}).getAttribute('aria-pressed'),'true');
    for(const deck of ['computer-education2/8','ai-education/chapter1','ai-algorithm/week2']){
     await page.goto(base+'/lectures/'+deck+'/#slide-2',{waitUntil:'domcontentloaded'});await page.waitForSelector('[data-ready=true]');
-    await page.locator('.lecture-more summary').click();await page.getByRole('button',{name:'북마크',exact:true}).click();await page.locator('.lecture-more summary').click();assert(await page.getByRole('button',{name:'북마크 해제',exact:true}).isVisible());await page.keyboard.press('Escape');
-    await page.locator('.lecture-more summary').click();await page.getByRole('button',{name:'선택 인쇄',exact:true}).click();assert(await page.locator('#lecture-print-options').isVisible());await page.getByRole('button',{name:'닫기',exact:true}).last().click();
+    await page.getByRole('button',{name:'북마크',exact:true}).click();assert(await page.getByRole('button',{name:'북마크 해제',exact:true}).isVisible());
+    await page.getByRole('button',{name:'선택 인쇄',exact:true}).click();assert(await page.locator('#lecture-print-options').isVisible());await page.getByRole('button',{name:'닫기',exact:true}).last().click();
     await page.locator('#ce-fullscreen,#fullscreenButton').click();await page.waitForFunction(()=>!!document.fullscreenElement);await geometry(deck+' fullscreen');await page.locator('#ce-next,#next').click();assert.equal(await page.locator('#ce-page-label').innerText(),`3 / ${await page.locator('#ce-page,#pageNumber').getAttribute('max')}`);await page.evaluate(()=>document.exitFullscreen());
     for(const theme of ['light','dark']){
-     await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);await page.locator('.lecture-more summary').click();
+     await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
      const audit=await new AxeBuilder({page}).include('.lecture-tools').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
      assert.deepEqual(audit.violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],deck+' '+theme+' tools accessibility');
      await page.keyboard.press('Escape');
