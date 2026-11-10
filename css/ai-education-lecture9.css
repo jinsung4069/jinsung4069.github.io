@@ -1,7 +1,7 @@
-/* Lecture 9: embedded solo unplugged activities. */
-[data-chapter="lecture9"] .ce-lab{padding:0;background:#f4f6fb}
-[data-chapter="lecture9"] .ce-lab::before{display:none}
-[data-chapter="lecture9"] .ce-stage.lab-mode{height:min(820px,calc(100dvh - 150px));min-height:520px}
+/* Lectures 9 and 10: embedded solo unplugged activities. */
+[data-chapter="lecture9"] .ce-lab,[data-chapter="lecture10"] .ce-lab{padding:0;background:#f4f6fb}
+[data-chapter="lecture9"] .ce-lab::before,[data-chapter="lecture10"] .ce-lab::before{display:none}
+[data-chapter="lecture9"] .ce-stage.lab-mode,[data-chapter="lecture10"] .ce-stage.lab-mode{height:min(820px,calc(100dvh - 150px));min-height:520px}
 .l9-lab{display:flex;flex-direction:column;min-height:100%;padding:14px 18px 76px;box-sizing:border-box;font-family:Freesentation,sans-serif;word-break:keep-all}
 .l9-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 .l9-head h2{font-size:clamp(20px,2.2vw,30px)!important;margin:0 0 4px!important}

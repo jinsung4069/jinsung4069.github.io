@@ -28,7 +28,7 @@ A personal portfolio & CV website showcasing research, interactive educational d
 | [ML Simulations](https://jinsung4069.github.io/machinelearning/) | Interactive supervised and unsupervised learning simulations |
 | [Orange3 Widget Parameter Lab](https://jinsung4069.github.io/orange3-widget-lab/) | Simulations for 9 Orange3 widgets with dataset/model-specific workflow recommendations and parameter-driven structure, boundary, clustering, and performance views |
 | [Webcam Object Classifier](https://jinsung4069.github.io/webcam-classifier/) | Real-time, in-browser object detection with TensorFlow.js and COCO-SSD |
-| [Alligator Chess](https://jinsung4069.github.io/alligator-chess/) | Strategic board game integrated in this repository |
+| [Rule-table Alligator Chess](https://jinsung4069.github.io/unplugged-lab/alligator/) | Unplugged hexapawn activity against a rule-table alligator and one that learns |
 | [Micro Robot](https://jinsung4069.github.io/microrobot/) | Strategic puzzle game (React) |
 | [Contour Simulator](https://jinsung4069.github.io/contour-simulator/) | Draw contours for 3D terrain & volcano simulation |
 | [Interactive Quiz](https://jinsung4069.github.io/simplequiz/) | Quiz question and answer authoring tool (separate repo) |
@@ -44,8 +44,6 @@ jinsung4069.github.io/
 ├── about/index.html            # About at /about/
 ├── 404.html                    # Not-found page that forwards moved URLs
 ├── <project-name>/index.html   # Interactive projects at /<project-name>/
-├── alligator-chess/            # Prebuilt Alligator Chess export
-├── apps/alligator-chess/       # Game source and build instructions
 ├── about.html, pages/*.html    # Legacy redirects to the folder URLs
 ├── css/, js/                   # Shared and page-specific styles and scripts
 ├── data/                       # Practice datasets and page data
@@ -59,7 +57,7 @@ External project repos served under the same domain: `astar-pathfinding`, `simpl
 
 ## 🛠️ Technologies
 
-- **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+), plus two prebuilt React games
+- **Frontend**: HTML5, CSS3, vanilla JavaScript (ES6+), plus prebuilt React games
 - **SQL Practice**: sql.js (browser SQLite) with KCI CSV data
 - **Machine Learning**: TensorFlow.js + COCO-SSD for on-device webcam object detection
 - **Games/Demos**: Canvas API; React (CDN) for Micro Robot
@@ -86,9 +84,7 @@ Legacy `.html` pages redirect to the new URL and preserve query strings and anch
 Explicit `index.html` visits are normalized by `js/clean-url.js`.
 Preview through a local HTTP server so folder URLs and root-relative assets resolve correctly.
 The main pages require no build step or server rewrite configuration.
-Alligator Chess is prebuilt in `alligator-chess/`; after editing its source, follow
-[the game build instructions](apps/alligator-chess/README.md).
-Keep the root `.nojekyll` file so GitHub Pages includes the game's `_next` assets.
+Keep the root `.nojekyll` file so GitHub Pages publishes the folders as they are.
 
 ## Validation
 
@@ -97,12 +93,10 @@ Run these checks from the repository root with Python 3.12+ and Node.js 24:
 ```sh
 python scripts/check_site.py
 python -B -m unittest discover -s tests
-node --test apps/alligator-chess/tests/game.test.mjs
 ```
 
 The site check covers internal assets and links, image/video paths in page data, folder URLs,
-redirects, sitemap entries, shared page landmarks, and matching game source/export hashes.
-The game tests cover regressions in turn-based victory detection and all 135 reachable states.
+redirects, sitemap entries, and shared page landmarks.
 The same checks run on pushes and pull requests through `.github/workflows/site-checks.yml`.
 They validate the site without deploying it.
 

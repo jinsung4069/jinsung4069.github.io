@@ -21,6 +21,17 @@ NS = {'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
 A, P, R = ('{%s}' % NS[k] for k in 'apr')
 EMU = 12700
 
+# Slides of lecture 10 without a title placeholder, or with part of the title drawn as a picture.
+LECTURE10_TITLES = {
+    1: '전문가 시스템의 이해와 언플러그드 활동', 3: '콤비의 부품', 4: '콤비의 두 가지 게임 방법',
+    6: '스피드게임 1. 준비', 7: '스피드게임 2. 미션 카드 펼치기', 8: '스피드게임 3. 조작 카드 맞추기',
+    9: '스피드게임 3. 조작 카드 맞추기', 10: '외계인 미션 카드', 11: '스피드게임 4. 검증과 점수',
+    12: '스피드게임 4. 검증과 점수', 15: '알고리즘게임 1. 준비', 16: '알고리즘게임 1. 준비',
+    18: '알고리즘게임 2. 카드 조작', 19: '조작 방법 1, 밀기', 20: '조작 방법 2, 돌리기',
+    21: '조작 방법 3, 뒤집기', 22: '조작 방법 3, 뒤집기', 23: '알고리즘게임 3. 횟수 말하기',
+    24: '알고리즘게임 4. 검증', 29: '검증 방법', 30: '검증 방법', 32: '절차적 사고력으로 게임 즐기기',
+}
+
 # lab: (insert after original slide number, lab id, title, intro)
 CHAPTERS = {
     '6': dict(number=6, title='인공지능과 데이터과학', version='v2', titles={1: '인공지능과 데이터과학'}, labs=[
@@ -47,7 +58,18 @@ CHAPTERS = {
         (36, 'monkey', '무는 원숭이를 찾아라', '훈련 카드로 의사결정트리를 만들고 테스트 카드로 확인합니다.'),
         (44, 'neuron', '뉴런 퍼즐', '가중치와 임계값을 맞추어 AND, OR, XOR을 계산합니다.'),
     ]),
+    'lecture10': dict(number=10, title='전문가 시스템의 이해와 언플러그드 활동', version='v1', titles=LECTURE10_TITLES, labs=[
+        (38, 'alligator', '규칙표 악어 체스', '규칙표 악어, 빈칸이 있는 규칙표, 스스로 배우는 악어와 차례로 대결합니다.'),
+    ]),
 }
+# Pictures a browser cannot show (EMF, WMF, TIFF) stay in the rendered background.
+WEB_IMAGES = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'}
+
+
+def web_picture(pic, rel):
+    blip = pic.find('.//a:blip', NS)
+    target = rel.get(blip.get(R + 'embed')) if blip is not None else None
+    return target if target and Path(target).suffix.lower() in WEB_IMAGES else None
 
 def rels(z, part):
     name = posixpath.join(posixpath.dirname(part), '_rels', posixpath.basename(part) + '.rels')
@@ -120,8 +142,13 @@ def transparent_copy(source, target, parts):
                         ET.SubElement(clr, A + 'alpha', val='0')
                         r.insert(0, rpr)
                 tree = xml.find('p:cSld/p:spTree', NS)
+                rel = rels(zin, item.filename)
                 for pic in tree.findall('p:pic', NS):
-                    tree.remove(pic)
+                    if web_picture(pic, rel):
+                        tree.remove(pic)
+                timing = xml.find('p:timing', NS)  # media animations point at the removed pictures
+                if timing is not None:
+                    xml.remove(timing)
                 data = ET.tostring(xml, xml_declaration=True, encoding='UTF-8', standalone=True)
             zout.writestr(item, data)
 
@@ -182,11 +209,15 @@ def restore_spacing(runs, texts):
     for run in runs:
         if run['text'] in source:
             continue
-        chars = [ch for ch in run['text'] if ch != ' ']
-        pattern = r'[ \n]{0,2}'.join(re.escape(ch) for ch in chars)  # a line can span several PPTX runs
-        m = re.search(pattern, source) if chars else None
-        if m:
-            run['text'] = m.group(0).replace('\n', '')
+        # An automatic list number ("1. ") is drawn by PowerPoint and is not in the PPTX text.
+        prefix, body = re.match(r'(\d+\.\s*)?(.*)', run['text'], re.S).groups()
+        for lead, text in (('', run['text']), (prefix or '', body)):
+            chars = [ch for ch in text if not ch.isspace()]
+            pattern = r'\s{0,3}'.join(re.escape(ch) for ch in chars)  # a line can span several PPTX runs
+            m = re.search(pattern, source) if chars else None
+            if m:
+                run['text'] = lead + re.sub(r'\s', ' ', m.group(0).replace('\n', ''))
+                break
     for run in runs:
         width = natural_width(run['text'], run['font'], run['size'])
         if width:
@@ -232,13 +263,14 @@ def main():
                 ph = sp.find('p:nvSpPr/p:nvPr/p:ph', NS)
                 if ph is not None and ph.get('type') in ('title', 'ctrTitle'):
                     title = ''.join(t.text or '' for t in sp.iter(A + 't')).strip()
-            title = cfg['titles'].get(number) or title or texts[0]
+            title = cfg['titles'].get(number) or title or (texts[0] if texts else data['slides'][-1]['title'])
             links = [v for v in rel.values() if v.startswith(('http://', 'https://'))]
             links += re.findall(r'https?://[A-Za-z0-9._~:/?#\[\]@!$&()*+,;=%-]+', ' '.join(texts))
             pictures = []
             for pic in xml.find('p:cSld/p:spTree', NS).findall('p:pic', NS):
-                blip = pic.find('.//a:blip', NS)
-                target = rel.get(blip.get(R + 'embed'))
+                target = web_picture(pic, rel)
+                if not target:
+                    continue
                 raw = z.read(target)
                 asset = folder / (hashlib.sha256(raw).hexdigest()[:16] + Path(target).suffix.lower())
                 if not asset.exists():

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>규칙표 악어 체스 | 전인성</title>
-<meta name="description" content="규칙표만 보고 움직이는 악어와 대결하며 규칙 기반 전문가 시스템의 강점과 한계를 체험하는 1인용 언플러그드 활동입니다.">
+<meta name="description" content="규칙표만 보고 움직이는 악어와 대결하며 규칙 기반 전문가 시스템의 강점과 한계를 체험하고, 사탕을 빼고 더하며 스스로 배우는 악어와도 대결하는 1인용 언플러그드 활동입니다.">
 <link rel="canonical" href="https://jinsung4069.github.io/unplugged-lab/alligator/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/unplugged-lab/lab.css?v=20261022a">
@@ -28,6 +28,35 @@
 .mini span.mf{background:#f6d58e}.mini span.mt{background:#9ec5ff}
 .log{max-height:180px;overflow:auto;margin:0;padding-left:1.3em;font-size:.92rem}
 .big{font-size:1.25rem;font-weight:700}
+@media (min-width:861px){.grid2.learn{grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr)}}
+.opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:10px 0}
+.opts label{display:inline-flex;gap:6px;align-items:center}
+.opts select{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:4px 8px;min-height:36px}
+.opts input[type=checkbox]{width:18px;height:18px}
+.states{position:relative;max-height:min(74vh,660px);overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 10px 10px;background:var(--panel2)}
+.states h3{position:sticky;top:0;z-index:1;margin:0 -10px 8px;padding:6px 10px;background:var(--panel2);font-size:.98rem;border-bottom:1px solid var(--line)}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-bottom:8px}
+.sc{border:2px solid var(--line);border-radius:12px;padding:6px;background:var(--panel);text-align:center}
+.sc.now{border-color:#f39c12;background:color-mix(in srgb,#f39c12 22%,var(--panel))}
+.sc.dead{opacity:.5}
+.sc svg{display:block;width:100%;max-width:120px;margin:0 auto;border-radius:6px}
+.sc .cell{fill:var(--board);stroke:var(--board2);stroke-width:1}
+.sc .ar{stroke-width:3;stroke-linecap:round}
+.sc .ar.on{stroke-width:5.5}
+.sc .ar.off{opacity:.25}
+.tks{display:flex;justify-content:center;gap:5px;min-height:66px;padding-top:16px;align-items:flex-end}
+.tk{position:relative;display:flex;flex-direction:column-reverse;gap:2px;align-items:center;padding:2px;border-radius:8px;border:2px solid transparent}
+.tk i{display:block;width:13px;height:13px;border-radius:50%;background:var(--c);box-shadow:inset -2px -2px 0 rgba(0,0,0,.18)}
+.tk i.none{background:none;border:2px dashed var(--c);box-shadow:none;opacity:.6}
+.tk.pick{border-color:var(--c)}
+.tk b{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:.78rem;white-space:nowrap;color:var(--text)}
+.sc .lbl{font-size:.8rem;font-weight:700;min-height:1.2em}
+.sc.think .tk i{animation:hop .5s ease-in-out infinite}
+.sc.think .tk.pick i{animation:jump .5s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-3px)}}
+@keyframes jump{50%{transform:translateY(-12px)}}
+@media (prefers-reduced-motion:reduce){.sc.think .tk i{animation:none}}
+.hist{display:flex;flex-wrap:wrap;gap:2px;font-size:1.05rem;min-height:1.6em}
 </style>
 </head>
 <body>
@@ -35,14 +64,14 @@
 <main class="lab-wrap">
  <header class="lab-head">
   <h1>규칙표 악어 체스</h1>
-  <p>나는 원숭이, 컴퓨터는 악어입니다. 규칙표 악어는 생각하지 않고 오른쪽 규칙표에서 지금 판과 같은 그림을 찾아 그대로 움직입니다. 스스로 배우는 악어는 규칙표 없이 지면서 배웁니다.</p>
+  <p>나는 원숭이, 컴퓨터는 악어입니다. 규칙표 악어는 생각하지 않고 오른쪽 규칙표에서 지금 판과 같은 그림을 찾아 그대로 움직입니다. 스스로 배우는 악어는 판마다 놓인 색 사탕 가운데 하나를 뽑아 그 색 화살표대로 움직이고, 지면 사탕을 빼고 이기면 사탕을 더합니다.</p>
  </header>
  <div class="tabs" role="group" aria-label="규칙표 선택">
   <button type="button" data-mode="full" aria-pressed="true">완성된 규칙표</button>
   <button type="button" data-mode="gap" aria-pressed="false">빈칸이 있는 규칙표</button>
   <button type="button" data-mode="learn" aria-pressed="false">스스로 배우는 악어</button>
  </div>
- <div class="grid2">
+ <div class="grid2" id="layout">
   <section class="panel">
    <h2>게임판</h2>
    <div class="board" id="board" role="grid" aria-label="3행 3열 악어 체스 게임판"></div>
@@ -60,11 +89,22 @@
   </section>
   <section class="stack">
    <div class="panel" id="learnPanel" hidden>
-    <div class="row" style="justify-content:space-between"><h2 style="margin:0">스스로 배우는 악어</h2><span class="tag" id="learnTag"></span></div>
-    <p class="small muted" style="margin:6px 0 10px">이 악어는 규칙표가 없습니다. 처음 보는 판에서는 둘 수 있는 수마다 수 카드를 한 장씩 두고 그중 하나를 고릅니다. 지면 마지막에 둔 수의 카드를 버리므로, 같은 판에서 그 수를 다시 두지 않습니다.</p>
-    <div id="learnNow"></div>
-    <p class="small" id="learnStat" style="margin:10px 0 0"></p>
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">악어의 사탕 판</h2><span class="tag" id="learnTag"></span></div>
+    <p class="small muted" style="margin:6px 0 0">악어 차례에 나올 수 있는 판 37가지입니다. 판마다 둘 수 있는 수를 색 화살표로 그렸고, 수마다 같은 색 사탕이 한 개씩 있습니다. 악어는 지금 판과 같은 그림을 찾아 사탕 하나를 눈 감고 뽑은 뒤 그 색 화살표대로 움직입니다.</p>
+    <ul class="steps small">
+     <li>악어가 지면 마지막에 뽑은 색 사탕을 하나 뺍니다. 그 판에 사탕이 하나도 남지 않으면 바로 앞에서 뽑은 색 사탕도 하나 뺍니다.</li>
+     <li>악어가 이기면 마지막에 뽑은 색 사탕을 하나 더합니다. 한 색은 3개까지입니다.</li>
+     <li>뽑을 사탕이 없는 판을 만나면 악어는 포기합니다.</li>
+    </ul>
+    <div class="opts">
+     <label>악어가 뽑는 시간 <select id="think"><option value="700">빠르게</option><option value="1500">보통</option><option value="3000">천천히</option></select></label>
+     <label><input type="checkbox" id="onlyNext"> 다음에 나올 수 있는 판만 보기</label>
+    </div>
+    <div class="states" id="states" aria-label="악어의 사탕 판"></div>
+    <p class="small" id="learnStat" style="margin:10px 0 4px"></p>
+    <div class="hist" id="hist" aria-label="지난 판의 승자"></div>
     <div class="row" style="margin-top:8px"><button class="btn" id="learnReset" type="button">악어의 기억 지우기</button></div>
+    <p class="small muted" style="margin:10px 0 0">활동 방식은 AI Unplugged의 강화 학습 활동과 Stefan Seegerer의 <a href="https://www.stefanseegerer.de/schlag-das-krokodil/" target="_blank" rel="noopener">Schlag das Krokodil</a>을 따랐습니다.</p>
    </div>
    <div class="panel" id="rulePanel">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">악어의 규칙표</h2><span class="tag" id="ruleCount"></span></div>
@@ -102,14 +142,14 @@ for(const [b,f,t] of RULES){const k=key(b),mk=key(mirror(b));
  const card={no:CARDS.length+1,board:b,f,t,hasMirror:false};CARDS.push(card);byKey[k]={card,mirrored:false,f,t}}
 for(const k in byKey)if(byKey[k].mirrored)byKey[k].card.hasMirror=true;
 const GAP=new Set(['B.B/W../..W','.BB/.W./W..','B.B/BW./..W'].map(k=>byKey[k].card.no));
-const st=load(KEY,{mode:'full',w:0,b:0});st.memory??={};st.history??=[];
-let board,turn,selected=null,over=false,last=null,hit=null,log=[];
+const st=load(KEY,{mode:'full',w:0,b:0});delete st.memory;st.tokens??={};st.history??=[];st.think??=1500;st.onlyNext??=false;
+let board,turn,selected=null,over=false,last=null,hit=null,log=[],gid=0,thinking=false,changed=[];
 const $=id=>document.getElementById(id);
 const ICON={W:'🐒',B:'🐊','.':''};
 function moves(b,p){const d=p==='W'?-1:1,o=p==='W'?'B':'W',res=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++){if(b[r][c]!==p)continue;const r2=r+d;if(r2<0||r2>2)continue;if(b[r2][c]==='.')res.push([[r,c],[r2,c]]);for(const c2 of [c-1,c+1])if(c2>=0&&c2<3&&b[r2][c2]===o)res.push([[r,c],[r2,c2]])}return res}
 function apply(b,[[r,c],[r2,c2]]){const g=b.map(x=>[...x]);g[r2][c2]=g[r][c];g[r][c]='.';return g.map(x=>x.join(''))}
 function winner(b,p){const o=p==='W'?'B':'W',goal=p==='W'?0:2;if(b[goal].includes(p))return p;if(!b.some(r=>r.includes(o)))return p;if(!moves(b,o).length)return p;return null}
-function newGame(){chosen=[];board=['BBB','...','WWW'];turn='W';selected=null;over=false;last=null;hit=null;log=[];draw();say('원숭이를 골라 움직이세요. 주황 테두리 칸의 원숭이를 움직일 수 있습니다.','')}
+function newGame(){gid++;thinking=false;changed=[];chosen=[];board=['BBB','...','WWW'];turn='W';selected=null;over=false;last=null;hit=null;log=[];draw();say('원숭이를 골라 움직이세요. 주황 테두리 칸의 원숭이를 움직일 수 있습니다.','')}
 function say(t,k){$('msg').textContent=t;$('msg').className='msg'+(k?' '+k:'')}
 function draw(){
  const my=turn==='W'&&!over?moves(board,'W'):[];const fromSet=new Set(my.map(m=>m[0].join(','))),dests=selected?my.filter(m=>m[0].join(',')===selected.join(',')).map(m=>m[1].join(',')):[];
@@ -121,7 +161,7 @@ function draw(){
  drawRules();
 }
 function drawRules(){
- $('learnPanel').hidden=st.mode!=='learn';$('rulePanel').hidden=st.mode==='learn';if(st.mode==='learn'){drawLearn();return}
+ $('learnPanel').hidden=st.mode!=='learn';$('rulePanel').hidden=st.mode==='learn';$('layout').classList.toggle('learn',st.mode==='learn');if(st.mode==='learn'){drawLearn();return}
  const active=CARDS.filter(c=>st.mode==='full'||!GAP.has(c.no));
  $('ruleCount').textContent=`규칙 카드 ${active.length}장`;
  $('rules').innerHTML=CARDS.map(c=>{const miss=st.mode==='gap'&&GAP.has(c.no),on=hit&&hit.card===c;
@@ -135,25 +175,62 @@ function click(r,c){
  selected=null;draw();
 }
 function play(m,p){
+ if(p==='W'&&hit?.learn){hit=null;changed=[]}
  const cap=board[m[1][0]][m[1][1]]!=='.';board=apply(board,m);last=m[1];selected=null;
  log.push(`${p==='W'?'🐒':'🐊'} ${m[0][0]+1}행 ${m[0][1]+1}열 → ${m[1][0]+1}행 ${m[1][1]+1}열${cap?' (잡음)':''}`);
  const w=winner(board,p);
- if(w&&st.mode==='learn'){st.history.push(w);if(w==='W'&&chosen.length){const [k,pick]=chosen[chosen.length-1],o=st.memory[k];if(o&&!o.removed.includes(pick)&&o.removed.length<o.moves.length-1)o.removed.push(pick)}chosen=[]}
- if(w){over=true;if(w==='W'){st.w++;say(st.mode==='full'?'원숭이가 이겼습니다. 완성된 규칙표를 이긴 경우가 있다면 규칙표에 오류가 있는 것입니다.':st.mode==='gap'?'원숭이가 이겼습니다. 규칙표에 빠진 경우가 있으면 악어는 아무 수나 두게 됩니다.':'원숭이가 이겼습니다. 악어는 마지막에 둔 수의 카드를 버리고 다음 판에서 다르게 둡니다.','good')}else{st.b++;say('악어가 이겼습니다. 악어는 규칙표의 그림을 찾아 따랐을 뿐입니다. 새 게임에서 다른 수를 시도해 보세요.','bad')}save(KEY,st);draw();return}
- turn=p==='W'?'B':'W';draw();if(turn==='B')setTimeout(alligator,650);
+ if(w){over=true;let note='';if(st.mode==='learn')note=learn(w);
+  if(w==='W'){st.w++;say(st.mode==='full'?'원숭이가 이겼습니다. 완성된 규칙표를 이긴 경우가 있다면 규칙표에 오류가 있는 것입니다.':st.mode==='gap'?'원숭이가 이겼습니다. 규칙표에 빠진 경우가 있으면 악어는 아무 수나 두게 됩니다.':'원숭이가 이겼습니다. '+note,'good')}
+  else{st.b++;say(st.mode==='learn'?'악어가 이겼습니다. '+note:'악어가 이겼습니다. 악어는 규칙표의 그림을 찾아 따랐을 뿐입니다. 새 게임에서 다른 수를 시도해 보세요.','bad')}
+  save(KEY,st);draw();return}
+ turn=p==='W'?'B':'W';draw();if(turn==='B'){const g=gid;setTimeout(()=>{if(g===gid)alligator()},st.mode==='learn'?250:650)}
 }
-const mkey=m=>m.flat().join('');
+/* Learning alligator: every position it can meet, one sweet per legal move. */
+const COLORS=[['파란','#2f6fde'],['빨간','#e0453a'],['초록','#2a9d4a'],['주황','#f08c00']];
+const STATES=[],sIdx={};
+(function explore(b,ply){for(const wm of moves(b,'W')){const s=apply(b,wm);if(winner(s,'W'))continue;const k=key(s);if(k in sIdx)continue;sIdx[k]=STATES.length;STATES.push({k,board:s,ply,moves:moves(s,'B')});
+ for(const bm of STATES[sIdx[k]].moves){const n=apply(s,bm);if(!winner(n,'B'))explore(n,ply+1)}}})(['BBB','...','WWW'],1);
+STATES.sort((a,b)=>a.ply-b.ply);STATES.forEach((s,i)=>{s.no=i+1;sIdx[s.k]=i});
+const tok=k=>{const s=STATES[sIdx[k]];let t=st.tokens[k];if(!Array.isArray(t)||t.length!==s.moves.length)t=st.tokens[k]=s.moves.map(()=>1);return t};
 let chosen=[];
+function learn(w){
+ st.history.push(w);changed=[];const n=chosen.length;let note;
+ if(w==='B'){const [k,i]=chosen[n-1],t=tok(k);if(t[i]<3){t[i]++;changed.push({k,i,d:1});note=`악어는 마지막에 뽑은 ${COLORS[i][0]} 사탕을 판 ${STATES[sIdx[k]].no}에 하나 더했습니다. 이 판에서 그 수를 더 자주 둡니다.`}else note=`판 ${STATES[sIdx[k]].no}의 ${COLORS[i][0]} 사탕은 이미 3개라서 더하지 않았습니다.`}
+ else if(!n)note='악어가 뽑을 사탕이 없어 첫 수부터 포기했습니다.';
+ else{const [k,i]=chosen[n-1],t=tok(k);note='';
+  if(t[i]>0){t[i]--;changed.push({k,i,d:-1});note=`악어는 마지막에 뽑은 ${COLORS[i][0]} 사탕을 판 ${STATES[sIdx[k]].no}에서 하나 뺐습니다. `}
+  if(!t.some(Boolean)&&n>1){const [k2,i2]=chosen[n-2],t2=tok(k2);if(t2[i2]>0){t2[i2]--;changed.push({k:k2,i:i2,d:-1});note+=`판 ${STATES[sIdx[k]].no}에 사탕이 남지 않아 그 앞의 판 ${STATES[sIdx[k2]].no}에서도 ${COLORS[i2][0]} 사탕을 하나 뺐습니다. `}}
+  note+='다음에는 같은 판에서 그 수를 덜 둡니다.'}
+ chosen=[];return note}
+function stateCard(s){
+ const t=tok(s.k),now=hit?.learn&&hit.k===s.k,pick=now?hit.pick:-1,C=30;
+ const cells=s.board.flatMap((row,r)=>[...row].map((v,c)=>`<rect class="cell" x="${c*C}" y="${r*C}" width="${C}" height="${C}"/>${v==='.'?'':`<text x="${c*C+15}" y="${r*C+16}" font-size="18" text-anchor="middle" dominant-baseline="central">${ICON[v]}</text>`}`)).join('');
+ const arrows=s.moves.map(([[r,c],[r2,c2]],i)=>{const x1=c*C+15,y1=r*C+15,x2=c2*C+15,y2=r2*C+15,L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,sx=x1+ux*9,sy=y1+uy*9,ex=x2-ux*9,ey=y2-uy*9,col=COLORS[i][1];
+  return `<g class="ar${pick===i?' on':''}${!t[i]?' off':''}" stroke="${col}" fill="${col}"><line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}"/><polygon stroke-width="1" points="${ex+ux*7},${ey+uy*7} ${ex-uy*5},${ey+ux*5} ${ex+uy*5},${ey-ux*5}"/></g>`}).join('');
+ const sweets=s.moves.map((m,i)=>{const ch=changed.find(x=>x.k===s.k&&x.i===i);return `<span class="tk${pick===i?' pick':''}" style="--c:${COLORS[i][1]}">${t[i]?'<i></i>'.repeat(t[i]):'<i class="none"></i>'}${ch?`<b>${ch.d>0?'+1':'−1'}</b>`:''}</span>`}).join('');
+ const label=now?(thinking?'뽑는 중':hit.pick<0?'사탕 없음':'방금 사용'):changed.some(x=>x.k===s.k)?'사탕 변화':'';
+ return `<div class="sc${now?' now':''}${now&&thinking?' think':''}${t.some(Boolean)?'':' dead'}" data-k="${s.k}" role="img" aria-label="판 ${s.no}, ${s.moves.map((m,i)=>`${COLORS[i][0]} 사탕 ${t[i]}개`).join(', ')}${now?', 지금 판':''}"><div class="lbl"><span class="muted">판 ${s.no}</span> ${label}</div><svg viewBox="0 0 90 90" aria-hidden="true">${cells}${arrows}</svg><div class="tks">${sweets}</div></div>`}
 function drawLearn(){
- const seen=Object.keys(st.memory).length,removed=Object.values(st.memory).reduce((n,o)=>n+o.removed.length,0),last=st.history.slice(-10),rate=last.length?Math.round(100*last.filter(x=>x==='B').length/last.length):0;
- $('learnTag').textContent=`${st.history.length}판 학습`;
- const k=key(board),o=st.memory[k];
- $('learnNow').innerHTML=o&&turn==='W'&&!over&&hit?.learn?`<p class="small">방금 판의 수 카드 ${o.moves.length}장 가운데 하나를 골랐습니다.</p>`:'';
- $('learnStat').textContent=`악어가 만난 판 ${seen}가지, 버린 수 카드 ${removed}장, 최근 ${last.length}판에서 악어 승률 ${rate}%`;
+ const h=st.history,recent=h.slice(-10),rate=recent.length?Math.round(100*recent.filter(x=>x==='B').length/recent.length):0;
+ const left=STATES.reduce((n,s)=>n+tok(s.k).reduce((a,b)=>a+b,0),0),start=STATES.reduce((n,s)=>n+s.moves.length,0);
+ $('learnTag').textContent=`${h.length}판 학습`;
+ let show=STATES;
+ if(st.onlyNext){const keys=new Set(turn==='W'&&!over?moves(board,'W').map(m=>key(apply(board,m))):[key(board)]);if(hit?.learn)keys.add(hit.k);changed.forEach(x=>keys.add(x.k));show=STATES.filter(s=>keys.has(s.k))}
+ const box=$('states'),top=box.scrollTop;
+ box.innerHTML=[1,2,3].map(ply=>{const list=show.filter(s=>s.ply===ply);return list.length?`<h3>악어의 ${ply}번째 수 <span class="muted small">판 ${list.length}가지</span></h3><div class="sgrid">${list.map(stateCard).join('')}</div>`:''}).join('')||'<p class="small muted">지금은 보여 줄 판이 없습니다.</p>';
+ box.scrollTop=top;
+ const cur=hit?.learn&&[...box.querySelectorAll('.sc')].find(e=>e.dataset.k===hit.k);
+ if(cur){const y=cur.offsetTop-40;if(y<box.scrollTop||cur.offsetTop+cur.offsetHeight>box.scrollTop+box.clientHeight)box.scrollTop=y}
+ $('learnStat').textContent=`${h.length}판 가운데 악어 ${h.filter(x=>x==='B').length}승, 원숭이 ${h.filter(x=>x==='W').length}승. 최근 ${recent.length}판에서 악어 승률 ${rate}%. 남은 사탕 ${left}개 (처음 ${start}개).`;
+ $('hist').innerHTML=h.slice(-30).map(x=>`<span title="${x==='B'?'악어 승':'원숭이 승'}">${ICON[x]}</span>`).join('');
 }
 function alligator(){
  const k=key(board),r=byKey[k];let m;
- if(st.mode==='learn'){const all=moves(board,'B');const o=st.memory[k]??={moves:all.map(mkey),removed:[]};let pool=o.moves.filter(x=>!o.removed.includes(x));if(!pool.length)pool=o.moves;const pick=pool[Math.floor(Math.random()*pool.length)];m=all.find(x=>mkey(x)===pick);chosen.push([k,pick]);hit={learn:true};say(`악어가 수 카드 ${pool.length}장 가운데 하나를 골랐습니다.`,'');const msgText=$('msg').textContent;play(m,'B');if(!over){$('msg').textContent=msgText+' 이제 원숭이 차례입니다.'}return}
+ if(st.mode==='learn'){const s=STATES[sIdx[k]],t=tok(k),bag=t.flatMap((n,i)=>Array(n).fill(i));
+  if(!bag.length){hit={learn:true,k,pick:-1};over=true;const note=learn('W');st.w++;log.push('🐊 뽑을 사탕이 없어 포기');say('악어가 지금 판(판 '+s.no+')에서 뽑을 사탕이 없어 포기했습니다. 원숭이가 이겼습니다. '+note,'good');save(KEY,st);draw();return}
+  const pick=bag[Math.floor(Math.random()*bag.length)],name=COLORS[pick][0];chosen.push([k,pick]);hit={learn:true,k,pick};thinking=true;
+  say(`악어가 판 ${s.no}의 사탕 ${bag.length}개 가운데 하나를 뽑고 있습니다.`,'');draw();
+  const g=gid;setTimeout(()=>{if(g!==gid)return;thinking=false;const text=`악어가 판 ${s.no}에서 ${name} 사탕을 뽑아 ${name} 화살표대로 움직였습니다.`;say(text,'');play(s.moves[pick],'B');if(!over)$('msg').textContent=text+' 이제 원숭이 차례입니다.'},st.think);return}
  if(r&&!(st.mode==='gap'&&GAP.has(r.card.no))){hit=r;m=[r.f,r.t];say(`악어가 규칙 ${r.card.no}을 ${r.mirrored?'좌우를 뒤집어 ':''}찾아 그대로 움직였습니다.`,'')}
  else{hit=null;const ms=moves(board,'B');m=ms[Math.floor(Math.random()*ms.length)];say('지금 판과 같은 규칙이 없습니다. 악어는 아무 수나 골라 두었습니다.','warn')}
  const msgText=$('msg').textContent,msgClass=$('msg').className;
@@ -161,7 +238,7 @@ function alligator(){
  if(!over){$('msg').textContent=msgText+' 이제 원숭이 차례입니다.';$('msg').className=msgClass}
 }
 document.querySelectorAll('[data-mode]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.mode===st.mode));b.onclick=()=>{st.mode=b.dataset.mode;save(KEY,st);document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));newGame()}});
-$('again').onclick=newGame;$('learnReset').onclick=()=>{st.memory={};st.history=[];save(KEY,st);newGame()};$('resetScore').onclick=()=>{st.w=0;st.b=0;save(KEY,st);draw()};
+$('again').onclick=newGame;$('learnReset').onclick=()=>{st.tokens={};st.history=[];save(KEY,st);newGame()};$('think').value=String(st.think);$('think').onchange=e=>{st.think=+e.target.value;save(KEY,st)};$('onlyNext').checked=st.onlyNext;$('onlyNext').onchange=e=>{st.onlyNext=e.target.checked;save(KEY,st);drawLearn()};$('resetScore').onclick=()=>{st.w=0;st.b=0;save(KEY,st);draw()};
 newGame();
 })();
 </script>
