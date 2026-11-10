@@ -61,6 +61,18 @@ CHAPTERS = {
     'lecture10': dict(number=10, title='전문가 시스템의 이해와 언플러그드 활동', version='v1', titles=LECTURE10_TITLES, labs=[
         (38, 'alligator', '규칙표 악어 체스', '규칙표 악어, 빈칸이 있는 규칙표, 스스로 배우는 악어와 차례로 대결합니다.'),
     ]),
+    'lecture11': dict(number=11, title='피지컬 AI 교육 사례와 인공지능 융합 교육', version='v1',
+                      titles={1: '피지컬 AI 교육 사례와 인공지능 융합 교육', 4: '01 피지컬 컴퓨팅과 피지컬 AI',
+                              12: '02 센서와 장치, AI의 연계', 17: '03 피지컬 AI와 VLA 모델', 24: '04 초등 피지컬 AI 교육 사례',
+                              30: '05 언플러그드와 연결 설계', 34: '06 인공지능 융합 교육', 39: '07 교육과정과 생활문제 연계'}, labs=[
+        (7, 'rule', '규칙으로 움직이는 장치', '밝기와 기준값을 바꾸며 사람이 쓴 규칙이 장치를 움직이는 모습을 봅니다.'),
+        (13, 'loop', '감지, 판단, 행동 따라가기', '로봇이 장애물을 피하는 동안 감지, 판단, 행동이 되풀이되는 모습을 봅니다.'),
+        (23, 'vla', '말을 행동으로 잇는 로봇', '지시를 고르고 영상, 언어, 행동이 이어지는 단계를 따라갑니다.'),
+        (28, 'wheelchair', '스마트 휠체어 따라가기', '경사가 바뀔 때 기울기 감지, 경사 판단, 의자 각도 조절이 이어지는 모습을 봅니다.'),
+        (32, 'cards', '규칙 카드와 예시 카드', '같은 물건을 규칙 카드와 예시 카드로 두 번 분류하고 결과를 비교합니다.'),
+        (33, 'design', '센서와 AI, 장치 연결 설계', '생활문제를 정하고 감지, 판단, 행동과 오판 대비를 설계합니다.'),
+        (47, 'topic', '융합 주제 선정과 수업 개요', '점검 질문으로 주제를 확인하고 수업 개요를 작성합니다.'),
+    ]),
 }
 # Pictures a browser cannot show (EMF, WMF, TIFF) stay in the rendered background.
 WEB_IMAGES = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'}
@@ -104,6 +116,18 @@ def soffice_pdf(src, outdir):
     subprocess.run(['soffice', '--headless', '--convert-to', 'pdf', '--outdir', str(outdir), str(src)],
                    check=True, capture_output=True, timeout=600)
     return outdir / (src.stem + '.pdf')
+
+
+def chart_boxes(xml):
+    """Charts stay in the rendered background; their labels are not in the slide XML."""
+    boxes = []
+    for frame in xml.find('p:cSld/p:spTree', NS).findall('p:graphicFrame', NS):
+        data = frame.find('a:graphic/a:graphicData', NS)
+        off, ext = frame.find('p:xfrm/a:off', NS), frame.find('p:xfrm/a:ext', NS)
+        if data is not None and data.get('uri', '').endswith('/chart') and off is not None:
+            x, y = int(off.get('x')) / EMU, int(off.get('y')) / EMU
+            boxes.append((x, y, x + int(ext.get('cx')) / EMU, y + int(ext.get('cy')) / EMU))
+    return boxes
 
 
 def rotated_text(node):
@@ -289,8 +313,11 @@ def main():
             pix = bg_pdf[number - 1].get_pixmap(matrix=fitz.Matrix(2000 / width, 2000 / width), alpha=False)
             bg = folder / f'{number:03}-background.webp'
             Image.open(io.BytesIO(pix.tobytes('png'))).save(bg, format='WEBP', lossless=True)
+            boxes = chart_boxes(xml)
+            runs = [r for r in page_runs(full_pdf[number - 1])
+                    if not any(x0 <= r['x'] + r['w'] / 2 <= x1 and y0 <= r['y'] + r['h'] / 2 <= y1 for x0, y0, x1, y1 in boxes)]
             data['slides'].append(dict(title=title, sourceSlide=number, sourcePart=part, text=texts,
-                                       runs=restore_spacing(page_runs(full_pdf[number - 1]), texts), pictures=pictures,
+                                       runs=restore_spacing(runs, texts), pictures=pictures,
                                        links=list(dict.fromkeys(links)), background='/' + bg.relative_to(ROOT).as_posix()))
             for after, lab, lab_title, intro in cfg['labs']:
                 if after == number:
