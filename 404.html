@@ -14,12 +14,13 @@
                 [/^\/computer-education2()(\/.*)?$/, '/lectures/computer-education2'],
                 [/^\/ai-education-chapter(\d+)(\/.*)?$/, '/lectures/ai-education/chapter$1'],
                 [/^\/ai-education()(\/.*)?$/, '/lectures/ai-education'],
-                [/^\/stitch_ai_poc()(\/.*)?$/, '/lectures/stitch-ai-poc']
+                [/^\/stitch_ai_poc()(\/.*)?$/, '/lectures/stitch-ai-poc'],
+                [/^\/alligator-chess()(\/.*)?$/, '/unplugged-lab/alligator']
             ];
             for (var i = 0; i < moves.length; i++) {
                 var match = location.pathname.match(moves[i][0]);
                 if (match) {
-                    location.replace(moves[i][1].replace('$1', match[1]) + (match[2] || '/') + location.search + location.hash);
+                    location.replace(moves[i][1].replace('$1', match[1]) + (i === moves.length - 1 ? '/' : match[2] || '/') + location.search + location.hash);
                     return;
                 }
             }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check published local links, folder URLs, sitemap and the committed game export.
+"""Check published local links, folder URLs, and the sitemap.
 
 Usage: python scripts/check_site.py [--root PATH]
 No network access or third-party Python packages are needed.
@@ -8,7 +8,6 @@ from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit, unquote
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -18,14 +17,6 @@ ORIGIN = 'https://jinsung4069.github.io'
 # These are separate GitHub Pages projects, not files in this repository.
 EXTERNAL_PROJECTS = {'astar-pathfinding', 'simplequiz', 'AlligatorChess'}
 EXCLUDED = {'.git', '.claude', '.codex', '.agents', '.playwright-cli', 'apps', 'scripts', 'tests', 'node_modules', '__pycache__'}
-
-TEXT_TYPES = {'.ts', '.tsx', '.js', '.mjs', '.json', '.css', '.svg', '.html', '.txt', '.map'}
-
-def file_hash(path):
-    content = path.read_bytes()
-    if path.suffix in TEXT_TYPES:
-        content = content.replace(b'\r\n', b'\n')
-    return hashlib.sha256(content).hexdigest()
 
 class Document(HTMLParser):
     def __init__(self, text):
@@ -88,7 +79,7 @@ def check_site(root):
                     error(f'{url}: page title is missing')
                 for attr, value in doc.references:
                     local_reference(value, url, attr)
-                legacy = name != 'index.html' and not url.startswith('/alligator-chess/') and url != '/404.html'
+                legacy = name != 'index.html' and url != '/404.html'
                 if legacy:
                     match = re.search(r'location\.replace\([\'"]([^\'"]+)[\'"]\s*\+\s*location\.search\s*\+\s*location\.hash\)', text)
                     if not match:
@@ -97,7 +88,7 @@ def check_site(root):
                         local_reference(match[1], url)
                     if not doc.canonical:
                         error(f'{url}: redirect canonical is missing')
-                elif name == 'index.html' and not url.startswith('/alligator-chess/404/'):
+                elif name == 'index.html':
                     expected = ORIGIN + url[:-len('index.html')]
                     if doc.canonical != expected:
                         error(f'{url}: expected canonical {expected}')
@@ -138,32 +129,8 @@ def check_site(root):
     if not (root / '404.html').is_file():
         error('Custom 404.html is missing')
     if not (root / '.nojekyll').is_file():
-        error('.nojekyll is required for the game bundle assets')
+        error('.nojekyll is required so GitHub Pages publishes the folders as they are')
 
-    manifest_file = root / 'alligator-chess/export-manifest.json'
-    if manifest_file.exists():
-        manifest = json.loads(manifest_file.read_text(encoding='utf-8-sig'))
-        for kind, folder in [('source', root / 'apps/alligator-chess'), ('files', root / 'alligator-chess')]:
-            entries = manifest.get(kind, {})
-            if not entries:
-                error(f'Game {kind} manifest is empty; rebuild the game')
-            for name, expected in entries.items():
-                path = (folder / name).resolve()
-                if not path.is_relative_to(folder.resolve()) or not path.is_file():
-                    error(f'Game {kind} file is missing or invalid: {name}')
-                elif file_hash(path) != expected:
-                    error(f'Game {kind} changed without a matching export: {name}')
-        app = root / 'apps/alligator-chess'
-        source_names = set()
-        for name in ('src', 'public', 'scripts', 'package.json', 'package-lock.json', 'next.config.ts', 'postcss.config.mjs', 'tailwind.config.ts', 'tsconfig.json'):
-            path = app / name
-            for file in path.rglob('*') if path.is_dir() else [path]:
-                if file.is_file():
-                    source_names.add(file.relative_to(app).as_posix())
-        if source_names != set(manifest.get('source', {})):
-            error('Game source file list changed; rebuild the game')
-    else:
-        error('Game export manifest is missing; rebuild the game')
     return {'html_pages': len(pages), 'local_targets': len(references), 'errors': errors}
 
 
