@@ -1,0 +1,75 @@
+/* Lecture 11: animations and activities. Reuses the Chapter 5 activity sheet styles. */
+[data-chapter="lecture11"] .ce-lab{padding:0}
+[data-chapter="lecture11"] .ce-lab::before{display:none}
+.l11-sim{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start;margin:14px 0}
+.l11-svg{display:block;width:100%;height:auto;border:1px solid #becfe7;border-radius:12px;background:#fff}
+.l11-svg text{font:700 15px Freesentation,sans-serif;fill:#18345b}
+.l11-svg .l11-label{font-size:14px;text-anchor:middle;paint-order:stroke;stroke:#ffffffd9;stroke-width:4px}
+.l11-code{display:grid;gap:6px;font-size:18px}
+.l11-block{background:#eaf0fb;border:1px solid #becfe7;border-left:6px solid #31578e;border-radius:8px;padding:8px 12px}
+.l11-block b{display:inline-block;min-width:2.2em;text-align:center;background:#fff;border:1px solid #b7c9e7;border-radius:6px;padding:0 6px}
+.l11-block em{font-style:normal;margin-left:8px;color:#25836e}
+.l11-in1{margin-left:22px;border-left-color:#ce8530}
+.l11-in2{margin-left:44px;border-left-color:#8296b5;opacity:.55}
+.l11-in2.active{opacity:1;background:#dff3ea;border-color:#25836e;border-left-color:#25836e}
+.l11-range{display:grid;gap:2px;font-size:18px;margin-top:14px}
+.l11-range output{font-weight:800;margin-left:8px}
+.l11-range input[type=range]{margin:8px 0!important}
+.l11 .ch5-inline{align-items:end;gap:10px}
+.l11 .ch5-inline label.l11-num{flex:none;min-width:0;display:flex;align-items:center;gap:8px}
+.l11 .ch5-metrics small{font-size:15px}
+.l11-arena{cursor:pointer;touch-action:manipulation;background:#f7f9fd}
+.l11-gridlines line{stroke:#dbe4f1;stroke-width:1}
+.l11-arena [data-beam]{stroke:#e2572b;stroke-width:4;stroke-dasharray:7 6;stroke-linecap:round}
+.l11-stages{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.l11-stages li{display:grid;grid-template-columns:3.2em 1fr;gap:10px;align-items:center;border:1px solid #becfe7;border-radius:10px;background:#fff;padding:10px 12px;font-size:17px;transition:background .2s,border-color .2s}
+.l11-stages li b{font-size:19px}
+.l11-stages li.active{background:#31578e;border-color:#31578e;color:#fff}
+.l11-back{font-size:16px;margin:10px 0 0;color:#36557c}
+.l11-commands{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.l11-det rect{fill:none;stroke:#6f86a8;stroke-width:2;stroke-dasharray:5 4}
+.l11-det text{font-size:13px;fill:#36557c;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.l11-det.obj rect{stroke:#d9701c;stroke-width:3;stroke-dasharray:none}
+.l11-det.obj text{fill:#a34f0d}
+.l11-det.dst rect{stroke:#1f8a6d;stroke-width:3;stroke-dasharray:none}
+.l11-det.dst text{fill:#15634e}
+.l11 mark{border-radius:5px;padding:0 4px;color:inherit}
+.l11 mark.obj{background:#ffd9b0;color:#5b2c05}
+.l11 mark.dst{background:#bfe9d9;color:#0d4a39}
+.l11-log{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;height:112px;overflow:auto;margin:10px 0;padding:10px;border:1px solid #becfe7;border-radius:10px;background:#fff;font-size:14px}
+.l11-log span{background:#eaf0fb;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.l11-log em{font-style:normal;color:#547298}
+.l11-rules{margin:0;padding-left:1.2em;font-size:19px;display:grid;gap:8px}
+.l11-examples{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.l11-examples>div{border:1px dashed #9fb3cf;border-radius:10px;padding:10px;text-align:center}
+.l11-examples>div>div{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.l11-examples figure{margin:6px 0 0}
+.l11-examples figcaption{font-size:15px}
+.l11-say{font-size:24px;font-weight:800;margin:6px 0 10px!important}
+.l11-say span{display:inline-block;font-size:15px;font-weight:700;background:#31578e;color:#fff;border-radius:999px;padding:2px 12px;margin-right:10px;vertical-align:middle}
+.l11-reveal{display:flex;align-items:center;gap:14px;min-height:92px;font-size:22px}
+.l11-unknown{display:grid;place-items:center;width:84px;height:84px;border:2px dashed #9fb3cf;border-radius:14px;font-size:40px;color:#9fb3cf}
+.l11-reveal.shown .l11-art{animation:l11-drop .45s cubic-bezier(.3,1.4,.5,1)}
+@keyframes l11-drop{from{transform:translateY(-34px) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.l11-form textarea{min-width:220px}
+.l11-form td:nth-child(2){color:#36557c}
+.l11-flow{display:flex;align-items:stretch;gap:0;margin:18px 0 8px}
+.l11-flow>div{flex:1;min-width:0;display:grid;gap:4px;align-content:start;border:2px solid #31578e;border-radius:12px;background:#fff;padding:12px 14px}
+.l11-flow b{font-size:20px}
+.l11-flow span{font-size:17px}
+.l11-flow span.empty,.l11-guard span.empty{color:#7d91ad}
+.l11-flow i{position:relative;flex:none;width:54px;align-self:center;height:4px;background:#31578e}
+.l11-flow i::before{content:"";position:absolute;right:-2px;top:-6px;border:8px solid transparent;border-left-color:#31578e;border-right-width:0}
+.l11-flow i::after{content:"";position:absolute;top:-4px;left:0;width:12px;height:12px;border-radius:50%;background:#e9a321;animation:l11-flow 1.6s linear infinite}
+@keyframes l11-flow{from{left:0;opacity:1}80%{opacity:1}to{left:38px;opacity:0}}
+.l11-guard{font-size:17px;margin:0 0 16px!important;padding:10px 14px;border-left:5px solid #ce8530;background:#fff7ec;border-radius:0 10px 10px 0}
+.l11-yn{display:flex;gap:8px}
+.l11-yn button{min-width:64px}
+.l11-gap{margin-top:16px}
+.l11 .ch5-result ul{margin:8px 0 0;padding-left:1.2em}
+.l11 h3{margin-top:22px}
+.l11 .ch5-panel h3{margin-top:0}
+@media(max-width:900px){.l11-sim{grid-template-columns:1fr}.l11-examples{grid-template-columns:1fr}}
+@media(max-width:700px){.l11-flow{flex-direction:column}.l11-flow i{width:4px;height:30px}.l11-flow i::before{right:-6px;top:auto;bottom:-2px;border:8px solid transparent;border-top-color:#31578e;border-bottom-width:0}.l11-flow i::after{left:-4px;animation:none;top:6px}.l11-say{font-size:21px}.l11-commands button{flex:1 1 100%}.l11-yn button{min-width:52px;padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){.l11-flow i::after,.l11-reveal.shown .l11-art{animation:none}}
+.lecture-print-building .l11-flow i::after{animation:none}
