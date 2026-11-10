@@ -159,3 +159,16 @@ Chapter 1과 Chapter 3의 원본 그림도 누르거나 Enter로 열어 크게 �
 - 활동 출처는 Lindner, Seegerer, Romeike(2019), Unplugged Activities in the Context of AI와 AI Unplugged 소책자(CC BY-NC 3.0)다.
 
 검증: PowerPoint 렌더링으로 48장 시각 검사, pptx validate 통과, 금지 기호 검사 통과. 뷰어 52쪽을 데스크톱 1400px와 모바일 390px에서 열어 가로 넘침과 스크립트 오류가 없음을 확인했다. 네 활동을 375px 어두운 화면에서 확인했고, 모눈종이 2단계(4장)와 5단계(18장) 풀이, 악어 체스 세 모드의 자동 대국(규칙표 악어 16전 16승), 원숭이 트리 테스트, 뉴런 은닉층 XOR 풀이를 직접 실행했다. `scripts/check_site.py` 오류 없음.
+
+## 2026-11-10 10강 전문가 시스템의 이해와 언플러그드 활동 추가
+
+언플러그드교육 11주차 교안(88장, SHA256 6f855b5a52b277df57f15df445c479b4900460cd69872781d4f4b545930bdd0b)을 `scripts/sync_ai_education_linux.py --chapter lecture10 --engine powerpoint`로 변환했다. 원본 PPTX는 수정하지 않았다. 웹은 원본 38쪽 뒤에 규칙표 악어 체스 활동 1장을 넣은 89쪽이며 주소는 `/lectures/ai-education/lecture10/`, 자료는 `lecture10.json`이다.
+
+- 브라우저가 표시하지 못하는 EMF 그림은 따로 추출하지 않고 PowerPoint가 렌더한 배경에 남긴다. 그림을 뺀 배경용 사본에서는 슬라이드의 `p:timing`도 지운다. 33쪽 온라인 동영상처럼 애니메이션이 지운 그림을 가리키면 PowerPoint가 파일을 열지 못한다.
+- 제목 개체가 없는 콤비 규칙 슬라이드의 목차 제목은 `LECTURE10_TITLES`에 적었다. 목차와 검색에만 쓰이고 화면의 글자는 원본 그대로다.
+- `restore_spacing`은 PowerPoint가 그려 넣는 자동 번호("1. ")와 탭, 연속 공백이 있는 줄도 원문과 맞춘다.
+- 33쪽 유튜브 영상은 표지 그림과 관련 링크로 연결된다.
+
+같은 날 `/alligator-chess/`(Next.js 내보내기)와 `apps/alligator-chess/` 소스를 지웠다. 같은 게임인 `/unplugged-lab/alligator/`만 남기고 옛 주소는 404 화면에서 그곳으로 넘긴다. 스스로 배우는 악어는 Stefan Seegerer의 Schlag das Krokodil처럼 악어 차례에 나올 수 있는 판 37가지를 모두 보여 주고, 수마다 색 화살표와 색 사탕을 둔다. 지면 마지막에 뽑은 사탕을 하나 빼고(그 판이 비면 앞의 판에서도 하나), 이기면 하나 더하며(색마다 3개까지), 사탕이 없는 판에서는 포기한다.
+
+검증: 뷰어 89쪽 가운데 14쪽을 1400px에서 열어 그림 로딩과 글자 위치를 확인했다. 악어 학습 화면에서 25판을 자동으로 두어 사탕 증감과 승률 표시, 다음 판만 보기, 390px 어두운 화면의 가로 넘침 없음을 확인했다. `scripts/check_site.py` 오류 없음.
