@@ -219,6 +219,9 @@ def restore_spacing(runs, texts):
                 run['text'] = lead + re.sub(r'\s', ' ', m.group(0).replace('\n', ''))
                 break
     for run in runs:
+        if not run['font'].startswith('Freesentation'):
+            # The viewer only has Freesentation; another font's width would stretch its glyphs.
+            run['font'] = 'Freesentation 7 Bold' if run['bold'] else 'Freesentation 4 Regular'
         width = natural_width(run['text'], run['font'], run['size'])
         if width:
             run['w'] = round(width, 4)
