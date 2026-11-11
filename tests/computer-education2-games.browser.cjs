@@ -2,7 +2,7 @@
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
 const base = process.argv[2] || 'http://127.0.0.1:8771';
-const last = {8:84, 9:30, 10:60, 11:44}, legacy = {9:26, 10:25, 11:10};
+const last = {8:84, 9:30, 10:62, 11:44}, legacy = {9:26, 10:26, 11:10};
 (async () => {
   const browser = await chromium.launch({headless:true, ...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});
   try {
@@ -46,16 +46,19 @@ const last = {8:84, 9:30, 10:60, 11:44}, legacy = {9:26, 10:25, 11:10};
     console.log('9: biased examples fail, representative examples win, budget limit, navigation preserves state');
 
     await go(10);
-    await click('run'); assert.match(await message(),/이름표.*연락처/);
-    await page.locator('#cg-name').check(); await page.locator('#cg-contact').check();
-    assert.match(await page.locator('#cg-preview').innerText(),/익명 학생/);
-    await click('run'); await click('next'); await click('run'); assert.match(await message(),/허락.*표시/);
-    await page.locator('#cg-asset').selectOption('allowed'); await page.locator('#cg-credit').check(); await click('run'); await click('next');
-    await click('run'); assert.match(await message(),/얼굴.*존중/);
-    await page.locator('#cg-face').check(); await page.locator('#cg-comment').selectOption('kind'); await click('run');
-    assert.match(await message(),/임무 성공/); assert.equal(await page.locator('#cg-run').isDisabled(),true); assert.match(await page.locator('#cg-score').innerText(),/3 \/ 3/);
-    await click('reset'); assert.match(await page.locator('#cg-score').innerText(),/0 \/ 3/); assert.equal(await page.locator('#cg-name').isChecked(),false);
-    console.log('10: privacy, permission and respectful feedback gates, preview, three stamps and reset');
+    assert.match(await page.locator('.ce-game h2').innerText(), /교무실 저작권 상담소/);
+    await click('run'); assert.match(await message(),/하나 골라/);
+    const answer = async n => { await page.locator(`input[name="cg-answer"][value="${n}"]`).check(); await click('run'); };
+    await answer(0); assert.match(await message(),/아쉽습니다.*제25조/); assert.equal(await page.locator('input[name="cg-answer"]').first().isDisabled(),true); assert.equal(await page.locator('#cg-run').isDisabled(),true);
+    assert.match(await page.locator('#cg-log').innerText(),/문제집 한 단원: × 틀림/);
+    for(const n of [0,2,1,1]) { await click('next'); await answer(n); assert.match(await message(),/^맞았습니다/); }
+    await click('next'); assert.match(await page.locator('#cg-next').innerText(),/상담 끝/); await answer(2);
+    assert.match(await message(),/여섯 사연 가운데 5개.*맡겨도/); assert.equal(await page.locator('#cg-next').isDisabled(),true); assert.match(await page.locator('#cg-score').innerText(),/맞힌 사연 5개/);
+    await click('reset'); assert.match(await page.locator('#cg-score').innerText(),/사연 1 \/ 6, 맞힌 사연 0개/); assert.equal(await page.locator('input[name="cg-answer"]:checked').count(),0);
+    await hash(legacy[10]); assert.match(await page.locator('#lab-result').innerText(),/480명/);
+    for(const k of [0,1,2,3,4]) await page.locator(`#ce-lab [data-k="${k}"]`).check();
+    assert.match(await page.locator('#lab-result').innerText(),/맞는 학생: 1명/); await hash(last[10]);
+    console.log('10: wrong and right answers with grounds, record, final score, reset, and the legacy re-identification activity');
 
     await go(11);
     await click('step'); assert.match(await message(),/벽 충돌/); assert.equal(await page.locator('#cg-step').isDisabled(),true);
