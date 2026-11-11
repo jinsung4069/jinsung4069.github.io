@@ -6,30 +6,33 @@
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const icon=name=>`<svg class="ce-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#ce-icon-${name}"></use></svg>`;
  const setIcon=(button,name,label)=>{button.innerHTML=icon(name)+`<span class="lecture-button-label">${esc(label)}</span>`;button.setAttribute('aria-label',label);button.dataset.tip=label};
- let index=0,data,zoom=false,touchTimer,updateTools;
+ let index=0,data,zoom=false,touchTimer,updateTools,answered=false;
  function reveal(){stage.classList.add('controls-visible');clearTimeout(touchTimer);touchTimer=setTimeout(()=>stage.classList.remove('controls-visible'),3500)}
  function resetZoom(){zoom=false;stage.classList.remove('zoom');setIcon($('#ce-zoom'),'zoom-in','확대');$('#ce-zoom').setAttribute('aria-pressed','false')}
  const place=(node,f)=>Object.assign(node.style,{left:`${f.x*100}%`,top:`${f.y*100}%`,width:`${f.width*100}%`,height:`${f.height*100}%`});
  // Each line is stretched to the width it has in the slide image, whatever font the browser ends up using.
  function fitLines(){media.querySelectorAll('.ce-text span').forEach(line=>{line.style.transform='';const width=line.getBoundingClientRect().width,target=Number(line.dataset.width)*line.parentNode.clientWidth;if(width&&target)line.style.transform=`scaleX(${target/width})`})}
  function hashIndex(){const match=location.hash.match(/^#slide-(\d+)$/);return match?Math.max(0,Math.min(data.slides.length-1,Number(match[1])-1)):0}
- function render(i,write=true){
-  index=Math.max(0,Math.min(data.slides.length-1,i));const s=data.slides[index],isLab=s.kind==='lab'||s.kind==='native';
+ // A quiz slide shows its question first; the answer appears on the next step, as it did on a click in the source deck.
+ function render(i,write=true,keep=false){
+  if(!keep)answered=false;
+  index=Math.max(0,Math.min(data.slides.length-1,i));const s=data.slides[index],isLab=s.kind==='lab'||s.kind==='native',asking=!!s.question&&!answered&&!window.LecturePrint.mode;
   media.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});media.replaceChildren();resetZoom();
   if(window.ceDataLabs)window.ceDataLabs.show(isLab?(s.labId||'legacy'):'hidden');
   if(window.ceChapter4)window.ceChapter4.show(isLab?(s.labId||'stackQueue'):'hidden');
   if(window.ceLabs)window.ceLabs.show(isLab?s.labId:null,s);
   stage.classList.toggle('lab-mode',isLab);img.hidden=isLab;lab.hidden=!isLab;$('#ce-zoom').disabled=isLab;
   $('#ce-loading').hidden=isLab;$('#ce-slide-text').textContent=isLab?'':s.text.join('\n');
-  if(!isLab){img.alt=`${index+1}쪽, ${s.title}`;img.src=s.image;if(img.complete&&img.naturalWidth)$('#ce-loading').hidden=true}
+  if(!isLab){img.alt=`${index+1}쪽, ${s.title}`;img.src=asking?s.question:s.image;if(img.complete&&img.naturalWidth)$('#ce-loading').hidden=true}
   page.value=index+1;$('#ce-total').textContent=data.slides.length;$('#ce-page-label').textContent=`${index+1} / ${data.slides.length}`;
-  $('#ce-prev').disabled=index===0;$('#ce-next').disabled=index===data.slides.length-1;
-  $('#ce-status').textContent=`${index+1} / ${data.slides.length}, ${s.title}`;
+  $('#ce-prev').disabled=index===0;$('#ce-next').disabled=index===data.slides.length-1&&!asking;
+  $('#ce-status').textContent=`${index+1} / ${data.slides.length}, ${s.title}${asking?', 문제':s.question?', 정답':''}`;
   // Pictures open at full size, and transparent lines over the slide image make its text selectable.
-  for(const p of (window.LecturePrint.mode||isLab?[]:(s.pictures||[]))){
+  for(const p of (window.LecturePrint.mode||isLab||asking?[]:(s.pictures||[]))){
    const b=document.createElement('button');b.type='button';b.className='ce-picture';place(b,p);b.dataset.zoom=p.src;b.dataset.zoomAlt=`${s.title}, 그림`;b.setAttribute('aria-label',`${s.title}, 그림 크게 보기`);b.setAttribute('aria-haspopup','dialog');media.append(b);
   }
-  if(s.lines&&!isLab&&!window.LecturePrint.mode){
+  if(asking){const b=document.createElement('button');b.type='button';b.className='ce-answer';b.textContent='정답 보기';b.addEventListener('click',forward);media.append(b);new Image().src=s.image}
+  if(s.lines&&!isLab&&!asking&&!window.LecturePrint.mode){
    // The line break at the end of each line is for copied text; it takes no room on screen.
    // Screen readers already get this text from #ce-slide-text, so the copy-only layer is hidden from them.
    const layer=document.createElement('div');layer.className='ce-text';layer.setAttribute('aria-hidden','true');
@@ -76,6 +79,7 @@
   const next=data.slides.slice(index+1).find(slide=>slide.image);if(next&&!window.LecturePrint.mode){const pre=new Image();pre.src=next.image}
   updateTools?.();
  }
+ function forward(){const s=data.slides[index];if(s.question&&!answered){answered=true;render(index,false,true)}else render(index+1)}
  try{
   // Other courses reuse this viewer by naming their data folder and print title on the main element.
   const course=viewer.dataset.course||'computer-education2',courseTitle=viewer.dataset.courseTitle||'컴퓨터과교육2';
@@ -89,7 +93,7 @@
   $('#ce-go-page').addEventListener('submit',e=>{e.preventDefault();render(Number(page.value||1)-1);$('#ce-page-dialog').close()});
   $('#ce-open-links').addEventListener('click',()=>$('#ce-links-dialog').showModal());
   document.querySelectorAll('.ce-dialog').forEach(d=>{d.querySelector('[data-close]').onclick=()=>d.close();d.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();d.close()}})});
-  $('#ce-prev').addEventListener('click',()=>render(index-1));$('#ce-next').addEventListener('click',()=>render(index+1));
+  $('#ce-prev').addEventListener('click',()=>render(index-1));$('#ce-next').addEventListener('click',forward);
   $('#ce-zoom').addEventListener('click',()=>{zoom=!zoom;stage.classList.toggle('zoom',zoom);setIcon($('#ce-zoom'),zoom?'zoom-out':'zoom-in',zoom?'화면에 맞춤':'확대');$('#ce-zoom').setAttribute('aria-pressed',String(zoom))});
   $('#ce-fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{$('#ce-status').textContent='이 브라우저에서는 전체 화면을 사용할 수 없습니다.'}});
   document.addEventListener('fullscreenchange',()=>setIcon($('#ce-fullscreen'),document.fullscreenElement?'minimize':'maximize',document.fullscreenElement?'전체 화면 종료':'전체 화면'));
@@ -108,11 +112,11 @@
    const letter=e.code==='KeyF'?'f':e.code==='KeyA'?'a':e.code==='KeyD'?'d':e.key.toLowerCase();
    if(letter==='f'){if(!e.repeat){e.preventDefault();$('#ce-fullscreen').click()}return}
    if(e.target.closest('.ce-lab')&&!['a','d'].includes(letter))return;
-   const actions={ArrowRight:()=>render(index+1),PageDown:()=>render(index+1),ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:()=>render(index+1)};
+   const actions={ArrowRight:forward,PageDown:forward,ArrowLeft:()=>render(index-1),PageUp:()=>render(index-1),Home:()=>render(0),End:()=>render(data.slides.length-1),a:()=>render(index-1),d:forward};
    const action=actions[e.key]||actions[letter];if(action){e.preventDefault();action()}
   });
   let touch=null;stage.addEventListener('touchstart',e=>{if(e.touches.length===1&&!e.target.closest('a,button:not(.ce-picture),input,select,textarea,video,.ce-lab'))touch=[e.touches[0].clientX,e.touches[0].clientY];else touch=null},{passive:true});
-  stage.addEventListener('touchend',e=>{if(!touch||zoom||!getSelection().isCollapsed)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)render(index+(dx<0?1:-1));else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
+  stage.addEventListener('touchend',e=>{if(!touch||zoom||!getSelection().isCollapsed)return;const dx=e.changedTouches[0].clientX-touch[0],dy=e.changedTouches[0].clientY-touch[1];if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)forward();else render(index-1)}else if(Math.abs(dx)<15&&Math.abs(dy)<15)reveal();touch=null},{passive:true});
   stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')reveal()});
   // A drag that starts on the picture would move a ghost of the slide instead of selecting text.
   img.draggable=false;new ResizeObserver(fitLines).observe(stage);document.fonts.ready.then(fitLines);
