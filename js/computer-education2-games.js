@@ -10,6 +10,8 @@
   const game = document.createElement('div');
   game.className = 'ce-game';
   game.hidden = true;
+  // Lecture 10 is all text, so it grows with the screen instead of staying at a fixed size.
+  if (chapter === 10) game.classList.add('cg-fluid');
   panel.append(legacy, game);
   const q = selector => game.querySelector(selector);
   const all = selector => [...game.querySelectorAll(selector)];
@@ -93,7 +95,7 @@
       { title: 'AI가 그린 주인공', who: '4학년 한 선생님', story: '학생이 생성형 AI로 만든 그림을 학급 신문에 실으려는데, 유명한 만화 주인공과 거의 똑같아요.', options: ['AI가 만들었으니 저작권 문제가 없습니다.', '학생 이름만 적으면 됩니다.', '싣지 마세요. 기존 캐릭터와 닮지 않게 다시 만들고, AI로 만들었다고 밝히세요.'], answer: 2, why: 'AI가 만든 그림이라도 기존 저작물과 비슷하면 저작권 침해가 될 수 있습니다. 누가 만들었는지 적는다고 달라지지 않습니다.' }
     ];
     let now = 0, results = [], checked = false;
-    shell(`<div class="cg-score" id="cg-score"></div><div class="cg-columns"><section class="cg-card"><h3 id="cg-mission"></h3><p id="cg-brief"></p><fieldset id="cg-edit"><legend>어떻게 답할까요?</legend><div id="cg-fields" class="cg-fields"></div></fieldset><div class="cg-actions">${button('cg-run', '답 확인')}${button('cg-next', '다음 사연', 'disabled')}${button('cg-reset', '처음부터')}</div></section><section class="cg-card"><h3>상담 기록</h3><ol id="cg-log" class="cg-post"></ol><p class="cg-note">사연 속 인물은 모두 지어낸 사람입니다.</p></section></div>${status}`);
+    shell(`<div class="cg-score" id="cg-score"></div><div class="cg-columns"><section class="cg-card"><h3 id="cg-mission"></h3><p id="cg-brief"></p><fieldset id="cg-edit"><legend>어떻게 답할까요?</legend><div id="cg-fields" class="cg-fields"></div></fieldset><div class="cg-actions">${button('cg-run', '답 확인')}${button('cg-next', '다음 사연', 'disabled')}${button('cg-reset', '처음부터')}</div></section><section class="cg-card"><h3>상담 기록</h3><ol id="cg-log" class="cg-post"></ol></section></div>${status}`);
     function draw() {
       q('#cg-score').textContent = `사연 ${now + 1} / ${cases.length}, 맞힌 사연 ${results.filter(Boolean).length}개`;
       q('#cg-log').innerHTML = cases.map((c, i) => `<li>${c.title}: ${i < results.length ? results[i] ? '○ 맞힘' : '× 틀림' : i === now ? '상담 중' : '기다리는 중'}</li>`).join('');

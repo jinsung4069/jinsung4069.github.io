@@ -32,7 +32,7 @@
   let seed=20261112;const next=n=>{seed=(seed*1103515245+12345)%2147483648;return Math.floor(seed/65536)%n};
   const roster=Array.from({length:480},(_,i)=>[i%6,Math.floor(i/6)%4,next(2),next(12),next(5)]),target=roster[137];
   const draw=()=>{const on=[...panel.querySelectorAll('[data-k]')].filter(e=>e.checked).map(e=>Number(e.dataset.k)),n=roster.filter(st=>on.every(k=>st[k]===target[k])).length;
-   result(`드러난 정보에 맞는 학생: ${n}명 (전교생 480명)\n${n===480?'아직은 누구 이야기인지 알 수 없습니다.':n>1?`${n}명 가운데 한 명입니다. 정보를 하나 더 켜 보세요.`:'한 명만 남았습니다. 이름이 없어도, 모으면 누구인지 알 수 있는 정보는 개인정보입니다.'}\n학생과 학교는 모두 지어낸 것입니다.`)};
+   result(`드러난 정보에 맞는 학생: ${n}명 (전교생 480명)\n${n===480?'아직은 누구 이야기인지 알 수 없습니다.':n>1?`${n}명 가운데 한 명입니다. 정보를 하나 더 켜 보세요.`:'한 명만 남았습니다. 이름이 없어도, 모으면 누구인지 알 수 있는 정보는 개인정보입니다.'}`)};
   panel.querySelectorAll('[data-k]').forEach(e=>e.onchange=draw);draw();
  }else if(chapter===11){
   box('센서 값으로 LED 제어하기','빛 센서가 어두움을 감지하면 LED를 켜는 모형입니다. 센서 값과 기준값을 바꿔 보세요.','<label>빛 센서 값 <input id="light" type="range" min="0" max="100" value="20"></label><label>기준값 <input id="threshold" type="range" min="0" max="100" value="40"></label>');
