@@ -16,22 +16,22 @@
   const button = (id, label, extra = '') => `<button type="button" id="${id}" ${extra}>${label}</button>`;
   const titles = {
     8: 'CNN, RNN, 확산 모델 체험실', 9: '우주 광물 분류소',
-    10: '디지털 시민 편집국', 11: '센서 로봇 구조 미션'
+    10: '교무실 저작권 상담소', 11: '센서 로봇 구조 미션'
   };
   const goals = {
     8: '같은 이미지를 세 모델에 넣고 이미지가 어떻게 바뀌는지 비교하세요. 샘플을 고르거나, 직접 그리거나, 내 이미지를 올릴 수 있습니다.',
     9: '학습 카드 네 장으로 1-최근접 이웃 분류기를 만들고 새 광물 8개 중 7개 이상을 분류하세요.',
-    10: '게시물의 위험 요소를 직접 고쳐 세 번의 공유 준비 심사를 통과하세요.',
+    10: '동료 선생님 여섯 분이 고민을 들고 왔습니다. 사연을 읽고 알맞은 답을 골라 주세요. 다섯 개 넘게 맞히면 성공입니다.',
     11: '센서 조건에 맞는 행동을 연결해 로봇을 출발점에서 구조 지점까지 보내세요.'
   };
   const reflections = {
     8: 'CNN의 필터를 바꿨을 때 어떤 무늬가 밝게 남았나요? RNN의 기억 유지율을 낮추면 마지막 기억에서 윗부분 정보는 어떻게 되나요? 확산 모델은 왜 학습 이미지와 비슷한 그림을 만들었을까요? 이 실습은 학습을 실행하지 않고 원리만 보여 주는 작은 모형입니다.',
     9: '같은 수의 학습 카드라도 어떤 위치의 사례를 골랐을 때 성능이 좋아졌나요? 여기서는 두 특성을 같은 척도로 비교합니다. 반복해서 본 검증 자료와 별도로, 최종 성능을 평가할 새로운 시험 자료가 필요합니다.',
-    10: '정보를 가리는 것, 사용 조건을 확인하는 것, 상대를 존중하는 행동은 각각 어떤 위험을 줄이나요? 모든 인물과 자료는 게임용 가상 사례입니다. 실제 게시나 신고는 실행되지 않습니다.',
+    10: '틀린 사연은 어디에서 헷갈렸나요? 수업에 쓰는 것과 수업 밖에서 나눠 주는 것은 무엇이 다른지, 출처만 밝히면 되는 때와 허락을 받아야 하는 때는 언제인지 짝과 말해 보세요.',
     11: '입력인 센서 값, 처리인 조건문, 출력인 모터 행동을 연결해 설명해 보세요. 실제 로봇에서는 센서 오차와 회전 시간도 보정해야 합니다. 이 활동은 하드웨어에 연결되지 않는 격자 모형입니다.'
   };
   function shell(body) {
-    game.innerHTML = `<div class="cg-heading"><span class="cg-eyebrow">${chapter}강 ${chapter === 8 ? '체험 실습, 2인 1조, 10~15분' : '게임 실습, 2인 1조, 8~12분'}</span><h2>${titles[chapter]}</h2><p>${goals[chapter]}</p></div>${body}<details class="cg-reflection"><summary>활동 후 함께 생각하기</summary><p>${reflections[chapter]}</p><p>한 사람은 조작, 한 사람은 결과 예측을 맡고 역할을 바꿔 한 번 더 도전하세요.</p></details>`;
+    game.innerHTML = `<div class="cg-heading"><span class="cg-eyebrow">${chapter}강 ${chapter === 8 ? '체험 실습, 2인 1조, 10~15분' : '게임 실습, 2인 1조, 8~12분'}</span><h2>${titles[chapter]}</h2><p>${goals[chapter]}</p></div>${body}<details class="cg-reflection"><summary>활동 후 함께 생각하기</summary><p>${reflections[chapter]}</p><p>${chapter === 10 ? '한 사람은 답을 고르고, 다른 사람은 까닭을 먼저 말합니다. 사연마다 역할을 바꾸세요.' : '한 사람은 조작, 한 사람은 결과 예측을 맡고 역할을 바꿔 한 번 더 도전하세요.'}</p></details>`;
   }
   function feedback(message, success = false) {
     q('#cg-feedback').textContent = message;
@@ -83,44 +83,50 @@
     feedback('같은 이름의 카드만 고르면 어떤 일이 생길까요? 예상한 뒤 실행해 보세요.');
   }
 
-  function editorGame() {
-    let mission = 0, attempts = 0, complete = false;
-    const missions = [
-      { title: '1. 작품 사진의 이름표', brief: '공개할 작품 사진에 가상 학생의 이름과 연락처가 보입니다. 작품 설명은 살리고 두 정보를 가려 주세요.', fields: '<label class="cg-check"><input id="cg-name" type="checkbox"> 이름 가리기</label><label class="cg-check"><input id="cg-contact" type="checkbox"> 연락처 가리기</label>', preview: () => `<b>우리 반 발명품 전시</b><p>제작자: ${q('#cg-name').checked ? '익명 학생' : '가상 학생 나별'}</p><p>연락처: ${q('#cg-contact').checked ? '비공개' : '별빛반 내부 연락처'}</p><p>종이로 만든 태양광 자동차를 소개합니다.</p>`, check: () => [q('#cg-name').checked ? '' : '이름표를 가려 주세요.', q('#cg-contact').checked ? '' : '연락처를 가려 주세요.'] },
-      { title: '2. 허락받은 별 그림', brief: '작가가 “이 활동의 게시물에 사용 가능, 작가 이름 표시”라는 조건으로 별 그림을 제공했습니다. 허락된 파일을 고르고 조건을 지켜 주세요.', fields: '<label>사용할 그림<select id="cg-asset"><option value="unknown">인터넷에서 찾은 출처 불명 그림</option><option value="allowed">가상 작가 하늘의 허락받은 별 그림</option></select></label><label class="cg-check"><input id="cg-credit" type="checkbox"> 작가 이름과 제공 사실 표시</label>', preview: () => `<b>우주 탐사 안내</b><div class="cg-art" aria-label="선택한 그림">${q('#cg-asset').value === 'allowed' ? '☆ ☆ ☆' : '? ? ?'}</div><p>${q('#cg-credit').checked ? '그림: 가상 작가 하늘, 작가 제공' : '그림 정보가 표시되지 않았습니다.'}</p>`, check: () => [q('#cg-asset').value === 'allowed' ? '' : '사용 허락이 확인된 파일로 바꿔 주세요.', q('#cg-credit').checked ? '' : '작가가 요청한 표시 조건을 지켜 주세요.'] },
-      { title: '3. 친구를 존중하는 전시', brief: '친구는 얼굴 공개에 동의하지 않았습니다. 얼굴을 가리고 작품에 대한 구체적이고 존중하는 댓글을 선택하세요.', fields: '<label class="cg-check"><input id="cg-face" type="checkbox"> 동의하지 않은 친구 얼굴 가리기</label><label>전시 댓글<select id="cg-comment"><option value="tease">이것도 작품이야? 다 같이 놀리자.</option><option value="kind">바퀴를 연결한 아이디어가 좋아. 더 잘 굴러가게 함께 고쳐 볼까?</option><option value="forward">웃긴 사진이니까 다른 단체방에도 퍼뜨리자.</option></select></label>', preview: () => `<b>친구의 작품을 소개합니다</b><p>사진: ${q('#cg-face').checked ? '작품과 가려진 얼굴' : '작품과 동의하지 않은 친구 얼굴'}</p><blockquote>${q('#cg-comment').selectedOptions[0].textContent}</blockquote>`, check: () => [q('#cg-face').checked ? '' : '공개에 동의하지 않은 얼굴을 가려 주세요.', q('#cg-comment').value === 'kind' ? '' : '조롱과 무단 확산 대신 존중하는 피드백을 선택하세요.'] }
+  function counselGame() {
+    const cases = [
+      { title: '문제집 한 단원', who: '3학년 김 선생님', story: '시중 수학 문제집 한 단원을 통째로 스캔해서 학급 온라인 방에 올리고 숙제로 내려고 해요.', options: ['수업에 쓰는 거니까 그대로 올려도 됩니다.', '출처만 적으면 올려도 됩니다.', '올리지 마세요. 꼭 필요한 몇 문제만 수업 시간에 다루거나 문제를 직접 만드세요.'], answer: 2, why: '수업에 쓰더라도 공표된 저작물의 일부분만 쓸 수 있습니다(저작권법 제25조 제3항). 문제집은 학생이 사서 쓰라고 만든 책이라, 한 단원을 통째로 나눠 주면 책을 살 까닭이 없어집니다. 출처를 적어도 마찬가지입니다.' },
+      { title: '유튜브 실험 영상', who: '5학년 박 선생님', story: '과학 시간에 유튜브에 공개된 화산 실험 영상을 교실 텔레비전으로 3분쯤 보여 주려고 해요.', options: ['보여 주셔도 됩니다.', '영상을 올린 사람에게 먼저 허락을 받아야 합니다.', '교실에서는 남이 만든 영상을 틀 수 없습니다.'], answer: 0, why: '수업에 필요한 만큼 공표된 저작물을 보여 주는 일은 허락 없이 할 수 있습니다(저작권법 제25조 제3항). 다만 영상을 내려받아 학급 누리집에 다시 올리는 일은 따로 따져 봐야 합니다.' },
+      { title: '졸업 영상 배경음악', who: '6학년 이 선생님', story: '졸업 영상에 요즘 인기 있는 가요를 배경음악으로 넣어 학부모 단체방에 파일로 보내려고 해요.', options: ['졸업 기념이니 괜찮습니다.', '30초만 넣으면 괜찮습니다.', '음악 저작권자에게 허락을 받거나, 자유롭게 쓸 수 있는 음원으로 바꾸세요.'], answer: 2, why: '졸업 영상을 나눠 주는 일은 수업이 아니어서 제25조가 적용되지 않습니다. 음악을 영상에 넣고 단체방에 보내려면 저작권자의 허락이 있어야 합니다. 30초면 괜찮다는 말은 근거가 없습니다. 공유마당 같은 곳의 자유 이용 음원을 쓰면 됩니다.' },
+      { title: '체험 학습 사진', who: '2학년 최 선생님', story: '현장 체험 학습 사진을 학교 누리집에 올리려는데, 아이들 얼굴이 또렷이 보여요.', options: ['학교 행사 사진이니 그냥 올리셔도 됩니다.', '보호자가 동의한 아이만 올리고, 나머지는 얼굴이 안 보이는 사진으로 고르세요.', '아이에게 물어보고 좋다고 하면 올리세요.'], answer: 1, why: '얼굴 사진은 누구인지 알아볼 수 있는 개인정보입니다. 만 14세 미만 아동의 개인정보를 동의받아 처리할 때는 법정대리인의 동의가 있어야 합니다(개인정보 보호법 제22조의2).' },
+      { title: '무료 글꼴', who: '행정실 정 주무관', story: '인터넷에서 받은 ‘개인 사용 무료’ 글꼴로 학교 현수막과 가정통신문을 만들려고 해요.', options: ['무료 글꼴이니 어디에 써도 됩니다.', '사용 범위를 확인하고, 학교에서 쓸 수 없으면 다른 글꼴로 바꾸세요.', '글꼴은 저작권과 상관없습니다.'], answer: 1, why: '글꼴 파일은 컴퓨터프로그램저작물로 보호받습니다. ‘개인 사용 무료’는 학교나 기관에서 쓰는 것까지 허락한 것이 아닐 수 있으니, 내려받은 곳에서 사용 범위를 먼저 확인해야 합니다.' },
+      { title: 'AI가 그린 주인공', who: '4학년 한 선생님', story: '학생이 생성형 AI로 만든 그림을 학급 신문에 실으려는데, 유명한 만화 주인공과 거의 똑같아요.', options: ['AI가 만들었으니 저작권 문제가 없습니다.', '학생 이름만 적으면 됩니다.', '싣지 마세요. 기존 캐릭터와 닮지 않게 다시 만들고, AI로 만들었다고 밝히세요.'], answer: 2, why: 'AI가 만든 그림이라도 기존 저작물과 비슷하면 저작권 침해가 될 수 있습니다. 누가 만들었는지 적는다고 달라지지 않습니다.' }
     ];
-    shell(`<div class="cg-score" id="cg-score"></div><div class="cg-columns"><section class="cg-card"><h3 id="cg-mission"></h3><p id="cg-brief"></p><fieldset id="cg-edit"><legend>게시물 수정</legend><div id="cg-fields" class="cg-fields"></div></fieldset><div class="cg-actions">${button('cg-run', '공유 준비 심사')}${button('cg-next', '다음 미션', 'disabled')}${button('cg-reset', '처음부터')}</div></section><section class="cg-card"><h3>게시물 미리보기</h3><div id="cg-preview" class="cg-post"></div><p class="cg-note">연습용 미리보기입니다. 외부에 게시되지 않습니다.</p></section></div>${status}`);
+    let now = 0, results = [], checked = false;
+    shell(`<div class="cg-score" id="cg-score"></div><div class="cg-columns"><section class="cg-card"><h3 id="cg-mission"></h3><p id="cg-brief"></p><fieldset id="cg-edit"><legend>어떻게 답할까요?</legend><div id="cg-fields" class="cg-fields"></div></fieldset><div class="cg-actions">${button('cg-run', '답 확인')}${button('cg-next', '다음 사연', 'disabled')}${button('cg-reset', '처음부터')}</div></section><section class="cg-card"><h3>상담 기록</h3><ol id="cg-log" class="cg-post"></ol><p class="cg-note">사연 속 인물은 모두 지어낸 사람입니다.</p></section></div>${status}`);
+    function draw() {
+      q('#cg-score').textContent = `사연 ${now + 1} / ${cases.length}, 맞힌 사연 ${results.filter(Boolean).length}개`;
+      q('#cg-log').innerHTML = cases.map((c, i) => `<li>${c.title}: ${i < results.length ? results[i] ? '○ 맞힘' : '× 틀림' : i === now ? '상담 중' : '기다리는 중'}</li>`).join('');
+    }
     function start() {
-      const m = missions[mission];
-      complete = false;
-      q('#cg-score').textContent = `공유 준비 도장 ${mission} / 3`;
-      q('#cg-mission').textContent = m.title;
-      q('#cg-brief').textContent = m.brief;
-      q('#cg-fields').innerHTML = m.fields;
+      const c = cases[now];
+      checked = false;
+      q('#cg-mission').textContent = `${now + 1}. ${c.title}`;
+      q('#cg-brief').textContent = `${c.who}: “${c.story}”`;
+      q('#cg-fields').innerHTML = c.options.map((text, i) => `<label class="cg-check"><input type="radio" name="cg-answer" value="${i}"> ${text}</label>`).join('');
       q('#cg-edit').disabled = false;
       q('#cg-run').disabled = false;
       q('#cg-next').disabled = true;
-      q('#cg-next').textContent = mission === 2 ? '편집국 임무 완료' : '다음 미션';
-      const preview = () => { q('#cg-preview').innerHTML = m.preview(); feedback('미리보기가 바뀌었습니다. 공개할 내용을 확인한 뒤 심사하세요.'); };
-      all('#cg-fields input, #cg-fields select').forEach(el => el.onchange = preview);
-      preview();
+      q('#cg-next').textContent = now === cases.length - 1 ? '상담 끝' : '다음 사연';
+      draw();
+      feedback('답을 고르기 전에 그렇게 생각한 까닭을 짝에게 먼저 말해 보세요.');
     }
     q('#cg-run').onclick = () => {
-      if (complete) return;
-      attempts++;
-      const issues = missions[mission].check().filter(Boolean);
-      complete = issues.length === 0;
-      if (complete) {
-        q('#cg-score').textContent = `공유 준비 도장 ${mission + 1} / 3, 심사 ${attempts}회`;
-        q('#cg-edit').disabled = true;
-        q('#cg-run').disabled = true;
-        q('#cg-next').disabled = mission === 2;
-      }
-      feedback(complete ? mission === 2 ? '임무 성공! 세 게시물의 공유 준비를 마쳤습니다. 각 미션에서 줄인 위험을 설명해 보세요.' : '심사 통과! 공유 준비 도장을 받았습니다. 다음 미션으로 이동하세요.' : `수정 후 재심사: ${issues.join(' ')}`, complete);
+      if (checked) return;
+      const picked = q('input[name="cg-answer"]:checked');
+      if (!picked) { feedback('답을 하나 골라 주세요.'); return; }
+      const c = cases[now], right = Number(picked.value) === c.answer;
+      checked = true;
+      results.push(right);
+      q('#cg-edit').disabled = true;
+      q('#cg-run').disabled = true;
+      const last = now === cases.length - 1, score = results.filter(Boolean).length;
+      q('#cg-next').disabled = last;
+      draw();
+      feedback(`${right ? '맞았습니다.' : `아쉽습니다. 알맞은 답은 “${c.options[c.answer]}”`} ${c.why}${last ? ` 상담을 마쳤습니다. 여섯 사연 가운데 ${score}개를 맞혔습니다. ${score >= 5 ? '상담소를 맡겨도 되겠습니다.' : '틀린 사연의 까닭을 다시 읽고 처음부터 한 번 더 해 보세요.'}` : ''}`, right);
     };
-    q('#cg-next').onclick = () => { if (complete && mission < 2) { mission++; start(); } };
-    q('#cg-reset').onclick = () => { mission = 0; attempts = 0; start(); };
+    q('#cg-next').onclick = () => { if (checked && now < cases.length - 1) { now++; start(); } };
+    q('#cg-reset').onclick = () => { now = 0; results = []; start(); };
     start();
   }
 
@@ -190,7 +196,7 @@
   const worksheets = {
     8: ['세로 경계 필터와 가로 경계 필터를 적용하고, 특징 지도에서 밝게 남은 곳을 표시하세요.', 'RNN 기억 유지율을 0.3과 0.9로 바꿔 32줄을 읽은 뒤, 마지막 기억에 남은 정보를 비교하세요.', '확산 모델에서 잡음 단계 t가 커질 때 그림의 변화를 적고, 생성 결과가 어느 학습 이미지에 가까웠는지 기록하세요.'],
     9: ['밝기와 질량의 분포를 보며 충전용, 냉각용 학습 사례 네 장을 고르세요.', '새 광물과 가장 가까운 학습 카드의 이름으로 분류하고 정답과 비교하세요.', '오배송을 줄이도록 사례를 바꾼 뒤, 별도 시험 자료가 필요한 이유를 쓰세요.'],
-    10: ['작품 사진의 이름과 연락처를 가리고 남길 정보를 정하세요.', '작가가 허락한 파일과 요청한 표시 조건을 확인하세요.', '얼굴 공개 동의를 확인하고 작품에 대한 존중하는 댓글을 작성하세요.'],
+    10: ['사연을 읽고 답을 고르기 전에, 그렇게 생각한 까닭을 한 줄로 적으세요.', '수업에 쓰는 일(저작권법 제25조)에 해당하는 사연과 그렇지 않은 사연을 나누세요.', '학교에서 겪을 만한 사연을 하나 지어 짝에게 물어보세요.'],
     11: ['오른쪽이 열렸을 때, 앞쪽만 열렸을 때, 둘 다 막혔을 때의 행동을 정하세요.', '오른쪽 회전 후 전진, 전진, 왼쪽 회전 규칙을 미로에서 실행하세요.', '센서 입력, 선택한 조건, 모터 행동, 위치를 한 단계씩 기록하세요.']
   };
   let mounted = false;
@@ -205,9 +211,9 @@
       if (!active || mounted) return;
       mounted = true;
       if (window.LecturePrint?.mode) {
-        shell(`<section class="cg-worksheet"><h3>실습 활동지</h3><ol>${worksheets[chapter].map(text => `<li>${text}</li>`).join('')}</ol><p>예측:</p><div class="cg-write-space"></div><p>실행 결과와 수정한 점:</p><div class="cg-write-space"></div><p>온라인 교안의 마지막 슬라이드에서 직접 실행할 수 있습니다.</p></section>`);
+        shell(`<section class="cg-worksheet"><h3>실습 활동지</h3><ol>${worksheets[chapter].map(text => `<li>${text}</li>`).join('')}</ol><p>${chapter === 10 ? '내 생각:' : '예측:'}</p><div class="cg-write-space"></div><p>${chapter === 10 ? '확인한 답과 까닭:' : '실행 결과와 수정한 점:'}</p><div class="cg-write-space"></div><p>온라인 교안의 마지막 슬라이드에서 직접 실행할 수 있습니다.</p></section>`);
         q('.cg-reflection').open = true;
-      } else ({8: modelLab, 9: mineralGame, 10: editorGame, 11: robotGame}[chapter])();
+      } else ({8: modelLab, 9: mineralGame, 10: counselGame, 11: robotGame}[chapter])();
     }
   };
 })();

@@ -27,8 +27,13 @@
   const draw=()=>{const threshold=Number(q('#threshold').value)/100;result(`모델의 양성 점수: 0.72\n임계값: ${threshold.toFixed(2)}\n분류 결과: ${0.72>=threshold?'양성':'음성'}\n점수가 임계값 이상이면 양성으로 분류합니다.`)};q('#threshold').oninput=draw;draw();
   const a=document.createElement('a');a.href='/ai-understanding-lab/';a.textContent='추가 실습: 데이터로 인공지능 학습시키기 →';panel.append(a);
  }else if(chapter===10){
-  box('공유 전 정보 가리기','가상의 게시물에서 이름과 연락처를 숨겨 보세요. 아래 자료는 체험을 위한 예시입니다.','<label><input id="name" type="checkbox" checked> 이름 숨기기</label><label><input id="contact" type="checkbox" checked> 연락처 숨기기</label>');
-  const draw=()=>result(`이름: ${q('#name').checked?'익명':'가상 학생 A'}\n연락처: ${q('#contact').checked?'비공개':'student@example.invalid'}\n내용: 오늘 만든 프로그램의 화면을 공유합니다.`);q('#name').onchange=draw;q('#contact').onchange=draw;draw();
+  box('모이면 보이는 사람','이름을 지워도 다른 정보가 모이면 누구인지 드러납니다. 가상의 학교 전교생 480명 가운데 한 학생의 글에 아래 정보가 하나씩 드러난다고 생각하고 켜 보세요.','<label><input type="checkbox" data-k="0"> 학년</label><label><input type="checkbox" data-k="1"> 반</label><label><input type="checkbox" data-k="2"> 성별</label><label><input type="checkbox" data-k="3"> 태어난 달</label><label><input type="checkbox" data-k="4"> 방과후 동아리</label>');
+  // 480 made-up students: 6 grades, 4 classes of 20; the other fields come from a fixed sequence.
+  let seed=20261112;const next=n=>{seed=(seed*1103515245+12345)%2147483648;return Math.floor(seed/65536)%n};
+  const roster=Array.from({length:480},(_,i)=>[i%6,Math.floor(i/6)%4,next(2),next(12),next(5)]),target=roster[137];
+  const draw=()=>{const on=[...panel.querySelectorAll('[data-k]')].filter(e=>e.checked).map(e=>Number(e.dataset.k)),n=roster.filter(st=>on.every(k=>st[k]===target[k])).length;
+   result(`드러난 정보에 맞는 학생: ${n}명 (전교생 480명)\n${n===480?'아직은 누구 이야기인지 알 수 없습니다.':n>1?`${n}명 가운데 한 명입니다. 정보를 하나 더 켜 보세요.`:'한 명만 남았습니다. 이름이 없어도, 모으면 누구인지 알 수 있는 정보는 개인정보입니다.'}\n학생과 학교는 모두 지어낸 것입니다.`)};
+  panel.querySelectorAll('[data-k]').forEach(e=>e.onchange=draw);draw();
  }else if(chapter===11){
   box('센서 값으로 LED 제어하기','빛 센서가 어두움을 감지하면 LED를 켜는 모형입니다. 센서 값과 기준값을 바꿔 보세요.','<label>빛 센서 값 <input id="light" type="range" min="0" max="100" value="20"></label><label>기준값 <input id="threshold" type="range" min="0" max="100" value="40"></label>');
   const draw=()=>{const light=Number(q('#light').value),threshold=Number(q('#threshold').value),on=light<threshold;result(`입력: 빛 센서 ${light}\n처리: ${light} < ${threshold} → ${on?'참':'거짓'}\n출력: LED ${on?'켜짐 💡':'꺼짐'}\n이 체험은 실제 로봇과 연결되지 않는 브라우저 모형입니다.`)};q('#light').oninput=draw;q('#threshold').oninput=draw;draw();
