@@ -76,8 +76,8 @@
  const STUDENTS=[];for(let c=1;c<=3;c++)for(let g=1;g<=6;g++)for(let i=0;i<12;i++)STUDENTS.push({g,c,girl:i%2===0,moved:MOVED.has(`${g}-${c}-${i}`)});
  const FACTS=[{k:'grade',name:'학년',value:'6학년',fits:s=>s.g===6},{k:'room',name:'반',value:'2반',fits:s=>s.c===2},{k:'moved',name:'전학 시기',value:'2학기에 전학 옴',fits:s=>s.moved},{k:'girl',name:'성별',value:'여학생',fits:s=>s.girl}];
  L.add('combineInfo','custom',{
-  hint:'이름을 쓰지 않으면 괜찮을까요? 정보를 하나씩 넣으며 <b>조건에 맞는 학생이 몇 명 남는지</b> 확인합니다. 학교와 학생은 가상의 예시입니다.',
-  body:`<div class="md-split" style="--split:1.9fr 1fr"><div class="md-panel"><h3>가상의 초등학교, 학생 216명</h3><div class="s71-school"><b></b>${[1,2,3,4,5,6].map(g=>`<b>${g}학년</b>`).join('')}
+  hint:'이름을 쓰지 않으면 괜찮을까요? 정보를 하나씩 넣으며 <b>조건에 맞는 학생이 몇 명 남는지</b> 확인합니다.',
+  body:`<div class="md-split" style="--split:1.9fr 1fr"><div class="md-panel"><h3>한 초등학교, 학생 216명</h3><div class="s71-school"><b></b>${[1,2,3,4,5,6].map(g=>`<b>${g}학년</b>`).join('')}
     ${[1,2,3].map(c=>`<b>${c}반</b>`+[1,2,3,4,5,6].map(g=>`<div class="s71-class">${STUDENTS.map((s,n)=>s.g===g&&s.c===c?`<i data-n="${n}"></i>`:'').join('')}</div>`).join('')).join('')}</div>
     <p class="s71-small" style="color:#52607f">점 하나가 학생 한 명입니다. 조건에 맞는 학생만 진하게 남습니다.</p></div>
    <div class="md-panel"><h3>요청문에 넣을 정보</h3><div class="s71-togs">${FACTS.map(f=>`<button type="button" class="s71-tog" data-k="${f.k}" aria-pressed="false"><span>${f.name}</span><b>${f.value}</b></button>`).join('')}</div>
@@ -107,7 +107,7 @@
   {name:'요청',risk:'상담 기록',lost:'필요한 도움',opts:[{t:'이 학생의 상담 기록을 요약해 줘.',kind:'risk'},{t:'어떻게 하면 좋을지 알려 줘.',kind:'lost'},{t:'읽기 보충 활동 세 가지를 제안해 줘.',kind:'keep'}]}];
  const KIND={risk:'넣지 않을 정보',lost:'특성이 사라짐',keep:'필요한 특성'};
  L.add('rewriteRequest','custom',{
-  hint:'다른 요청문으로 연습합니다. 네 부분의 표현을 바꾸어 <b>식별 정보와 민감한 사정은 빼고 필요한 특성은 남긴</b> 요청을 만듭니다. 요청문은 예시입니다.',
+  hint:'다른 요청문으로 연습합니다. 네 부분의 표현을 바꾸어 <b>식별 정보와 민감한 사정은 빼고 필요한 특성은 남긴</b> 요청을 만듭니다.',
   body:`<div class="md-split" style="--split:1.4fr 1fr"><div class="md-panel"><h3>부분마다 표현 하나 고르기</h3><div class="s71-rows">${PARTS.map((p,i)=>`<div class="s71-row"><span><b>${p.name}</b><small></small></span>${options('s71-opt',p.opts,i)}</div>`).join('')}</div></div>
    <div class="md-panel"><h3>완성된 요청</h3><p class="s71-quote" id="s71-request"></p>
     <div class="s71-gauge"><span>알아볼 수 있는 정보와 민감한 기록</span><b id="s71-risk"></b><div class="md-meter"><i id="s71-riskbar" style="background:#c2413b"></i></div></div>
@@ -146,7 +146,7 @@
   {name:'생성된 결과',opts:[{t:'내용을 설명하는 그림을 요청',need:[]},{t:'특정 작가나 캐릭터의 스타일을 요청',need:['기존 작품과 비슷해 침해가 될 수 있는지 확인']}]},
   {name:'공유하는 범위',opts:[{t:'교사 혼자 참고',need:[]},{t:'AI로 만든 자료를 수업에서 배포',need:['AI 사용 사실과 사람이 고친 부분 표시']},{t:'생성 이미지를 학교 누리집에 게시',need:['수업 목적의 이용 범위를 넘는 공개인지 확인','AI 사용 사실과 사람이 고친 부분 표시']}]}];
  L.add('materialCheck','custom',{
-  hint:'수업 자료 하나를 만든다고 가정합니다. <b>입력하는 자료, 생성된 결과, 공유하는 범위</b>를 바꾸어 가며 확인할 점이 어디에서 생기는지 살펴봅니다.',
+  hint:'수업 자료를 만들려고 합니다. <b>입력하는 자료, 생성된 결과, 공유하는 범위</b>를 바꾸어 가며 확인할 점이 어디에서 생기는지 살펴봅니다.',
   body:`<div class="md-split s71-path" style="--split:1fr 1fr 1fr;gap:1em">${STAGES.map((s,i)=>`<div class="md-panel"><h3>${i+1}. ${s.name}</h3><div class="s71-togs">${options('s71-opt',s.opts,i)}</div><h4>확인할 점</h4><div class="s71-need" data-stage="${i}"></div></div>`).join('')}</div>`,
   state:()=>({pick:[1,0,1]}),
   render(ui,st,reset){
@@ -173,7 +173,7 @@
  // One person passes a file to two people, four times over. A person who stops still received it but passes it to nobody.
  const NODES=31,LEVEL_Y=[36,126,216,306,394],level=i=>Math.floor(Math.log2(i+1)),xOf=i=>i>=15?25+50*(i-15):(xOf(2*i+1)+xOf(2*i+2))/2;
  L.add('shareChain','custom',{
-  hint:'합성물이 <b>한 사람에게서 두 사람에게</b> 네 번 전달된다고 가정한 예시 모형입니다. 받은 사람 가운데 <b>공유를 멈추는 두 사람</b>을 골라 봅니다.',
+  hint:'합성물이 <b>한 사람에게서 두 사람에게</b> 네 번 전달됩니다. 받은 사람 가운데 <b>공유를 멈추는 두 사람</b>을 골라 봅니다.',
   body:`<div class="md-split" style="--split:2.7fr 1fr"><div class="md-panel"><svg class="s71-tree" viewBox="-84 0 884 424" role="img" aria-label="한 사람에게서 두 사람에게 네 번 전달되는 공유 사슬"></svg>
     <p class="s71-key"><span><i style="background:#55627f;border-color:#1c2c4c"></i>처음 올린 사람</span><span><i style="background:#f6c9c5;border-color:#c2413b"></i>받은 사람</span><span><i style="background:#fff7df;border-color:#f0a202"></i>멈춘 사람</span><span><i style="background:#f6f8fd;border-color:#b9c6e6"></i>받지 않은 사람</span></p></div>
    <div class="md-panel"><h3>전달 결과</h3><ul class="md-list s71-tight" id="s71-levels"></ul><p class="s71-count"><b id="s71-got"></b>명이 받음</p><p class="s71-state" id="s71-spread"></p></div></div>`,
@@ -200,7 +200,7 @@
    draw();
   }});
 
- L.add('checkMatch','match',{hint:'교사용 점검표의 여섯 영역과, 그 질문에 <b>아직 답하지 못한 장면</b>을 짝지어 봅니다. 장면은 이 활동을 위해 만든 예시입니다.',leftTitle:'점검 영역',rightTitle:'아직 답하지 못한 장면(예시)',seed:6,pairs:[
+ L.add('checkMatch','match',{hint:'교사용 점검표의 여섯 영역과, 그 질문에 <b>아직 답하지 못한 장면</b>을 짝지어 봅니다.',leftTitle:'점검 영역',rightTitle:'아직 답하지 못한 장면(예시)',seed:6,pairs:[
   {left:'목적',right:'학생이 써야 할 감상문을 AI가 대신 써 주는 활동을 계획함'},
   {left:'개인정보',right:'상담 기록을 그대로 붙여 넣고 요약을 요청함'},
   {left:'저작권',right:'교과서 삽화를 입력해 만든 그림을 이용 범위 확인 없이 게시함'},
@@ -208,7 +208,7 @@
   {left:'검증과 공개',right:'AI가 만든 퀴즈를 사실 확인 없이, AI 사용도 밝히지 않고 나누어 줌'},
   {left:'책임',right:'AI 피드백이 틀렸을 때 누가 어떻게 바로잡을지 정하지 않음'}]});
 
- L.add('ruleSort','sort',{soft:true,hint:'학급 AI 사용 규칙에 넣을 문장을 양식의 <b>다섯 항목</b>에 놓아 봅니다. 문장은 초등 고학년 학급을 가정해 만든 예시입니다.',
+ L.add('ruleSort','sort',{soft:true,hint:'학급 AI 사용 규칙에 넣을 문장을 양식의 <b>다섯 항목</b>에 놓아 봅니다. 초등 고학년 학급의 규칙 문장입니다.',
   bins:[{id:'aim',label:'목적',sub:'AI를 쓰는 수업 활동과 이유'},{id:'allow',label:'허용과 금지',sub:'쓸 수 있는 활동과 쓰지 않을 활동'},{id:'open',label:'공개 방법',sub:'AI 사용을 밝히는 방식'},{id:'privacy',label:'개인정보',sub:'입력하지 않을 정보'},{id:'verify',label:'확인 절차',sub:'결과를 확인하는 방법'}],cards:[
   {id:'a',label:'모둠 발표 주제를 정할 때 질문을 떠올리려고 써요',answer:'aim',why:'AI를 쓰는 수업 활동과 이유를 밝힌 목적 문장입니다.'},
   {id:'b',label:'독서 감상문은 AI에게 대신 쓰게 하지 않아요',answer:'allow',why:'쓰지 않을 활동을 정한 허용과 금지 문장입니다.'},

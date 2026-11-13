@@ -14,7 +14,7 @@
    <label class="md-slider">과제 및 산출물<input type="range" data-k="task" min="0" max="30" step="1"><output></output></label>
    <label class="md-slider">프로젝트 평가<input type="range" data-k="project" min="0" max="40" step="1"><output></output></label>
    <label class="md-slider">참여<input type="range" data-k="join" min="0" max="10" step="1"><output></output></label>
-   <p style="font-size:.78em;color:#52607f">출석 점수 20점은 출석 시간에 비례한다고 가정한 계산 예시입니다. 실제 산정 방식은 운영 안내를 따릅니다.</p></div>
+   <p style="font-size:.78em;color:#52607f">출석 점수 20점은 출석 시간에 비례합니다. 실제 산정 방식은 운영 안내를 따릅니다.</p></div>
    <div class="md-panel"><h3>이수 기준 확인</h3><ul class="md-list"><li><span>출석률 80% 이상(36시간)</span><b id="pc-rate"></b></li><li><span>총점 60% 이상</span><b id="pc-total"></b></li></ul>
    <div class="md-meter" aria-hidden="true"><i id="pc-bar"></i></div><p id="pc-note" style="font-size:.85em"></p><p class="md-verdict" id="pc-verdict"></p></div></div>`,
   state:()=>({hours:45,task:24,project:30,join:8}),

@@ -123,7 +123,7 @@
  const RULES=[{need:[0],mid:'전원 공급 이상'},{need:['전원 공급 이상',1],say:'전원 케이블을 다시 꽂는다'},{need:[2],say:'영상 케이블과 입력 선택을 확인한다'},{need:[3],say:'초점 조절 링을 돌려 맞춘다'},{need:[4],say:'전원 케이블을 뽑고 사용을 멈춘다',extra:true}];
  const ruleText=c=>typeof c==='number'?FACTS[c]:c;
  L.add('expertSystem','custom',{
-  hint:'교실 프로젝터 고장을 진단하는 전문가 시스템입니다. 증상을 고르면 <b>추론 엔진</b>이 지식 베이스의 규칙을 적용합니다. 규칙은 활동용 예시입니다.',
+  hint:'교실 프로젝터 고장을 진단하는 전문가 시스템입니다. 증상을 고르면 <b>추론 엔진</b>이 지식 베이스의 규칙을 적용합니다.',
   body:`<div class="md-split" style="--split:1fr 1.1fr 1.35fr"><div class="md-panel"><h3>사용자가 고른 증상</h3><div class="s21-facts">${FACTS.map((f,i)=>`<button type="button" class="s21-fact" data-i="${i}"><i></i>${f}</button>`).join('')}</div></div>
    <div class="md-panel"><h3>추론 엔진이 적용한 규칙</h3><ol class="s21-trace"></ol><div class="s21-out"></div></div>
    <div class="md-panel"><h3 id="s21-kb"></h3><ul class="md-list s21-rules"></ul></div></div>`,
@@ -245,7 +245,7 @@
   ['성취 판단',['teacher'],'슬라이드의 예시에서 교사가 해야 할 일입니다. 결과에 대한 책임이 필요합니다.'],['학생 상담',['teacher'],'슬라이드의 예시에서 교사가 해야 할 일입니다. 관계와 가치가 필요합니다.']];
  const ZONES={ai:['AI에게 맡길 일','반복적이고 결과 확인이 쉬움'],both:['함께할 일','AI가 제안하고 교사가 검토'],teacher:['교사가 해야 할 일','관계, 가치, 책임이 필요함']},zoneOf=(x,y)=>x+y<=1?'ai':x+y===2?'both':'teacher';
  L.add('roleMap','custom',{
-  hint:'과업 여섯 가지를 <b>결과의 영향</b>과 <b>오류 확인의 쉬움</b>에 따라 판에 놓습니다. 놓인 칸이 세 묶음 가운데 하나를 정합니다. 칸의 구분은 활동용 예시입니다.',
+  hint:'과업 여섯 가지를 <b>결과의 영향</b>과 <b>오류 확인의 쉬움</b>에 따라 판에 놓습니다. 놓인 칸이 세 묶음 가운데 하나를 정합니다.',
   body:`<div class="md-split" style="--split:1.5fr 1fr"><div class="s21-plane"><span class="s21-ylab">결과의 영향</span>
    ${[2,1,0].map(y=>`<span class="s21-tick">${['작음','보통','큼'][y]}</span>${[0,1,2].map(x=>`<div class="s21-cell" role="button" tabindex="0" data-x="${x}" data-y="${y}" data-zone="${zoneOf(x,y)}" data-name="${ZONES[zoneOf(x,y)][0]}"></div>`).join('')}`).join('')}
    <span></span><span></span>${['쉬움','보통','어려움'].map(t=>`<span class="s21-tick">${t}</span>`).join('')}<span></span><span></span><span class="s21-xlab">오류 확인</span></div>

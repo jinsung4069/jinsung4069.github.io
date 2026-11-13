@@ -100,7 +100,7 @@
  const fmtTime=sec=>{if(sec<.01)return '0.01초 미만';if(sec<60)return `${sec.toFixed(2)}초`;if(sec<3600)return `약 ${Math.round(sec/60)}분`;if(sec<86400)return `약 ${Math.round(sec/3600)}시간`;
   const days=sec/86400,years=days/365;if(days<365)return `약 ${Math.round(days)}일`;return years<1e16?`약 ${Math.round(years).toLocaleString('ko-KR')}년`:`${fmtCount(years)}년`};
  L.add('explosion','custom',{
-  hint:'단계마다 고를 수 있는 <b>선택지의 수</b>와 <b>단계 수</b>를 바꾸어 경우의 수가 얼마나 빨리 늘어나는지 봅니다. 시간은 1초에 100만 가지를 확인하는 컴퓨터를 가정한 계산 예시입니다.',
+  hint:'단계마다 고를 수 있는 <b>선택지의 수</b>와 <b>단계 수</b>를 바꾸어 경우의 수가 얼마나 빨리 늘어나는지 봅니다. 시간은 1초에 100만 가지를 확인하는 컴퓨터로 계산합니다.',
   body:`<div class="md-split" style="--split:1fr 1.1fr"><div class="md-panel"><h3>조건 바꾸기</h3>
    <label class="md-slider">선택지의 수<input type="range" data-k="c" min="2" max="10" step="1"><output></output></label>
    <label class="md-slider">단계 수<input type="range" data-k="n" min="1" max="30" step="1"><output></output></label>
@@ -231,7 +231,7 @@
   }});
 
  const WAYS=['정방향 추론','역방향 추론'];
- L.add('inferenceQuiz','quiz',{hint:'학교 업무에 알맞은 <b>추론 방식</b>을 골라 봅니다. 상황은 이 활동을 위해 만든 예시입니다.',closing:'새 자료가 계속 들어오거나 결론이 열려 있으면 정방향, 확인할 결론이 정해져 있으면 역방향이 알맞습니다.',questions:[
+ L.add('inferenceQuiz','quiz',{hint:'학교 업무에 알맞은 <b>추론 방식</b>을 골라 봅니다.',closing:'새 자료가 계속 들어오거나 결론이 열려 있으면 정방향, 확인할 결론이 정해져 있으면 역방향이 알맞습니다.',questions:[
   {q:'출결 기록이 입력될 때마다 결석이 쌓인 학생을 찾아 담임에게 알립니다.',short:'출결 입력마다 알림',choices:WAYS,answer:0,why:'새 자료가 들어올 때마다 바로 반영하는 데이터 주도 추론입니다.'},
   {q:'이 학생이 교육복지 지원 대상 요건을 갖추었는지 확인합니다.',short:'지원 대상 요건 확인',choices:WAYS,answer:1,why:'확인할 결론이 정해져 있어 그 결론에 필요한 조건만 묻는 목표 주도 추론입니다.'},
   {q:'날씨와 행사 일정을 넣으면 가능한 체육 수업 장소를 모두 제시합니다.',short:'가능한 장소 모두 제시',choices:WAYS,answer:0,why:'결론이 여럿이고 열려 있어 알려진 사실에서 출발합니다.'},
@@ -240,7 +240,7 @@
 
  const PROBLEMS=['빠진 규칙','충돌','순환','드문 예외'];
  const rq=(rules,what)=>`<ul class="s51-rq">${rules.map(r=>`<li>${r}</li>`).join('')}<li><em>${what}</em></li></ul>`;
- L.add('ruleProblems','quiz',{hint:'규칙표를 시험하다 생긴 일입니다. 어떤 <b>문제</b>인지 골라 봅니다. 규칙과 상황은 이 활동을 위해 만든 예시입니다.',closing:'규칙을 시험하며 문제를 찾고, 빠진 규칙과 충돌하는 규칙을 고칩니다.',questions:[
+ L.add('ruleProblems','quiz',{hint:'규칙표를 시험하다 생긴 일입니다. 어떤 <b>문제</b>인지 골라 봅니다.',closing:'규칙을 시험하며 문제를 찾고, 빠진 규칙과 충돌하는 규칙을 고칩니다.',questions:[
   {html:'<p>비가 오고 미세먼지도 매우 나쁜 날, 두 결론이 함께 나왔습니다.</p>'+rq(['<b>규칙 1</b> 비가 오고 운동장 수업 예정이면 → 강당으로 장소 변경','<b>규칙 2</b> 미세먼지 매우 나쁨이면 → 교실 수업'],'결론: 강당으로 장소 변경, 교실 수업'),short:'같은 사실에서 다른 결론',choices:PROBLEMS,columns:4,answer:1,why:'같은 사실에서 다른 결론이 나오는 충돌입니다. 우선순위를 정하거나 조건을 나눕니다.'},
   {html:'<p>체온은 36.8도이지만 기침이 심한 학생에게 아무 안내도 나오지 않았습니다.</p>'+rq(['<b>규칙 1</b> 체온 37.5도 이상이면 → 보건실 안내'],'결론: 없음'),short:'결론이 나오지 않음',choices:PROBLEMS,columns:4,answer:0,why:'결론이 나오지 않는 빠진 규칙입니다. 필요한 조건과 결론을 추가합니다.'},
   {html:'<p>추론이 끝나지 않고 같은 두 규칙을 계속 실행합니다.</p>'+rq(['<b>규칙 1</b> 보충 수업 대상이면 → 학부모 상담','<b>규칙 2</b> 학부모 상담이면 → 보충 수업 대상'],'결론: 규칙 1, 규칙 2, 규칙 1, …'),short:'규칙이 서로를 계속 부름',choices:PROBLEMS,columns:4,answer:2,why:'규칙이 서로를 계속 부르는 순환입니다. 결론이 조건으로 되돌아가지 않게 고칩니다.'},

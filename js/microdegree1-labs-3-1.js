@@ -28,7 +28,7 @@
  const MORE=[['학교 축제 이벤트 참가 신청 안내',0],['당.첨 안내, 상품 수령은 여기서',1],['연수 이수 인증서 발급 링크 안내',0],['택배 주소 오류, 지금 수정하세요',1]];
  const WORDS=['무료','당첨','링크','인증','쿠폰','이벤트'];
  L.add('s31SpamRules','custom',{
-  hint:'제목에 <b>고른 낱말</b>이 있으면 스팸으로 거르는 규칙을 만들어 여섯 통에 적용합니다. 메일과 스팸 여부는 모두 설명을 위해 만든 예시입니다.',
+  hint:'제목에 <b>고른 낱말</b>이 있으면 스팸으로 거르는 규칙을 만들어 여섯 통에 적용합니다.',
   body:`<div class="s31-row"><span>만약 제목에 이 낱말이 있으면 스팸</span><div class="md-chips">${WORDS.map(w=>`<button type="button" class="md-chip" data-w="${w}">${w}</button>`).join('')}</div></div>
    <table class="md-check s31-table s31-mail"><thead><tr><th>번호</th><th>메일 제목(예시)</th><th>실제</th><th>규칙의 판단</th><th>결과</th></tr></thead><tbody></tbody></table>`,
   state:()=>({words:['무료'],more:false}),
@@ -50,7 +50,7 @@
  // Loss (w-3)^2 on one weight. One step is w - width * slope, the update written on the slide's figure.
  const loss=w=>(w-3)**2,far=w=>Math.abs(w-3)>5,LIMIT=30;
  L.add('s31Descent','custom',{
-  hint:'가로축은 가중치, 세로축은 손실입니다. <b>한 번에 바꾸는 폭</b>을 정하고 손실이 줄어드는 쪽으로 한 걸음씩 옮겨 봅니다. 곡선과 수치는 이 활동을 위해 만든 예시입니다.',
+  hint:'가로축은 가중치, 세로축은 손실입니다. <b>한 번에 바꾸는 폭</b>을 정하고 손실이 줄어드는 쪽으로 한 걸음씩 옮겨 봅니다.',
   body:`<div class="md-split" style="--split:1.5fr 1fr"><div class="md-panel"><div class="s31-plot" id="s31-gd"></div></div>
    <div class="md-panel"><h3>지금 위치</h3><ul class="md-list" id="s31-gd-now"></ul><label class="md-slider s31-wide">한 번에 바꾸는 폭<input type="range" id="s31-gd-rate" min="1" max="11" step="1"><output></output></label>
    <p class="s31-note">새 가중치 = 가중치 - 폭 × 기울기</p><p id="s31-gd-calc" style="font-size:.88em"></p></div></div>`,
@@ -97,7 +97,7 @@
     <text x="25" y="23" font-size="9">범주 A로 예측</text><text x="25" y="231" font-size="9">범주 B로 예측</text><text x="155" y="258" text-anchor="middle" font-size="9">특성 1 (예시)</text><text transform="translate(10 125) rotate(-90)" text-anchor="middle" font-size="9">특성 2 (예시)</text></svg>`;
  }
  L.add('s31Fit','custom',{
-  hint:'<b>경계 모양을 선택하고 두 정확도를 비교해 보세요.</b> 같은 점들을 사용하며, 점과 경계는 원리를 설명하기 위해 만든 예시입니다.',
+  hint:'<b>경계 모양을 선택하고 두 정확도를 비교해 보세요.</b> 경계를 바꾸어도 점은 같습니다.',
   body:`<div class="s31-fit"><fieldset class="s31-fit-choices"><legend>경계의 복잡도</legend>${BOUNDS.map(([name],i)=>`<button type="button" data-level="${i}" aria-pressed="false">${name}</button>`).join('')}</fieldset></div>
     <div class="s31-legend"><span>○ 범주 A</span><span>△ 범주 B</span><span><span class="s31-miss">빨간 테두리</span> 잘못 분류한 점</span><span>파란 선, 분류 경계</span></div>
     <div class="md-split">${['훈련 데이터 20개','새 데이터 20개'].map((t,i)=>`<div class="md-panel"><h3>${t}</h3><div class="s31-fit-score"><strong></strong><span></span></div><div class="s31-plot" data-set="${i}"></div><div class="s31-bar"><div class="md-meter" role="meter" aria-label="${i?'새 데이터':'훈련 데이터'} 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div></div></div>`).join('')}</div>`,
@@ -119,7 +119,7 @@
  const SPAM=[20,30,35,40,45,50,55,55,60,65,65,70,75,75,80,85,85,90,95,95],NORMAL={5:14,10:14,15:12,20:10,25:9,30:7,35:5,40:4,45:2,50:1,55:1,65:1};
  const HAM=Object.entries(NORMAL).flatMap(([s,n])=>Array(n).fill(Number(s)));
  L.add('s31Threshold','custom',{
-  hint:'스팸 점수가 <b>기준 점수</b> 이상인 메일을 스팸으로 예측합니다. 기준을 옮기며 세 지표를 비교합니다. 점수 분포는 이 활동을 위해 만든 예시입니다.',
+  hint:'스팸 점수가 <b>기준 점수</b> 이상인 메일을 스팸으로 예측합니다. 기준을 옮기며 세 지표를 비교합니다.',
   body:`<div class="md-split" style="--split:1.4fr 1fr"><div class="md-panel"><div class="s31-plot" id="s31-th-plot"></div><label class="md-slider s31-wide">기준 점수<input type="range" id="s31-th" min="5" max="100" step="5"><output></output></label></div>
    <div class="md-panel"><h3>혼동행렬</h3><table class="md-check s31-table s31-cm"><thead><tr><th></th><th>스팸으로 예측</th><th>정상으로 예측</th></tr></thead><tbody><tr><th scope="row">실제 스팸 (20통)</th><td data-c="tp" data-result="right"></td><td data-c="fn" data-result="wrong"></td></tr>
    <tr><th scope="row">실제 정상 (80통)</th><td data-c="fp" data-result="wrong"></td><td data-c="tn" data-result="right"></td></tr></tbody></table><ul class="md-list" id="s31-th-rate" style="font-size:.84em"></ul></div></div>`,

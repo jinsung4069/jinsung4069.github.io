@@ -84,7 +84,7 @@
 
  // Tool choice, generation, requests and RAG.
  {
- L.add('toolTypeSort','sort',{hint:'교사의 여덟 가지 과제에 실제로 쓰는 기능이 무엇인지 놓아 봅니다. 과제는 이 활동을 위해 만든 예시입니다.',
+ L.add('toolTypeSort','sort',{hint:'교사의 여덟 가지 과제에 실제로 쓰는 기능이 무엇인지 놓아 봅니다.',
   bins:[{id:'gen',label:'생성'},{id:'search',label:'검색 결합'},{id:'ground',label:'자료 기반'},{id:'image',label:'이미지'},{id:'voice',label:'음성'}],cards:[
   {id:'a',label:'확인 문항 초안 다섯 개 쓰기',answer:'gen',why:'학습한 패턴으로 새 글과 문항을 작성하는 생성 기능입니다.'},
   {id:'b',label:'읽기 자료를 학년 수준에 맞게 다시 쓰기',answer:'gen',why:'학습한 패턴으로 새 글을 작성하는 생성 기능입니다.'},
@@ -111,7 +111,7 @@
    {t:'광합성은 주로 잎에서 일어납니다.',n:2,src:'인용 2, 올린 교과서 단원 예시 12쪽',ev:'광합성은 주로 잎에서 일어납니다.',same:true,why:SAME},
    {t:'만든 양분은 모두 줄기에 저장됩니다.',n:3,src:'인용 3, 올린 교과서 단원 예시 13쪽',ev:'잎에서 만든 양분은 줄기를 거쳐 식물 전체로 이동합니다.',same:false,why:'답은 줄기에 저장, 원문은 줄기를 거쳐 이동입니다. 인용이 있어도 답이 원문과 다를 수 있습니다.'}]}};
  L.add('basisCompare','custom',{
-  hint:'같은 질문에 <b>답의 재료</b>를 바꾸어 봅니다. 문장을 눌러 근거를 열고 원문과 일치하는지 판단하세요. 답과 자료는 이 활동을 위해 만든 예시입니다.',
+  hint:'같은 질문에 <b>답의 재료</b>를 바꾸어 봅니다. 문장을 눌러 근거를 열고 원문과 일치하는지 판단하세요.',
   body:`<div class="md-split" style="--split:1.2fr 1fr"><div class="md-panel"><div class="s52t-tabs">${Object.entries(BASIS).map(([k,v])=>`<button type="button" class="s52t-tab" data-mode="${k}">${v.tab}</button>`).join('')}</div>
    <p class="s52t-line"><b>질문</b> 광합성에 필요한 것과 일어나는 곳, 양분이 어떻게 되는지 알려 줘.</p><div class="s52t-sents" id="s52t-bs-sents"></div><ul class="md-list" id="s52t-bs-info" style="margin-top:auto"></ul></div>
    <div class="md-panel"><h3>근거 열어 보기</h3><div class="s52t-box" id="s52t-bs-ev"></div><div class="md-choices" style="--n:2"><button type="button" class="md-choice" data-j="same">원문과 일치</button><button type="button" class="md-choice" data-j="diff">원문과 다름</button></div><p class="md-why" id="s52t-bs-why"></p></div></div>`,
@@ -185,7 +185,7 @@
  const NT_SECOND={잎에서:[['양분을',70],['녹말을',20],['산소를',10]],스스로:[['양분을',80],['녹말을',20]],뿌리에서:[['양분을',75],['녹말을',25]]};
  const candidates=out=>[NT_FIRST,NT_SECOND[out[0]],NT_LAST][out.length]||null,NT_MAX=4,NT_SEED=2624;
  L.add('nextToken','custom',{
-  hint:'요청 뒤에 올 토큰을 <b>확률에 따라</b> 하나씩 골라 문장을 이어 씁니다. 같은 요청을 여러 번 실행해 결과를 비교하세요. 확률은 이 활동을 위해 만든 예시입니다.',
+  hint:'요청 뒤에 올 토큰을 <b>확률에 따라</b> 하나씩 골라 문장을 이어 씁니다. 같은 요청을 여러 번 실행해 결과를 비교하세요.',
   body:`<div class="md-split" style="--split:1.5fr 1fr"><div class="md-panel"><h3>요청과 이어 쓴 문장</h3><div class="s52t-toks" id="s52t-nt-toks"></div><h3 style="margin-top:.5em">다음 토큰 후보의 확률</h3><div class="s52t-cands" id="s52t-nt-cands"></div>
    <p class="s52t-note" style="margin-top:auto">확률을 계산하고 하나를 고르는 일을 문장이 끝날 때까지 되풀이합니다. 사실을 조회하는 단계는 없습니다.</p></div>
    <div class="md-panel"><h3>같은 요청, 실행 결과</h3><ol class="s52t-runs" id="s52t-nt-runs"></ol></div></div>`,
@@ -227,7 +227,7 @@
  const PIECE_STEMS=PIECES.map(stemsOf);
  const ASKS=[['질문 1','광합성에는 무엇이 필요한가요?',0],['질문 2','녹말이 있는지 어떻게 확인하나요?',5],['질문 3','뿌리에서 흡수한 물은 어디로 빠져나가나요?',4],['질문 3 고쳐 쓰기','잎에서 물이 빠져나가는 것을 무엇이라고 하나요?',4]];
  L.add('ragSteps','custom',{
-  hint:'질문을 고르거나 적으면 여섯 조각 가운데 <b>낱말이 가장 많이 겹치는 두 조각</b>을 찾아 인용과 함께 답합니다. 자료와 답은 이 활동을 위해 만든 예시입니다.',
+  hint:'질문을 고르거나 적으면 여섯 조각 가운데 <b>낱말이 가장 많이 겹치는 두 조각</b>을 찾아 인용과 함께 답합니다.',
   body:`<div class="md-split" style="--split:1.3fr 1fr"><div class="md-panel"><h3>올린 자료, 교과서 단원 예시를 여섯 조각으로 나눔</h3><ul class="s52t-ps" id="s52t-rg-ps"></ul>
    <p class="s52t-note" style="margin-top:auto">실제 도구는 낱말이 아니라 의미를 수치 벡터로 바꾸어 가까운 부분을 찾습니다.</p></div>
    <div class="md-panel"><h3>질문</h3><div class="md-chips">${ASKS.map((a,i)=>`<button type="button" class="md-chip" data-ask="${i}">${a[0]}</button>`).join('')}</div>
@@ -261,7 +261,7 @@
   {id:'rule',name:'조건',sub:'지킬 기준',text:'교과서에서 쓰는 용어를 사용해 줘.',guess:'교과서와 다른 용어가 섞일 수 있음',set:'교과서에서 쓰는 용어'},
   {id:'example',name:'예시',sub:'원하는 결과의 본보기',text:'"식물도 밥을 먹을까요?"와 같은 수준의 질문으로 만들어 줘.',guess:'질문의 수준을 추측함',set:'예시 질문과 같은 수준'}];
  L.add('promptBuild','custom',{
-  hint:'모호한 요청에 요소를 <b>한 번에 하나씩</b> 더해 봅니다. 도구가 추측으로 채우는 부분이 어떻게 줄어드는지 확인하세요. 결과의 특징은 이 활동을 위해 만든 예시입니다.',
+  hint:'모호한 요청에 요소를 <b>한 번에 하나씩</b> 더해 봅니다. 도구가 추측으로 채우는 부분이 어떻게 줄어드는지 확인하세요.',
   body:`<div class="md-split" style="--split:.72fr 1.2fr 1.1fr"><div class="s52t-els">${ELEMENTS.map(e=>`<button type="button" class="s52t-el" data-el="${e.id}"><b>${e.name}</b><small>${e.sub}</small></button>`).join('')}</div>
    <div class="md-panel"><h3>지금의 요청문</h3><div class="s52t-req" id="s52t-pb-req"></div><p class="s52t-note" id="s52t-pb-count" style="margin-top:auto"></p></div>
    <div class="md-panel"><h3>결과의 특징</h3><ul class="s52t-feat" id="s52t-pb-feat"></ul><h3 style="margin-top:auto">결과의 모양</h3><div class="s52t-shape" id="s52t-pb-shape" aria-hidden="true"></div></div></div>`,
@@ -283,7 +283,7 @@
   }});
 
  const SIX=['역할','맥락','과업','형식','조건','예시'];
- L.add('fixQuiz','quiz',{hint:'결과가 기대와 다를 때 요청문의 <b>어느 요소</b>를 고칠지 골라 봅니다. 상황은 이 활동을 위해 만든 예시입니다.',closing:'결과가 기대와 다르면 부족한 요소를 찾아 한 번에 한 가지씩 고칩니다.',questions:[
+ L.add('fixQuiz','quiz',{hint:'결과가 기대와 다를 때 요청문의 <b>어느 요소</b>를 고칠지 골라 봅니다.',closing:'결과가 기대와 다르면 부족한 요소를 찾아 한 번에 한 가지씩 고칩니다.',questions:[
   {q:'"광합성 수업 자료 만들어 줘."라고 했더니 설명과 활동이 길게 섞여 나왔습니다.',short:'무엇을 만들지 분명하지 않을 때',choices:SIX,answer:2,why:'과업은 해야 할 일입니다. "도입 질문 세 개를 만들어 줘."처럼 구체적으로 요청합니다.'},
   {q:'도입 질문은 나왔지만 초등 고학년 학생이 이해하기 어려운 수준입니다.',short:'학년 수준이 맞지 않을 때',choices:SIX,answer:1,why:'맥락은 학년, 차시 목표, 수업 시간, 학생 수준처럼 결과를 결정하는 상황 정보입니다.'},
   {q:'내용은 괜찮은데 긴 줄글이어서 활동지에 바로 쓰기 어렵습니다.',short:'결과의 모양이 맞지 않을 때',choices:SIX,answer:3,why:'형식은 결과의 모양입니다. "질문, 예상 답, 이어질 활동을 열로 하는 표로 만들어 줘."처럼 요청합니다.'},
@@ -307,7 +307,7 @@
  const PASSAGES=DOCS.flatMap(d=>d.ps.map(t=>({doc:d.id,t,stems:stemsOf(t)})));
  const QUESTIONS=[['식물은 광합성으로 무엇을 만드나요?',[0,2]],['광합성은 식물의 어디에서 일어나나요?',[1,2]],['만든 양분은 어떻게 저장되나요?',[3]]];
  L.add('sourceSwap','custom',{
-  hint:'노트북에 올릴 자료를 바꾸면서 같은 질문을 해 봅니다. 답은 <b>올린 자료에서 찾은 두 문장</b>으로만 만들어집니다. 자료와 답은 이 활동을 위해 만든 예시입니다.',
+  hint:'노트북에 올릴 자료를 바꾸면서 같은 질문을 해 봅니다. 답은 <b>올린 자료에서 찾은 두 문장</b>으로만 만들어집니다.',
   body:`<div class="md-split" style="--split:1.3fr 1fr"><div class="md-panel"><h3>노트북에 올릴 자료</h3><div class="s52-docs" id="s52-sw-docs"></div></div>
    <div class="md-panel"><h3>질문</h3><div class="s52-qs">${QUESTIONS.map((q,i)=>`<button type="button" class="s52-q" data-q="${i}">${q[0]}</button>`).join('')}</div><h3>찾은 문장으로 만든 답</h3><div class="s52-answer" id="s52-sw-answer"></div></div></div>`,
   state:()=>({on:{el:true,mid:false,lunch:false},q:0}),
@@ -335,7 +335,7 @@
  const SCOPE=[['only','올린 자료에 있는 내용만으로 답해 줘.'],['none','자료에서 찾을 수 없는 내용은 자료에 없다고 답해 줘.'],['cite','각 문장 끝에 근거가 된 자료의 위치를 표시해 줘.'],['split','자료의 표현과 네 설명을 구분해서 보여 줘.'],['ask','답을 주기 전에 학생이 생각할 질문을 먼저 해 줘.']];
  const SCOPE_SRC=['이 단원에서는 식물이 빛, 물, 이산화 탄소를 이용해 양분을 만드는 과정을 배웁니다.','광합성이 주로 잎에서 일어남을 관찰 결과로 설명합니다.','평가는 관찰 기록장으로 합니다.'];
  L.add('scopeBuild','custom',{
-  hint:'요청문에 넣을 문장을 켜고 끄며 <b>답이 어떻게 달라지는지</b> 봅니다. 질문에는 자료에 없는 실험 준비물이 들어 있습니다. 자료와 답은 이 활동을 위해 만든 예시입니다.',
+  hint:'요청문에 넣을 문장을 켜고 끄며 <b>답이 어떻게 달라지는지</b> 봅니다. 질문에는 자료에 없는 실험 준비물이 들어 있습니다.',
   body:`<div class="md-split" style="--split:1fr .82fr 1.12fr"><div class="s52-rules">${SCOPE.map(([id,t])=>`<button type="button" class="s52-rule" data-rule="${id}">${t}</button>`).join('')}</div>
    <div class="md-panel"><h3>올린 자료, 단원 안내 예시</h3><ul class="s52-src">${SCOPE_SRC.map((t,i)=>`<li><b>[${i+1}]</b>${t}</li>`).join('')}</ul><h3>질문</h3><p class="s52-line">광합성이 무엇인지와 실험 준비물을 알려 줘.</p></div>
    <div class="md-panel"><h3>답</h3><div class="s52-answer" id="s52-sc-answer"></div><p class="s52-note" id="s52-sc-note" style="margin-top:auto"></p></div></div>`,
@@ -370,7 +370,7 @@
   {t:'관찰 기록은 일주일에 두 번 씁니다.',at:4,same:true,why:SAME},
   {t:'키는 자로 재어 센티미터로 적습니다.',at:4,same:false,why:'인용한 곳에는 키를 재는 방법이 없습니다. 엉뚱한 인용이므로 지우거나 교사가 근거를 따로 확인합니다.'}];
  L.add('citeCheck','custom',{
-  hint:'답의 문장을 누르면 인용한 원문이 <b>앞뒤 문맥</b>과 함께 열립니다. 답의 문장이 원문과 일치하는지 판단하세요. 자료와 답은 이 활동을 위해 만든 예시입니다.',
+  hint:'답의 문장을 누르면 인용한 원문이 <b>앞뒤 문맥</b>과 함께 열립니다. 답의 문장이 원문과 일치하는지 판단하세요.',
   body:`<div class="md-split" style="--split:1fr 1.15fr"><div class="md-panel"><h3>자료 기반 도구의 답</h3><div class="s52-sents" id="s52-ct-sents"></div><p class="s52-note" id="s52-ct-log" style="margin-top:auto"></p></div>
    <div class="md-panel"><h3 id="s52-ct-title"></h3><div class="s52-ctx" id="s52-ct-ctx"></div><div class="md-choices" style="--n:2"><button type="button" class="md-choice" data-j="same">원문과 일치</button><button type="button" class="md-choice" data-j="diff">원문과 다름</button></div><p class="md-why" id="s52-ct-why"></p></div></div>`,
   state:()=>({sel:0,judged:[]}),
@@ -406,7 +406,7 @@
   {id:'f',label:'수업에 쓸지 결정하기',answer:'human',why:'최종 판단 단계에서 사람이 사용 여부를 결정합니다.'},
   {id:'g',label:'결과에 책임지기',answer:'human',why:'최종 판단과 책임은 사람에게 있습니다.'}]});
 
- L.add('useLevelSort','sort',{hint:'학생이 밝힌 AI 사용 방식이 다섯 수준 가운데 어디에 해당하는지 놓아 봅니다. 학생의 말은 이 활동을 위해 만든 예시입니다.',
+ L.add('useLevelSort','sort',{hint:'학생이 밝힌 AI 사용 방식이 다섯 수준 가운데 어디에 해당하는지 놓아 봅니다.',
   bins:[{id:'l1',label:'1 AI 사용 없음'},{id:'l2',label:'2 계획'},{id:'l3',label:'3 협업'},{id:'l4',label:'4 전면 사용'},{id:'l5',label:'5 탐구'}],cards:[
   {id:'a',label:'모든 단계를 AI 없이 스스로 했어요',answer:'l1',why:'모든 단계를 학생이 스스로 수행하는 수준입니다.'},
   {id:'b',label:'AI로 조사할 질문을 찾고 글은 직접 썼어요',answer:'l2',why:'아이디어 탐색과 조사에 쓰고 결과물은 학생이 작성하는 수준입니다.'},

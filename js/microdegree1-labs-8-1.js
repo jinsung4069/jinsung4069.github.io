@@ -37,7 +37,7 @@
    draw();
   }});
 
- L.add('sceneSort','sort',{hint:'발표 자료의 문장이 다섯 장면 가운데 어디에 들어갈지 놓아 봅니다. 문장은 이 활동을 위해 만든 예시입니다.',
+ L.add('sceneSort','sort',{hint:'발표 자료의 문장이 다섯 장면 가운데 어디에 들어갈지 놓아 봅니다.',
   bins:[{id:'problem',label:'문제'},{id:'design',label:'설계'},{id:'demo',label:'시연'},{id:'verify',label:'검증'},{id:'improve',label:'개선'}],cards:[
   {id:'a',label:'5학년 학생이 실험 결과를 해석하는 글쓰기를 어려워합니다',answer:'problem',why:'누가, 어떤 상황에서 무엇이 어려운지를 말하는 문제 장면입니다.'},
   {id:'b',label:'성취기준과 학습 목표, 평가 계획은 다음과 같습니다',answer:'design',why:'성취기준, 목표, 평가 계획을 제시하는 설계 장면입니다.'},
@@ -52,7 +52,7 @@
   {label:'예시 자료',question:'학생 개인정보가 없는 자료이다'},{label:'대체 자료',question:'접속 실패에 대비한 화면 캡처나 녹화가 있다'},
   {label:'시간',question:'시연을 2분 안에 끝낼 수 있다'},{label:'화면',question:'알림, 다른 탭, 개인 파일이 보이지 않는다'}]});
 
- L.add('cqsSort','sort',{hint:'검토자의 말을 <b>칭찬</b>, <b>질문</b>, <b>제안</b>으로 나눕니다. 문장은 이 활동을 위해 만든 응답 예시입니다.',
+ L.add('cqsSort','sort',{hint:'검토자의 말을 <b>칭찬</b>, <b>질문</b>, <b>제안</b>으로 나눕니다.',
   bins:[{id:'c',label:'칭찬',sub:'기준을 충족한 부분'},{id:'q',label:'질문',sub:'설계 의도와 근거'},{id:'s',label:'제안',sub:'바로 적용할 수정 방향 하나'}],cards:[
   {id:'a',label:'평가 증거가 학습 목표의 동사와 바로 이어집니다',answer:'c',why:'활용안의 특정 부분이 기준을 충족했다고 짚는 칭찬입니다.'},
   {id:'b',label:'AI 결과가 틀리면 학생은 어떻게 알아차리나요?',answer:'q',why:'설계의 근거를 묻는 질문입니다.'},
@@ -65,7 +65,7 @@
   {key:'1단계',label:'소개',sub:'목표와 규칙 안내'},{key:'2단계',label:'발표',sub:'발표자만 말함'},{key:'3단계',label:'확인 질문',sub:'사실 확인만'},{key:'4단계',label:'생각 정리',sub:'조용히 메모'},
   {key:'5단계',label:'피드백',sub:'발표자는 듣고 기록'},{key:'6단계',label:'발표자 성찰',sub:'의견을 골라 응답'},{key:'7단계',label:'마무리',sub:'과정 돌아보기'}]});
 
- L.add('feedbackSort','sort',{soft:true,hint:'기록지에 적힌 말입니다. 발표자가 <b>어느 부분을 어떻게 고칠지</b> 알 수 있는 말을 골라 나눕니다. 문장은 응답 예시입니다.',
+ L.add('feedbackSort','sort',{soft:true,hint:'기록지에 적힌 말입니다. 발표자가 <b>어느 부분을 어떻게 고칠지</b> 알 수 있는 말을 골라 나눕니다.',
   bins:[{id:'good',label:'도움이 되는 말',sub:'부분과 기준을 가리킴'},{id:'weak',label:'덜 도움이 되는 말',sub:'고칠 곳을 알 수 없음'}],cards:[
   {id:'a',label:'재미있는 수업이네요',answer:'weak',why:'어느 부분이 어떤 기준을 충족했는지 알 수 없습니다.'},
   {id:'b',label:'3단계에서 비교 기준이 표로 제시되어 좋습니다',answer:'good',why:'위치(3단계)와 좋은 이유를 함께 짚었습니다.'},
@@ -74,7 +74,7 @@
   {id:'e',label:'전체적으로 조금 더 보완하면 좋겠습니다',answer:'weak',why:'보완할 부분과 방향이 없습니다.'},
   {id:'f',label:'평가 계획에 확인 시점을 한 줄 넣어 보세요',answer:'good',why:'고칠 위치와 방향을 하나로 좁혔습니다.'}]});
 
- L.add('triage','sort',{soft:true,hint:'받은 의견을 세 묶음으로 나눕니다. 루브릭 기준과 연결된 의견부터 반영합니다. 의견은 이 활동을 위해 만든 예시입니다.',
+ L.add('triage','sort',{soft:true,hint:'받은 의견을 세 묶음으로 나눕니다. 루브릭 기준과 연결된 의견부터 반영합니다.',
   bins:[{id:'now',label:'바로 반영',sub:'기준과 연결되고 수정이 간단'},{id:'later',label:'검토 후 반영',sub:'조건 확인이나 추가 자료 필요'},{id:'keep',label:'반영하지 않음',sub:'이유를 적고 보관'}],cards:[
   {id:'a',label:'검증 단계에 누가 확인하는지 적어 주세요',answer:'now',why:'결과 검증 기준과 연결되고 한 줄로 고칠 수 있습니다.'},
   {id:'b',label:'학습 목표와 평가 기준의 동사를 같은 말로 맞춰 주세요',answer:'now',why:'기준과 연결되고 수정이 간단합니다.'},
@@ -89,7 +89,7 @@
   ['교사가 직접 찍은 화단 사진',false,'직접 만든 자료이므로 그대로 둘 수 있습니다.'],['도구 이름만 있고 약관 확인 날짜가 없음',true,'이용 조건: 도구 약관과 확인 날짜를 적습니다.'],
   ['도구가 없을 때의 대체 방법 안내',false,'동료가 따라 할 수 있도록 함께 적는 내용입니다.'],['이용 허락을 확인하지 않은 삽화',true,'저작권: 이용 허락을 확인합니다.']];
  L.add('shareCheck','custom',{
-  hint:'공유하려는 활용안에 들어 있는 자료 여덟 가지입니다. <b>공유 전에 고쳐야 할 것</b>을 모두 고르세요. 자료 목록은 이 활동을 위해 만든 예시입니다.',
+  hint:'공유하려는 활용안에 들어 있는 자료 여덟 가지입니다. <b>공유 전에 고쳐야 할 것</b>을 모두 고르세요.',
   body:`<div class="md-split" style="--split:2.1fr 1fr"><div class="s81-doc">${SPOTS.map((s,i)=>`<button type="button" class="s81-spot" data-i="${i}" aria-pressed="false"><i></i>${s[0]}</button>`).join('')}</div>
    <div class="md-panel"><h3>공유 전 확인</h3><ul class="md-list"><li><b>학생 개인정보</b><span>이름, 얼굴, 목소리</span></li><li><b>저작권</b><span>출처와 이용 허락</span></li><li><b>이용 조건</b><span>약관과 확인 날짜</span></li></ul><p id="s81-why" style="font-size:.88em;margin-top:auto"></p></div></div>`,
   state:()=>({picked:[],checked:false,why:''}),

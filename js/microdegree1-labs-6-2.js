@@ -31,7 +31,7 @@
  const SENTENCES=['한글은 세종대왕이 1446년에 창제한 문자입니다.','창제 당시에는 24자로 만들어졌습니다.','1940년 경주에서 발견된 『훈민정음 해례본』은 1997년 유네스코 세계기록유산에 등재되었습니다.','2026년은 훈민정음 반포 590주년입니다.','참고문헌, 김민준(2019), 「훈민정음의 과학적 원리」, 한국어문연구 12호'];
  const GUESS={ok:'그대로 쓴다',doubt:'의심스럽다'},KEY='s62Predict';
  L.add('s62Predict','custom',{
-  hint:'앞 장의 응답 예시입니다. 검색하지 않고 문장마다 <b>그대로 써도 될지</b> 예상을 적어 봅니다. 확인 결과는 다음 장에 있습니다.',
+  hint:'앞 장의 한글 소개 글입니다. 검색하지 않고 문장마다 <b>그대로 써도 될지</b> 예상을 적어 봅니다. 확인 결과는 다음 장에 있습니다.',
   body:`<p class="s62-ask">요청문 “초등학교 4학년 한글날 수업에 쓸 한글 소개 글을 써 줘. 참고문헌도 하나 붙여 줘.”</p>
    <div class="s62-rows">${SENTENCES.map((s,i)=>`<div class="s62-row"><b>${i+1}</b><span>${esc(s)}</span><div class="s62-two">${Object.entries(GUESS).map(([v,label])=>`<button type="button" class="md-chip" data-i="${i}" data-v="${v}">${label}</button>`).join('')}</div></div>`).join('')}</div>`,
   state:()=>L.memory.get(KEY)||{pred:SENTENCES.map(()=>null)},
@@ -73,7 +73,7 @@
  const MODELS=[{name:'gpt-5-thinking-mini',none:52,right:22,wrong:26},{name:'o4-mini',none:1,right:24,wrong:75}];
  const points=tenths=>(tenths<0?'−':'')+(Math.abs(tenths)/10).toFixed(Math.abs(tenths)%10?1:0);
  L.add('s62Scoring','custom',{
-  hint:'앞 장의 SimpleQA 결과를 100문항으로 바꾸어 봅니다. <b>오답의 감점</b>을 바꾸면 어느 모델의 점수가 더 높아질까요? 감점 채점은 이 활동을 위해 만든 계산 예시입니다.',
+  hint:'앞 장의 SimpleQA 결과를 100문항으로 바꾸어 봅니다. <b>오답의 감점</b>을 바꾸면 어느 모델의 점수가 더 높아질까요? 감점의 크기는 직접 정합니다.',
   body:`<div class="md-split" style="--split:1.45fr 1fr"><div class="md-panel" style="gap:1.7em"><h3>100문항 가운데</h3>${MODELS.map((m,i)=>`<div class="s62-model"><p><b>${m.name}</b><span>점수 <b data-score="${i}"></b>점</span></p>
    <div class="s62-stack" aria-hidden="true">${['none','right','wrong'].map(k=>`<i data-k="${k}" style="width:${m[k]}%"></i>`).join('')}</div>
    <p><span class="s62-key"><span><i data-k="none"></i>답하지 않음 ${m.none}</span><span><i data-k="right"></i>정답 ${m.right}</span><span><i data-k="wrong"></i>오답 ${m.wrong}</span></span><small data-how="${i}"></small></p></div>`).join('')}<p class="s62-note" style="margin-top:auto">막대는 100문항을 답하지 않음, 정답, 오답으로 나눈 것입니다. 점수는 정답 수에서 감점과 오답 수를 곱한 값을 뺀 것입니다.</p></div>
@@ -124,7 +124,7 @@
   {t:'신청서는 담당 교사에게 냅니다.',why:'수치, 인용, 날짜가 없어 우선순위가 낮은 문장입니다. 안내문의 신청 방법과 같습니다.'}];
  const VERDICTS={ok:'확인됨',fix:'수정함',none:'확인 불가'},FIRST=LINES.filter(l=>l.v).length;
  L.add('s62Verdict','custom',{
-  hint:'AI 답에서 <b>수치, 인용, 날짜</b>가 있어 먼저 확인할 문장을 표시한 뒤, 근거 자료와 대조해 판정을 붙입니다. 답과 안내문은 이 활동을 위해 만든 예시입니다.',
+  hint:'AI 답에서 <b>수치, 인용, 날짜</b>가 있어 먼저 확인할 문장을 표시한 뒤, 근거 자료와 대조해 판정을 붙입니다.',
   body:`<div class="md-split" style="--split:1.55fr 1fr"><div class="md-panel"><h3>AI 답 예시, 과학 동아리 소개 글</h3><div class="s62-lines" id="s62-vd-lines"></div></div><div class="md-panel" id="s62-vd-side"></div></div>`,
   state:()=>({phase:'mark',marks:LINES.map(()=>false),verdict:LINES.map(()=>null),why:''}),
   render(ui,st,reset){
@@ -169,7 +169,7 @@
   {t:'『훈민정음 해례본』은 1940년 안동에서 발견되었습니다.',changed:false,kind:'그대로',why:'처음 답과 같은 문장입니다.'},
   {t:'한글날 수업에서 다루면 학생의 흥미가 높아집니다.',changed:true,kind:'사라진 신중한 표현',why:'“가능성이 있습니다”가 단정 표현으로 바뀌었습니다.'}];
  L.add('s62Recheck','custom',{
-  hint:'수정 요청은 창제 연도 하나였습니다. 고친 답에서 <b>요청하지 않았는데 바뀌었거나 새로 생긴 문장</b>을 모두 고르세요. 두 답은 이 활동을 위해 만든 예시입니다.',
+  hint:'수정 요청은 창제 연도 하나였습니다. 고친 답에서 <b>요청하지 않았는데 바뀌었거나 새로 생긴 문장</b>을 모두 고르세요.',
   body:`<div class="md-split" style="--split:1fr 1.1fr"><div class="md-panel"><h3>처음 답과 판정</h3><div class="s62-lines">${BEFORE.map(([t,tag,tone],i)=>`<div class="s62-line" style="grid-template-columns:1.4em minmax(0,1fr)"><b style="color:#2c478f">${i+1}</b><span>${esc(t)}<small class="s62-tag" data-tone="${tone}">${tag}</small></span></div>`).join('')}</div>
    <p class="s62-ask" style="margin-top:auto">수정 요청문 “한글 창제 연도를 1443년으로 고쳐 줘.”</p></div>
    <div class="md-panel"><h3>AI가 고친 답</h3><div class="s62-lines" id="s62-rc-lines"></div></div></div>`,
@@ -239,7 +239,7 @@
     if(!st.done){ui.say('두 답을 붙여 넣고 다른 문장 찾기를 누르세요. 계정이 없으면 예시로 해 볼 수 있습니다.');return}
     const only=lists.map((l,i)=>l.filter(t=>!keys[1-i].has(norm(t))).length),nums=lists.map(l=>new Set(l.flatMap(numbers)));
     const diff=[...new Set([...nums[0]].filter(n=>!nums[1].has(n)).concat([...nums[1]].filter(n=>!nums[0].has(n))))].slice(0,8);
-    ui.say(`${st.sample?'이 활동을 위해 만든 예시입니다. ':''}첫 번째 답 ${lists[0].length}문장 중 ${only[0]}문장, 두 번째 답 ${lists[1].length}문장 중 ${only[1]}문장이 한쪽에만 있습니다.${diff.length?` 한쪽에만 나온 숫자는 ${diff.join(', ')}입니다.`:''} 달라진 수치는 검증 대상으로 남겨 둡니다.`,only[0]+only[1]?'':'good');
+    ui.say(`첫 번째 답 ${lists[0].length}문장 중 ${only[0]}문장, 두 번째 답 ${lists[1].length}문장 중 ${only[1]}문장이 한쪽에만 있습니다.${diff.length?` 한쪽에만 나온 숫자는 ${diff.join(', ')}입니다.`:''} 달라진 수치는 검증 대상으로 남겨 둡니다.`,only[0]+only[1]?'':'good');
    }
    draw();
   }});

@@ -30,7 +30,7 @@
   {say:'영상을 보고 나면 다음에 볼 영상이 뜬다',in:'시청 기록',job:'관심 추정과 추천',out:'영상 목록'},{say:'메일함이 광고 메일을 따로 모아 준다',in:'메일 내용',job:'스팸 여부 분류',out:'스팸 또는 정상 표시'}];
  const SLOTS=[['in','입력','서비스가 받는 데이터',4],['job','처리','작동하는 AI 기능',9],['out','결과','서비스가 내놓는 것',13]];
  L.add('s32Parts','custom',{
-  hint:'사용 경험 한 문장을 <b>입력, 처리, 결과</b>로 나누어 다시 적습니다. 칸마다 하나씩 고른 뒤 확인하세요. 첫 문장 말고는 이 활동을 위해 만든 예시입니다.',
+  hint:'사용 경험 한 문장을 <b>입력, 처리, 결과</b>로 나누어 다시 적습니다. 칸마다 하나씩 고른 뒤 확인하세요.',
   body:'<div id="s32-pt" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:.65em"></div>',
   state:()=>({round:0,pick:{},checked:false}),
   render(ui,st,reset){
@@ -60,7 +60,7 @@
  // A phone booking passes through three functions. An error stays in everything that follows the stage where it starts.
  const STAGES=[['음성 인식','말을 글로 바꿈','이름을 잘못 알아듣게 하기'],['대화 처리','글에서 예약 정보를 뽑음','시간을 잘못 뽑게 하기'],['음성 합성','응답 문장을 말소리로 바꿈','인원을 잘못 읽게 하기']];
  L.add('s32Pipeline','custom',{
-  hint:'전화 예약 서비스의 세 단계 가운데 <b>오류가 생기는 단계</b>를 바꾸어 결과가 어디서부터 틀리는지 봅니다. 대화 내용은 이 활동을 위해 만든 예시입니다.',
+  hint:'전화 예약 서비스의 세 단계 가운데 <b>오류가 생기는 단계</b>를 바꾸어 결과가 어디서부터 틀리는지 봅니다.',
   body:`<p class="s32-say"><span>고객의 말</span><b>"나래입니다. 내일 6시에 네 명 예약할게요."</b></p>
    <div class="s32-stages">${STAGES.map(([name,sub,err],i)=>`${i?'<i aria-hidden="true">→</i>':''}<div class="md-panel"><h3>${i+1} ${name} <small>${sub}</small></h3><p class="s32-box" data-o="${i}"></p><p class="s32-tag" data-t="${i}"></p><label class="s32-check"><input type="checkbox" data-e="${i}">${err}</label></div>`).join('')}</div>
    <div class="s32-ends"><p class="s32-box" data-r="book"><b>남은 예약 기록</b><span></span></p><p class="s32-box" data-r="heard"><b>고객이 들은 안내</b><span></span></p></div>`,
@@ -87,7 +87,7 @@
  // A toy classifier that only knows the classes it was trained on. Probabilities are shared among those classes alone.
  const KINDS=[['강아지',4,7,'#3f5dae'],['고양이',3,3,'#b36b00'],['토끼',9,2,'#16794c']],PHOTOS={dog:['강아지 사진',4,7],cat:['고양이 사진',3,3],rabbit:['토끼 사진',9,2]};
  L.add('s32Prob','custom',{
-  hint:'<b>강아지와 고양이만</b> 학습한 분류 모델입니다. 토끼 사진을 넣거나 사진의 특징을 바꾸어 확률 막대를 살펴봅니다. 모델과 수치는 이 활동을 위해 만든 예시입니다.',
+  hint:'<b>강아지와 고양이만</b> 학습한 분류 모델입니다. 토끼 사진을 넣거나 사진의 특징을 바꾸어 확률 막대를 살펴봅니다.',
   body:`<div class="md-split" style="--split:1.15fr 1fr"><div class="md-panel"><div class="md-chips">${Object.entries(PHOTOS).map(([k,v])=>`<button type="button" class="md-chip" data-photo="${k}">${v[0]} 넣기</button>`).join('')}</div><div class="s32-plot" id="s32-pb-plot"></div>
    <label class="md-slider s32-wide">귀 길이<input type="range" data-k="ear" min="0" max="10" step="0.5"><output></output></label><label class="md-slider s32-wide">몸집<input type="range" data-k="body" min="0" max="10" step="0.5"><output></output></label></div>
    <div class="md-panel"><h3>모델이 내놓은 확률</h3><div class="s32-prob" id="s32-pb-bars"></div><label class="s32-check" style="margin-top:.4em"><input type="checkbox" id="s32-pb-learn">토끼 사진도 학습시키기</label>
@@ -130,7 +130,7 @@
  const SEEN=[['화산 실험 따라 하기','sci'],['식물 관찰 일기','sci'],['5분 계란 요리','cook'],['주말 축구 하이라이트','ball'],['동요 모음 30분','song'],['국내 기차 여행','trip']];
  const POOL=[['율동 동요 이어 듣기','song'],['초간단 간식 만들기','cook'],['드리블 기초 연습','ball'],['용암 램프 만들기','sci'],['제주 걷기 여행','trip'],['별자리 관찰하는 법','sci']];
  L.add('s32Recommend','custom',{
-  hint:'영상마다 <b>시청, 좋아요, 관심 없음</b>을 눌러 이용 기록을 바꾸면 추천 순서가 달라집니다. 영상과 점수 규칙은 이 활동을 위해 만든 예시이며 실제 서비스의 방식이 아닙니다.',
+  hint:'영상마다 <b>시청, 좋아요, 관심 없음</b>을 눌러 이용 기록을 바꾸면 추천 순서가 달라집니다.',
   body:`<div class="md-split" style="--split:1.25fr 1fr"><div class="md-panel"><h3>내 이용 기록</h3><ul class="s32-seen">${SEEN.map(([t,k],i)=>`<li><span>${t} <small>${TOPICS[k]}</small></span>${MARKS.map(([m,name])=>`<button type="button" class="md-chip" data-i="${i}" data-m="${m}">${name}</button>`).join('')}</li>`).join('')}</ul>
    <p class="s32-note" style="margin-top:auto">주제별 관심 점수: 시청 +1, 좋아요 +2, 관심 없음 -2. 점수가 같으면 인기 순서를 따릅니다.</p></div><div class="md-panel"><h3>다음에 볼 영상의 추천 순서</h3><ul class="md-list s32-rank" id="s32-rc-rank"></ul></div></div>`,
   state:()=>({marks:['like','watch','','','watch','']}),
@@ -172,7 +172,7 @@
  const RUBRIC=[['교육 목적','학습 목표에 직접 필요함','일부 활동에만 도움이 됨','목표와 관계가 적음'],['발달 단계','학생이 결과를 해석함','교사 안내가 있으면 가능함','결과 해석이 어려움'],
   ['이용 조건','필수기준을 모두 충족함','계정 방식 조정이 필요함','연령이나 개인정보 기준을 충족하지 못함'],['대안','AI만의 장점이 분명함','대안과 효과가 비슷함','더 쉬운 대안이 있음'],['위험','오류 피해가 작고 바로 고칠 수 있음','교사 확인이 필요함','오류 피해가 큼']];
  L.add('s32Rubric','custom',{
-  hint:'어떤 서비스를 떠올리며 다섯 기준의 점수를 골라 봅니다. <b>이용 조건이 1점</b>이면 어떻게 될까요? 그 밖의 판정 문구는 이 활동을 위해 정한 예시입니다.',
+  hint:'어떤 서비스를 떠올리며 다섯 기준의 점수를 골라 봅니다. <b>이용 조건이 1점</b>이면 어떻게 될까요?',
   body:`<div class="md-split" style="--split:2.5fr 1fr"><div class="s32-rubric"><span>기준</span><span>3 적합</span><span>2 보완 후 사용</span><span>1 부적합</span>
    ${RUBRIC.map((r,i)=>`<b>${r[0]}</b>${[3,2,1].map(n=>`<button type="button" class="md-choice" data-i="${i}" data-n="${n}">${r[4-n]}</button>`).join('')}`).join('')}</div>
    <div class="md-panel"><h3>판단 결과</h3><ul class="md-list"><li><span>합계</span><b id="s32-rb-sum"></b></li><li><span>이용 조건</span><b id="s32-rb-terms"></b></li></ul><p id="s32-rb-fix" style="font-size:.88em"></p><p class="md-verdict" id="s32-rb-out" style="margin-top:auto"></p></div></div>`,
