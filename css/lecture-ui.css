@@ -37,8 +37,10 @@
 .ce-viewer.lecture-ui .lecture-reader{color:var(--color-text);background:var(--color-white)}
 .lecture-table-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;margin:8px 0;padding:3px}.lecture-table-scroll table{margin-top:0!important}
 .lecture-ui .ce-lab :is(button,input:not([type=checkbox]):not([type=radio]),select){min-height:44px}.lecture-ui .ce-lab button{touch-action:manipulation;min-width:44px}
-/* Activity pages reflow without shrinking their type to a 16:9 thumbnail. Printing retains the source layout. */
-@media screen{
+/* Activity pages keep the 16:9 slide frame on wide screens, like the slides around them. Their controls are sized by the frame there, so the touch-size floor is lifted. */
+@media screen and (min-width:801px){.md-viewer.lecture-ui .ce-lab :is(button,input:not([type=checkbox]):not([type=radio]),select){min-height:0}.md-viewer.lecture-ui .ce-lab button{min-width:0}}
+/* On narrow screens activity pages reflow without shrinking their type to a 16:9 thumbnail. Printing retains the source layout. */
+@media screen and (max-width:800px){
  .md-viewer.lecture-ui .ce-stage.lab-mode,.md-viewer.lecture-ui .ce-stage.lab-mode .ce-canvas{width:100%;height:auto;min-height:0;aspect-ratio:auto}
  .md-viewer.lecture-ui .ce-stage.lab-mode .ce-viewport{position:relative;overflow:visible}
  .md-viewer.lecture-ui .ce-lab.md-lab{position:relative;inset:auto;overflow:visible;font-size:clamp(16px,1.3vw,20px);line-height:1.6;border-radius:10px;min-height:560px}
