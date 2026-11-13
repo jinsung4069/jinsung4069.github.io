@@ -25,7 +25,7 @@ UI_VERSION = '20261024ui'
 PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide player
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 # Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
-SESSION_VERSIONS = {'5-1': '20261107a', '5-2': '20261107a'}
+SESSION_VERSIONS = {'5-1': '20261107a', '5-2': '20261107a', '6-2': '20261113a'}
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
 SESSIONS = [
