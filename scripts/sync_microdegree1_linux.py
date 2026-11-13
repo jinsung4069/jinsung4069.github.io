@@ -12,7 +12,9 @@ PowerPoint does not add that space.
 
     python scripts/sync_microdegree1_linux.py --source <pptx> --session 6-2 --work-dir <tmp dir>
 
-A changed slide with a picture or a video is refused: those need the Windows converter.
+--render 5,22 also redraws slides whose text is the same but whose layout changed (alignment, positions).
+A changed slide may carry one YouTube video: a linked thumbnail picture and the video address in the text.
+Any other picture on a changed slide is refused, because separate picture layers need the Windows converter.
 """
 from pathlib import Path
 import argparse, hashlib, json, re, shutil, subprocess, sys
@@ -135,6 +137,7 @@ def main():
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--session', required=True)
     parser.add_argument('--work-dir', type=Path, required=True)
+    parser.add_argument('--render', default='', help='slide numbers to redraw although their text is unchanged, e.g. 5,22')
     parser.add_argument('--uno-python', default='/usr/bin/python3', help='a Python that can import uno')
     args = parser.parse_args()
     from pptx import Presentation
@@ -156,6 +159,7 @@ def main():
     shutil.copy2(args.source, copy)
     deck = Presentation(str(copy))
     assert abs(deck.slide_width / deck.slide_height - 16 / 9) < .002, f'{key}: source is not 16:9'
+    forced = {int(n) for n in args.render.split(',') if n.strip()}
     slides, changed = [], []
     for number, slide in enumerate(deck.slides, 1):
         redact(slide)
@@ -164,14 +168,26 @@ def main():
         assert not md.LEFTOVER.search(raw), f'{key}: instructor text remains on slide {number}'
         assert not md.SCHEDULE_LEFT.search(raw), f'{key}: a session date or running time remains on slide {number}'
         old = by_text.get(tuple(texts))
-        if old is not None:
+        if old is not None and number not in forced:
             record = {k: v for k, v in old.items() if k not in ('sourcePage', 'image')}
             record['from'] = old['image']
         else:
-            assert not any(shape.shape_type == 13 for shape in slide.shapes), f'{key}: changed slide {number} has a picture'
-            assert not md.YOUTUBE.search(raw), f'{key}: changed slide {number} has a video'
             links = list(dict.fromkeys(re.findall(r'https?://[A-Za-z0-9._~:/?#\[\]@!$&()*+,;=%-]+', raw)))
             record = dict(title=slide_title(slide, number, texts), text=texts, links=links)
+            pictures = [shape for shape in slide.shapes if shape.shape_type == 13]
+            video = md.YOUTUBE.search(raw)
+            if old is not None:
+                assert not pictures and not video, f'{key}: slide {number} has a picture or a video, so it cannot be redrawn here'
+            elif video:
+                assert len(pictures) == 1 and len(md.YOUTUBE.findall(raw)) == 1, f'{key}: slide {number} needs exactly one video and its thumbnail'
+                thumb = pictures[0]
+                label = next((t.split(', ', 1)[1] for t in texts if t.startswith('영상:') and ', ' in t), record['title'])
+                record['embeds'] = [dict(src=f'https://www.youtube-nocookie.com/embed/{video.group(1)}', title=label,
+                                         x=round(thumb.left / deck.slide_width, 4), y=round(thumb.top / deck.slide_height, 4),
+                                         width=round(thumb.width / deck.slide_width, 4), height=round(thumb.height / deck.slide_height, 4))]
+                record['video'] = next(link for link in links if md.YOUTUBE.search(link))
+            else:
+                assert not pictures, f'{key}: changed slide {number} has a picture'
             changed.append(number)
         record['sourcePage'] = number
         slides.append(record)
@@ -198,6 +214,10 @@ def main():
             Image.frombytes('RGB', (pixmap.width, pixmap.height), pixmap.samples).resize((2000, 1125)).save(target, format='WEBP', quality=88, method=6)
             lines = page_lines(page, record['text'])
             if lines: record['lines'] = lines
+            href = record.pop('video', None)
+            if href:
+                x, y, w, h = next(line[:4] for line in lines if line[4] == href)
+                record['linkAreas'] = [dict(href=href, label=href, x=round(x - .004, 4), y=round(y - .004, 4), width=round(w + .008, 4), height=round(h + .008, 4))]
         record['image'] = f'/images/lectures/{md.COURSE}/{key}/{number:03}.webp'
     for old in folder.glob('*.webp'): old.unlink()
     for new in sorted(staged.glob('*.webp')): shutil.copy2(new, folder / new.name)

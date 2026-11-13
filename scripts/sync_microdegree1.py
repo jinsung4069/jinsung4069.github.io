@@ -25,7 +25,7 @@ UI_VERSION = '20261024ui'
 PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide player
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 # Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
-SESSION_VERSIONS = {'5-1': '20261107a', '5-2': '20261107a', '6-2': '20261113a'}
+SESSION_VERSIONS = {'5-1': '20261107a', '5-2': '20261107a', '6-1': '20261113a', '6-2': '20261113a'}
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
 SESSIONS = [
@@ -303,7 +303,7 @@ HEAD = '''<!doctype html><html lang="ko"><head>{print_js}<meta charset="utf-8">
     <script src="/js/preferences.js?v=20260913a"></script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/style.css?v=20261007wrap"><link rel="stylesheet" href="/css/computer-education2.css?v=20261102anim"><link rel="stylesheet" href="/css/lecture-image-zoom.css?v=20261022a"><link rel="stylesheet" href="/css/microdegree1.css?v={version}"><script src="/js/main.js?v=20261022upgrade" defer></script><link rel="canonical" href="https://jinsung4069.github.io{path}">
 <script defer src="/js/clean-url.js"></script>
 {print_css}<link rel="stylesheet" href="/css/lecture-text.css?v=20261021wrap"><link rel="stylesheet" href="/css/site-tools.css">
-<link rel="stylesheet" href="/css/lecture-ui.css?v=20261107ui">{catalog_js}</head><body class="lecture-page">
+<link rel="stylesheet" href="/css/lecture-ui.css?v=20261113md">{catalog_js}</head><body class="lecture-page">
     <a class="skip-link" href="#main-content"><span class="lang-content lang-ko active">본문으로 바로가기</span><span class="lang-content lang-en">Skip to content</span></a><header><div class="header-inner"><a class="site-title" href="/">전인성</a><div class="header-right"><nav class="site-nav" id="mainNav" aria-label="주 메뉴"><ul><li><a class="nav-text-link" href="/">홈</a></li><li><a class="nav-text-link" href="/about/">소개</a></li><li class="nav-item"><a class="nav-text-link" href="/lectures/">강의자료</a></li></ul></nav><button id="darkModeToggle" class="dark-mode-toggle" aria-label="화면 테마 전환">
                         <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
