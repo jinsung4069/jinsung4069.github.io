@@ -341,4 +341,57 @@
   // Leaving the slide removes the panel's children; the sound must stop with it.
   const watch=new MutationObserver(()=>{if(!v.isConnected){v.pause();v.removeAttribute('src');v.load();watch.disconnect()}});watch.observe(panel,{childList:true});
  }});
+ // Two more individual practices: checking a source outside its own site, and writing the usage record.
+ L.style(`.md-lab .s62-kvs{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;gap:.5em}
+.md-lab .s62-kv{display:grid;grid-template-columns:8.5em minmax(0,1fr);align-items:center;gap:.8em;font-size:.9em}.md-lab .s62-kv>label,.md-lab .s62-kv>span{color:#2c478f;font-weight:800}
+.md-lab .s62-kv .s62-two{flex-wrap:wrap}.md-lab .s62-kv .md-chip{padding:.3em .8em;font-size:.9em}.md-lab .s62-kv .md-chip[aria-pressed=true]{font-weight:800}
+.md-lab .s62-out{flex:1;min-height:0;margin:0;padding:.6em .8em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;font-size:.84em;line-height:1.5;white-space:pre-wrap;overflow:auto;overflow-wrap:anywhere}.md-lab .s62-out b{color:#2c478f}`);
+ const LAT_ASK='초등학생의 스마트폰 사용 시간을 조사한 최근 자료를 출처 링크와 함께 알려 줘.';
+ const LAT_WHO=['정부, 공공기관','언론사','학술, 연구 기관','기업, 단체','개인, 알 수 없음'],LAT_USE=['수업 자료에 인용함','원자료를 더 찾아봄','쓰지 않음'];
+ L.add('s62Lateral','custom',{
+  hint:'검색 기능이 켜진 생성형 AI에 요청문을 넣어 출처를 받습니다. 처음 보는 출처를 골라 <b>새 탭에서 이름을 검색</b>하고, 누가 운영하는지와 다른 곳에서 어떻게 설명하는지 적습니다.',
+  body:`<div class="s62-askrow"><p class="s62-ask">요청문 “${esc(LAT_ASK)}”</p><button type="button" class="md-btn" id="s62-lt-copy">요청문 복사</button></div>
+   <div class="md-panel" style="flex:1;min-height:0"><div class="s62-kvs">
+    <div class="s62-kv"><label for="s62-lt-name">출처 이름</label><input class="md-text" id="s62-lt-name" data-f="name" type="text" autocomplete="off" placeholder="AI가 붙여 준 출처의 이름이나 주소"></div>
+    <div class="s62-kv"><span>운영 주체</span><div class="s62-two" data-g="who">${LAT_WHO.map((t,i)=>`<button type="button" class="md-chip" data-v="${i}">${t}</button>`).join('')}</div></div>
+    <div class="s62-kv"><label for="s62-lt-said">다른 곳의 설명</label><input class="md-text" id="s62-lt-said" data-f="said" type="text" autocomplete="off" placeholder="새 탭에서 찾은 내용"></div>
+    <div class="s62-kv"><span>나의 판단</span><div class="s62-two" data-g="use">${LAT_USE.map((t,i)=>`<button type="button" class="md-chip" data-v="${i}">${t}</button>`).join('')}</div></div>
+   </div></div>`,
+  state:()=>L.memory.get('s62Lateral')||{name:'',said:'',who:null,use:null},
+  render(ui,st,reset){
+   ui.action('다시 하기',()=>{L.memory.set('s62Lateral',null);reset()});
+   ui.q('#s62-lt-copy').onclick=async()=>ui.say(await copyText(LAT_ASK)?'요청문을 복사했습니다. 생성형 AI의 입력 칸에 붙여 넣으세요.':'복사하지 못했습니다. 요청문을 끌어서 선택해 복사해 주세요.');
+   ui.all('[data-f]').forEach(el=>{el.value=st[el.dataset.f];el.oninput=()=>{st[el.dataset.f]=el.value;L.memory.set('s62Lateral',st)}});
+   function draw(){
+    ui.all('[data-g] .md-chip').forEach(b=>b.setAttribute('aria-pressed',String(st[b.parentElement.dataset.g]===Number(b.dataset.v))));L.memory.set('s62Lateral',st);
+    if(st.who===null||st.use===null){ui.say('운영 주체와 나의 판단을 하나씩 고르세요.');return}
+    ui.say(st.who===4?'운영 주체를 알 수 없는 출처는 인용하지 않고, 같은 내용을 다룬 공공기관이나 조사 기관의 자료를 찾습니다.':st.use===0?'인용하기 전에 답의 수치가 출처의 문장과 같은지 한 번 더 대조합니다.':st.use===1?'보도나 요약 글이 가리키는 조사 기관의 원자료를 찾아 수치와 조사 연도를 확인합니다.':'쓰지 않기로 한 이유를 다른 곳의 설명 칸에 남겨 둡니다.',st.who===4?'bad':'good');
+   }
+   ui.body.addEventListener('click',e=>{const b=e.target.closest('[data-g] .md-chip');if(!b)return;const g=b.parentElement.dataset.g,v=Number(b.dataset.v);st[g]=st[g]===v?null:v;draw()});draw();
+  }});
+
+ L.add('s62Cite','custom',{
+  hint:'앞의 개별 실습에서 나눈 대화를 하나 골라 칸을 채웁니다. 오른쪽에 <b>APA 7판 인용</b>과 과제에 붙일 <b>사용 기록</b>이 만들어집니다.',
+  body:`<div class="md-split" style="--split:1fr 1.15fr"><div class="md-panel"><h3>내 대화의 정보</h3><div class="s62-form">
+     <label for="s62-ct-org">회사</label><input class="md-text" id="s62-ct-org" data-f="org" type="text" autocomplete="off" placeholder="서비스를 만든 회사">
+     <label for="s62-ct-tool">도구</label><input class="md-text" id="s62-ct-tool" data-f="tool" type="text" autocomplete="off" placeholder="서비스 이름">
+     <label for="s62-ct-model">모델</label><input class="md-text" id="s62-ct-model" data-f="model" type="text" autocomplete="off" placeholder="화면에 표시된 모델 이름">
+     <label for="s62-ct-url">주소</label><input class="md-text" id="s62-ct-url" data-f="url" type="text" autocomplete="off" placeholder="서비스 주소">
+     <label for="s62-ct-date">사용 날짜</label><input class="md-text" id="s62-ct-date" data-f="date" type="date">
+     <label for="s62-ct-ask">요청문</label><input class="md-text" id="s62-ct-ask" data-f="ask" type="text" autocomplete="off" placeholder="AI에 넣은 요청문">
+     <label for="s62-ct-check">직접 확인</label><input class="md-text" id="s62-ct-check" data-f="check" type="text" autocomplete="off" placeholder="내가 근거 자료로 확인한 내용">
+    </div></div><div class="md-panel"><h3>만들어진 기록</h3><p class="s62-out" id="s62-ct-out"></p></div></div>`,
+  state:()=>L.memory.get('s62Cite')||{org:'',tool:'',model:'',url:'',date:today(),ask:'',check:''},
+  render(ui,st,reset){
+   const text=()=>{const year=(st.date||today()).slice(0,4),or=v=>v.trim();
+    const cite=`${or(st.org)||'회사'}. (${year}). ${or(st.tool)||'도구'}${or(st.model)?` (${or(st.model)})`:''} [Large language model]. ${or(st.url)||'서비스 주소'}`;
+    const log=`${st.date||today()}에 ${or(st.tool)||'도구'}${or(st.model)?`(${or(st.model)})`:''}에서 받은 답을 참고했습니다.\n요청문: “${or(st.ask)||'요청문'}”\n${or(st.check)?`직접 확인한 내용: ${or(st.check)}`:'직접 확인한 내용: 아직 적지 않음'}`;
+    return {cite,log}};
+   ui.action('기록 복사',async()=>{const t=text();ui.say(await copyText(`[참고문헌]\n${t.cite}\n\n[AI 사용 기록]\n${t.log}`)?'기록을 복사했습니다. 검증 보고서의 AI 사용 기록 칸이나 과제 끝에 붙여 넣으세요.':'복사하지 못했습니다. 오른쪽 글을 끌어서 선택해 복사해 주세요.','good')},true);
+   ui.action('다시 하기',()=>{L.memory.set('s62Cite',null);reset()});
+   function draw(){const t=text();ui.q('#s62-ct-out').innerHTML=`<b>참고문헌</b>\n${esc(t.cite)}\n\n<b>AI 사용 기록</b>\n${esc(t.log)}`;L.memory.set('s62Cite',st);
+    const left=['org','tool','model','url','ask','check'].filter(k=>!st[k].trim()).length;
+    ui.say(left?`빈칸이 ${left}개 남았습니다. 모델 이름은 서비스 화면의 모델 선택 메뉴에서 확인합니다.`:'기록이 완성되었습니다. 한 달 뒤에 이 기록만 보고 같은 답을 다시 확인할 수 있는지 읽어 봅니다.',left?'':'good')}
+   ui.all('[data-f]').forEach(el=>{el.value=st[el.dataset.f];el.oninput=()=>{st[el.dataset.f]=el.value;draw()}});draw();
+  }});
 })();

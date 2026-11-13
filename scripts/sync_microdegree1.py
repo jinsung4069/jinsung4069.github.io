@@ -26,7 +26,7 @@ PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide pla
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 # Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
 SESSION_VERSIONS = {key: '20261113b' for key in ('1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '5-1', '5-2', '6-1', '6-2', '7-1', '7-2', '8-1')}
-SESSION_VERSIONS['6-2'] = '20261113c'  # the review film after the title slide
+SESSION_VERSIONS['6-2'] = '20261114a'  # the review film after the title slide; two news videos and two more practices
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
 SESSIONS = [
