@@ -329,4 +329,16 @@
     const fix=row.querySelector('[data-k=fix]');fix.disabled=c.v!=='fixed';fix.placeholder=c.v==='fixed'?'고친 내용':'';keep();say()});
    draw();
   }});
+ // The page after the title: a film that looks back on weeks 1 to 6 (morning). It fills the slide instead of the activity frame.
+ // Music: Deliberate Thought, Kevin MacLeod (incompetech.com), CC BY 4.0. The credit is also shown in the closing scene.
+ L.style(`.md-lab .s62-film{flex:1;min-height:0;display:grid;background:#0c1730}.md-lab .s62-film video{display:block;width:100%;height:100%;object-fit:contain;background:#0c1730}`);
+ L.add('s62Review','custom',{render(ui){
+  const panel=ui.body.parentNode,box=document.createElement('div'),v=document.createElement('video');
+  box.className='s62-film';box.innerHTML='<h2 class="sr-only">1주차부터 6주차 오전까지 돌아보기</h2>';
+  v.controls=true;v.playsInline=true;v.preload='metadata';v.poster='/media/lectures/microdegree1/28c2972224da5584.webp';v.src='/media/lectures/microdegree1/28c2972224da5584.mp4';
+  v.setAttribute('aria-label','1주차부터 6주차 오전까지 돌아보는 영상, 2분 41초, 배경음악만 있고 말소리는 없음');
+  box.append(v);panel.replaceChildren(box);
+  // Leaving the slide removes the panel's children; the sound must stop with it.
+  const watch=new MutationObserver(()=>{if(!v.isConnected){v.pause();v.removeAttribute('src');v.load();watch.disconnect()}});watch.observe(panel,{childList:true});
+ }});
 })();
