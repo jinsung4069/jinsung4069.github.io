@@ -186,4 +186,147 @@
    ui.body.addEventListener('click',e=>{const b=e.target.closest('#s62-rc-lines .s62-line');if(!b)return;const i=Number(b.dataset.i);
     if(st.checked)st.why=`${AFTER[i].kind}: ${AFTER[i].why}`;else st.picked[i]=!st.picked[i];draw()});draw();
   }});
+ // Individual practices with the learner's own AI tool. Nothing typed or pasted here leaves the browser.
+ L.style(`.md-lab .s62-area{flex:1;min-height:0;width:100%;padding:.5em .7em;border:1px solid #9fb0dc;border-radius:.5em;background:#fff;color:#1c2c4c;font:inherit;font-size:.82em;line-height:1.45;resize:none}
+.md-lab .s62-askrow{flex:none;display:flex;align-items:center;gap:.6em}.md-lab .s62-askrow .s62-ask{flex:1;min-width:0}
+.md-lab .s62-sents{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.3em;margin:0;padding:0;list-style:none;font-size:.82em;line-height:1.4}
+.md-lab .s62-sents li{padding:.2em .6em;border:1px solid #d5ddf1;border-radius:.4em;background:#fff}.md-lab .s62-sents li[data-only=true]{border-color:#f0a202;background:#fff7df;font-weight:700}
+.md-lab .s62-refs{flex:1;min-height:0;display:flex;flex-direction:column;gap:.5em}
+.md-lab .s62-ref{flex:1 1 auto;display:grid;grid-template-columns:1.8em minmax(0,1fr) auto;align-items:center;gap:.7em;padding:.3em .8em;border:1px solid #b9c6e6;border-radius:.5em;background:#f6f8fd}
+.md-lab .s62-ref>b{display:grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;background:#3f5dae;color:#fff;font-size:.9em}.md-lab .s62-ref .md-text{font-size:.86em}
+.md-lab .s62-ref .md-chip{padding:.3em .85em;font-size:.84em}.md-lab .s62-ref .md-chip[aria-pressed=true]{font-weight:800}
+.md-lab [data-k=partial]{background:#f0a202}
+.md-lab .s62-form{display:grid;grid-template-columns:5.2em minmax(0,1fr);align-items:center;gap:.45em .6em;font-size:.86em}.md-lab .s62-form label{color:#2c478f;font-weight:800}
+.md-lab .s62-claims{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.3em}
+.md-lab .s62-claim{flex:none;display:grid;grid-template-columns:2.6em minmax(0,1.5fr) auto minmax(0,1fr) minmax(0,.9fr) 2.4em;align-items:center;gap:.4em;padding:.22em .5em;border:1px solid #c9d3ec;border-radius:.45em;background:#fff;font-size:.74em}
+.md-lab .s62-claim[data-head]{position:sticky;top:0;z-index:1;border-color:#3f5dae;background:#3f5dae;color:#fff;font-weight:800;text-align:center}
+.md-lab .s62-claim>b{color:#2c478f;text-align:center}.md-lab .s62-claim .md-text{padding:.25em .5em}.md-lab .s62-claim .md-text:disabled{background:#eef1f8}
+.md-lab .s62-claim .md-chip{padding:.15em .55em;font-size:.94em}.md-lab .s62-claim .md-chip[aria-pressed=true]{font-weight:800}
+.md-lab .s62-drop{display:grid;place-items:center;justify-self:center;width:1.9em;height:1.9em;min-width:0;min-height:0;padding:0;border:1px solid #c9d3ec;border-radius:50%;background:#fff;color:#52607f;line-height:1;cursor:pointer}
+.md-lab .md-hint a{color:#2c478f;font-weight:800}
+@media (max-width:700px){.ce-lab.md-lab .md-actions{flex-wrap:wrap;max-width:100%}.md-lab .s62-claim[data-head]{display:none}
+.md-lab .s62-claim{grid-template-columns:2em minmax(0,1fr) 2.4em;font-size:.9em}.md-lab .s62-claim .s62-two{grid-column:1/-1;grid-row:2}.md-lab .s62-claim [data-k=src]{grid-column:1/-1;grid-row:3}.md-lab .s62-claim [data-k=fix]{grid-column:1/-1;grid-row:4}
+.md-lab .s62-ref{grid-template-columns:1.8em minmax(0,1fr)}.md-lab .s62-ref .s62-two{grid-column:1/-1}.md-lab .s62-askrow{flex-wrap:wrap}}`);
+
+ const sentences=text=>text.replace(/\r/g,'').split(/\n+|(?<=[.!?。”"])\s+/).map(t=>t.replace(/^\s*(?:[>*#\-•·]+\s*|\d{1,2}[.)]\s+)+/,'').replace(/\*\*/g,'').trim()).filter(t=>t.replace(/[^가-힣A-Za-z0-9]/g,'').length>1);
+ const norm=t=>t.replace(/[^가-힣A-Za-z0-9]/g,'').toLowerCase();
+ const numbers=t=>t.match(/\d[\d,.]*\d|\d/g)||[];
+ async function copyText(text){
+  try{await navigator.clipboard.writeText(text);return true}catch{}
+  const area=document.createElement('textarea');area.value=text;area.setAttribute('readonly','');area.style.cssText='position:fixed;left:-99em';document.body.append(area);area.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch{}area.remove();return ok;
+ }
+
+ const TWICE_ASK='광주와 전남의 대표 축제를 소개하고 축제마다 시작 연도와 방문객 수를 알려 줘.';
+ const TWICE_SAMPLE=['한글은 세종대왕이 1443년에 창제한 문자입니다. 1446년에 반포되었습니다. 창제 당시에는 28자로 만들어졌습니다. 『훈민정음 해례본』은 1940년 안동에서 발견되었습니다.',
+  '한글은 세종대왕이 1446년에 창제한 문자입니다. 창제 당시에는 24자로 만들어졌습니다. 『훈민정음 해례본』은 1940년 안동에서 발견되었습니다. 1997년에 유네스코 세계기록유산에 등재되었습니다.'];
+ L.add('s62Twice','custom',{
+  hint:'평소 쓰는 생성형 AI에 요청문을 넣어 답을 받고, <b>새 대화</b>를 열어 같은 요청문으로 한 번 더 받습니다. 두 답을 붙여 넣으면 한쪽에만 있는 문장을 표시합니다. 붙여 넣은 내용은 이 브라우저 안에서만 비교합니다.',
+  body:`<div class="s62-askrow"><p class="s62-ask">요청문 “${esc(TWICE_ASK)}”</p><button type="button" class="md-btn" id="s62-tw-copy">요청문 복사</button></div>
+   <div class="md-split"><div class="md-panel"><h3>첫 번째 답</h3><div class="s62-slot" data-i="0" style="flex:1;min-height:0;display:flex"></div></div><div class="md-panel"><h3>두 번째 답, 새 대화</h3><div class="s62-slot" data-i="1" style="flex:1;min-height:0;display:flex"></div></div></div>`,
+  state:()=>({text:['',''],done:false,sample:false}),
+  render(ui,st,reset){
+   const compare=ui.action('다른 문장 찾기',()=>{if(st.text.some(t=>!sentences(t).length)){ui.say('두 답을 모두 붙여 넣은 뒤 눌러 주세요.','bad');return}st.done=true;draw()},true);
+   ui.action('예시로 해 보기',()=>{st.text=[...TWICE_SAMPLE];st.sample=true;st.done=true;draw()});
+   const edit=ui.action('고쳐 넣기',()=>{st.done=false;st.sample=false;draw()});ui.action('다시 하기',reset);
+   ui.q('#s62-tw-copy').onclick=async()=>ui.say(await copyText(TWICE_ASK)?'요청문을 복사했습니다. 생성형 AI의 입력 칸에 붙여 넣으세요.':'복사하지 못했습니다. 요청문을 끌어서 선택해 복사해 주세요.');
+   function draw(){
+    const lists=st.text.map(sentences),keys=lists.map(l=>new Set(l.map(norm)));
+    ui.all('.s62-slot').forEach(slot=>{const i=Number(slot.dataset.i);
+     if(st.done)slot.innerHTML=`<ol class="s62-sents">${lists[i].map(t=>`<li data-only="${!keys[1-i].has(norm(t))}">${esc(t)}</li>`).join('')}</ol>`;
+     else{slot.innerHTML=`<textarea class="s62-area" aria-label="${i?'두 번째 답':'첫 번째 답'}" placeholder="AI의 답을 여기에 붙여 넣습니다."></textarea>`;const area=slot.firstChild;area.value=st.text[i];area.oninput=()=>{st.text[i]=area.value}}});
+    compare.hidden=st.done;edit.hidden=!st.done;
+    if(!st.done){ui.say('두 답을 붙여 넣고 다른 문장 찾기를 누르세요. 계정이 없으면 예시로 해 볼 수 있습니다.');return}
+    const only=lists.map((l,i)=>l.filter(t=>!keys[1-i].has(norm(t))).length),nums=lists.map(l=>new Set(l.flatMap(numbers)));
+    const diff=[...new Set([...nums[0]].filter(n=>!nums[1].has(n)).concat([...nums[1]].filter(n=>!nums[0].has(n))))].slice(0,8);
+    ui.say(`${st.sample?'이 활동을 위해 만든 예시입니다. ':''}첫 번째 답 ${lists[0].length}문장 중 ${only[0]}문장, 두 번째 답 ${lists[1].length}문장 중 ${only[1]}문장이 한쪽에만 있습니다.${diff.length?` 한쪽에만 나온 숫자는 ${diff.join(', ')}입니다.`:''} 달라진 수치는 검증 대상으로 남겨 둡니다.`,only[0]+only[1]?'':'good');
+   }
+   draw();
+  }});
+
+ const REF_ASK='초등학생 인공지능 교육의 효과를 다룬 세 편의 국내 학술지 논문을 추천하고 저자, 연도, 학술지를 적어 줘.';
+ const REF_VERDICT=[['match','서지 일치','right'],['partial','서지 오류','partial'],['none','찾지 못함','wrong']];
+ L.add('s62Refs','custom',{
+  hint:'AI가 추천한 논문을 한 줄씩 옮기고 <a href="https://www.riss.kr/" target="_blank" rel="noopener">RISS</a>나 <a href="https://www.kci.go.kr/" target="_blank" rel="noopener">KCI</a>에서 <b>제목으로 찾아</b> 저자, 연도, 학술지까지 대조합니다. 담당 교과 주제로 바꾸어 요청해도 됩니다.',
+  body:`<div class="s62-askrow"><p class="s62-ask">요청문 “${esc(REF_ASK)}”</p><button type="button" class="md-btn" id="s62-rf-copy">요청문 복사</button></div>
+   <div class="s62-refs">${[0,1,2].map(i=>`<div class="s62-ref"><b>${i+1}</b><input class="md-text" type="text" data-i="${i}" autocomplete="off" aria-label="${i+1}번 참고문헌" placeholder="AI가 준 참고문헌을 붙여 넣습니다."><div class="s62-two">${REF_VERDICT.map(([v,label])=>`<button type="button" class="md-chip" data-i="${i}" data-v="${v}">${label}</button>`).join('')}</div></div>`).join('')}</div>
+   <div class="s62-stack" id="s62-rf-bar" aria-hidden="true"></div>`,
+  state:()=>L.memory.get('s62Refs')||{text:['','',''],verdict:[null,null,null]},
+  render(ui,st,reset){
+   ui.action('다시 하기',()=>{L.memory.set('s62Refs',null);reset()});
+   ui.q('#s62-rf-copy').onclick=async()=>ui.say(await copyText(REF_ASK)?'요청문을 복사했습니다. 생성형 AI의 입력 칸에 붙여 넣으세요.':'복사하지 못했습니다. 요청문을 끌어서 선택해 복사해 주세요.');
+   ui.all('.s62-ref input').forEach(input=>{const i=Number(input.dataset.i);input.value=st.text[i];input.oninput=()=>{st.text[i]=input.value;L.memory.set('s62Refs',st)}});
+   function draw(){
+    ui.all('.s62-ref .md-chip').forEach(b=>b.setAttribute('aria-pressed',String(st.verdict[Number(b.dataset.i)]===b.dataset.v)));
+    const count=REF_VERDICT.map(([v])=>st.verdict.filter(x=>x===v).length),done=count.reduce((a,b)=>a+b,0);
+    ui.q('#s62-rf-bar').innerHTML=REF_VERDICT.map(([,,k],j)=>`<i data-k="${k}" style="width:${count[j]/3*100}%"></i>`).join('')+`<i data-k="none" style="width:${(3-done)/3*100}%"></i>`;
+    L.memory.set('s62Refs',st);
+    if(!done)ui.say('문헌마다 학술 DB에서 찾은 결과를 하나씩 고르세요.');
+    else ui.say(`${done}편을 판정했습니다. 서지 일치 ${count[0]}편, 서지 오류 ${count[1]}편, 찾지 못함 ${count[2]}편입니다.${count[2]?' 찾지 못한 문헌은 없다고 단정하지 않고, 인용하지 않습니다.':''}${count[1]?' 서지 오류는 원문의 저자, 연도, 권호로 고쳐 씁니다.':''}`,done===3&&count[0]===3?'good':'');
+   }
+   ui.body.addEventListener('click',e=>{const b=e.target.closest('.s62-ref .md-chip');if(!b)return;const i=Number(b.dataset.i);st.verdict[i]=st.verdict[i]===b.dataset.v?null:b.dataset.v;draw()});draw();
+  }});
+
+ L.add('s62Premise','pick',{
+  hint:'요청문 “훈민정음 해례본이 1940년 경주에서 발견된 과정을 자세히 설명해 줘.”를 평소 쓰는 생성형 AI에 넣고, 답이 <b>틀린 전제</b>를 어떻게 다루는지 고릅니다. 해례본은 1940년 안동에서 발견되었습니다.',
+  options:[{id:'fix',label:'전제를 바로잡음',sub:'발견 장소가 안동이라고 고쳐 줌'},{id:'follow',label:'전제를 따라 설명함',sub:'경주에서 발견된 것처럼 이어 씀'},{id:'unsure',label:'모른다고 답함',sub:'확인할 수 없다고 하거나 되물음'}],
+  reasonLabel:'판단의 근거가 된 AI의 문장',
+  after:'선택을 기록했습니다. 전제를 따라간 답이라면 어느 문장부터 사실처럼 이어졌는지 표시해 둡니다.'});
+
+ // The individual verification report: split an answer into claims, judge each one, keep the record.
+ const RKEY='s62Report',RV=[['ok','확인됨'],['fixed','수정함'],['unknown','확인 불가']];
+ const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ L.add('s62Report','custom',{
+  hint:'',
+  body:'<div id="s62-rp" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:.55em"></div>',
+  state:()=>L.memory.get(RKEY)||{phase:'input',tool:'',date:today(),ask:'',answer:'',claims:[]},
+  render(ui,st,reset){
+   const box=ui.q('#s62-rp'),keep=()=>L.memory.set(RKEY,st);
+   const split=ui.action('주장으로 나누기',()=>{const list=sentences(st.answer);if(!list.length){ui.say('AI의 답을 붙여 넣은 뒤 눌러 주세요.','bad');return}
+    st.claims=list.slice(0,30).map(t=>({t,v:null,src:'',fix:''}));st.phase='judge';draw()},true);
+   const sample=ui.action('예시 응답 넣기',()=>{st.ask='초등학교 4학년 한글날 수업에 쓸 한글 소개 글을 써 줘. 참고문헌도 하나 붙여 줘.';st.answer=SENTENCES.join('\n');st.tool=st.tool||'예시 응답';draw()});
+   const copy=ui.action('보고서 복사',async()=>ui.say(await copyText(report())?'보고서를 복사했습니다. 문서나 메모에 붙여 넣어 보관하세요.':'복사하지 못했습니다. 파일로 저장을 써 주세요.','good'),true);
+   const file=ui.action('파일로 저장',()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([report()],{type:'text/plain;charset=utf-8'}));a.download=`검증보고서_${st.date||today()}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);ui.say('검증 보고서를 텍스트 파일로 저장했습니다.','good')});
+   const back=ui.action('답 다시 넣기',()=>{st.phase='input';draw()});
+   ui.action('다시 하기',()=>{L.memory.set(RKEY,null);reset()});
+   const tally=()=>RV.map(([v])=>st.claims.filter(c=>c.v===v).length);
+   function report(){
+    const n=tally();
+    return ['[생성형 AI 결과 검증 보고서]',`도구와 버전: ${st.tool||'미기록'}`,`사용 날짜: ${st.date||'미기록'}`,`요청문: ${st.ask||'미기록'}`,
+     `판정 요약: 주장 ${st.claims.length}개, 확인됨 ${n[0]}, 수정함 ${n[1]}, 확인 불가 ${n[2]}, 미판정 ${st.claims.length-n[0]-n[1]-n[2]}`,'',
+     ...st.claims.map((c,i)=>`${i+1}. [${(RV.find(([v])=>v===c.v)||[,'미판정'])[1]}] ${c.t}\n   근거 자료와 위치: ${c.src||'미기록'}${c.v==='fixed'?`\n   바른 내용: ${c.fix||'미기록'}`:''}`),'',
+     '[AI의 답 원문]',st.answer].join('\n');
+   }
+   function say(){
+    if(st.phase==='input'){ui.say('도구, 날짜, 요청문을 적고 AI의 답을 원문 그대로 붙여 넣습니다. 학생 개인정보는 넣지 않습니다.');return}
+    const n=tally(),left=st.claims.length-n[0]-n[1]-n[2];
+    ui.say(`주장 ${st.claims.length}개 가운데 확인됨 ${n[0]}, 수정함 ${n[1]}, 확인 불가 ${n[2]}, 미판정 ${left}입니다.${left?' 수치, 인용, 날짜가 든 주장부터 1차 자료로 확인합니다.':' 확인 불가는 수업 자료에서 지우고 보고서를 보관합니다.'}`,left?'':'good');
+   }
+   function draw(){
+    keep();const input=st.phase==='input';
+    split.hidden=sample.hidden=!input;copy.hidden=file.hidden=back.hidden=input;
+    if(input){
+     box.innerHTML=`<div class="md-split" style="--split:1fr 1.5fr"><div class="md-panel"><h3>AI 사용 기록</h3><div class="s62-form">
+       <label for="s62-rp-tool">도구와 버전</label><input class="md-text" id="s62-rp-tool" data-f="tool" type="text" autocomplete="off" placeholder="사용한 서비스와 모델 이름">
+       <label for="s62-rp-date">사용 날짜</label><input class="md-text" id="s62-rp-date" data-f="date" type="date">
+       <label for="s62-rp-ask">요청문</label><textarea class="s62-area" id="s62-rp-ask" data-f="ask" style="height:7.5em;flex:none" placeholder="AI에 넣은 요청문 원문"></textarea></div>
+       <p class="s62-note">앞 장의 요청문 가운데 하나를 고르거나 내 수업 주제로 바꾸어 씁니다. 입력한 내용은 이 브라우저 탭에만 남고 서버로 보내지 않습니다.</p></div>
+      <div class="md-panel"><h3>AI의 답 원문</h3><textarea class="s62-area" data-f="answer" aria-label="AI의 답 원문" placeholder="AI의 답을 고치지 않고 그대로 붙여 넣습니다."></textarea></div></div>`;
+     ui.all('[data-f]').forEach(el=>{el.value=st[el.dataset.f];el.oninput=()=>{st[el.dataset.f]=el.value;keep()}});
+    }else{
+     box.innerHTML=`<div class="s62-claims"><div class="s62-claim" data-head><span>번호</span><span>주장</span><span>판정</span><span>근거 자료와 위치</span><span>바른 내용</span><span></span></div>${st.claims.map((c,i)=>`<div class="s62-claim" data-i="${i}"><b>${i+1}</b>
+       <input class="md-text" data-k="t" type="text" aria-label="${i+1}번 주장"><div class="s62-two">${RV.map(([v,label])=>`<button type="button" class="md-chip" data-v="${v}" aria-pressed="${c.v===v}">${label}</button>`).join('')}</div>
+       <input class="md-text" data-k="src" type="text" aria-label="${i+1}번 근거 자료와 위치" placeholder="자료 이름, 확인한 곳"><input class="md-text" data-k="fix" type="text" aria-label="${i+1}번 바른 내용" ${c.v==='fixed'?'placeholder="고친 내용"':'disabled'}>
+       <button type="button" class="s62-drop" aria-label="${i+1}번 주장 빼기" title="확인할 주장이 아니면 뺍니다">×</button></div>`).join('')}</div>`;
+     ui.all('.s62-claim[data-i] input').forEach(el=>{const c=st.claims[Number(el.closest('.s62-claim').dataset.i)];el.value=c[el.dataset.k];el.oninput=()=>{c[el.dataset.k]=el.value;keep()}});
+    }
+    say();
+   }
+   box.addEventListener('click',e=>{const row=e.target.closest('.s62-claim[data-i]');if(!row)return;const i=Number(row.dataset.i),chip=e.target.closest('.md-chip');
+    if(e.target.closest('.s62-drop')){const top=box.querySelector('.s62-claims').scrollTop;st.claims.splice(i,1);draw();box.querySelector('.s62-claims').scrollTop=top;return}
+    if(!chip)return;const c=st.claims[i];c.v=c.v===chip.dataset.v?null:chip.dataset.v;
+    row.querySelectorAll('.md-chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===c.v)));
+    const fix=row.querySelector('[data-k=fix]');fix.disabled=c.v!=='fixed';fix.placeholder=c.v==='fixed'?'고친 내용':'';keep();say()});
+   draw();
+  }});
 })();
