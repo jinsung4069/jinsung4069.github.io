@@ -59,7 +59,7 @@
    ui.body.addEventListener('click',e=>{const b=e.target.closest('.s41-ask button');if(b&&st.a[b.dataset.i]===undefined){st.a[b.dataset.i]=b.dataset.v==='true';draw()}});draw();
   }});
 
- L.add('kindSort','sort',{hint:'아홉 가지 값을 <b>수치형</b>과 <b>범주형</b>으로 나눕니다. 숫자로 적는 값이 모두 수치형인지도 생각해 봅니다. 카드의 값은 예시입니다.',
+ L.add('kindSort','sort',{hint:'아홉 가지 값을 <b>수치형</b>과 <b>범주형</b>으로 나눕니다. 숫자로 적는 값이 모두 수치형인지도 생각해 봅니다.',
   bins:[{id:'num',label:'수치형',sub:'양을 나타내어 크기 비교와 평균 계산이 가능한 값'},{id:'cat',label:'범주형',sub:'종류나 등급을 나타내는 값으로 평균을 내지 않음'}],cards:[
   {id:'a',label:'통학 시간',sub:'12분, 25분',answer:'num',why:'양을 나타내어 크기 비교와 평균 계산이 가능합니다.'},
   {id:'b',label:'통학 방법',sub:'도보, 버스, 자전거',answer:'cat',why:'종류를 나타내는 값으로 평균을 내지 않습니다.'},
@@ -124,7 +124,7 @@
  // Restoring a picture from its record, as in 실습 1. The picture differs from the one on the slide.
  const HEART=['01100110','10011001','10000001','10000001','01000010','00100100','00011000','00000000'],ONES=HEART.join('').split('1').length-1;
  L.add('pixelRestore','custom',{
-  hint:'짝에게서 <b>기록만</b> 받았습니다. 오른쪽 모눈의 칸을 눌러 칠하며 그림을 복원합니다. 이 기록은 활동을 위해 만든 예시입니다.',
+  hint:'짝에게서 <b>기록만</b> 받았습니다. 오른쪽 모눈의 칸을 눌러 칠하며 그림을 복원합니다.',
   body:`<div class="md-split"><div class="md-panel"><h3>받은 기록</h3><div class="s41-grid s41-rec" style="--n:8;--w:17em">${HEART.map((row,y)=>[...row].map(v=>`<span data-y="${y}">${v}</span>`).join('')).join('')}</div><p class="s41-note" style="text-align:center">약속: 한 줄에 여덟 칸, 1은 칠한 칸, 0은 빈칸</p></div>
    <div class="md-panel"><h3>복원하는 모눈</h3><div class="s41-grid" id="s41-paint" style="--n:8;--w:17em">${HEART.map((row,y)=>[...row].map((v,x)=>`<button type="button" data-k="${y*8+x}" aria-label="${y+1}째 줄 ${x+1}째 칸"></button>`).join('')).join('')}</div><p class="s41-note" style="text-align:center" id="s41-count"></p></div></div>`,
   state:()=>({cells:Array(64).fill(0),checked:false}),
@@ -148,7 +148,7 @@
   return n===8?full:[0,2,4,6].map(y=>[0,2,4,6].map(x=>Math.floor((full[y][x]+full[y][x+1]+full[y+1][x]+full[y+1][x+1])/4+.5)));
  };
  L.add('pixelDetail','custom',{
-  hint:'같은 그림을 <b>픽셀 수</b>와 <b>색 단계</b>를 바꾸어 기록합니다. 그림과 기록의 양이 어떻게 달라지는지 봅니다. 그림은 활동용 예시입니다.',
+  hint:'같은 그림을 <b>픽셀 수</b>와 <b>색 단계</b>를 바꾸어 기록합니다. 그림과 기록의 양이 어떻게 달라지는지 봅니다.',
   body:`<div class="md-split" style="--split:1fr 1fr 1.05fr;gap:1em"><div class="md-panel"><h3>화면에 보이는 그림</h3><div class="s41-grid" id="s41-pic" style="--w:14.5em"></div></div><div class="md-panel"><h3>저장되는 기록</h3><div class="s41-grid s41-rec" id="s41-nums" style="--w:14.5em"></div></div>
    <div class="md-panel"><h3>픽셀 수</h3><div class="s41-seg" data-k="n"><button type="button" data-v="8">8×8</button><button type="button" data-v="4">4×4</button></div>
    <h3>색 단계</h3><div class="s41-seg" data-k="levels"><button type="button" data-v="2">2단계(0, 1)</button><button type="button" data-v="4">4단계(0~3)</button></div>

@@ -95,7 +95,7 @@
  // Thirty made-up summer days: temperature drives both ice cream sales and swimming accidents.
  const dice=(s=>()=>(s=(s*1103515245+12345)&0x7fffffff)/0x7fffffff)(11),DAYS=Array.from({length:30},()=>[dice()*12-6,dice()*2-1,dice()*2-1]);
  L.add('causeSim','custom',{
-  hint:'점 하나는 하루입니다. <b>기온</b>과 <b>아이스크림 판매</b>를 각각 바꾸어 물놀이 사고가 어떻게 달라지는지 봅니다. 수치는 활동용 예시입니다.',
+  hint:'점 하나는 하루입니다. <b>기온</b>과 <b>아이스크림 판매</b>를 각각 바꾸어 물놀이 사고가 어떻게 달라지는지 봅니다.',
   body:`<div class="md-split" style="--split:1.35fr 1fr"><div class="md-panel"><h3>아이스크림 판매와 물놀이 사고 (30일)</h3><svg class="s22-plot" viewBox="0 0 520 320" role="img" aria-label="하루 아이스크림 판매량과 물놀이 사고 건수의 산점도"></svg></div>
    <div class="md-panel"><label class="md-slider s22-wide">평균 기온<input type="range" data-k="temp" min="22" max="32" step="1"><output></output></label>
    <label class="md-slider s22-wide">판매 줄이기<input type="range" data-k="cut" min="0" max="80" step="10"><output></output></label>
@@ -133,7 +133,7 @@
  const CATS=[['개',v=>.45*(v[1]-5)+.3*(v[2]-5)],['고양이',v=>-.45*(v[1]-5)-.3*(v[2]-5)+.1*(v[0]-3)],['토끼',v=>1.2*(v[0]-6.5)]];
  const SHOTS={dog:['개 사진',[3,8,7]],cat:['고양이 사진',[3,2,3]],rabbit:['토끼 사진',[10,3,2]],blur:['흐린 사진',[3,5,6]]},FEATURES=['귀 길이','주둥이 길이','몸 크기'];
  L.add('classifySim','custom',{
-  hint:'개와 고양이만 배운 분류 모델입니다. 입력을 바꾸어 <b>범주별 가능성</b>과 결과를 봅니다. 특징과 계산식은 원리를 보기 위한 예시입니다.',
+  hint:'개와 고양이만 배운 분류 모델입니다. 입력을 바꾸어 <b>범주별 가능성</b>과 결과를 봅니다.',
   body:`<div class="md-split" style="--split:1fr 1.05fr 1.05fr"><div class="md-panel"><h3>1. 입력</h3><svg class="s22-animal" viewBox="0 0 200 230" role="img" aria-label="특징 값에 따라 달라지는 동물 그림"></svg>
    <div class="md-chips">${Object.entries(SHOTS).map(([k,s])=>`<button type="button" class="md-chip" data-shot="${k}">${s[0]}</button>`).join('')}</div></div>
    <div class="md-panel"><h3>2. 특징</h3>${FEATURES.map((f,i)=>`<label class="md-slider s22-narrow">${f}<input type="range" data-f="${i}" min="0" max="10" step="1"><output></output></label>`).join('')}
@@ -169,7 +169,7 @@
   ['줄넘기 기초','축구 드리블','아침 스트레칭','배드민턴 서브','달리기 자세','농구 슛 연습'],['리코더 연습','합창 발성','장구 장단','우쿨렐레 코드','박자 익히기','동요 반주']];
  const VIDEOS=TITLES[0].flatMap((_,n)=>FIELDS.map((_,f)=>({title:TITLES[f][n],f,base:3-(n*4+f)*.12})));
  L.add('recommendSim','custom',{
-  hint:'추천 목록에서 <b>시청</b>을 눌러 이용 기록을 쌓아 봅니다. 점수가 높은 순서로 여섯 개를 보여 줍니다. 영상 제목과 점수 계산은 활동용 예시입니다.',
+  hint:'추천 목록에서 <b>시청</b>을 눌러 이용 기록을 쌓아 봅니다. 점수가 높은 순서로 여섯 개를 보여 줍니다.',
   body:`<div class="md-split" style="--split:1.55fr 1fr"><div class="md-panel"><h3>추천 목록 (관심 가능성 점수가 높은 순)</h3><ol class="s22-recs"></ol></div>
    <div class="md-panel"><h3>나의 이용 기록</h3><ul class="md-list" id="s22-record"></ul><div class="md-chips"><button type="button" class="md-chip" data-act="family">가족이 같은 계정으로 요리 영상 3편 시청</button><button type="button" class="md-chip" data-act="clear">시청 기록 삭제</button></div>
    <div class="s22-bar" style="grid-template-columns:auto 1fr 3.4em;margin-top:auto"><span>추천 목록 속 분야</span><div class="md-meter"><i id="s22-wide"></i></div><b id="s22-wide-n"></b></div></div></div>`,
@@ -201,7 +201,7 @@
  const SLOTS=[{name:'위치',fact:'2층',c:[['2층',55],['1층',30],['3층',15]]},{name:'책의 수',fact:'약 8천 권',c:[['약 8천 권',50],['약 5천 권',30],['약 1만 권',20]]},{name:'닫는 시각',fact:'오후 4시 30분',c:[['오후 4시 30분',55],['오후 5시',30],['오후 4시',15]]}];
  const PARTS=['우리 학교 도서관은 ',0,'에 있고 책이 ',1,' 있으며 ',2,'까지 엽니다.'];
  L.add('generateSim','custom',{
-  hint:'생성 모델이 <b>이어질 말의 가능성</b>에 따라 문장을 완성합니다. 완성된 문장을 사실 자료와 대조해 보세요. 학교, 자료, 가능성 값은 모두 활동용 예시입니다.',
+  hint:'생성 모델이 <b>이어질 말의 가능성</b>에 따라 문장을 완성합니다. 완성된 문장을 사실 자료와 대조해 보세요.',
   body:`<div class="md-split" style="--split:1.5fr 1fr"><div class="md-panel"><div class="s22-chat">우리 학교 도서관을 한 문장으로 소개해 줘.</div><div class="s22-answer" id="s22-answer"></div><h3 id="s22-next"></h3><div class="s22-bars" id="s22-cand"></div>
    <div class="s22-note" style="margin-top:auto">모델은 사실 자료를 보지 않습니다. 여러 학교 소개 글에서 배운 패턴으로 그럴듯한 말을 고릅니다.</div></div>
    <div class="md-panel"><h3>사실 자료 (학교 안내문)</h3><ul class="md-list">${SLOTS.map(s=>`<li><span>${s.name}</span><b>${s.fact}</b></li>`).join('')}</ul><h3>응답 기록</h3><ul class="md-list" id="s22-log"></ul></div></div>`,
@@ -237,7 +237,7 @@
   return `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 18 10 3l9 9zM33 18 30 3l-9 9z" fill="${fur}"/><circle cx="20" cy="23" r="13" fill="${fur}"/><path d="M20 15c-4 3-8 6-8 11a8 8 0 0 0 16 0c0-5-4-8-8-11z" fill="${mask}"/><circle cx="14.5" cy="20" r="2" fill="${eye}"/><circle cx="25.5" cy="20" r="2" fill="${eye}"/><circle cx="20" cy="27" r="2.2" fill="#1c2c4c"/></svg>`};
  const NAMES={wolf:'늑대',husky:'허스키'},GROUND={snow:'눈 위의',grass:'풀밭의'},TESTS=[['husky','snow'],['wolf','grass'],['wolf','snow'],['husky','grass']];
  L.add('huskySim','custom',{
-  hint:'늑대와 허스키 분류 실험을 단순하게 만든 예시입니다. 학습 사진의 <b>배경</b>을 바꾸면 모델이 배우는 기준과 새 사진의 결과가 어떻게 달라질까요?',
+  hint:'늑대와 허스키를 분류하는 모델입니다. 학습 사진의 <b>배경</b>을 바꾸면 모델이 배우는 기준과 새 사진의 결과가 어떻게 달라질까요?',
   body:`<div class="md-split" style="--split:1.2fr 1fr"><div class="md-panel"><h3>학습 사진 12장</h3><div class="s22-train" data-kind="wolf"></div><div class="s22-train" data-kind="husky"></div>
    <label class="md-slider s22-wide" style="grid-template-columns:11em 1fr 3em">눈 배경인 늑대 사진<input type="range" data-k="wolf" min="0" max="6" step="1"><output></output></label>
    <label class="md-slider s22-wide" style="grid-template-columns:11em 1fr 3em">눈 배경인 허스키 사진<input type="range" data-k="husky" min="0" max="6" step="1"><output></output></label>
@@ -275,7 +275,7 @@
    [['확신도가 높으면 정답이라고 볼 수 있습니다.',false,'확신도는 모델의 계산 결과일 뿐 정답이라는 보장이 아닙니다.'],['학습 때와 상황이 다르면 확신도가 높아도 틀릴 수 있습니다.',true,'잘하는 일에 틀리는 조건을 짝지어 말했습니다.'],['AI는 사람보다 항상 정확합니다.',false,'잘하는 일만 말하고 틀리는 조건이 빠졌습니다.']],
    [['그래서 AI의 답은 한 번 더 확인하고, 중요한 결정은 사람이 합니다.',true,'결과를 확인하는 행동으로 마무리했습니다.'],['그래서 AI의 답을 그대로 옮겨 적습니다.',false,'확인하는 행동이 없습니다. AI의 답은 한 번 더 확인합니다.'],['그래서 근거는 따로 확인하지 않아도 됩니다.',false,'확인하는 행동이 없습니다. 중요한 결정에는 다른 근거와 사람의 확인을 함께 둡니다.']]]]};
  L.add('explainBuilder','custom',{
-  hint:'세 원칙마다 문장을 하나씩 골라 학생에게 할 <b>설명</b>을 완성합니다. 고른 문장이 원칙에 맞는지 바로 확인됩니다. 문장은 활동용 예시입니다.',
+  hint:'세 원칙마다 문장을 하나씩 골라 학생에게 할 <b>설명</b>을 완성합니다. 고른 문장이 원칙에 맞는지 바로 확인됩니다.',
   body:`<div class="md-split" style="--split:1.75fr 1fr"><div class="s22-rows"><div class="md-chips">${Object.entries(LEVELS).map(([k,v])=>`<button type="button" class="md-chip" data-level="${k}">${v[0]}</button>`).join('')}</div>
    ${STEPS.map((s,r)=>`<div class="s22-row"><b>${s}</b><div class="md-choices" style="--n:3" data-r="${r}"></div></div>`).join('')}</div>
    <div class="md-panel"><h3>완성된 설명</h3><div class="s22-draft"></div><h3>세 원칙 확인</h3><ul class="md-list" id="s22-rules"></ul><div class="s22-result" id="s22-verdict"></div></div></div>`,

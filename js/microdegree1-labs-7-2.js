@@ -33,7 +33,7 @@
 .md-lab .s72-level{display:block;width:100%;padding:.3em .45em;border:1px solid #9fb0dc;border-radius:.45em;background:#fff;color:#1c2c4c;font-size:.94em;line-height:1.3;text-align:center;cursor:pointer}`);
  const options=(list,key)=>list.map((o,j)=>`<button type="button" class="s72-opt" data-k="${key}" data-j="${j}" aria-pressed="false">${esc(o.t)}</button>`).join('');
 
- L.add('startSort','sort',{hint:'활용안의 첫 문장입니다. <b>도구에서 출발한 계획</b>인지 <b>문제에서 출발한 계획</b>인지 나누어 봅니다. 문장은 이 활동을 위해 고른 예시입니다.',
+ L.add('startSort','sort',{hint:'활용안의 첫 문장입니다. <b>도구에서 출발한 계획</b>인지 <b>문제에서 출발한 계획</b>인지 나누어 봅니다.',
   bins:[{id:'tool',label:'도구에서 출발',sub:'도구를 수업 어디에 넣을지 먼저 고민'},{id:'problem',label:'문제에서 출발',sub:'학생이나 교사가 어려워하는 지점을 먼저 정함'}],cards:[
   {id:'a',label:'새로 알게 된 그림 생성 AI를 미술 시간에 써 보려 합니다',answer:'tool',why:'도구가 먼저 정해져 있고 누가 무엇을 어려워하는지는 드러나지 않습니다.'},
   {id:'b',label:'4학년 학생 일부가 설명하는 글을 쓸 때 문단의 중심 문장을 세우지 못합니다',answer:'problem',why:'대상, 상황, 어려움이 드러나 여러 대안을 비교할 수 있습니다.'},
@@ -48,7 +48,7 @@
   {name:'어떤 상황에서',opts:[{t:'(비워 둠)',tone:'bad',note:'비어 있음'},{t:'국어 시간에',tone:'warn',note:'어떤 활동인지 분명하지 않음'},{t:'주장하는 글을 고쳐 쓸 때',tone:'good',note:'상황이 드러남'}]},
   {name:'무엇이 어려운가',opts:[{t:'AI 글쓰기 도우미가 필요합니다',tone:'bad',note:'어려움이 아니라 해결책',fix:true},{t:'글쓰기 능력이 부족합니다',tone:'warn',note:'모호한 단어, 관찰하기 어려움'},{t:'근거가 주장을 뒷받침하는지 스스로 점검하지 못합니다',tone:'good',note:'관찰할 수 있는 어려움'}]}];
  L.add('problemBuilder','custom',{
-  hint:'세 요소에서 표현을 하나씩 골라 <b>문제 정의 문장</b>을 만듭니다. 어느 요소가 빠졌거나 흐린지 오른쪽에서 확인합니다. 표현은 예시입니다.',
+  hint:'세 요소에서 표현을 하나씩 골라 <b>문제 정의 문장</b>을 만듭니다. 어느 요소가 빠졌거나 흐린지 오른쪽에서 확인합니다.',
   body:`<div class="s72-parts">${ELEMENTS.map((el,i)=>`<div class="md-panel"><h3>${el.name}</h3><div class="s72-stack">${options(el.opts,i)}</div></div>`).join('')}</div>
    <div class="md-split" style="--split:1.35fr 1fr"><div class="md-panel"><h3>지금 만든 문장</h3><p class="s72-sentence" id="s72-sentence"></p><p class="s72-state" id="s72-verdict"></p></div>
     <div class="md-panel"><h3>문장 점검</h3><ul class="md-list s72-diag" id="s72-diag"></ul></div></div>`,
@@ -75,13 +75,13 @@
  // Teacher minutes for three ways of handling the fraction example. Every minute value is an example chosen for the comparison.
  const QUIZ_MINUTES=20;
  L.add('needCompare','custom',{
-  hint:'분수 덧셈 예시의 세 가지 해결 방법을 <b>우리 반의 조건</b>에 맞추어 비교합니다. 시간은 비교를 위해 정한 예시 값입니다.',
+  hint:'분수 덧셈 예시의 세 가지 해결 방법을 <b>우리 반의 조건</b>에 맞추어 비교합니다.',
   body:`<div class="md-split" style="--split:1fr 1.5fr"><div class="md-panel"><h3>우리 반의 조건</h3>
     <label class="s72-sl"><span>오류를 확인할 학생 수</span><input type="range" data-k="n" min="2" max="28" step="2"><output></output></label>
     <label class="s72-sl"><span>한 학생의 풀이를 직접 살피는 시간</span><input type="range" data-k="t" min="1" max="5" step="1"><output></output></label>
     <label class="s72-sl"><span>AI 피드백 하나를 교사가 검토하는 시간</span><input type="range" data-k="r" min="0" max="3" step="0.5"><output></output></label>
     <label class="s72-sl"><span>계정과 입력 정보를 점검하는 시간</span><input type="range" data-k="s" min="0" max="60" step="10"><output></output></label>
-    <p class="s72-note">일반 디지털 도구는 퀴즈 준비 ${QUIZ_MINUTES}분으로 두었습니다. 실제 시간은 학급과 도구에 따라 다릅니다.</p></div>
+    <p class="s72-note">일반 디지털 도구는 퀴즈 준비 ${QUIZ_MINUTES}분으로 두었습니다.</p></div>
    <div class="md-panel"><h3>같은 문제를 푸는 세 가지 방법과 교사가 쓰는 시간</h3><div class="s72-methods" id="s72-methods"></div></div></div>`,
   state:()=>({n:24,t:3,r:1,s:30}),
   render(ui,st,reset){
@@ -107,14 +107,14 @@
   {key:'1',label:'문제 정의',sub:'대상, 상황, 어려움'},{key:'2',label:'성취기준 연결',sub:'교육과정 원문 확인'},{key:'3',label:'학습 목표',sub:'관찰 가능한 행동'},{key:'4',label:'평가 계획',sub:'목표 달성의 증거'},
   {key:'5',label:'AI의 역할',sub:'학생 사용, 교사 사용'},{key:'6',label:'차시 흐름',sub:'AI 사용 전, 중, 후'},{key:'7',label:'도구와 점검',sub:'이용 조건, 윤리, 검증'},{key:'8',label:'효과 확인',sub:'기대 효과와 확인 방법'}]});
 
- L.add('goalQuiz','quiz',{hint:'학습 목표 문장입니다. <b>무엇을 보고 판단할지</b> 드러나는 목표인지 골라 봅니다. 첫 문장 외에는 이 활동을 위해 만든 예시입니다.',closing:'목표를 정했다면 다음 장의 백워드 설계에서 그 결과를 확인할 증거를 이어서 정합니다.',questions:[
+ L.add('goalQuiz','quiz',{hint:'학습 목표 문장입니다. <b>무엇을 보고 판단할지</b> 드러나는 목표인지 골라 봅니다.',closing:'목표를 정했다면 다음 장의 백워드 설계에서 그 결과를 확인할 증거를 이어서 정합니다.',questions:[
   {q:'"AI를 활용하여 인공지능을 이해한다."',short:'AI를 활용하여 인공지능을 이해한다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용과 이해가 섞여 있어 무엇을 보고 판단할지 알 수 없습니다.'},
   {q:'"분수의 덧셈에서 틀린 풀이를 찾아 고친 이유를 설명할 수 있다."',short:'틀린 풀이를 찾아 고친 이유를 설명할 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:0,why:'찾기와 설명이라는 행동이 드러나 오류 설명 기록 같은 증거로 이어집니다.'},
   {q:'"생성형 AI로 발표 자료를 만들 수 있다."',short:'생성형 AI로 발표 자료를 만들 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용이 목표가 되었습니다. 평가 증거는 AI를 사용했다는 사실이 아니라 학생이 보여 준 이해입니다.'},
   {q:'"생활 속 AI 사례의 이익과 위험을 한 가지씩 들어 정리할 수 있다."',short:'사례의 이익과 위험을 들어 정리할 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:0,why:'정리한 내용이 그대로 평가 증거가 됩니다. 모둠 토의 관찰이나 자기 평가로 확인할 수 있습니다.'},
   {q:'"AI의 편리함을 느끼고 흥미를 가진다."',short:'AI의 편리함을 느끼고 흥미를 가진다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'느낀다, 흥미를 가진다는 관찰하기 어렵습니다. 설명하기나 비교하기처럼 관찰 가능한 행동으로 고칩니다.'}]});
 
- L.add('conditionMatch','match',{hint:'활용안에 적은 메모가 <b>도구와 이용 조건</b>의 어느 점검 항목에 답하는지 짝지어 봅니다. 메모는 이 활동을 위해 만든 예시입니다.',leftTitle:'점검 항목',rightTitle:'활용안에 적은 메모(예시)',seed:8,pairs:[
+ L.add('conditionMatch','match',{hint:'활용안에 적은 메모가 <b>도구와 이용 조건</b>의 어느 점검 항목에 답하는지 짝지어 봅니다.',leftTitle:'점검 항목',rightTitle:'활용안에 적은 메모(예시)',seed:8,pairs:[
   {left:'이용 연령과 계정',right:'학생은 가입하지 않고 교사 계정으로 시연하는 화면을 함께 봄'},
   {left:'입력 정보',right:'교실 물건 사진만 쓰고 얼굴과 이름표가 나오지 않게 촬영함'},
   {left:'저장과 학습 이용',right:'입력 자료가 학습에 쓰이지 않도록 설정을 확인하고 끔'},
@@ -130,7 +130,7 @@
   ['PK','5학년 수준에 맞추어 예상을 먼저 적고 비교하는 활동과 채점 기준표를 골랐다.'],['TCK','사진 몇 장으로 만든 모델이 학습이라는 개념을 잘못 보여 주지 않는지 살폈다.'],
   ['TPACK','이 개념을 이 학생들에게 이 도구로 가르치는 것이 서로 맞는지 한 문장으로 설명했다.']];
  L.add('tpackPlace','custom',{
-  hint:'활용안을 점검하며 적은 메모입니다. 메모가 답하는 <b>지식 영역</b>을 그림에서 눌러 봅니다. 메모는 초등 실과 수업 예시를 바탕으로 만든 예시입니다.',
+  hint:'활용안을 점검하며 적은 메모입니다. 메모가 답하는 <b>지식 영역</b>을 그림에서 눌러 봅니다. 초등 실과 수업의 활용안입니다.',
   body:`<div class="md-split" style="--split:1fr 1.35fr"><div class="md-panel"><svg class="s72-venn" viewBox="0 0 420 402" role="group" aria-label="TPACK 그림. 영역을 눌러 고릅니다.">
      <circle class="s72-ring" cx="210" cy="205" r="192"/><circle cx="210" cy="140" r="105" fill="#f0a202" fill-opacity=".2" stroke="#c98a00"/><circle cx="150" cy="246" r="105" fill="#1f8a5b" fill-opacity=".18" stroke="#1f8a5b"/><circle cx="270" cy="246" r="105" fill="#3f5dae" fill-opacity=".2" stroke="#3f5dae"/>
      ${Object.entries(ZONES).map(([k,z])=>`<g class="s72-zone" data-zone="${k}" role="button" aria-label="${k}">${k==='XK'?`<rect x="${z.x-50}" y="${z.y-15}" width="100" height="30" rx="15"/><text x="${z.x}" y="${z.y}">XK 맥락</text>`
@@ -164,7 +164,7 @@
   {name:'검증 절차',opts:[{t:'결과가 그럴듯한지 살펴봄',why:'확인 계획은 있으나 무엇을 기준으로 확인하는지 모호합니다.'},{t:'따로 남긴 사진으로 예측을 확인하고 틀린 사례를 기록',ok:true},{t:'정하지 않음',why:'결과 확인 절차가 없어 틀린 예측을 알아차릴 수 없습니다.'}]}];
  const START=[0,0,1,0,2];
  L.add('planLink','custom',{
-  hint:'작성 예시의 다섯 칸을 바꾸어 가며 <b>칸과 칸이 서로 이어지는지</b> 확인합니다. 작성 예시에 없던 선택지는 이 활동을 위해 만든 것입니다.',
+  hint:'작성 예시의 다섯 칸을 바꾸어 가며 <b>칸과 칸이 서로 이어지는지</b> 확인합니다.',
   body:`<div class="md-split" style="--split:1.62fr 1fr"><div class="md-panel"><div class="s72-plan">${PLAN.map((p,i)=>`<div class="s72-prow" style="--n:${p.opts.length}"><b>${p.name}</b>${options(p.opts,i)}</div>`).join('')}</div></div>
    <div class="md-panel"><h3>칸과 칸의 연결</h3><ul class="s72-links" id="s72-links"></ul></div></div>`,
   state:()=>({pick:[...START]}),
@@ -202,7 +202,7 @@
   {name:'실행 가능성',levels:['조건 확인과 대체 방법을 갖춤','조건은 확인했으나 대체 방법이 없음','이용 조건을 확인하지 않음'],answer:2,
    text:'도구의 이용 연령과 학교 기기에서 열리는지는 아직 확인하지 못했습니다.',why:'이용 연령과 접속 환경이라는 이용 조건을 아직 확인하지 않았습니다.'}];
  L.add('rubricApply','custom',{
-  hint:'가상의 활용안에서 뽑은 여섯 문장을 <b>루브릭의 세 수준</b>으로 판단해 봅니다. 활용안은 이 활동을 위해 만든 예시이고, 발표 기준은 8주차에 적용합니다.',
+  hint:'활용안에서 뽑은 여섯 문장을 <b>루브릭의 세 수준</b>으로 판단해 봅니다. 발표 기준은 8주차에 적용합니다.',
   body:`<div class="s72-rubwrap"><table class="s72-rubric"><colgroup><col style="width:8em"><col><col style="width:11.4em"><col style="width:11.4em"><col style="width:11.4em"></colgroup>
    <thead><tr><th>기준</th><th>활용안의 문장(예시)</th>${LEVELS.map(l=>`<th>${l}</th>`).join('')}</tr></thead>
    <tbody>${RUBRIC.map((r,i)=>`<tr data-i="${i}"><th scope="row">${r.name}</th><td>${esc(r.text)}</td>${r.levels.map((l,j)=>`<td><button type="button" class="s72-level" data-j="${j}" aria-pressed="false" aria-label="${r.name}, ${LEVELS[j]}: ${l}">${l}</button></td>`).join('')}</tr>`).join('')}</tbody></table></div>`,

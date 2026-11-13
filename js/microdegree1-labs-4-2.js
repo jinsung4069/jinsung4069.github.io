@@ -43,7 +43,7 @@
   {t:'이 공식은 어떻게 나온 거예요?',mate:'c'},{t:'자의 눈금 0은 어디에 맞추나요?',mate:'p'},{t:'비율은 무엇이고 어떻게 구하나요?',mate:'h'},{t:'분모가 같아야 더할 수 있는 이유는 무엇인가요?',mate:'c'},{t:'실험 기구는 어떤 순서로 정리하나요?',mate:'p'}]];
  const GUIDE=[['정의','개념은 뜻이나 이유를 묻는 질문, 절차는 방법, 순서, 위치를 묻는 질문'],['포함 예','개념: 왜 그런가요, 무엇이 다른가요. 절차: 어떤 순서로 하나요, 어디에 쓰나요'],['제외 예','"어떻게 나온 거예요"는 방법이 아니라 이유를 묻는 말이므로 절차가 아니라 개념'],['보류 규칙','한 문장에서 개념과 절차를 함께 물으면 보류로 따로 표시']];
  L.add('labelAgree','custom',{
-  hint:'학생 질문을 <b>개념</b>과 <b>절차</b>로 나누고 짝과 비교합니다. 문장과 짝의 레이블은 이 활동을 위해 만든 예시입니다.',
+  hint:'학생 질문을 <b>개념</b>과 <b>절차</b>로 나누고 짝과 비교합니다.',
   body:'<div class="s42-agree"></div>',
   state:()=>({phase:0,a:[[],[]],shown:[false,false]}),
   render(ui,st,reset){
@@ -92,7 +92,7 @@
   return out;
  }
  L.add('cleanTable','custom',{
-  hint:'예시로 만든 통학 기록입니다. <b>빈칸, 180분, 섞인 표기</b>의 처리 방법을 바꾸며 평균과 중앙값이 어떻게 달라지는지 봅니다.',
+  hint:'한 학급의 통학 기록입니다. <b>빈칸, 180분, 섞인 표기</b>의 처리 방법을 바꾸며 평균과 중앙값이 어떻게 달라지는지 봅니다.',
   body:`<div class="md-split" style="--split:1fr 1.75fr"><div class="md-panel"><h3>우리 반 통학 기록(예시)</h3><table class="s42-tbl" id="s42-clean" style="--fs:.9em;--pad:.34em"><thead><tr><th>번호</th><th>통학 방법</th><th>통학 시간(분)</th></tr></thead><tbody></tbody></table><p class="s42-note" id="s42-groups" style="margin-top:auto"></p></div>
    <div class="md-panel" style="gap:.45em">${CLEAN.map(([k,label,opts])=>`<div class="s42-ctl"><b>${label}</b><div class="s42-seg" data-k="${k}">${opts.map(([v,t])=>`<button type="button" data-v="${v}">${t}</button>`).join('')}</div></div>`).join('')}
    <div class="s42-tiles"><div class="s42-tile">계산에 쓴 사례<b id="s42-n"></b></div><div class="s42-tile">평균 통학 시간<b id="s42-mean"></b></div><div class="s42-tile">중앙값<b id="s42-median"></b></div></div>
@@ -152,7 +152,7 @@
   <rect x="${BX(12)}" y="42" width="${BX(26.5)-BX(12)}" height="56" fill="#ebf0fc" stroke="#3f5dae" stroke-width="2"/><line x1="${BX(17.5)}" y1="42" x2="${BX(17.5)}" y2="98" stroke="#3f5dae" stroke-width="3.5"/><circle cx="${BX(58)}" cy="70" r="5.5" fill="#fff" stroke="#c2413b" stroke-width="2.5"/>
   <text x="230" y="166" text-anchor="middle" font-size="12" fill="#1c2c4c">통학 시간(분)</text></svg>`;
  const chart=(text,svg)=>`${esc(text)}<div class="s42-chart">${svg}</div>`;
- L.add('chartQuiz','quiz',{hint:'한 학급 20명의 통학 시간을 그린 그래프입니다. 값은 이 활동을 위해 만든 예시입니다.',closing:'학습 전에 분포를 보면 결측, 치우침, 이상치를 먼저 발견할 수 있습니다.',questions:[
+ L.add('chartQuiz','quiz',{hint:'한 학급 20명의 통학 시간을 그린 그래프입니다.',closing:'학습 전에 분포를 보면 결측, 치우침, 이상치를 먼저 발견할 수 있습니다.',questions:[
   {html:chart('히스토그램에서 학생이 가장 많이 몰린 구간은 어디일까요?',histogram),short:'값이 몰린 구간 읽기',columns:4,choices:['0분 이상 10분 미만','10분 이상 20분 미만','20분 이상 30분 미만','30분 이상 40분 미만'],answer:1,why:'10분 이상 20분 미만의 막대가 8명으로 가장 높습니다. 히스토그램은 값이 몰린 구간을 보여 줍니다.'},
   {html:chart('통학 시간이 30분 이상인 학생은 모두 몇 명일까요?',histogram),short:'막대의 높이 더하기',choices:['3명','4명','5명'],answer:1,why:'30분 이상 40분 미만 3명, 50분 이상 60분 미만 1명을 더하면 4명입니다.'},
   {html:chart('같은 자료의 상자그림입니다. 상자 안의 굵은 선은 무엇을 나타낼까요?',boxplot),short:'상자 안의 선',choices:['평균','중앙값','가장 큰 값'],answer:1,why:'상자그림은 중앙값과 퍼짐, 이상치 후보를 보여 줍니다. 이 자료의 중앙값은 17.5분입니다.'},
@@ -196,7 +196,7 @@
   return out;
  }
  L.add('dataLab','custom',{
-  hint:'사진 한 장을 <b>사물의 모양</b>과 <b>배경 밝기</b> 두 숫자로 줄인 장난감 모델입니다. 실제 Teachable Machine의 결과가 아닙니다.',
+  hint:'사진 한 장을 <b>사물의 모양</b>과 <b>배경 밝기</b> 두 숫자로 줄인 장난감 모델입니다.',
   body:`<div class="s42-conds">${CONDS.map(c=>`<button type="button" data-c="${c.id}">${c.name}</button>`).join('')}</div>
    <div class="md-split" style="--split:1.5fr 1fr;gap:1em"><div class="md-panel" style="gap:.3em;padding:.5em .7em"><svg class="s42-svg" id="s42-plot" viewBox="0 0 640 330" role="img" aria-label="학습 사진과 평가 사진의 분포"></svg>
    <div class="s42-legend"><span><i style="background:#3f5dae;border-radius:50%"></i>풀 레이블 학습 사진</span><span><i style="background:#f0a202"></i>지우개 레이블 학습 사진</span><span>큰 동그라미와 큰 네모는 새 배경에서 찍은 풀, 지우개 평가 사진</span></div></div>

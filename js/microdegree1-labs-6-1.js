@@ -42,7 +42,7 @@
  const MODES=[{label:'집단, 동아리, 자격 모두',keys:[0,1,2]},{label:'집단 항목 지움',keys:[1,2]},{label:'집단과 동아리 항목 지움',keys:[2]}];
  const cell=(k,v)=>k===0?`${v} 집단`:k===1?`동아리 ${v}`:v?'자격 충족':'자격 미달';
  L.add('s61Proxy','custom',{
-  hint:'과거 합격 기록을 배운 채용 모델입니다. <b>모델에 보여 주는 항목</b>을 지우며 새 지원자의 결과를 봅니다. 기록과 지원자는 이 활동을 위해 만든 예시입니다.',
+  hint:'과거 합격 기록을 배운 채용 모델입니다. <b>모델에 보여 주는 항목</b>을 지우며 새 지원자의 결과를 봅니다.',
   body:`<div class="md-chips s61-bar"><span>모델에 보여 주는 항목</span>${MODES.map((m,i)=>`<button type="button" class="md-chip" data-mode="${i}">${m.label}</button>`).join('')}</div>
    <div class="md-split" style="--split:1.2fr 1fr"><div class="md-panel"><h3>모델이 과거 기록 40건에서 배운 것</h3><table class="md-check s61-table"><thead><tr><th>같은 조건의 과거 지원자</th><th>지원</th><th>합격</th><th>합격 비율</th><th>모델의 예측</th></tr></thead><tbody id="s61-px-rows"></tbody></table>
    <p class="s61-note" style="margin-top:auto">과거 지원자는 가 집단 30명, 나 집단 10명입니다. 가 집단은 주로 동아리 A, 나 집단은 주로 동아리 B였습니다. 자격을 충족한 지원자 가운데 가 집단은 19명 중 15명, 나 집단은 6명 중 1명이 합격했습니다. 모델은 합격 비율이 50% 이상인 조건을 합격으로 예측합니다.</p></div>
@@ -72,7 +72,7 @@
 
  // A recognizer that only knows the expressions it met in training. Each group speaks with ten expressions of its own.
  L.add('s61DataMix','custom',{
-  hint:'학습 자료 20건에 <b>나 집단 자료</b>를 몇 건 넣을지 바꾸어 봅니다. 본 적 있는 표현만 알아듣는 아주 단순한 음성 인식 모델을 가정한 계산 예시입니다.',
+  hint:'학습 자료 20건에 <b>나 집단 자료</b>를 몇 건 넣을지 바꾸어 봅니다. 음성 인식 모델은 학습 자료에서 본 적 있는 표현만 알아듣습니다.',
   body:`<div class="md-split" style="--split:1fr 1.2fr"><div class="md-panel"><h3>학습 자료 20건의 구성</h3>
    <label class="md-slider" style="grid-template-columns:6.4em 1fr 6.2em">나 집단 자료<input type="range" id="s61-dm-k" min="0" max="10" step="2" aria-label="학습 자료 20건 중 나 집단 자료 수"><output id="s61-dm-out"></output></label>
    <div class="s61-mix" id="s61-dm-mix" aria-hidden="true"></div><p class="s61-legend"><span><i data-k="hit"></i><span id="s61-dm-a"></span></span><span><i data-k="wrong"></i><span id="s61-dm-b"></span></span></p>
@@ -111,7 +111,7 @@
  // The worked example of the slide before: 100 students per grade, 50 and 20 of them really need support.
  const GRADES=[{name:'1학년',need:50},{name:'2학년',need:20}];
  L.add('s61Criteria','custom',{
-  hint:'두 학년의 <b>추천 인원</b>을 바꾸어 세 기준을 한꺼번에 맞출 수 있는지 확인합니다. 도움이 필요한 학생부터 추천된다고 가정한 계산 예시입니다.',
+  hint:'두 학년의 <b>추천 인원</b>을 바꾸어 세 기준을 한꺼번에 맞출 수 있는지 확인합니다. 도움이 필요한 학생부터 추천됩니다.',
   body:`<div class="md-split" style="--split:1.6fr 1fr"><div class="md-panel"><div class="s61-grades">${GRADES.map((g,i)=>`<div class="s61-grade" data-g="${i}"><h3>${g.name} 100명<small>도움이 필요한 학생 ${g.need}명</small></h3>
    <label class="md-slider" style="grid-template-columns:4.4em 1fr 6.6em">추천 인원<input type="range" min="0" max="100" step="5" aria-label="${g.name} 추천 인원"><output></output></label>
    <div class="s61-unit" aria-hidden="true"></div>
@@ -156,7 +156,7 @@
   {name:'AI 사용 사실 알리기',q:'AI로 만든 학습 자료의 반응이 좋습니다. AI 사용 사실을 밝히면 자료를 덜 믿는 사람이 생길 수 있습니다.',options:[['v','정직한 교사라면 AI 사용 사실과 한계를 숨기지 않는가'],['d','반응과 관계없이 사용 사실을 알린다는 규칙을 지키는가'],['u','밝힐 때와 밝히지 않을 때 학생이 얻는 이익은 어느 쪽이 큰가']]},
   {name:'자율주행차의 규칙',q:'자율주행차가 피할 수 없는 사고에서 보행자와 탑승자 중 누구를 보호할지, 설계자가 미리 규칙으로 정해야 합니다.',options:[['u','피해를 입는 사람의 수가 가장 적어지는가'],['v','책임 있는 설계자라면 결정의 이유를 스스로 설명할 수 있는가'],['d','수와 관계없이 한 사람이라도 수단으로 대하지 않는가']]}];
  L.add('s61Views','custom',{
-  hint:'세 상황에서 <b>가장 먼저 따질 질문</b>을 고르면 세 관점 가운데 어디에 가까운지 보여 줍니다. 상황은 이 활동을 위해 만든 예시이며 정해진 답은 없습니다.',
+  hint:'세 상황에서 <b>가장 먼저 따질 질문</b>을 고르면 세 관점 가운데 어디에 가까운지 보여 줍니다. 정해진 답은 없습니다.',
   body:'<div class="md-quiz" id="s61-vw"></div>',
   state:()=>({i:0,picks:[]}),
   render(ui,st,reset){
@@ -177,7 +177,7 @@
    box.addEventListener('click',e=>{const b=e.target.closest('.md-choice');if(b&&st.picks[st.i]===undefined){st.picks[st.i]=b.dataset.id;draw()}});draw();
   }});
 
- L.add('s61Principle','match',{hint:'교육분야 인공지능 윤리원칙 여섯 가지와 학교 장면을 짝지어 봅니다. 장면은 이 활동을 위해 만든 예시입니다.',leftTitle:'교육분야 인공지능 윤리원칙',rightTitle:'학교 장면 예시',seed:13,pairs:[
+ L.add('s61Principle','match',{hint:'교육분야 인공지능 윤리원칙 여섯 가지와 학교 장면을 짝지어 봅니다.',leftTitle:'교육분야 인공지능 윤리원칙',rightTitle:'학교 장면 예시',seed:13,pairs:[
   {left:'학습자의 주도성과 다양성 보장',right:'AI가 추천한 과제를 학생이 스스로 고르고 바꿀 수 있게 한다'},
   {left:'교수자의 전문성 존중',right:'AI 결과는 참고 자료로 두고 최종 판단은 교사가 내린다'},
   {left:'교육의 기회균등과 공정성 보장',right:'기기가 없는 학생이 보충 학습 대상에서 빠지지 않았는지 살핀다'},
@@ -191,7 +191,7 @@
   {label:'제34조 사업자 책무',question:'결과의 근거와 정정 절차가 있는가'},{label:'제35조 영향평가',question:'도입 전 평가 결과를 볼 수 있는가'},
   {label:'제43조 과태료',question:'약관과 화면에 고지가 있는가'}]});
 
- L.add('s61Analysis','sort',{soft:true,hint:'사례 E 학습 추천을 분석한 메모 여섯 장을 분석표의 다섯 항목에 놓아 봅니다. 메모는 이 활동을 위해 만든 예시입니다.',
+ L.add('s61Analysis','sort',{soft:true,hint:'사례 E 학습 추천을 분석한 메모 여섯 장을 분석표의 다섯 항목에 놓아 봅니다.',
   bins:[{id:'source',label:'편향의 원천'},{id:'people',label:'영향받는 사람'},{id:'criteria',label:'공정성 기준'},{id:'rule',label:'윤리 원칙과 법'},{id:'fix',label:'개선 방법'}],cards:[
   {id:'a',label:'학습 참여를 접속 시간만으로 판단함',answer:'source',why:'대리 지표를 고른 설계 단계에서 생긴 편향입니다.'},
   {id:'b',label:'기기가 없는 학생이 보충 학습 기회를 놓침',answer:'people',why:'누가 어떤 기회에서 불리해졌는지를 적은 메모입니다.'},
