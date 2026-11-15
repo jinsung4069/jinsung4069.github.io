@@ -4,7 +4,7 @@
 .lecture-page .courses>h2{font-size:22px;margin:28px 0 12px}
 .lecture-page .course-entry{padding:20px 24px;margin:0 0 20px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-white)}
 .lecture-page .course-entry h3{font-size:22px;line-height:1.4}.lecture-page .course-entry p{margin:8px 0;line-height:1.7}.lecture-page .course-entry strong{margin-top:12px}
-.lecture-page .ce-card{min-width:0}.lecture-page .ce-card>div{min-width:0}.lecture-page .ce-card h2{font-size:21px}.lecture-page .ce-card p{font-size:15px}
+.lecture-page .ce-card{min-width:0}.lecture-page .ce-card>div:not(.ce-number){min-width:0}.lecture-page .ce-card h2{font-size:21px}.lecture-page .ce-card p{font-size:15px}
 .lecture-page .learning-library{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:20px}.lecture-page .learning-library h2{font-size:20px;margin:0 0 12px}.lecture-page .learning-library p{font-size:15px;margin:0}
 .lecture-catalog-search{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:24px 0}.lecture-catalog-search label{display:grid;gap:6px;flex:1;min-width:180px;font-size:15px;font-weight:700}.lecture-catalog-search input{min-height:44px;padding:10px 12px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-white);color:var(--color-text);font:inherit;width:100%}.lecture-catalog-search p{margin:0;padding:10px 0;font-size:14px;color:var(--color-text-muted)}
 .lecture-page [hidden]{display:none!important}

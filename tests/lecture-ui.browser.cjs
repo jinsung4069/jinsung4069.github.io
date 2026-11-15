@@ -27,7 +27,7 @@ function htmlFiles(folder){return fs.readdirSync(folder,{withFileTypes:true}).fl
    const html=fs.readFileSync(file,'utf8');assert(html.includes('/css/lecture-ui.css'),file+' shared layout');
    if(!/class="ce-viewer|id="presentation"/.test(html))continue;
    const deck=path.dirname(file).replaceAll(path.sep,'/').replace(/^lectures\//,'');if(only&&!only.includes(deck))continue;
-   const algorithm=deck.startsWith('ai-algorithm/'),input=algorithm?'#pageNumber':'#ce-page';
+   const algorithm=html.includes('id="pageNumber"'),input=algorithm?'#pageNumber':'#ce-page';
    await page.setViewportSize({width:1440,height:1000});await page.goto(base+'/'+path.dirname(file).replaceAll(path.sep,'/')+'/',{waitUntil:'domcontentloaded'});await page.waitForSelector('[data-ready=true]');
    assert.equal(await page.locator('.lecture-tools').count(),1,deck+' one toolbar');assert.equal(await page.locator('.ce-stage .ce-toolbar').count(),0,deck+' no overlay');
    const n=Number(await page.locator(input).getAttribute('max'));assert(n>0,deck+' total');
