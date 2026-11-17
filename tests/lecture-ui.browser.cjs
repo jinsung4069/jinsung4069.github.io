@@ -1,5 +1,5 @@
 // Exercise every slide in the four course catalogs, using their actual renderers.
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=require('./unlocked-playwright.cjs');
 const assert=require('node:assert/strict');
 const {default:AxeBuilder}=require('@axe-core/playwright');
 const fs=require('node:fs'),path=require('node:path');

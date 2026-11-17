@@ -43,5 +43,15 @@ class SiteCheckTests(unittest.TestCase):
         p.write_text(p.read_text() + '<a href="/index.html">Home</a>', encoding='utf-8')
         self.assertTrue(any('link should use a folder URL' in e for e in self.errors()))
 
+    def test_lecture_page_needs_gate_and_noindex(self):
+        page = '<head>{}<title>L</title><link rel="canonical" href="https://jinsung4069.github.io/lectures/c/1/"></head>'
+        self.write('lectures/c/1/index.html', page.format(''))
+        self.assertTrue(any('must start with the date gate' in e for e in self.errors()))
+        self.write('js/lecture-gate.js', '')
+        self.write('lectures/c/1/index.html', page.format('<script src="/js/lecture-gate.js?v=1"></script><meta name="robots" content="noindex">'))
+        self.assertEqual(self.errors(), [])
+        self.write('sitemap.xml', '<urlset><url><loc>https://jinsung4069.github.io/lectures/c/1/</loc></url></urlset>')
+        self.assertTrue(any('gated lecture page is listed' in e for e in self.errors()))
+
 if __name__ == '__main__':
     unittest.main()

@@ -22,6 +22,8 @@ IMAGES = ROOT / 'images/lectures' / COURSE
 PAGES = ROOT / 'lectures' / COURSE
 VERSION = '20261013a'
 UI_VERSION = '20261024ui'
+# Every lecture page starts with the date gate and stays out of search results; course lists stay open.
+GATE = '<script src="/js/lecture-gate.js?v=20261117a"></script><meta name="robots" content="noindex">'
 PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide player
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 # Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
@@ -371,7 +373,7 @@ def write_pages(only=None):
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
         lab_script = f'<script src="/js/microdegree1-labs-{c["id"]}.js?v={SESSION_VERSIONS.get(c["id"], UI_VERSION)}"></script>' if (ROOT / f'js/microdegree1-labs-{c["id"]}.js').exists() else ''
-        head = HEAD.format(print_js='<script src="/js/lecture-print.js?v=20261024ui"></script>',
+        head = HEAD.format(print_js=GATE + '<script src="/js/lecture-print.js?v=20261024ui"></script>',
                            print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">', catalog_js='',
                            version=VERSION, path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(c['summary']),
                            title=f'{escape(label)} | 마이크로디그리 과정1 | 전인성')

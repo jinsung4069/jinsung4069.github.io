@@ -12,8 +12,8 @@ Freesentation fonts installed, so that LibreOffice lays out text as PowerPoint d
     python scripts/sync_ai_algorithm_linux.py --source <pptx> --deck week11 --work-dir <tmp dir>
     python scripts/sync_ai_algorithm_linux.py --pages-only
 
-The course page (lectures/ai-algorithm/index.html) is edited by hand: add the card of a new deck there,
-and its address to sitemap.xml.
+The course page (lectures/ai-algorithm/index.html) is edited by hand: add the card of a new deck there.
+Deck pages are gated and noindex, so they stay out of sitemap.xml.
 """
 from pathlib import Path
 from html import escape
@@ -254,7 +254,7 @@ def write_pages(only=None):
                    + button('ce-open-links', 'link', '관련 링크', 'hidden') + button('ce-zoom', 'zoom-in', '확대', 'aria-pressed="false"')
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
-        head = HEAD.format(print_js=f'<script src="/js/lecture-print.js?v={md.UI_VERSION}"></script>',
+        head = HEAD.format(print_js=md.GATE + f'<script src="/js/lecture-print.js?v={md.UI_VERSION}"></script>',
                            print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">', catalog_js='',
                            path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(c['summary']),
                            title=f'{escape(label)} | {COURSE_TITLE} | 전인성')

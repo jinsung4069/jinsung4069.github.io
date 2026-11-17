@@ -1,6 +1,6 @@
 // Usage: PLAYWRIGHT_MODULE=<installed module> node tests/lecture-quiz.browser.cjs [base URL] [screenshot folder]
 // Quiz slides of computer education lecture 10 show the question first and the answer on the next step.
-const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const {chromium} = require('./unlocked-playwright.cjs');
 const assert = require('node:assert/strict');
 const base = process.argv[2] || 'http://127.0.0.1:8771', shots = process.argv[3];
 (async () => {
