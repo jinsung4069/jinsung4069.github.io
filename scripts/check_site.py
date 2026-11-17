@@ -42,7 +42,7 @@ class Document(HTMLParser):
 
 def check_site(root):
     errors, references = [], set()
-    pages = []
+    pages, lectures = [], []
 
     def error(message):
         errors.append(message)
@@ -92,6 +92,10 @@ def check_site(root):
                     expected = ORIGIN + url[:-len('index.html')]
                     if doc.canonical != expected:
                         error(f'{url}: expected canonical {expected}')
+                if re.fullmatch(r'/lectures/[^/]+/[^/]+/index\.html', url):
+                    lectures.append(ORIGIN + url[:-len('index.html')])
+                    if not re.search(r'<head[^>]*>\s*<script src="/js/lecture-gate\.js', text) or '<meta name="robots" content="noindex">' not in text:
+                        error(f'{url}: lecture page must start with the date gate and be noindex')
                 if '/js/main.js' in text:
                     if '/js/preferences.js' not in text or doc.main_count != 1 or not doc.has_skip:
                         error(f'{url}: shared page needs preferences, one main landmark and a skip link')
@@ -124,6 +128,8 @@ def check_site(root):
             error('sitemap.xml: duplicate URL')
         for url in urls:
             local_reference(url, '/sitemap.xml', 'href')
+            if url in lectures:
+                error(f'sitemap.xml: gated lecture page is listed: {url}')
     except (OSError, ET.ParseError) as exc:
         error(f'sitemap.xml: {exc}')
     if not (root / '404.html').is_file():

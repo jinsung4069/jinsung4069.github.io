@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=require('./unlocked-playwright.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 (async()=>{
  const base=process.argv[2]||'http://127.0.0.1:8765',out=process.argv[3]||'tmp/chapter4-html/qa';fs.mkdirSync(out,{recursive:true});

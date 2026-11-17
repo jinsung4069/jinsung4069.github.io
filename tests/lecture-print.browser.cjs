@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const {chromium}=require('./unlocked-playwright.cjs');
 const assert=require('assert');
 (async()=>{
  const browser=await chromium.launch({headless:true,...(process.env.PW_CHANNEL==='none'?{}:{channel:process.env.PW_CHANNEL||'msedge'})});const base=process.argv[2]||'http://127.0.0.1:8765';

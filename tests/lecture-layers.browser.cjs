@@ -1,6 +1,6 @@
 // Selectable text lines and enlargeable pictures of the image-based decks, and picture enlargement in AI education chapters 1 and 3.
 // Usage: node tests/lecture-layers.browser.cjs http://127.0.0.1:8765 [deck,deck]   e.g. computer-education2/2,microdegree1/1-1
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=require('./unlocked-playwright.cjs');
 const assert=require('node:assert/strict');
 (async()=>{
  const base=process.argv[2]||'http://127.0.0.1:8765',only=process.argv[3]?.split(',');

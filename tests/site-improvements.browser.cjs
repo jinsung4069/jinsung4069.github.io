@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const {chromium}=require('./unlocked-playwright.cjs');
 const {default:AxeBuilder}=require('@axe-core/playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');

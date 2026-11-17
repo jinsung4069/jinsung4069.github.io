@@ -1,5 +1,5 @@
 // Usage: PLAYWRIGHT_MODULE=<installed module> node tests/computer-education2-games.browser.cjs [base URL]
-const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const {chromium} = require('./unlocked-playwright.cjs');
 const assert = require('node:assert/strict');
 const base = process.argv[2] || 'http://127.0.0.1:8771';
 const last = {8:84, 9:30, 10:62, 11:44}, legacy = {9:26, 10:26, 11:10};

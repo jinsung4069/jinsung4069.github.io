@@ -189,7 +189,7 @@ def write_pages(only=None):
                    + button('ce-open-links', 'link', '관련 링크', 'hidden') + button('ce-zoom', 'zoom-in', '확대', 'aria-pressed="false"')
                    + button('ce-fullscreen', 'maximize', '전체 화면', 'aria-keyshortcuts="f"') + button('ce-print', 'printer', '인쇄'))
         close = lambda ident: button(ident, 'x', '닫기', 'data-close')
-        head = HEAD.format(print_js=f'<script src="/js/lecture-print.js?v={UI_VERSION}"></script>',
+        head = HEAD.format(print_js=md.GATE + f'<script src="/js/lecture-print.js?v={UI_VERSION}"></script>',
                            print_css='<link rel="stylesheet" href="/css/lecture-print.css?v=20260915print1">',
                            path=f'/lectures/{COURSE}/{c["id"]}/', description=escape(f'{c["event"]}, {c["summary"]}'),
                            title=f'{escape(c["title"])} | {COURSE_TITLE} | 전인성')
