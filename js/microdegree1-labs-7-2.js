@@ -33,19 +33,19 @@
 .md-lab .s72-level{display:block;width:100%;padding:.3em .45em;border:1px solid #9fb0dc;border-radius:.45em;background:#fff;color:#1c2c4c;font-size:.94em;line-height:1.3;text-align:center;cursor:pointer}`);
  const options=(list,key)=>list.map((o,j)=>`<button type="button" class="s72-opt" data-k="${key}" data-j="${j}" aria-pressed="false">${esc(o.t)}</button>`).join('');
 
- L.add('startSort','sort',{hint:'활용안의 첫 문장입니다. <b>도구에서 출발한 계획</b>인지 <b>문제에서 출발한 계획</b>인지 나누어 봅니다.',
-  bins:[{id:'tool',label:'도구에서 출발',sub:'도구를 수업 어디에 넣을지 먼저 고민'},{id:'problem',label:'문제에서 출발',sub:'학생이나 교사가 어려워하는 지점을 먼저 정함'}],cards:[
-  {id:'a',label:'새로 알게 된 그림 생성 AI를 미술 시간에 써 보려 합니다',answer:'tool',why:'도구가 먼저 정해져 있고 누가 무엇을 어려워하는지는 드러나지 않습니다.'},
-  {id:'b',label:'4학년 학생 일부가 설명하는 글을 쓸 때 문단의 중심 문장을 세우지 못합니다',answer:'problem',why:'대상, 상황, 어려움이 드러나 여러 대안을 비교할 수 있습니다.'},
+ L.add('startSort','sort',{hint:'활용안의 첫 문장입니다. <b>도구 중심 계획</b>인지 <b>문제 중심 계획</b>인지 나누어 봅니다.',
+  bins:[{id:'tool',label:'도구 중심',sub:'도구를 넣을 수업부터 찾음'},{id:'problem',label:'문제 중심',sub:'학생이나 교사가 어려워하는 부분부터 정함'}],cards:[
+  {id:'a',label:'새로 알게 된 그림 생성 AI를 미술 시간에 써 보려 합니다',answer:'tool',why:'도구가 먼저 정해져 있고 누가 무엇을 어려워하는지는 알 수 없습니다.'},
+  {id:'b',label:'4학년 학생 일부가 설명하는 글을 쓸 때 문단의 중심 문장을 세우지 못합니다',answer:'problem',why:'대상, 상황, 어려움이 분명해 여러 대안을 비교할 수 있습니다.'},
   {id:'c',label:'연수에서 배운 챗봇을 어느 단원에 넣을지 찾고 있습니다',answer:'tool',why:'도구를 넣을 자리를 찾는 계획입니다. 도구 사용이 목표가 되기 쉽습니다.'},
-  {id:'d',label:'서술형 과제의 피드백이 늦어져 학생이 고쳐 쓸 때를 놓칩니다',answer:'problem',why:'피드백이 늦어지는 과제라는 어려움에서 출발합니다. AI는 여러 대안 중 하나가 됩니다.'},
-  {id:'e',label:'우리 반에 AI 튜터를 도입하고 싶습니다',answer:'tool',why:'해결책만 있고 누가 무엇을 어려워하는지 드러나지 않습니다.'},
+  {id:'d',label:'서술형 과제의 피드백이 늦어져 학생이 고쳐 쓸 때를 놓칩니다',answer:'problem',why:'피드백이 늦어지는 과제라는 어려움부터 정했습니다. AI는 여러 대안 중 하나입니다.'},
+  {id:'e',label:'우리 반에 AI 튜터를 도입하고 싶습니다',answer:'tool',why:'해결책만 있고 누가 무엇을 어려워하는지 알 수 없습니다.'},
   {id:'f',label:'5학년 학생 일부가 분수의 덧셈에서 분모끼리 더하는 오류를 스스로 알아차리지 못합니다',answer:'problem',why:'해결 방법을 문장에서 뺐기 때문에 여러 대안을 비교할 수 있습니다.'}]});
 
  // A problem statement assembled from three elements. Each option carries the diagnosis shown beside the sentence.
  const ELEMENTS=[
-  {name:'누가',opts:[{t:'(비워 둠)',tone:'bad',note:'비어 있음'},{t:'우리 반에서',tone:'warn',note:'누가 어려워하는지 분명하지 않음'},{t:'6학년 학생 일부가',tone:'good',note:'대상이 드러남'}]},
-  {name:'어떤 상황에서',opts:[{t:'(비워 둠)',tone:'bad',note:'비어 있음'},{t:'국어 시간에',tone:'warn',note:'어떤 활동인지 분명하지 않음'},{t:'주장하는 글을 고쳐 쓸 때',tone:'good',note:'상황이 드러남'}]},
+  {name:'누가',opts:[{t:'(비워 둠)',tone:'bad',note:'비어 있음'},{t:'우리 반에서',tone:'warn',note:'누가 어려워하는지 분명하지 않음'},{t:'6학년 학생 일부가',tone:'good',note:'대상이 분명함'}]},
+  {name:'어떤 상황에서',opts:[{t:'(비워 둠)',tone:'bad',note:'비어 있음'},{t:'국어 시간에',tone:'warn',note:'어떤 활동인지 분명하지 않음'},{t:'주장하는 글을 고쳐 쓸 때',tone:'good',note:'상황이 분명함'}]},
   {name:'무엇이 어려운가',opts:[{t:'AI 글쓰기 도우미가 필요합니다',tone:'bad',note:'어려움이 아니라 해결책',fix:true},{t:'글쓰기 능력이 부족합니다',tone:'warn',note:'모호한 단어, 관찰하기 어려움'},{t:'근거가 주장을 뒷받침하는지 스스로 점검하지 못합니다',tone:'good',note:'관찰할 수 있는 어려움'}]}];
  L.add('problemBuilder','custom',{
   hint:'세 요소에서 표현을 하나씩 골라 <b>문제 정의 문장</b>을 만듭니다. 어느 요소가 빠졌거나 흐린지 오른쪽에서 확인합니다.',
@@ -61,10 +61,10 @@
     ui.q('#s72-sentence').textContent=got.filter((o,i)=>i===2||st.pick[i]>0).map(o=>o.t).join(' ')+'.';
     const compare=fixed?['bad','해결책이 정해져 비교할 수 없음']:all?['good','여러 대안을 비교할 수 있음']:['warn','세 요소가 분명해야 비교할 수 있음'];
     ui.q('#s72-diag').innerHTML=ELEMENTS.map((el,i)=>`<li><b>${el.name}</b><span data-tone="${tone[i]}">${got[i].note}</span></li>`).join('')+`<li><b>대안 비교</b><span data-tone="${compare[0]}">${compare[1]}</span></li>`;
-    const left=tone.filter(t=>t!=='good').length,v=ui.q('#s72-verdict');v.textContent=all?'세 요소가 드러난 문제 정의 문장':`고쳐 쓸 요소 ${left}개`;v.dataset.tone=all?'good':'bad';
+    const left=tone.filter(t=>t!=='good').length,v=ui.q('#s72-verdict');v.textContent=all?'세 요소가 분명한 문제 정의 문장':`고쳐 쓸 요소 ${left}개`;v.dataset.tone=all?'good':'bad';
     const empty=ELEMENTS.filter((_,i)=>i<2&&st.pick[i]===0).map(el=>el.name);
-    ui.say(all?'대상, 상황, 어려움이 드러나 여러 대안을 비교할 수 있습니다. 문장에 해결 방법은 들어 있지 않습니다.'
-     :fixed&&empty.length===2?'해결책만 있고 누가 무엇을 어려워하는지 드러나지 않습니다. 세 요소를 하나씩 바꾸어 보세요.'
+    ui.say(all?'대상, 상황, 어려움이 분명해 여러 대안을 비교할 수 있습니다. 문장에 해결 방법은 들어 있지 않습니다.'
+     :fixed&&empty.length===2?'해결책만 있고 누가 무엇을 어려워하는지 알 수 없습니다. 세 요소를 하나씩 바꾸어 보세요.'
      :fixed?'해결 방법을 문장에서 빼야 대안을 비교할 수 있습니다. 무엇이 어려운지로 바꾸어 보세요.'
      :empty.length?`${empty.join(', ')} 요소가 비어 있습니다.`:'분명하지 않은 표현이 남았습니다. 모호한 단어는 관찰할 수 있는 행동으로 고칩니다.',all?'good':fixed?'bad':'');
    }
@@ -103,16 +103,16 @@
    draw();
   }});
 
- L.add('flowOrder','order',{hint:'다음 장을 보기 전에 활용안 설계의 <b>여덟 단계</b>를 순서대로 놓아 봅니다. 평가 계획은 차시 흐름보다 앞일까요, 뒤일까요?',columns:4,seed:5,from:'먼저',to:'나중',items:[
+ L.add('flowOrder','order',{hint:'다음 장을 보기 전에 활용안 설계의 <b>여덟 단계</b>를 순서대로 놓아 봅니다. 평가 계획은 차시 활동보다 앞일까요, 뒤일까요?',columns:4,seed:5,from:'먼저',to:'나중',items:[
   {key:'1',label:'문제 정의',sub:'대상, 상황, 어려움'},{key:'2',label:'성취기준 연결',sub:'교육과정 원문 확인'},{key:'3',label:'학습 목표',sub:'관찰 가능한 행동'},{key:'4',label:'평가 계획',sub:'목표 달성의 증거'},
-  {key:'5',label:'AI의 역할',sub:'학생 사용, 교사 사용'},{key:'6',label:'차시 흐름',sub:'AI 사용 전, 중, 후'},{key:'7',label:'도구와 점검',sub:'이용 조건, 윤리, 검증'},{key:'8',label:'효과 확인',sub:'기대 효과와 확인 방법'}]});
+  {key:'5',label:'AI의 역할',sub:'학생 사용, 교사 사용'},{key:'6',label:'차시 활동',sub:'AI 사용 전, 중, 후'},{key:'7',label:'도구와 점검',sub:'이용 조건, 윤리, 검증'},{key:'8',label:'효과 확인',sub:'기대 효과와 확인 방법'}]});
 
- L.add('goalQuiz','quiz',{hint:'학습 목표 문장입니다. <b>무엇을 보고 판단할지</b> 드러나는 목표인지 골라 봅니다.',closing:'목표를 정했다면 다음 장의 백워드 설계에서 그 결과를 확인할 증거를 이어서 정합니다.',questions:[
-  {q:'"AI를 활용하여 인공지능을 이해한다."',short:'AI를 활용하여 인공지능을 이해한다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용과 이해가 섞여 있어 무엇을 보고 판단할지 알 수 없습니다.'},
-  {q:'"분수의 덧셈에서 틀린 풀이를 찾아 고친 이유를 설명할 수 있다."',short:'틀린 풀이를 찾아 고친 이유를 설명할 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:0,why:'찾기와 설명이라는 행동이 드러나 오류 설명 기록 같은 증거로 이어집니다.'},
-  {q:'"생성형 AI로 발표 자료를 만들 수 있다."',short:'생성형 AI로 발표 자료를 만들 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용이 목표가 되었습니다. 평가 증거는 AI를 사용했다는 사실이 아니라 학생이 보여 준 이해입니다.'},
-  {q:'"생활 속 AI 사례의 이익과 위험을 한 가지씩 들어 정리할 수 있다."',short:'사례의 이익과 위험을 들어 정리할 수 있다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:0,why:'정리한 내용이 그대로 평가 증거가 됩니다. 모둠 토의 관찰이나 자기 평가로 확인할 수 있습니다.'},
-  {q:'"AI의 편리함을 느끼고 흥미를 가진다."',short:'AI의 편리함을 느끼고 흥미를 가진다',choices:['평가 증거로 이어지는 목표','고쳐 쓸 목표'],answer:1,why:'느낀다, 흥미를 가진다는 관찰하기 어렵습니다. 설명하기나 비교하기처럼 관찰 가능한 행동으로 고칩니다.'}]});
+ L.add('goalQuiz','quiz',{hint:'학습 목표 문장입니다. <b>무엇을 보고 판단할지</b> 분명한 목표인지 골라 봅니다.',closing:'목표를 정했다면 다음 장의 백워드 설계에서 그 결과를 확인할 증거를 이어서 정합니다.',questions:[
+  {q:'"AI를 활용하여 인공지능을 이해한다."',short:'AI를 활용하여 인공지능을 이해한다',choices:['평가할 수 있는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용과 이해가 섞여 있어 무엇을 보고 판단할지 알 수 없습니다.'},
+  {q:'"분수의 덧셈에서 틀린 풀이를 찾아 고친 이유를 설명할 수 있다."',short:'틀린 풀이를 찾아 고친 이유를 설명할 수 있다',choices:['평가할 수 있는 목표','고쳐 쓸 목표'],answer:0,why:'찾기와 설명이라는 행동이 분명해 오류 설명 기록으로 평가할 수 있습니다.'},
+  {q:'"생성형 AI로 발표 자료를 만들 수 있다."',short:'생성형 AI로 발표 자료를 만들 수 있다',choices:['평가할 수 있는 목표','고쳐 쓸 목표'],answer:1,why:'도구 사용이 목표가 되었습니다. AI를 사용했다는 사실만으로는 학생의 이해를 확인할 수 없습니다.'},
+  {q:'"생활 속 AI 사례의 이익과 위험을 한 가지씩 들어 정리할 수 있다."',short:'사례의 이익과 위험을 들어 정리할 수 있다',choices:['평가할 수 있는 목표','고쳐 쓸 목표'],answer:0,why:'정리한 내용을 그대로 평가 증거로 씁니다. 모둠 토의 관찰이나 자기 평가로 확인할 수 있습니다.'},
+  {q:'"AI의 편리함을 느끼고 흥미를 가진다."',short:'AI의 편리함을 느끼고 흥미를 가진다',choices:['평가할 수 있는 목표','고쳐 쓸 목표'],answer:1,why:'느낀다, 흥미를 가진다는 관찰하기 어렵습니다. 설명하기나 비교하기처럼 관찰 가능한 행동으로 고칩니다.'}]});
 
  L.add('conditionMatch','match',{hint:'활용안에 적은 메모가 <b>도구와 이용 조건</b>의 어느 점검 항목에 답하는지 짝지어 봅니다.',leftTitle:'점검 항목',rightTitle:'활용안에 적은 메모(예시)',seed:8,pairs:[
   {left:'이용 연령과 계정',right:'학생은 가입하지 않고 교사 계정으로 시연하는 화면을 함께 봄'},
@@ -125,7 +125,7 @@
  // The TPACK picture as a board: three circles, their overlaps, and the context ring around them.
  const ZONES={TK:{x:210,y:82,r:30,sub:'테크놀로지',q:'도구의 작동 원리, 한계, 오류 대처를 알고 있는가'},PK:{x:108,y:284,r:30,sub:'교수',q:'학습자 수준에 맞는 수업 방법과 평가를 골랐는가'},CK:{x:312,y:284,r:30,sub:'내용',q:'가르칠 개념과 흔한 오개념을 정확히 파악했는가'},
   TPK:{x:157,y:180,r:24,q:'도구가 수업 방법과 학생 참여를 어떻게 바꾸는가'},TCK:{x:263,y:180,r:24,q:'도구가 내용을 보여 주는 방식이 개념을 왜곡하지 않는가'},PCK:{x:210,y:292,r:24},
-  TPACK:{x:210,y:218,r:29,q:'이 내용, 이 학생, 이 도구에서 세 지식이 맞물리는가'},XK:{x:210,y:378,sub:'맥락',q:'학교의 기기, 시간, 규정 안에서 실행할 수 있는가'}};
+  TPACK:{x:210,y:218,r:29,q:'이 내용, 이 학생, 이 도구가 서로 맞는가'},XK:{x:210,y:378,sub:'맥락',q:'학교의 기기, 시간, 규정 안에서 실행할 수 있는가'}};
  const MEMOS=[['XK','학교 태블릿 수와 두 차시라는 시간, 계정 규정 안에서 할 수 있는지 확인했다.'],['CK','AI가 데이터로 학습해 예측한다는 개념과 AI가 스스로 안다고 여기는 오개념을 정리했다.'],
   ['TPK','도구를 쓰면 설명을 듣던 수업이 학생이 직접 자료를 바꾸어 보는 수업으로 달라진다.'],['TK','이미지 분류 도구가 어떻게 학습하는지, 예측이 틀리면 어떻게 대처할지 알고 있다.'],
   ['PK','5학년 수준에 맞추어 예상을 먼저 적고 비교하는 활동과 채점 기준표를 골랐다.'],['TCK','사진 몇 장으로 만든 모델이 학습이라는 개념을 잘못 보여 주지 않는지 살폈다.'],
@@ -143,7 +143,7 @@
    function draw(hit){
     const over=st.i>=MEMOS.length,done=MEMOS.slice(0,st.i).map(m=>m[0]);
     ui.q('#s72-turn').textContent=over?'일곱 메모를 모두 놓았습니다':`점검 메모 ${st.i+1} / ${MEMOS.length}`;
-    ui.q('#s72-memo').textContent=over?'특정 내용을 특정 방법과 기술로 가르치는 판단이 TPACK의 핵심입니다.':MEMOS[st.i][1];
+    ui.q('#s72-memo').textContent=over?'TPACK은 특정 내용을 어떤 방법과 기술로 가르칠지 판단하는 지식입니다.':MEMOS[st.i][1];
     ui.all('.s72-zone').forEach(g=>{g.dataset.done=String(done.includes(g.dataset.zone));g.dataset.miss=String(st.miss===g.dataset.zone)});
     ui.q('#s72-ref').innerHTML=['CK','PK','TK','TCK','TPK','TPACK','XK'].map(k=>`<li data-done="${done.includes(k)}"><b>${k}</b><span>${ZONES[k].q}</span></li>`).join('');
     ui.say(over?`잘못 고른 횟수는 ${st.wrong}번입니다. 내 활용안에서는 어느 지식의 메모가 가장 비어 있을까요?`
@@ -159,15 +159,15 @@
  // The worked example of the deck with one weaker choice or two in every box. ok marks the choice the example uses.
  const PLAN=[
   {name:'성취기준과 목표',opts:[{t:'AI를 활용하여 인공지능을 이해한다.'},{t:'학습 자료를 바꾼 결과를 비교하여 AI의 예측이 달라진 이유를 설명할 수 있다.',ok:true}]},
-  {name:'평가 계획',opts:[{t:'AI 도구를 끝까지 사용했는지 확인',why:'평가 증거는 AI를 사용했다는 사실이 아니라 학생이 보여 준 이해입니다.'},{t:'조건별 결과 비교표와 오류 원인 설명을 채점 기준표로 평가',ok:true},{t:'완성한 모델의 예측 정확도로 평가',why:'목표의 행동은 비교와 설명인데 평가는 모델의 정확도를 봅니다.'}]},
+  {name:'평가 계획',opts:[{t:'AI 도구를 끝까지 사용했는지 확인',why:'AI를 사용했다는 사실만으로는 학생의 이해를 확인할 수 없습니다.'},{t:'조건별 결과 비교표와 오류 원인 설명을 채점 기준표로 평가',ok:true},{t:'완성한 모델의 예측 정확도로 평가',why:'목표의 행동은 비교와 설명인데 평가는 모델의 정확도를 봅니다.'}]},
   {name:'AI의 역할',opts:[{t:'학생이 사진으로 두 모델을 학습시키고 예측을 비교',ok:true},{t:'AI가 비교표와 원인 설명을 대신 작성',why:'AI가 증거를 대신 만들어 학생의 이해를 확인할 수 없습니다.'},{t:'교사가 미리 만든 모델의 결과만 보여 줌',why:'학생이 자료를 바꾸어 보지 않아 비교표를 만들 수 없습니다.'}]},
   {name:'이용 조건',opts:[{t:'5학년 학생이 각자 계정을 만들어 Drive에 저장',why:'본인 계정 관리는 14세 이상이어서 5학년 학생이 직접 하기 어렵습니다.'},{t:'학생 얼굴 사진으로 모델을 학습',why:'학생 얼굴은 입력하지 않을 정보입니다. 얼굴과 이름표가 나오지 않게 촬영합니다.'},{t:'브라우저 안에서 학습, 교실 물건 사진만 사용',ok:true}]},
   {name:'검증 절차',opts:[{t:'결과가 그럴듯한지 살펴봄',why:'확인 계획은 있으나 무엇을 기준으로 확인하는지 모호합니다.'},{t:'따로 남긴 사진으로 예측을 확인하고 틀린 사례를 기록',ok:true},{t:'정하지 않음',why:'결과 확인 절차가 없어 틀린 예측을 알아차릴 수 없습니다.'}]}];
  const START=[0,0,1,0,2];
  L.add('planLink','custom',{
-  hint:'작성 예시의 다섯 칸을 바꾸어 가며 <b>칸과 칸이 서로 이어지는지</b> 확인합니다.',
+  hint:'작성 예시의 항목을 바꾸어 가며 <b>항목끼리 서로 맞는지</b> 확인합니다.',
   body:`<div class="md-split" style="--split:1.62fr 1fr"><div class="md-panel"><div class="s72-plan">${PLAN.map((p,i)=>`<div class="s72-prow" style="--n:${p.opts.length}"><b>${p.name}</b>${options(p.opts,i)}</div>`).join('')}</div></div>
-   <div class="md-panel"><h3>칸과 칸의 연결</h3><ul class="s72-links" id="s72-links"></ul></div></div>`,
+   <div class="md-panel"><h3>항목 사이의 연결</h3><ul class="s72-links" id="s72-links"></ul></div></div>`,
   state:()=>({pick:[...START]}),
   render(ui,st,reset){
    ui.action('고치기 전으로',reset);
@@ -175,13 +175,13 @@
     const got=PLAN.map((p,i)=>p.opts[st.pick[i]]),[goal,test,role,terms,verify]=got;
     ui.all('.s72-opt').forEach(b=>b.setAttribute('aria-pressed',String(st.pick[b.dataset.k]===Number(b.dataset.j))));
     const links=[
-     ['목표 → 평가 계획',goal.ok&&test.ok,!goal.ok?'목표에 도구 사용과 이해가 섞여 있어 무엇을 보고 판단할지 알 수 없습니다.':test.ok?'비교와 설명이라는 행동이 평가 증거로 바로 이어집니다.':test.why],
+     ['목표 → 평가 계획',goal.ok&&test.ok,!goal.ok?'목표에 도구 사용과 이해가 섞여 있어 무엇을 보고 판단할지 알 수 없습니다.':test.ok?'비교와 설명이라는 행동을 평가 증거로 쓸 수 있습니다.':test.why],
      ['평가 계획 → AI의 역할',test.ok&&role.ok,!role.ok?role.why:test.ok?'학생의 AI 활동이 평가할 증거를 만듭니다.':'AI 활동은 비교인데 평가 계획이 그 증거를 보지 않습니다.'],
      ['AI의 역할 → 이용 조건',!!terms.ok,terms.ok?'이용 조건을 충족하고 입력 정보는 교실 물건 사진뿐입니다.':terms.why],
      ['AI의 역할 → 검증 절차',!!verify.ok,verify.ok?'따로 남긴 사진을 기준으로 예측을 확인하고 기록합니다.':verify.why]];
     ui.q('#s72-links').innerHTML=links.map(([name,ok,text])=>`<li data-ok="${!!ok}"><b>${name} ${ok?'이어짐':'끊김'}</b>${esc(text)}</li>`).join('');
     const n=links.filter(l=>l[1]).length;
-    ui.say(n===4?'다섯 칸이 서로 이어졌습니다. 작성 예시에서 본 수업과 같은 선택입니다.':`네 연결 중 ${n}곳이 이어졌습니다. 끊긴 연결의 칸을 바꾸어 보세요.`,n===4?'good':'');
+    ui.say(n===4?'다섯 항목이 서로 맞습니다. 작성 예시에서 본 수업과 같은 선택입니다.':`네 연결 중 ${n}곳이 맞습니다. 맞지 않는 연결의 항목을 바꾸어 보세요.`,n===4?'good':'');
    }
    ui.body.addEventListener('click',e=>{const b=e.target.closest('.s72-opt');if(b){st.pick[b.dataset.k]=Number(b.dataset.j);draw()}});
    draw();
@@ -190,8 +190,8 @@
  // Six lines of a made-up plan judged with the level descriptions of the rubric. answer is the level argued for in why.
  const LEVELS=['우수','보통','보완 필요'];
  const RUBRIC=[
-  {name:'문제 정의',levels:['세 요소와 관찰 근거가 모두 드러남','세 요소는 있으나 근거가 약함','해결책 중심으로 서술됨'],answer:0,
-   text:'5학년 학생 일부가 조사 보고서를 쓸 때 자료의 출처를 적지 않습니다. 지난 보고서 24편 중 15편에 출처가 없었습니다.',why:'대상, 상황, 어려움이 모두 있고 보고서를 세어 본 관찰 근거가 함께 드러납니다.'},
+  {name:'문제 정의',levels:['세 요소와 관찰 근거가 모두 있음','세 요소는 있으나 근거가 약함','해결책 중심으로 서술됨'],answer:0,
+   text:'5학년 학생 일부가 조사 보고서를 쓸 때 자료의 출처를 적지 않습니다. 지난 보고서 24편 중 15편에 출처가 없었습니다.',why:'대상, 상황, 어려움이 모두 있고 보고서를 세어 본 관찰 근거가 함께 있습니다.'},
   {name:'AI 필요성',levels:['두 가지 이상의 대안과 비교해 선택함','대안을 언급하나 비교가 약함','대안 검토 없이 도구를 정함'],answer:2,
    text:'요즘 많이 쓰는 대화형 AI를 수업에 써 보려고 이 도구로 정했습니다.',why:'다른 해결 방법을 살펴본 내용이 없고 도구부터 정했습니다.'},
   {name:'원리 이해',levels:['원리로 오류 상황을 예상하고 대비함','원리를 설명하나 수업과 연결이 약함','원리와 관련된 설명이 없음'],answer:1,
