@@ -28,7 +28,7 @@ PLAYER_VERSION = '20261102video'  # computer-education2.js, the shared slide pla
 VIEWER_VERSION = '20261022a'  # shared viewer and picture-zoom assets
 # Sessions rebuilt from a revised deck get a new data and activity version, so no browser pairs old data with new images.
 SESSION_VERSIONS = {key: '20261113b' for key in ('1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '5-1', '5-2', '6-1', '6-2', '7-1', '7-2', '8-1')}
-SESSION_VERSIONS['7-2'] = '20261120d'  # the 2027 curriculum year, the assessment guidance slide, two table rows
+SESSION_VERSIONS['7-2'] = '20261121a'  # the 2027 curriculum year, the assessment guidance slide, two table rows
 SESSION_VERSIONS['6-2'] = '20261114b'  # the review film after the title slide; two news videos and two more practices
 
 # id, week, half, title, card summary, source slides left out because they only introduce instructors.
@@ -46,7 +46,7 @@ SESSIONS = [
     ('6-1', 6, '오전', '공정성과 편향성 및 책임 있는 활용 Part 1', '편향이 생기는 곳, 공정성 기준, 윤리 관점과 원칙, 편향 사례 분석', []),
     ('6-2', 6, '오후', '생성형 인공지능 결과 해석과 검증', '생성 원리 다시 보기, 오류의 유형, 근거 확인과 검증 절차', []),
     ('7-1', 7, '오전', '공정성과 편향성 및 책임 있는 활용 Part 2', '개인정보, 저작권, 투명성, 책임 있는 활용 기준, 학급 규칙 만들기', []),
-    ('7-2', 7, '오후', '인공지능 활용 교육 프로젝트 설계', '문제 정의, 활용안 설계, TPACK 점검, 활용안 작성과 루브릭', []),
+    ('7-2', 7, '오후', '인공지능 활용 교육 프로젝트 설계', 'AI 동향, 문제 정의, 활용안 설계, 수업 사례, 활용안 작성과 점검', []),
     ('8-1', 8, '오전', '프로젝트 발표 및 종합 평가, 수료식', '발표 운영, 동료 검토, 평가와 개선, 과정 성찰과 수료', []),
 ]
 # Line breaks added in the working copy where a source title runs off its coloured band: (slide, find, replace).
